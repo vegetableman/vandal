@@ -1,0 +1,79 @@
+.vandal-graph {
+  display: flex;
+  flex-direction: column;
+}
+
+.vandal-graph__year-container {
+  justify-content: flex-end;
+  max-height: 75px;
+  display: flex;
+}
+
+.vandal-graph__year {
+  align-items: baseline;
+  display: flex;
+  flex: 0 0 48px;
+  flex-direction: column;
+  justify-content: space-between;
+  
+  border-right: 0.5px dotted #ccc;
+  box-sizing: content-box;
+  color: #555;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.vandal-graph__year:hover {
+  background: #eee;
+}
+
+.vandal-graph__year--selected {
+  background: #89ff002b;
+}
+
+.vandal-graph__year--selected:hover {
+  background: #89ff002b; 
+}
+
+.vandal-graph__year__value {
+  padding: 0 0 0 10px;
+}
+
+.vandal-graph__month-container {
+  display: flex;
+  flex: 0 0 55px;
+  justify-content: flex-end;
+
+  position: relative;
+}
+
+.vandal-graph__month {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  flex: 0 0 80px;
+
+  border-right: 1px dotted #ddd;
+  font-size: 11px;
+  position: relative;
+}
+
+.vandal-graph__month__value {
+  font-family: Roboto;
+  padding: 7px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.vandal-gh-loader-container {
+  flex: 0 0 55px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.vandal-gh-loader {
+  flex: 0 0 80px;
+  position: relative;
+  top: 12px;
+}

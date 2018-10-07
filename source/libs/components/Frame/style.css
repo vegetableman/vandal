@@ -1,0 +1,20 @@
+.vandal-frame {
+	display: flex;
+	align-items: center;
+
+ 	background: #f9f9f9;
+  border-bottom: 1px solid #ccc;
+  height: 100%;
+}
+
+.vandal-frame__left {
+	flex: 0 0 100px;
+}
+
+.vandal-frame__mid {
+	flex: 1;
+}
+
+.vandal-frame__right {
+	flex: 0 0 200px;
+}

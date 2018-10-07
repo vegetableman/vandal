@@ -1,0 +1,73 @@
+.vandal-cl__minput-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.vandal-cl__mlabel {
+	padding: 0 0 10px 0;
+}
+
+.vandal-cl__minput {
+	font-family: Source Sans Pro;
+  font-size: 14px;
+  max-width: 165px;
+  padding: 1px 5px;
+}
+
+.vandal-cl-container {
+	display: flex;
+	flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  justify-content: center;
+}
+
+.vandal-cl {
+	flex: 1;
+	justify-content: flex-start;
+  padding: 15px 0 0 0;
+}
+
+.vandal-cl-week {
+	display: flex;
+	justify-content: flex-end;
+	flex: 0 0 22px;
+}
+
+.vandal-cl-last-week {
+	justify-content: flex-start;
+	margin-left: 4px;
+}
+
+.vandal-cl-day {
+	flex: 0 0 25px;
+	align-items: center;
+  cursor: pointer;
+	display: flex;
+	justify-content: center;
+	text-align: center;
+}
+
+.vandal-cl-day--selected .vandal-cl-day__date {
+	transform: scale(1.25);
+}
+
+.vandal-cl-day__date {
+	font-size: 13px;
+	margin-right: 3px;
+	width: 100%;
+}
+
+.vandal-cl-month {
+	display: flex;
+	flex-direction: column;
+	width: 180px;
+}
+
+.vandal-cl-loader {
+	flex: 1;
+	margin-top: -15px;
+}

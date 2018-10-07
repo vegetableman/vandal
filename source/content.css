@@ -1,0 +1,133 @@
+html, body {
+	background-color: #CCC !important;
+	height: 100%;
+	width: 100%;
+}
+
+.frame {
+	height: 100%;
+	width: 100%;
+}
+
+/*.vandal-container {
+	display: flex;
+	flex-direction: column;
+
+  background: #dddd;
+  border-bottom: 1px solid #ccc;
+  height: 50px;
+	max-width: none;
+  width: 100%;
+}
+
+.vandal-year {
+	align-items: baseline;
+  display: flex;
+	flex: 0 0 48px;
+	flex-direction: column;
+	justify-content: space-between;
+
+	border-left: 0.5px dotted #ccc;
+  box-sizing: content-box;
+  color: #555;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: Helvetica Neue;
+}
+
+.vandal-year:hover {
+	background: #efefef;
+}
+
+.vandal-year_container {
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
+
+  background: #fff;
+  max-height: 75px;
+  overflow: auto;
+}
+
+.vandal-month_container {
+  display: flex;
+	flex: 0 0 46px;
+
+	position: relative;
+}
+
+.vandal-month {
+	background: #ccc;
+  border-right: 1px solid #ddd;
+	flex: 0 0 80px;
+	display: flex;
+	justify-content: flex-end;
+  flex-direction: column;
+  font-size: 11px;
+  position: relative;
+}
+
+.vandal-about_container {
+	display: flex;
+  flex: 0 0 70px;
+}
+
+.vandal-year__sparkline {
+	width: 100%;	
+}
+
+.vandal-month__value {
+	font-family: Roboto;
+	padding: 7px;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.vandal-year__value {
+	font-family: Roboto;
+	padding: 10px;
+}
+
+.vandal-tooltip__date {
+	background: #708090;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	color: #efefef;
+	display: flex;
+	font-family: Roboto;
+	padding: 10px;
+	justify-content: space-evenly;
+}
+
+.vandal-tooltip__date--empty {
+	border-radius: 5px;
+}
+
+.vandal-tooltip {
+	background: #efefef;
+  border-radius: 5px;
+  color: #333;
+  position: absolute;
+  width: 110px;
+}
+
+.vandal-tooltip__ts {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+}
+
+.vandal-tooltip__ts__value {
+  font-size: 11px;
+  font-family: Cousine;
+	padding: 6px 0;
+	text-align: center;
+	width: 100%;
+}
+
+.vandal-tooltip__ts__value:hover {
+	background: #ccc;
+  cursor: pointer;
+  font-weight: bold;
+}*/

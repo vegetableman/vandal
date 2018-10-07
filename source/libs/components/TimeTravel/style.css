@@ -1,0 +1,70 @@
+.vandal-timetravel {
+  height: 300px;
+  position: absolute;
+  background: #f9f9f9;
+  width: 260px;
+  border-bottom: 1px solid #ccc;
+  top: 43.5px;
+  border-right: 1px solid #ccc;
+  right: 13.9%;
+  border-left: 1px solid #ccc;
+}
+
+.vandal-timetravel__tabs {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.vandal-timetravel__tab-list {
+	display: flex;
+  list-style: none;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 50px;
+  flex: 0 0 60px;
+}
+
+.vandal-timetravel__tab {
+	background: linear-gradient(to bottom,#fcfcfc 0,#f1f1f1 100%);
+  border-color: #c2c0c2 #c2c0c2 #a19fa1;
+  box-shadow: 0 1px 1px rgba(0,0,0,.06);
+  border: 1px solid #0000;
+  border-color: #c2c0c2 #c2c0c2 #a19fa1;
+  color: #373737;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px 8px;
+	text-shadow: 0 1px 1px rgba(0,0,0,.1);
+}
+
+.vandal-timetravel__tab-calendar {
+	border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.vandal-timetravel__tab-graph {
+	border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+	border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.vandal-timetravel__tab--active {
+	background: linear-gradient(to bottom,#6eb4f7 0,#1a82fb 100%);
+  box-shadow: 0 1px 1px rgba(0,0,0,.06);
+  border-color: #388df8 #388df8 #0866dc;
+  box-shadow: 0 1px 1px rgba(0,0,0,.1);
+  color: #fff;
+}
+
+.react-tabs__tab-panel--selected {
+	flex: 1;
+}
+
+.vandal-timetravel--graph {
+  width: calc(100% - 300px);
+}
+

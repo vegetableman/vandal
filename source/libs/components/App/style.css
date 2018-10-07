@@ -1,0 +1,12 @@
+.vandal-container {
+	display: flex;
+	flex-direction: column;
+	font-family: Source Sans Pro;
+  height: 60px;
+	max-width: none;
+  width: 100%;
+}
+
+.vandal-container * {
+	box-sizing: border-box;
+}
