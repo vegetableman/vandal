@@ -1,0 +1,15 @@
+{
+  "name": "pagerest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "capture-website": "^0.2.1",
+    "pageres": "^5.0.2"
+  }
+}

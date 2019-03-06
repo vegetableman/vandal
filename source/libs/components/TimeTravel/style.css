@@ -1,70 +1,307 @@
 .vandal-timetravel {
-  height: 300px;
+  display: flex;
+  flex-direction: column;
+
+  height: 325px;
   position: absolute;
-  background: #f9f9f9;
+  background: var(--vandal-primary-background-color);
   width: 260px;
-  border-bottom: 1px solid #ccc;
-  top: 43.5px;
-  border-right: 1px solid #ccc;
-  right: 13.9%;
-  border-left: 1px solid #ccc;
+  border-bottom: 1px solid var(--vandal-menu-border-color);
+  top: 44.5px;
+  border-right: 1px solid var(--vandal-menu-border-color);
+  right: 200px;
+  border-left: 1px solid var(--vandal-menu-border-color);
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  user-select: none;
+  z-index: 1;
 }
 
 .vandal-timetravel__tabs {
-	display: flex;
-	flex-direction: column;
-	height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .vandal-timetravel__tab-list {
-	display: flex;
-  list-style: none;
+  display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding-right: 50px;
   flex: 0 0 60px;
+
+  list-style: none;
+  margin: 0;
+  padding: 10px 72px 12px 0;
 }
 
 .vandal-timetravel__tab {
-	background: linear-gradient(to bottom,#fcfcfc 0,#f1f1f1 100%);
-  border-color: #c2c0c2 #c2c0c2 #a19fa1;
-  box-shadow: 0 1px 1px rgba(0,0,0,.06);
-  border: 1px solid #0000;
-  border-color: #c2c0c2 #c2c0c2 #a19fa1;
-  color: #373737;
+  background: var(--vandal-timetravel-tab-inactive-background-color);
+  color: var(--vandal-timetravel-tab-inactive-color);
   cursor: pointer;
-  font-size: 13px;
-  padding: 4px 8px;
-	text-shadow: 0 1px 1px rgba(0,0,0,.1);
+  font-size: 12px;
+  font-family: Helvetica;
+  padding: 7px 8px 8px 8px;
 }
 
 .vandal-timetravel__tab-calendar {
-	border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  border-right: 0;
 }
 
 .vandal-timetravel__tab-graph {
-	border-top-left-radius: 0;
+  border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-	border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-left: 0;
 }
 
 .vandal-timetravel__tab--active {
-	background: linear-gradient(to bottom,#6eb4f7 0,#1a82fb 100%);
-  box-shadow: 0 1px 1px rgba(0,0,0,.06);
-  border-color: #388df8 #388df8 #0866dc;
-  box-shadow: 0 1px 1px rgba(0,0,0,.1);
-  color: #fff;
+  background: var(--vandal-timetravel-tab-active-background-color);
+  color: #ffffff;
 }
 
 .react-tabs__tab-panel--selected {
-	flex: 1;
+  flex: 1;
 }
 
 .vandal-timetravel--graph {
-  width: calc(100% - 300px);
+  width: calc(100% - 400px);
 }
 
+.vandal-navigate__controls {
+  padding: 0 5px 0 0;
+}
+
+.vandal-timetravel__tab-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.vandal-navigate__first-icon {
+  position: relative;
+  top: 4px;
+}
+
+.vandal-navigate__last-icon {
+  position: relative;
+  top: 3.8px;
+}
+
+.vandal-navigate__icon {
+  width: 14px;
+  fill: var(--vandal-primary-icon-color);
+}
+
+.vandal-forward__icon {
+  width: 23px;
+  height: 15px;
+  position: relative;
+  top: 5px;
+}
+
+.vandal-backward__icon {
+  width: 23px;
+  height: 15px;
+  fill: var(--vandal-primary-icon-color);
+  position: relative;
+  top: 5px;
+}
+
+.vandal-backward__icon {
+  transform: rotate(180deg);
+}
+
+.vandal-next__icon {
+  position: relative;
+  top: 4px;
+  width: 14px;
+}
+
+.vandal-prev__icon {
+  transform: rotate(180deg);
+  position: relative;
+  top: 5px;
+  width: 14px;
+}
+
+.vandal-navigate__btn {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  padding: 0 5px;
+  outline: none;
+}
+
+.vandal-navigate__btn:hover .vandal-navigate__icon {
+  fill: var(--vandal-primary-icon-active-color);
+}
+
+.vandal-navigate__btn:disabled {
+  cursor: auto;
+}
+
+.vandal-navigate__btn:disabled .vandal-navigate__icon {
+  fill: var(--vandal-disabled-icon-color);
+}
+
+.vandal-timetravel__footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  flex: 0 0 27px;
+
+  background: var(--vandal-timetravel-footer-background-color);
+  border-top: 1px dotted var(--vandal-timetravel-footer-border-color);
+}
+
+.vandal-timetravel__footer .vandal-vertical-menu {
+  padding-right: 5px;
+}
+
+.vandal-timetravel-info-tooltip {
+  opacity: 1 !important;
+  padding: 5px 10px !important;
+  pointer-events: auto !important;
+  max-width: 250px;
+  transition: none !important;
+}
+
+.vandal-timetravel-info-tooltip:hover {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.vandal-timetravel-info-tooltip.place-bottom:after {
+  border-bottom-color: var(--vandal-tooltip-background-color) !important;
+}
+
+.vandal-timetravel-info-tooltip.place-left:before {
+  right: -5px !important;
+  top: 50%;
+  margin-top: -5px;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left-style: solid;
+  border-left-width: 6px;
+  z-index: 1;
+}
+
+.vandal-timetravel-info-tooltip.place-left:after {
+  border-left-color: var(--vandal-primary-border-color) !important;
+  border-left-width: 6px !important;
+  right: -7px !important;
+}
+.vandal-timetravel-info-tooltip.place-left {
+  margin-left: -7px !important;
+}
+
+.vandal-timetravel-info__icon {
+  cursor: pointer;
+  position: absolute;
+  right: 230px;
+  top: 15px;
+  fill: var(--vandal-primary-icon-color);
+}
+
+.vandal-timetravel-info__icon:hover {
+  fill: #333;
+}
+
+.vandal-timetravel-info-tooltip.place-bottom:after {
+  border-bottom-color: var(--vandal-primary-border-color) !important;
+}
+
+.vandal-timetravel-info-tooltip.place-bottom:before {
+  border-bottom-color: #f6f6f6 !important;
+  border-bottom-style: solid;
+  border-bottom-width: 6px;
+  margin-left: -10px !important;
+  top: -4px !important;
+  z-index: 1;
+}
+
+.vandal-timetravel-info-tooltip.place-right:before {
+  border-right-color: #f6f6f6 !important;
+  border-right-style: solid;
+  border-right-width: 6px;
+  left: -4px !important;
+  z-index: 1;
+}
+
+.vandal-timetravel-info-tooltip.place-right:after {
+  border-right-color: var(--vandal-primary-border-color) !important;
+}
+
+.vandal-timetravel-count {
+  border: 1px dotted #aaa;
+  border-radius: 3px;
+  color: var(--vandal-total-count);
+  cursor: pointer;
+  font-size: 11.5px;
+  font-family: VANDAL__Inconsolata;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  max-width: 50px;
+  overflow: hidden;
+  padding: 5px 5px 5px 5px;
+  position: absolute;
+  text-overflow: ellipsis;
+  top: 17px;
+  right: 11px;
+}
+
+.vandal-timetravel__reload-icon {
+  cursor: pointer;
+  position: absolute;
+  bottom: 35px;
+  right: 9px;
+  fill: var(--vandal-primary-icon-color);
+  stroke: var(--vandal-primary-icon-color);
+  stroke-width: 3px;
+}
+
+.vandal-timetravel__reload-icon:hover {
+  fill: var(--vandal-primary-icon-active-color);
+  stroke: var(--vandal-primary-icon-active-color);
+}
+
+.vandal-timetravel__reload-icon--loading {
+  animation: rotate 0.8s infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.vandal-timetravel__selection-icon {
+  cursor: pointer;
+  fill: var(--vandal-primary-icon-color);
+  position: absolute;
+  bottom: 26px;
+  right: 28px;
+}
+
+.vandal-timetravel__selection-icon:hover {
+  fill: #333;
+}
+
+.vandal-connection__error-icon {
+  fill: var(--vandal-error-icon-color);
+  height: 14px;
+  margin: 0 60px 0 0;
+  position: relative;
+  top: 3.5px;
+}
+
+.vandal-connection__error-icon:hover {
+  fill: #ef0a0a;
+}

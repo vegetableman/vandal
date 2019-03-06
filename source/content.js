@@ -5,75 +5,77 @@ import React from 'react';
 import domLoaded from 'dom-loaded';
 
 // import * as pageDetect from './libs/page-detect';
-import {safeElementReady, enableFeature, safeOnAjaxedPages} from './libs/utils';
+import { safeElementReady } from './libs/utils';
 import App from './libs/components/App';
+import Drawer from './libs/components/Drawer';
 
 // Add globals for easier debugging
 // window.select = select;
 
 async function init() {
-	await safeElementReady('body');
+  await safeElementReady('body');
 
-	// if (pageDetect.is404() || pageDetect.is500()) {
-	// 	return;
-	// }
+  // if (pageDetect.is404() || pageDetect.is500()) {
+  // 	return;
+  // }
 
-	await domLoaded;
-	console.log('Vandal in action');
-	onDomReady();
+  await domLoaded;
+  console.log('Vandal in action');
+  onDomReady();
 }
 
+let _app;
+
+const archiveRegExp = /\/web\/\d+(?:im_)?\/(.*)/;
+
 async function onDomReady() {
-	document.body.innerHTML = '';
-	const container = document.createElement('div');
-	container.className = 'vandal';
-	const frame = document.createElement('iframe');
-	frame.src = window.location.href;
-	frame.className = 'frame';
-	frame.setAttribute('frameborder', '0');
+  document.body.innerHTML = '';
+  const box = document.createElement('div');
+  box.className = 'vandal-box';
+  const drawer = document.createElement('div');
+  drawer.className = 'vandal-drawer';
 
-	document.body.appendChild(container);
-	document.body.appendChild(frame);
+  // use iframe.html as it's a web accessible resource
+  /// to avoid blocked by client errors
+  const baseUrl = chrome.runtime.getURL('iframe.html');
+  const frame = document.createElement('iframe');
 
-	ReactDOM.render(<App/>, container);
+  let url = new URL(window.location.href);
+  if (url.host === 'web.archive.org' && archiveRegExp.test(url.pathname)) {
+    let match = url.pathname.match(archiveRegExp)[1];
+    try {
+      url = new URL(match);
+    } catch (e) {
+      console.log('Failed to parse url');
+    }
+  }
 
-	// enableFeature(markUnread);
-	// enableFeature(addOpenAllNotificationsButton);
-	// enableFeature(enableCopyOnY);
-	// enableFeature(addProfileHotkey);
-	// enableFeature(makeDiscussionSidebarSticky);
-	// enableFeature(closeOutOfViewModals);
-	// enableFeature(improveShortcutHelp);
-	// enableFeature(addUploadBtn);
+  frame.id = frame.className = 'vandal-iframe';
+  frame.setAttribute('frameborder', '0');
 
-	// if (!pageDetect.isGist()) {
-	// 	enableFeature(moveMarketplaceLinkToProfileDropdown);
-	// 	enableFeature(addYourRepoLinkToProfileDropdown);
-	// }
+  const container = document.createElement('div');
+  container.className = 'vandal';
+  document.body.appendChild(container);
+  container.appendChild(box);
+  container.appendChild(frame);
+  container.appendChild(drawer);
 
-	// if (pageDetect.isGist()) {
-	// 	enableFeature(addFileCopyButton);
-	// }
+  ReactDOM.render(
+    <App
+      baseUrl={baseUrl}
+      ref={_ref => (_app = _ref)}
+      url={url.href}
+      root={container}
+      browser={frame}
+    />,
+    box
+  );
+  ReactDOM.render(
+    <Drawer getSelectedTS={() => _app.getSelectedTS()} frame={frame} />,
+    drawer
+  );
 
-	// if (pageDetect.isDashboard()) {
-	// 	enableFeature(hideOwnStars);
-	// 	enableFeature(autoLoadMoreNews);
-	// }
-
-	// // Push safeOnAjaxedPages on the next tick so it happens in the correct order
-	// // (specifically for addOpenAllNotificationsButton)
-	await Promise.resolve();
-
-	// safeOnAjaxedPages(() => {
-	// 	ajaxedPagesHandler();
-
-	// 	// Mark current page as "done"
-	// 	// so history.back() won't reapply the same changes
-	// 	const ajaxContainer = select('#js-repo-pjax-container,#js-pjax-container');
-	// 	if (ajaxContainer) {
-	// 		ajaxContainer.append(<has-rgh/>);
-	// 	}
-	// });
+  await Promise.resolve();
 }
 
 // eslint-disable-next-line complexity

@@ -1,0 +1,48 @@
+.vandal-diff-panel {
+  display: flex;
+  align-items: center;
+
+  background: var(--vandal-primary-background-color);
+  border-radius: 3px;
+  color: #fff;
+  font-size: 13px;
+  height: 32px;
+  padding: 0 10px;
+  position: absolute;
+  top: 69px;
+  left: 500px;
+  width: 700px;
+}
+
+.vandal-diff-panel__current {
+  display: flex;
+  align-items: center;
+
+  border: 1px solid #333;
+  border-radius: 5px;
+  padding: 0 10px;
+}
+
+.vandal-diff__panel-fade-enter,
+.vandal-diff__panel-fade-appear {
+  opacity: 0.01;
+  transform: translate3d(0, -10px, 0);
+  transition: all 0.15s ease-out;
+}
+
+.vandal-diff__panel-fade-enter.vandal-diff__panel-fade-enter-active,
+.vandal-diff__panel-fade-appear.vandal-diff__panel-fade-appear-active {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.vandal-diff__panel-fade-exit {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition: all 0.15s ease-in;
+}
+
+.vandal-diff__panel-fade-exit.vandal-diff__panel-fade-exit-active {
+  transform: translate3d(0, -10px, 0);
+  opacity: 0.01;
+}

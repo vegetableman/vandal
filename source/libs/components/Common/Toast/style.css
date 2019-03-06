@@ -1,0 +1,133 @@
+.vandal__toast {
+  position: fixed;
+  top: 70px;
+  height: 37px;
+  z-index: 2;
+}
+
+.vandal__toast-wrapper {
+  display: flex;
+  align-items: center;
+
+  background: #333;
+  font-size: 13.05px;
+  color: #fff;
+  border-radius: 3px;
+  height: 100%;
+  min-width: 140px;
+  padding: 0 15px;
+}
+
+.vandal__toast-fade-enter,
+.vandal__toast-fade-appear {
+  opacity: 0.01;
+  transform: translate3d(0, -10px, 0);
+  transition: all 0.15s ease-out;
+}
+
+.vandal__toast-fade-enter.vandal__toast-fade-enter-active,
+.vandal__toast-fade-appear.vandal__toast-fade-appear-active {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.vandal__toast-fade-exit {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  transition: all 0.15s ease-in;
+}
+
+.vandal__toast-fade-exit.vandal__toast-fade-exit-active {
+  transform: translate3d(0, -10px, 0);
+  opacity: 0.01;
+}
+
+.vandal__toast-url,
+.vandal__toast-empty-error {
+  left: calc(50% - 200px);
+}
+
+.vandal__toast-save {
+  left: calc(50% - 45px);
+}
+
+.vandal__toast-save-error {
+  left: calc(50% - 90px);
+}
+
+.vandal__toast-block-error {
+  left: calc(50% - 150px);
+}
+
+.vandal__toast-block-error .vandal__toast-wrapper,
+.vandal__toast-empty-error .vandal__toast-wrapper {
+  padding: 0 10px 0 15px;
+}
+
+.vandal__toast-block-error--default {
+  left: calc(50% - 190px);
+}
+
+.vandal__toast-block-link,
+.vandal__toast-block-tt-link {
+  cursor: pointer;
+  color: orange;
+  margin: 0 1px 0 4px;
+}
+
+.vandal__toast-block-tt-link {
+  margin-left: 0px;
+}
+
+.vandal__toast-block__close {
+  cursor: pointer;
+  margin-left: 8px;
+  position: relative;
+  fill: #fff;
+  stroke: #fff;
+  stroke-width: 44px;
+  top: 0px;
+  width: 10px;
+}
+
+.vandal__toast-block-link:hover,
+.vandal__toast-block-tt-link:hover {
+  text-decoration: underline;
+}
+
+.vandal__toast-url .vandal__toast-link {
+  max-width: 330px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.vandal__toast-url .vandal__toast-link a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.vandal__toast-url .vandal__toast-actions {
+  padding: 0 0 0 15px;
+}
+
+.vandal__toast-link-open,
+.vandal__toast-link-close {
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 10px;
+}
+
+.vandal__toast-link-open {
+  margin-right: 7px;
+}
+
+.vandal__toast-actions {
+  display: flex;
+}
+
+.vandal__toast-link-open:hover,
+.vandal__toast-link-close:hover {
+  background: var(--vandal-primary-icon-color);
+}

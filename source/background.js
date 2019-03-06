@@ -1,63 +1,72 @@
-import OptionsSync from 'webext-options-sync';
-import domainPermissionToggle from 'webext-domain-permission-toggle';
-import dynamicContentScripts from 'webext-dynamic-content-scripts';
+const promisifiedXHR = (
+  url,
+  { method = 'GET', fetchResHeader, abortFn = () => {}, timeout = 5000 }
+) => {
+  return new Promise(function(resolve, reject) {
+    let xhrRequest = new XMLHttpRequest();
+    xhrRequest.open(method, url);
+    if (timeout) {
+      xhrRequest.timeout = timeout;
+    }
+    xhrRequest.onload = function() {
+      if (this.status >= 200 && this.status < 300) {
+        if (fetchResHeader) {
+          return resolve(xhrRequest.getResponseHeader(fetchResHeader));
+        }
+        resolve(xhrRequest.response);
+      } else {
+        reject({
+          status: this.status,
+          statusText: xhrRequest.statusText
+        });
+      }
+    };
+    xhrRequest.onerror = function() {
+      reject({
+        status: this.status,
+        statusText: xhrRequest.statusText
+      });
+    };
+    xhrRequest.send();
+    abortFn(xhrRequest);
+  });
+};
 
-// // Define defaults
-// new OptionsSync().define({
-// 	defaults: {
-// 		disabledFeatures: '',
-// 		customCSS: '',
-// 		personalToken: '',
-// 		logging: false
-// 	},
-// 	migrations: [
-// 		// Migration example:
-// 		options => {
-// 			// #1330
-// 			options.disabledFeatures = options.disabledFeatures.replace('move-account-switcher-to-sidebar', '');
-// 		},
-// 		OptionsSync.migrations.removeUnused
-// 	]
-// });
+const xhr = async (...args) => {
+  try {
+    const res = await promisifiedXHR(...args);
+    return [res, null];
+  } catch (err) {
+    return [null, err];
+  }
+};
 
-// browser.runtime.onMessage.addListener(async message => {
-// 	if (!message || message.action !== 'openAllInTabs') {
-// 		return;
-// 	}
-// 	const [currentTab] = await browser.tabs.query({currentWindow: true, active: true});
-// 	for (const [i, url] of message.urls.entries()) {
-// 		browser.tabs.create({
-// 			url,
-// 			index: currentTab.index + i + 1,
-// 			active: false
-// 		});
-// 	}
-// });
-
-// browser.runtime.onInstalled.addListener(async ({reason}) => {
-// 	// Cleanup old key
-// 	// TODO: remove in the future
-// 	browser.storage.local.remove('userWasNotified');
-
-// 	// Only notify on install
-// 	if (reason === 'install') {
-// 		const {installType} = await browser.management.getSelf();
-// 		if (installType === 'development') {
-// 			return;
-// 		}
-// 		browser.tabs.create({
-// 			url: 'https://github.com/sindresorhus/refined-github/issues/1137',
-// 			active: false
-// 		});
-// 	}
-// });
-
-// GitHub Enterprise support
-// dynamicContentScripts.addToFutureTabs();
-// domainPermissionToggle.addContextMenu();
+const getTimestamp = async url => {
+  const [ts, err] = await xhr(url, {
+    method: 'HEAD',
+    fetchResHeader: 'Memento-Datetime'
+  });
+  return [ts, err];
+};
 
 browser.browserAction.onClicked.addListener(() => {
-	browser.tabs.executeScript({file: "browser-polyfill.min.js"});
-	browser.tabs.insertCSS({file: "content.css"});
-  browser.tabs.executeScript({file: "content.js"});
+  browser.tabs.executeScript({ file: 'browser-polyfill.min.js' });
+  browser.tabs.insertCSS({ file: 'content.css' });
+  browser.tabs.executeScript({ file: 'content.js' });
+});
+
+const urlMap = {};
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  const { message, data } = request;
+  if (message === 'getTimestamp') {
+    getTimestamp(data).then(sendResponse);
+    return true;
+  } else if (message === 'openOptionsPage') {
+    chrome.runtime.openOptionsPage();
+  } else if (message) {
+    chrome.tabs.query({ active: true }, function(tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, { message, data });
+    });
+  }
 });

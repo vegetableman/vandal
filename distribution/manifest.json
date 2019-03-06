@@ -1,43 +1,72 @@
 {
-	"name": "Vandal",
-	"version": "0.0.0",
-	"description": "Simplifies the GitHub interface and adds useful features",
-	"homepage_url": "https://github.com/sindresorhus/refined-github",
-	"manifest_version": 2,
-	"minimum_chrome_version": "58",
-	"applications": {
-		"gecko": {
-			"id": "{a4c4eda4-fb84-4a84-b4a1-f7c1cbf2a1ad}",
-			"strict_min_version": "55.0"
-		}
-	},
-	"permissions": [
-		"storage",
-		"clipboardWrite",
-		"contextMenus",
-		"activeTab",
-		"https://web.archive.org/*"
-	],
-	"browser_action": {
-		"default_icon": "icon.png",
-		"browser_style": true
-	},
-	"optional_permissions": [
-		"http://*/*",
-		"https://*/*"
-	],
-	"icons": {
-		"128": "icon.png"
-	},
-	"options_ui": {
-		"chrome_style": true,
-		"page": "options.html"
-	},
-	"background": {
-		"scripts": [
-			"browser-polyfill.min.js",
-			"background.js"
-		],
-		"persistent": false
-	}
+  "name": "Vandal",
+  "version": "0.0.0",
+  "description": "Simplifies the GitHub interface and adds useful features",
+  "homepage_url": "https://github.com/sindresorhus/refined-github",
+  "manifest_version": 2,
+  "minimum_chrome_version": "58",
+  "applications": {
+    "gecko": {
+      "id": "{a4c4eda4-fb84-4a84-b4a1-f7c1cbf2a1ad}",
+      "strict_min_version": "55.0"
+    }
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "pageCapture",
+    "webRequest",
+    "webRequestBlocking",
+    "webNavigation",
+    "https://web.archive.org/*",
+    "https://archive.org/*",
+    "https://zzgi3cdqi7.execute-api.us-east-2.amazonaws.com/*",
+    "*://d1smdru0lrhqpr.cloudfront.net/*",
+    "http://service.prerender.cloud/*"
+  ],
+  "browser_action": {
+    "default_icon": "icon.png",
+    "browser_style": true
+  },
+  "optional_permissions": ["http://*/*", "https://*/*"],
+  "icons": {
+    "128": "icon.png"
+  },
+  "options_ui": {
+    "chrome_style": true,
+    "page": "options.html"
+  },
+  "background": {
+    "scripts": [
+      "browser-polyfill.min.js",
+      "background.js",
+      "sw.js",
+      "intercept.js"
+    ],
+    "persistent": true
+  },
+  "web_accessible_resources": [
+    "vandal.css",
+    "fonts/sourcesanspro-regular-webfont.woff",
+    "fonts/sourcesanspro-regular-webfont.woff2",
+    "fonts/Cousine-Regular.woff",
+    "fonts/Cousine-Regular.ttf",
+    "fonts/Cousine-Regular.svg",
+    "fonts/Cousine-Regular.eot",
+    "fonts/Cousine-Bold.ttf",
+    "fonts/Cousine-Bold.woff",
+    "fonts/Cousine-Bold.svg",
+    "fonts/Cousine-Bold.eot",
+    "fonts/Inconsolata-Regular.woff",
+    "fonts/Inconsolata-Regular.ttf",
+    "fonts/Inconsolata-Regular.eot",
+    "fonts/Inconsolata-Regular.svg",
+    "fonts/Inconsolata-Bold.woff",
+    "fonts/Inconsolata-Bold.ttf",
+    "fonts/Inconsolata-Bold.eot",
+    "fonts/Inconsolata-Bold.svg",
+    "iframe.html",
+    "hidden-iframe.html",
+    "iframe.js"
+  ]
 }
