@@ -1,0 +1,47 @@
+service: screenshooter
+
+provider:
+  name: aws
+  runtime: nodejs6.10
+  memorySize: 1536
+  profile: vandal-admin
+  timeout: 180
+  region: us-east-2
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:PutObject"
+        - "s3:GetObject"
+        - "s3:ListObject"
+      Resource: [
+        "arn:aws:s3:::${self:custom.s3bucket}",
+        "arn:aws:s3:::${self:custom.s3bucket}/*",
+      ]
+
+functions:
+  test-function:
+    handler: index.handler
+    environment:
+      DEBUG: 0
+      CHROME_BUCKET: ${self:custom.s3bucket}
+    events:
+      - http:
+          method: get
+          path: screenshot
+          integration: lambda
+          request:
+            template:
+              application/json: '{ "url" : "$input.params(''url'')", "latest" : "$input.params(''latest'')" }'
+
+package:
+  artifact: ./package.zip
+  
+plugins:
+  - serverless-hooks-plugin
+
+custom:
+  s3bucket: "screenshooter-dev-serverlessdeploymentbucket-g822i0vu6elq"
+  hooks:
+    package:initialize:
+      - npm run package
+      

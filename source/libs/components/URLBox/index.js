@@ -1,24 +1,111 @@
 import React from 'react';
+import cx from 'classnames';
 import './style.css';
 import HistoryIcon from './history.svg';
-import CloseIcon from './close.svg';
+import InfoIcon from './info.svg';
+import GlobeIcon from './globe.svg';
+import ArchiveIcon from './archive.svg';
+import DownNavIcon from './downnav.svg';
+import { ArchiveLoader, URLLoader } from '../Common';
+import { getDateTimeFromTS, toTwelveHourTime } from '../../utils';
 
 export default class URLBox extends React.Component {
+  static defaultProps = {
+    toggleTimeTravel: () => {},
+    url: ''
+  };
+
   constructor(props) {
     super(props);
+    this.state = {
+      showInfo: false
+    };
+    console.log('constructor: urlbox');
   }
 
   render() {
+    const {
+      toggleTimeTravel,
+      toggleURLInfo,
+      toggleURLHistory,
+      showTimeTravel,
+      showURLInfo,
+      selectedTS,
+      redirectedTS,
+      showFrameLoader,
+      showURLLoader,
+      showURLHistory,
+      theme,
+      url
+    } = this.props;
+    const ts = redirectedTS || selectedTS;
+    const dateObj = ts ? getDateTimeFromTS(ts) : {};
     return (
-      <div className="vandal-url-container">
-        <input className="vandal-url__input"/>
-        <div className="vandal-url__filter">
-          <div className="vandal-url__date">
-            <CloseIcon className="vandal-url__date__close" width={15} fill={"#777"}/>
-            <div className="vandal-url__date__value">9th Aug 2018, 09:27:33</div>
+      <div className="vandal-urlbox-container">
+        <div className="vandal-url-container">
+          <div className="vandal-url__mode">
+            {showURLLoader && <URLLoader />}
+            {!ts && !showURLLoader && (
+              <GlobeIcon className="vandal-url__icon" />
+            )}
+            {!!ts && !showURLLoader && (
+              <ArchiveIcon className="vandal-archive__icon" />
+            )}
           </div>
-          <div className="vandal-url__wayback">
-            <HistoryIcon width={22} fill={"#777"}/>
+          <input
+            type="text"
+            className="vandal-url__input"
+            value={url}
+            readOnly
+          />
+          <button
+            className={cx({
+              'vandal-url__history__btn': true,
+              'vandal-url__history__btn--active': showURLHistory
+            })}
+            onClick={toggleURLHistory}>
+            <DownNavIcon className="vandal-url__history-down__icon" />
+          </button>
+        </div>
+        {!!ts && (
+          <div
+            className={cx({
+              'vandal-url__date': true,
+              'vandal-url__date-loader': showFrameLoader,
+              'vandal-url__date-info': showURLInfo
+            })}
+            onClick={toggleURLInfo}>
+            {showFrameLoader && (
+              <ArchiveLoader title="Loading..." theme={theme} />
+            )}
+            {!showFrameLoader && (
+              <InfoIcon
+                width={22}
+                className={cx({
+                  'vandal-url__date-info__icon': true,
+                  'vandal-url__date-info__icon--dark': theme === 'dark'
+                })}
+              />
+            )}
+            <div className="vandal-url__date__value">
+              <span style={{ marginRight: '3px' }}>
+                {dateObj.humanizedDate}
+              </span>{' '}
+              <span>{toTwelveHourTime(dateObj.ts)}</span>
+            </div>
+          </div>
+        )}
+        <div className="vandal-url__filter">
+          <div
+            className={cx({
+              'vandal-url__timetravel-btn': true,
+              'vandal-url__timetravel-btn--selected': showTimeTravel
+            })}
+            onClick={toggleTimeTravel}>
+            <HistoryIcon
+              width={22}
+              className="vandal-url__timetravel-btn__icon"
+            />
           </div>
         </div>
       </div>
