@@ -1,9 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
 import cx from 'classnames';
-import domify from 'domify';
-import Readability from 'readability';
-import { diffChars } from 'diff';
 import DiffPanel from '../DiffPanel';
 import Frame from '../Frame';
 import TimeTravel from '../TimeTravel';
@@ -21,15 +18,10 @@ import {
   isUrlEqual,
   stripOffTag,
   stripIm,
-  xhr,
-  walkTree,
-  toVdom,
-  diff
+  xhr
 } from '../../utils';
 import { Toast } from '../Common';
 import { historyStore, drawerStore, ThemeProvider } from '../../stores';
-let vdoms = [];
-
 import './style.css';
 import './tooltip.css';
 
@@ -370,9 +362,7 @@ export default class App extends React.PureComponent {
     });
   };
 
-  handleStartDiff = () => {
-    console.log(diff(vdoms[0], vdoms[1]));
-  };
+  handleStartDiff = () => {};
 
   render() {
     const {
@@ -614,19 +604,6 @@ export default class App extends React.PureComponent {
 
   onMessage = async request => {
     if (request.message === 'frameHTML') {
-      // console.log('data: ', request.data);
-      // var el = domify(request.data.content);
-      let d = document.implementation.createHTMLDocument();
-      d.body.innerHTML = request.data;
-      const article = new Readability(d).parse();
-      var el = domify(article.content);
-      console.log('toVdom: ', toVdom(el));
-      vdoms = [...vdoms, toVdom(el)];
-      // walkTree(el, (node, iterator) => {
-      //   if (node.innerText) {
-      //     console.log(diffChars(node.innerText, node.innerText + '.'));
-      //   }
-      // });
     } else if (request.message === 'URLLoaded') {
       this.complete = true;
       this.setState({ showURLLoader: false, showBlockError: false });

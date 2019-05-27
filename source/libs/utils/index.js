@@ -541,16 +541,3 @@ export const smoothScrollX = (el, x) => {
     x: x
   });
 };
-
-export const walkTree = (node, func) => {
-  if (func(node) !== false) {
-    node = node.firstChild;
-    while (node) {
-      walkTree(node, func);
-      node = node.nextSibling;
-    }
-  }
-};
-
-export { default as toVdom } from './toVdom.js';
-export { default as diff } from './diff.js';

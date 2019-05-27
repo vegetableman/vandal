@@ -5,9 +5,8 @@ import React from 'react';
 import CalendarLoader from './loader';
 import cx from 'classnames';
 import './style.css';
-import RightNavIcon from './leftnav.svg';
-import LeftNavIcon from './rightnav.svg';
 import ErrorIcon from './error.svg';
+import InputCalendar from '../InputCalendar';
 
 class Calendar extends React.PureComponent {
   render() {
@@ -125,11 +124,20 @@ export default class CalendarFilter extends React.PureComponent {
     }
   }
 
+  handleCalendarSelect = (month, year) => {
+    const date = `${year}-${_.padStart(month, 2, '0')}`;
+    this.setState({ date });
+    this.props.onChange(date);
+  };
+
   render() {
     const { date } = this.state;
     const {
       showLoader,
+      sparkline,
       goToPrevious,
+      selectedMonth,
+      selectedYear,
       goToNext,
       showConnectionError,
       theme
@@ -141,35 +149,31 @@ export default class CalendarFilter extends React.PureComponent {
           <div className="vandal-cl__mlabel">Select Date :</div>
           <div className="vandal-cl__nav-container">
             <div className="vandal-cl__minput-container">
-              <input
-                key={date}
-                autoFocus
-                ref={input => {
-                  this.dateInput = input;
-                }}
-                className="vandal-cl__minput"
-                defaultValue={date}
-                type="month"
-                min="1996-01"
-                max={`${this.currentDate.getFullYear()}-12`}
-                onChange={e => {
-                  e.persist();
-                  this.debouncedCalendarChange(e);
-                }}
-              />
+              <InputCalendar
+                sparkline={sparkline}
+                goToNext={goToNext}
+                selectedMonth={selectedMonth}
+                selectedYear={selectedYear}
+                goToPrevious={goToPrevious}
+                onSelect={this.handleCalendarSelect}>
+                <input
+                  key={date}
+                  autoFocus
+                  ref={input => {
+                    this.dateInput = input;
+                  }}
+                  className="vandal-cl__minput"
+                  defaultValue={date}
+                  type="month"
+                  min="1996-01"
+                  max={`${this.currentDate.getFullYear()}-12`}
+                  onChange={e => {
+                    e.persist();
+                    this.debouncedCalendarChange(e);
+                  }}
+                />
+              </InputCalendar>
             </div>
-            {date && (
-              <div className="vandal-cl__navigation">
-                <LeftNavIcon
-                  className="vandal-cl__left-nav__icon"
-                  onClick={goToPrevious}
-                />
-                <RightNavIcon
-                  className="vandal-cl__right-nav__icon"
-                  onClick={goToNext}
-                />
-              </div>
-            )}
           </div>
           {showConnectionError && (
             <div className="vandal-cl__archive-error">

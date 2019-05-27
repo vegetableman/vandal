@@ -897,6 +897,7 @@ class TimeTravel extends React.PureComponent {
               theme={theme}
               selectedDay={selectedDay}
               selectedYear={selectedYear}
+              sparkline={sparkline}
               selectedMonth={selectedMonth}
               showConnectionError={showCalendarConnErr || showSparklineConnErr}
               getColor={this.getColor(tsDay, tsMonth, tsYear)}

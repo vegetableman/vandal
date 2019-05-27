@@ -208,7 +208,6 @@ class NavigationHandler {
     let responseHeaders = details.responseHeaders.map(header => {
       const isCSPHeader = /content-security-policy/i.test(header.name);
       const isFrameHeader = /^x-frame-options/i.test(header.name);
-
       if (isCSPHeader) {
         let csp = header.value;
         csp = csp.replace(/frame-ancestors ((.*?);|'none'|'self')/gi, '');
@@ -241,6 +240,23 @@ class NavigationHandler {
 
       return header;
     });
+
+    const headerCount = Object.keys(responseHeaders).length;
+    const extraHeaders = {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods':
+        'GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH',
+      'Access-Control-Allow-Credentials': 'false'
+    };
+
+    let extraIndex = headerCount - 1;
+    for (let i in extraHeaders) {
+      responseHeaders[extraIndex] = {
+        name: i,
+        value: extraHeaders[i]
+      };
+      extraIndex++;
+    }
 
     return { responseHeaders };
   };
@@ -306,10 +322,10 @@ const eventMap = {
     type: 'webRequest',
     name: 'headerReceivedHandler',
     options: {
-      urls: requestFilters,
-      types: ['sub_frame']
+      urls: requestFilters
+      // types: ['sub_frame']
     },
-    extras: ['blocking', 'responseHeaders']
+    extras: ['blocking', 'responseHeaders', 'extraHeaders']
   },
   onBeforeRedirect: {
     type: 'webRequest',

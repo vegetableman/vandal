@@ -29,6 +29,10 @@
   background: var(--vandal-text-selection-color);
 }
 
+.vandal-cl__minput::-webkit-clear-button {
+  display: none;
+}
+
 .vandal-cl-container {
   display: flex;
   flex-direction: column;

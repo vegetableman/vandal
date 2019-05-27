@@ -230,19 +230,19 @@ function onDomReady() {
   chrome.runtime.onMessage.removeListener(messageHandler);
   chrome.runtime.onMessage.addListener(messageHandler);
 
-  let index = 0;
-  document.body.querySelectorAll('*').forEach(node => {
-    if (node && VALID_TAGS.indexOf(node.nodeName) > -1) {
-      node.setAttribute('data-vandal__index', index++);
-    }
-  });
+  // let index = 0;
+  // document.body.querySelectorAll('*').forEach(node => {
+  //   if (node && VALID_TAGS.indexOf(node.nodeName) > -1) {
+  //     node.setAttribute('data-vandal__index', index++);
+  //   }
+  // });
 
   console.log('hello: frame: ', document.location.href);
 
-  chrome.runtime.sendMessage({
-    message: 'frameHTML',
-    data: document.body.innerHTML
-  });
+  // chrome.runtime.sendMessage({
+  //   message: 'frameHTML',
+  //   data: document.body.innerHTML
+  // });
 }
 
 onDomReady();

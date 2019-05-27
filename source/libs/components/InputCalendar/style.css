@@ -1,0 +1,119 @@
+.vandal-cl__input-calendar-filter-icon {
+  fill: var(--vandal-primary-icon-color);
+  bottom: 0;
+  cursor: pointer;
+  height: 15px;
+  position: absolute;
+  top: 5px;
+  right: 45px;
+  transform: rotate(90deg);
+  width: 14px;
+}
+
+.vandal-cl__input-calendar {
+  position: relative;
+}
+
+.vandal-cl__input-calendar-filter-icon:hover {
+  fill: var(--vandal-primary-icon-active-color);
+}
+
+.vandal-cl__calendar {
+  background: #fdfdfd;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  position: absolute;
+  height: 190px;
+  width: 244px;
+  right: 0;
+  z-index: 1;
+}
+
+.vandal-cl__calendar-year {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  padding: 10px 6px 0 0;
+}
+
+.vandal-cl__calendar-year--last {
+  padding-bottom: 4px;
+}
+
+.vandal-cl__calendar-year__left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  cursor: pointer;
+  font-family: Helvetica;
+  font-size: 12px;
+  flex: 50px 0 0;
+  padding: 5px 10px 0 10px;
+}
+
+.vandal-cl__calendar-year__left:hover .vandal-cl__calendar-year__label {
+  text-decoration: underline;
+}
+
+.vandal-cl__calendar-year__months {
+  flex: 180px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+.vandal-cl__calendar-year__month {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  color: #555555;
+  font-family: Helvetica;
+  font-size: 11.5px;
+  flex: 30px 0 0;
+  text-align: center;
+  height: 25px;
+}
+
+.vandal-cl__calendar-year__month:hover {
+  background: #ddd;
+}
+
+.vandal-cl__calendar-year__month:hover .vandal-cl__calendar-year__month__label {
+  text-decoration: underline;
+}
+
+.vandal-cl__input-calendar__nav {
+  position: absolute;
+  display: flex;
+  top: 1px;
+  right: 1px;
+  background: #eee;
+  height: 24px;
+  width: 38px;
+  border-left: 1px dotted #ccc;
+  align-items: center;
+  justify-content: center;
+}
+
+.vandal-cl__input-calendar__nav__prev-icon {
+  width: 15px;
+  height: 14px;
+  transform: rotate(180deg);
+  fill: var(--vandal-primary-icon-color);
+}
+
+.vandal-cl__input-calendar__nav__next-icon {
+  width: 14px;
+  height: 14px;
+  fill: var(--vandal-primary-icon-color);
+}
+
+.vandal-cl__input-calendar__nav__prev-icon:hover,
+.vandal-cl__input-calendar__nav__next-icon:hover {
+  cursor: pointer;
+  fill: var(--vandal-primary-icon-active-color);
+}
