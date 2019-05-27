@@ -1,4 +1,4 @@
 node_modules
 test
-.build
+.build/
 distribution
