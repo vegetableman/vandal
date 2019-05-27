@@ -195,6 +195,25 @@ class NavigationHandler {
     }
   };
 
+  beforeSendHandler = details => {
+    const { tabId, frameId, parentFrameId } = details;
+    if (
+      details.url.indexOf('web.archive.org') < 0 ||
+      (!isValidTab(tabId) || !isValidFrame(tabId, frameId, parentFrameId))
+    ) {
+      return;
+    }
+
+    let requestHeaders = details.requestHeaders.map(function(header) {
+      const isEncodingHeader = /accept-encoding/i.test(header.name);
+      if (isEncodingHeader) {
+        header.value = 'Identity';
+      }
+      return header;
+    });
+    return { requestHeaders };
+  };
+
   // https://github.com/segmentio/chrome-sidebar/blob/ae9f07e97bb08927631d1f2eb5fb31e965959bde/examples/github-trending/src/background.js
   headerReceivedHandler = details => {
     const { tabId, frameId } = details;
@@ -335,6 +354,15 @@ const eventMap = {
       types: ['sub_frame']
     },
     extras: ['responseHeaders']
+  },
+  onBeforeSendHeaders: {
+    type: 'webRequest',
+    name: 'beforeSendHandler',
+    options: {
+      urls: requestFilters
+      // types: ['sub_frame']
+    },
+    extras: ['blocking', 'requestHeaders', 'extraHeaders']
   }
 };
 
