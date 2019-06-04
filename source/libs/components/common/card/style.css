@@ -1,0 +1,226 @@
+/*
+ * Container style
+ */
+.ps {
+  overflow: hidden !important;
+  overflow-anchor: none;
+  -ms-overflow-style: none;
+  touch-action: auto;
+  -ms-touch-action: auto;
+}
+
+/*
+ * Scrollbar rail styles
+ */
+.ps__rail-x {
+  display: none;
+  opacity: 0;
+  transition: background-color 0.2s linear, opacity 0.2s linear;
+  -webkit-transition: background-color 0.2s linear, opacity 0.2s linear;
+  height: 15px;
+  /* there must be 'bottom' or 'top' for ps__rail-x */
+  bottom: 0px;
+  /* please don't change 'position' */
+  position: absolute;
+}
+
+.ps__rail-y {
+  display: none;
+  opacity: 0;
+  transition: background-color 0.2s linear, opacity 0.2s linear;
+  -webkit-transition: background-color 0.2s linear, opacity 0.2s linear;
+  width: 7px;
+  /* there must be 'right' or 'left' for ps__rail-y */
+  right: 0;
+  /* please don't change 'position' */
+  position: absolute;
+}
+
+.ps--active-x > .ps__rail-x,
+.ps--active-y > .ps__rail-y {
+  display: block;
+  background-color: transparent;
+}
+
+.ps:hover > .ps__rail-x,
+.ps:hover > .ps__rail-y,
+.ps--focus > .ps__rail-x,
+.ps--focus > .ps__rail-y,
+.ps--scrolling-x > .ps__rail-x,
+.ps--scrolling-y > .ps__rail-y {
+  opacity: 0.6;
+}
+
+.ps .ps__rail-x:hover,
+.ps .ps__rail-y:hover,
+.ps .ps__rail-x:focus,
+.ps .ps__rail-y:focus,
+.ps .ps__rail-x.ps--clicking,
+.ps .ps__rail-y.ps--clicking {
+  background-color: #eee;
+  opacity: 0.9;
+}
+
+/*
+ * Scrollbar thumb styles
+ */
+.ps__thumb-x {
+  background-color: #aaa;
+  border-radius: 6px;
+  transition: background-color 0.2s linear, height 0.2s ease-in-out;
+  -webkit-transition: background-color 0.2s linear, height 0.2s ease-in-out;
+  height: 6px;
+  /* there must be 'bottom' for ps__thumb-x */
+  bottom: 2px;
+  /* please don't change 'position' */
+  position: absolute;
+}
+
+.ps__thumb-y {
+  background-color: var(--vandal-primary-icon-color);
+  border-radius: 6px;
+  transition: background-color 0.2s linear, width 0.2s ease-in-out;
+  -webkit-transition: background-color 0.2s linear, width 0.2s ease-in-out;
+  width: 5px;
+  /* there must be 'right' for ps__thumb-y */
+  right: 2px;
+  /* please don't change 'position' */
+  position: absolute;
+}
+
+.ps__rail-x:hover > .ps__thumb-x,
+.ps__rail-x:focus > .ps__thumb-x,
+.ps__rail-x.ps--clicking .ps__thumb-x {
+  background-color: #999;
+  height: 11px;
+}
+
+.ps__rail-y:hover > .ps__thumb-y,
+.ps__rail-y:focus > .ps__thumb-y,
+.ps__rail-y.ps--clicking .ps__thumb-y {
+  background-color: #999;
+  width: 8px;
+}
+
+/* MS supports */
+@supports (-ms-overflow-style: none) {
+  .ps {
+    overflow: auto !important;
+  }
+}
+
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .ps {
+    overflow: auto !important;
+  }
+}
+
+.vandal-card {
+  /* display: flex;
+  flex-direction: column; */
+
+  background: var(--vandal-primary-background-color);
+  border: 1px solid var(--vandal-primary-border-color);
+  /* box-shadow: rgba(0, 0, 0, 0.34) 1px 4px 4px -4px; */
+
+  left: 0;
+  min-width: 95px;
+  max-height: 500px;
+  /* overflow: auto; */
+  position: absolute;
+  top: 0;
+  z-index: 1;
+}
+
+.card {
+  /* display: flex;
+  flex-direction: column; */
+
+  background: var(--vandal-primary-background-color);
+  border: 1px solid var(--vandal-primary-border-color);
+  /* box-shadow: rgba(0, 0, 0, 0.34) 1px 4px 4px -4px; */
+
+  left: 0;
+  min-width: 95px;
+  max-height: 500px;
+  /* overflow: auto; */
+  position: absolute;
+  top: 0;
+  z-index: 1;
+}
+
+.vandal-card__body {
+  padding: 2px 0 5px 0;
+  height: 100%;
+  max-height: 500px;
+}
+
+.vandal-card__body--no-title {
+  padding: 5px 0 5px 0;
+}
+
+.vandal-card__body--title {
+  max-height: 459px;
+}
+
+.vandal-card--empty {
+  box-shadow: none;
+}
+
+.card_empty {
+  box-shadow: none;
+}
+
+.vandal-card__value {
+  align-items: center;
+  display: flex;
+  flex: 0 0 25px;
+
+  color: var(--vandal-text-color);
+  cursor: pointer;
+  font-size: 11px;
+  font-family: 'VANDAL__Cousine';
+  justify-content: space-between;
+  padding: 0 2px 0 10px;
+  width: 100%;
+}
+
+.vandal-card__value--selected {
+  text-decoration: underline;
+}
+
+.vandal-card__value:hover {
+  text-decoration: underline;
+}
+
+.vandal-card__title {
+  color: var(--vandal-text-color);
+  font-family: Helvetica;
+  font-size: 13px;
+  padding: 8px 5px 5px 9px;
+  text-align: left;
+}
+
+.vandal-card__body {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+}
+
+.vandal-card__status__redirect-icon {
+  fill: var(--vandal-card-status-icon);
+  margin: 0 3px 0 6px;
+}
+
+.vandal-card__status__error-icon {
+  fill: red;
+  margin: 1px 3px 0 6px;
+}
+
+.vandal-card__status__dot-icon {
+  background: #555;
+  border-radius: 100%;
+  width: 10px;
+  height: 10px;
+}

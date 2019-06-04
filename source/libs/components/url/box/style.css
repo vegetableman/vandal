@@ -1,0 +1,200 @@
+.vandal-urlbox-container {
+  display: flex;
+
+  background: var(--vandal-input-background-color);
+  border: 1px solid var(--vandal-primary-border-color);
+  border-radius: 3px;
+  height: 30px;
+  width: 100%;
+}
+
+.vandal-urlbox-container--timetravel {
+  border-bottom-right-radius: 0;
+}
+
+.vandal-url-container {
+  display: flex;
+  width: 100%;
+  cursor: pointer;
+}
+
+.vandal-url__input {
+  flex: 1;
+
+  background: none;
+  border: 0;
+  color: var(--vandal-input-color);
+  cursor: auto;
+  font-size: 14px;
+  outline: none;
+  padding: 8px 0 5px 2px;
+}
+
+.vandal-url__filter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 35px;
+  user-select: none;
+}
+
+.vandal-url__date {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  flex: 0 0 192px;
+
+  border-left: 1px solid var(--vandal-date-border-color);
+  background: var(--vandal-date-background-color);
+  cursor: pointer;
+  max-width: 200px;
+  padding: 0 10px;
+}
+
+@keyframes blink {
+  from {
+    background-color: var(--vandal-secondary-background-color);
+  }
+  to {
+    background-color: var(--vandal-blink-background-color);
+  }
+}
+
+.vandal-url__date-loader {
+  animation: blink ease-in-out 1s infinite;
+}
+
+.vandal-url__date-info__icon {
+  --vandal-primary-icon-color: #000000;
+  fill: var(--vandal-primary-icon-color);
+  stroke: var(--vandal-primary-icon-color);
+  position: relative;
+  top: 2px;
+  width: 15px;
+}
+
+.vandal-url__date-info__icon path {
+  --vandal-primary-icon-color: #000000;
+  fill: var(--vandal-primary-icon-color);
+}
+
+.vandal-url__date-info__icon--dark {
+  --vandal-primary-icon-color: #ffffff;
+  fill: var(--vandal-primary-icon-color);
+  stroke: var(--vandal-primary-icon-color);
+}
+
+.vandal-url__date-info__icon--dark path {
+  --vandal-primary-icon-color: #ffffff;
+  fill: var(--vandal-primary-icon-color);
+}
+
+.vandal-url__date:hover,
+.vandal-url__date-info {
+  background: var(--vandal-blink-background-color);
+  user-select: none;
+}
+
+.vandal-url__date__value {
+  font-size: 13.5px;
+  color: var(--vandal-input-color);
+  margin-left: 7px;
+  position: relative;
+  top: 2px;
+}
+
+.vandal-url__date__close:hover {
+  cursor: pointer;
+  fill: red;
+}
+
+.vandal-url__timetravel-btn {
+  display: flex;
+  justify-content: center;
+  flex: 0 0 35px;
+
+  border-left: 1px solid var(--vandal-border-separator-color);
+  cursor: pointer;
+  height: 100%;
+}
+
+.vandal-url__timetravel-btn:hover {
+  background: var(--vandal-secondary-background-color);
+}
+
+.vandal-url__timetravel-btn__icon {
+  fill: var(--vandal-primary-icon-color);
+}
+
+.vandal-url__timetravel-btn:hover .vandal-url__timetravel-btn__icon,
+.vandal-url__timetravel-btn--selected .vandal-url__timetravel-btn__icon {
+  fill: var(--vandal-primary-icon-active-color);
+}
+
+.vandal-url__timetravel-btn--selected {
+  background: var(--vandal-secondary-background-color);
+}
+
+.vandal-url__wayback:hover {
+  background: var(--vandal-secondary-background-color);
+}
+
+.vandal-url__wayback__icon {
+  width: 16px;
+}
+
+.vandal-url__mode {
+  flex: 0 0 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vandal-url__icon {
+  width: 18px;
+  height: 18px;
+  fill: var(--vandal-primary-icon-color);
+  position: relative;
+  top: 1px;
+}
+
+.vandal-archive__icon {
+  width: 12px;
+  height: 12px;
+  fill: var(--vandal-primary-icon-color);
+}
+
+.vandal-url-loader {
+  display: flex;
+}
+
+.vandal-url__history__btn {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  outline: none;
+}
+
+.vandal-url__history__btn:hover .vandal-url__history-down__icon,
+.vandal-url__history__btn--active .vandal-url__history-down__icon {
+  fill: var(--vandal-primary-icon-active-color);
+  stroke: var(--vandal-primary-icon-active-color);
+}
+
+.vandal-url__history-down__icon {
+  background: none;
+  fill: var(--vandal-primary-icon-color);
+  stroke: var(--vandal-primary-icon-color);
+  stroke-width: 3px;
+  width: 28px;
+  height: 28px;
+  transform: rotate(90deg);
+}
+
+.vandal-url__history__btn:hover .vandal-url__history-down__icon {
+  fill: var(--vandal-primary-icon-active-color);
+  stroke: var(--vandal-primary-icon-active-color);
+}

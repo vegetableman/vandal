@@ -1,0 +1,232 @@
+.vandal__drawer {
+  display: flex;
+  flex-direction: column;
+
+  background: var(--vandal-primary-background-color);
+  contain: strict;
+  font-family: 'VANDAL__SourceSansPro';
+  font-weight: normal;
+  line-height: normal;
+  font-size: 16px;
+  font: normal 16px 'VANDAL__SourceSansPro';
+  -webkit-font-smoothing: initial;
+}
+
+.vandal__drawer__title-bar {
+  display: flex;
+  align-items: center;
+
+  background: var(--vandal-drawer-background-color);
+  border-top: 1px solid var(--vandal-primary-border-color);
+  border-bottom: 1px solid var(--vandal-primary-border-color);
+  cursor: ns-resize;
+
+  font-size: 14px;
+  flex: 0 0 32px;
+}
+
+.vandal__drawer__list {
+  display: flex;
+  flex-direction: column;
+
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  padding: 0 0 5px 0;
+}
+
+.vandal__drawer__item {
+  display: flex;
+  padding: 3px 5px;
+}
+
+.vandal__drawer__item:hover {
+  background: var(--vandal-drawer-item-hover-background-color);
+}
+
+.vandal__drawer__body {
+  flex: 1;
+  overflow: auto;
+}
+
+.vandal-drawer__timestamp-icon {
+  fill: var(--vandal-primary-icon-active-color);
+  height: 25px;
+  padding: 0 5px;
+  width: 25px;
+  position: relative;
+  top: 2.5px;
+}
+
+.vandal-drawer__close-icon {
+  cursor: pointer;
+  height: 20px;
+  padding: 5px 10px 0 0;
+  width: 20px;
+
+  fill: var(--vandal-drawer-icon-color);
+  stroke: var(--vandal-drawer-icon-color);
+}
+
+.vandal__drawer__title-bar__left {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+}
+
+.vandal-drawer__timestamp__title {
+  font-size: 14px;
+  position: relative;
+  top: 1.5px;
+}
+
+.vandal__drawer__item__left {
+  display: flex;
+  align-items: flex-start;
+  flex: 1;
+  max-width: calc(100% - 500px);
+}
+
+.vandal__drawer__item__image-icon {
+  flex: 0 0 20px;
+
+  height: 22px;
+  width: 20px;
+  position: relative;
+  top: 1.1px;
+  fill: var(--vandal-drawer-icon-color);
+  stroke: var(--vandal-drawer-icon-color);
+}
+
+.vandal__drawer__item__resource-icon {
+  flex: 0 0 20px;
+
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px;
+  position: relative;
+  top: 2px;
+  fill: var(--vandal-drawer-icon-color);
+  stroke: var(--vandal-drawer-icon-color);
+  color: var(--vandal-drawer-icon-color);
+}
+
+.vandal__drawer__item__resource-icon--js {
+  text-align: center;
+}
+
+.vandal__drawer__item__doc-icon {
+  flex: 0 0 20px;
+  height: 22px;
+  width: 20px;
+  fill: var(--vandal-drawer-icon-color);
+  stroke: var(--vandal-drawer-icon-color);
+}
+
+.vandal__drawer__item__js-icon {
+  height: 22px;
+  padding: 0 5px 0 0;
+  width: 20px;
+}
+
+.vandal__drawer__item__link {
+  color: var(--vandal-input-color);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-left: 5px;
+}
+
+.vandal__drawer__item__link:hover {
+  text-decoration: underline;
+}
+
+.vandal__timestamp__loader {
+  border: 2px solid var(--vandal-primary-border-color);
+  border-radius: 50%;
+  border-top: 2px solid #3498db;
+  width: 10px;
+  height: 10px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+  position: relative;
+  top: 3px;
+  left: 3px;
+  margin-right: 10px;
+}
+
+.vandal__drawer__item__timestamp {
+  flex: 0 0 500px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.vandal__drawer__item__timestamp--plus {
+  background: #bff1bf;
+}
+
+.vandal__drawer__item__timestamp--minus {
+  background: #fbcaca;
+}
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.vandal__drawer__scroll-container {
+  margin-left: 5px;
+}
+
+.vandal__drawer__scroll-checkbox {
+  margin-right: 7px;
+}
+
+.vandal__drawer__timestamps--empty,
+.vandal__drawer__timestamps--loading {
+  color: var(--vandal-text-color);
+  font-size: 15px;
+  padding: 0 12px;
+}
+
+.vandal__drawer__item .vandal-url-loader > div {
+  margin: 3px 4px 2px 3px;
+  height: 9px;
+  width: 9px;
+}
+
+.vandal__drawer__item--err {
+  background: #e6e6e6;
+}
+
+.vandal__drawer__item__timestamp__value {
+  padding: 0 10px 0 0;
+  color: var(--vandal-text-color);
+}
+
+.vandal__drawer__info {
+  font-size: 13px;
+  padding: 10px 12px 7px 12px;
+  color: var(--vandal-drawer-text-color);
+}
+
+.vandal__drawer__info__link {
+  color: var(--vandal-link-color);
+}
+
+.vandal__drawer__scroll-label {
+  color: var(--vandal-input-color);
+}
