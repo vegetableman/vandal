@@ -4,8 +4,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import _ from 'lodash';
 import './style.css';
 import { toTwelveHourTime } from '../../../utils';
-import RedirectIcon from './redirect.svg';
-import ErrorIcon from './error.svg';
+import { Icon } from '../../Common';
 
 export default class Card extends React.Component {
   static defaultProps = {
@@ -71,14 +70,15 @@ export default class Card extends React.Component {
                       {toTwelveHourTime(_.toString(value).substr(-6))}
                     </span>
                     {(status === 301 || status === 302) && (
-                      <RedirectIcon
+                      <Icon
+                        name="redirect"
                         className="vandal-card__status__redirect-icon"
                         width={10}
-                        title="Redirect"
                       />
                     )}
                     {status > 400 && (
-                      <ErrorIcon
+                      <Icon
+                        name="error"
                         className="vandal-card__status__error-icon"
                         width={13}
                         title="Error"
