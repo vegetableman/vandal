@@ -6,20 +6,10 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import tinycolor from 'tinycolor2';
 import memoizeOne from 'memoize-one';
 
-import PrevIcon from './prev.svg';
-import NextIcon from './next.svg';
-import LastIcon from './last.svg';
-import FirstIcon from './first.svg';
-import ForwardIcon from './forward.svg';
-import BackwardIcon from './backward.svg';
-import ErrorIcon from './error.svg';
-import ReloadIcon from './reload.svg';
-import SelectionIcon from './selection.svg';
+import { Card, withDialog, Icon } from '../Common';
+import { api, getDateTimeFromTS } from '../../utils';
 import CalendarFilter from '../CalendarFilter';
 import GraphFilter from '../GraphFilter';
-import { Card, withDialog } from '../Common';
-import { api, getDateTimeFromTS } from '../../utils';
-
 import './style.css';
 
 const monthNames = [
@@ -949,7 +939,8 @@ class TimeTravel extends React.PureComponent {
           </TabPanel>
         </Tabs>
         {!!(firstTS || lastTS || !sparkline) && (
-          <ReloadIcon
+          <Icon
+            name="reloadCalendar"
             width={15}
             className={cx({
               'vandal-timetravel__reload-icon': true,
@@ -963,7 +954,8 @@ class TimeTravel extends React.PureComponent {
           !!versionCount &&
           !showLoader &&
           (tsMonth !== selectedMonth || tsYear !== selectedYear) && (
-            <SelectionIcon
+            <Icon
+              name="selection"
               width={27.2}
               title="Current Selection"
               onClick={this.handleCurrentSelection}
@@ -972,7 +964,11 @@ class TimeTravel extends React.PureComponent {
           )}
         <div className="vandal-timetravel__footer">
           {isOffline && (
-            <ErrorIcon width={18} className="vandal-connection__error-icon" />
+            <Icon
+              name="error"
+              width={18}
+              className="vandal-connection__error-icon"
+            />
           )}
           <div className="vandal-navigate__controls">
             <button
@@ -980,7 +976,10 @@ class TimeTravel extends React.PureComponent {
               disabled={!versionCount || !firstTS || selectedTS === firstTS}
               onClick={this.gotoFirst}
               title="First Snapshot">
-              <FirstIcon className="vandal-navigate__icon vandal-navigate__first-icon" />
+              <Icon
+                name="firstTS"
+                className="vandal-navigate__icon vandal-navigate__first-icon"
+              />
             </button>
             <button
               className="vandal-navigate__btn"
@@ -993,7 +992,10 @@ class TimeTravel extends React.PureComponent {
                 !selectedTS ||
                 selectedTS === firstTS
               }>
-              <BackwardIcon className="vandal-navigate__icon vandal-backward__icon" />
+              <Icon
+                name="backwardTS"
+                className="vandal-navigate__icon vandal-backward__icon"
+              />
             </button>
             <button
               className="vandal-navigate__btn"
@@ -1005,7 +1007,10 @@ class TimeTravel extends React.PureComponent {
               }
               onClick={this.debouncedPrev}
               title="Previous Snapshot">
-              <PrevIcon className="vandal-navigate__icon vandal-prev__icon" />
+              <Icon
+                name="prevTS"
+                className="vandal-navigate__icon vandal-prev__icon"
+              />
             </button>
             <button
               className="vandal-navigate__btn"
@@ -1017,7 +1022,10 @@ class TimeTravel extends React.PureComponent {
               }
               onClick={this.debouncedNext}
               title="Next Snapshot">
-              <NextIcon className="vandal-navigate__icon vandal-next__icon" />
+              <Icon
+                name="nextTS"
+                className="vandal-navigate__icon vandal-next__icon"
+              />
             </button>
             <button
               className="vandal-navigate__btn"
@@ -1030,14 +1038,20 @@ class TimeTravel extends React.PureComponent {
                 !this.isTSVisible()
               }
               onClick={this.handleDateForward}>
-              <ForwardIcon className="vandal-navigate__icon vandal-forward__icon" />
+              <Icon
+                name="forwardTS"
+                className="vandal-navigate__icon vandal-forward__icon"
+              />
             </button>
             <button
               className="vandal-navigate__btn"
               disabled={!versionCount || !lastTS || selectedTS === lastTS}
               onClick={this.gotoLast}
               title="Last Snapshot">
-              <LastIcon className="vandal-navigate__icon vandal-navigate__last-icon" />
+              <Icon
+                name="lastTS"
+                className="vandal-navigate__icon vandal-navigate__last-icon"
+              />
             </button>
           </div>
         </div>

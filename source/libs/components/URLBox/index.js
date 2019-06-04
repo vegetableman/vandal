@@ -1,12 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
 import './style.css';
-import HistoryIcon from './history.svg';
-import InfoIcon from './info.svg';
-import GlobeIcon from './globe.svg';
-import ArchiveIcon from './archive.svg';
-import DownNavIcon from './downnav.svg';
-import { ArchiveLoader, URLLoader } from '../Common';
+import { ArchiveLoader, URLLoader, Icon } from '../Common';
 import { getDateTimeFromTS, toTwelveHourTime } from '../../utils';
 
 export default class URLBox extends React.Component {
@@ -20,7 +15,6 @@ export default class URLBox extends React.Component {
     this.state = {
       showInfo: false
     };
-    console.log('constructor: urlbox');
   }
 
   render() {
@@ -46,10 +40,10 @@ export default class URLBox extends React.Component {
           <div className="vandal-url__mode">
             {showURLLoader && <URLLoader />}
             {!ts && !showURLLoader && (
-              <GlobeIcon className="vandal-url__icon" />
+              <Icon name="globe" className="vandal-url__icon" />
             )}
             {!!ts && !showURLLoader && (
-              <ArchiveIcon className="vandal-archive__icon" />
+              <Icon name="archive" className="vandal-archive__icon" />
             )}
           </div>
           <input
@@ -64,7 +58,10 @@ export default class URLBox extends React.Component {
               'vandal-url__history__btn--active': showURLHistory
             })}
             onClick={toggleURLHistory}>
-            <DownNavIcon className="vandal-url__history-down__icon" />
+            <Icon
+              name="bottomCaret"
+              className="vandal-url__history-down__icon"
+            />
           </button>
         </div>
         {!!ts && (
@@ -79,7 +76,8 @@ export default class URLBox extends React.Component {
               <ArchiveLoader title="Loading..." theme={theme} />
             )}
             {!showFrameLoader && (
-              <InfoIcon
+              <Icon
+                name="info"
                 width={22}
                 className={cx({
                   'vandal-url__date-info__icon': true,
@@ -102,9 +100,10 @@ export default class URLBox extends React.Component {
               'vandal-url__timetravel-btn--selected': showTimeTravel
             })}
             onClick={toggleTimeTravel}>
-            <HistoryIcon
-              width={22}
+            <Icon
               className="vandal-url__timetravel-btn__icon"
+              name="history"
+              width={22}
             />
           </div>
         </div>

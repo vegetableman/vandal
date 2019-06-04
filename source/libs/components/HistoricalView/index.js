@@ -13,7 +13,6 @@ import {
   Screenshooter
 } from '../../utils';
 import { VerticalMenu } from '../Common';
-import ErrorIcon from './error.svg';
 import './style.css';
 
 const monthNames = [
@@ -239,7 +238,8 @@ export default class HistoricalView extends React.Component {
                   {snapshot ? (
                     <React.Fragment>
                       {(_.get(snapshot, 'err') && (
-                        <ErrorIcon
+                        <Icon
+                          name="error"
                           className="vandal-historical-year__err"
                           title={_.get(snapshot, 'err')}
                         />

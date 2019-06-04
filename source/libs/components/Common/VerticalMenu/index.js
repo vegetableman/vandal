@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import cx from 'classnames';
 import withDialog from '../withDialog';
-import VerticalMenuIcon from './vertical-menu.svg';
+import Icon from '../icon';
 import './style.css';
 
 class List extends React.Component {
@@ -64,7 +64,6 @@ class VerticalMenu extends React.PureComponent {
   };
 
   toggleMenu = e => {
-    console.log('toggleMenu: visible: ', this.state.visible);
     this.setState(prevState => {
       return { visible: !prevState.visible };
     });
@@ -88,7 +87,7 @@ class VerticalMenu extends React.PureComponent {
         <div
           className="vandal-vertical-menu-icon-container"
           onClick={this.toggleMenu}>
-          <VerticalMenuIcon className="vandal-vertical-menu-icon" />
+          <Icon name="verticalMenu" className="vandal-vertical-menu-icon" />
         </div>
         {visible && (
           <WithDialogList

@@ -9,7 +9,6 @@ import {
 } from 'react-sparklines';
 import GraphLoader from './loader.js';
 import Calendar from './calendar';
-import ErrorIcon from './error.svg';
 import './style.css';
 import { themeStore } from '../../stores';
 
@@ -107,7 +106,11 @@ export default class GraphFilter extends React.PureComponent {
     if (showConnectionError) {
       return (
         <div className="vandal-graph__archive-error">
-          <ErrorIcon width={18} className="vandal-graph__conn-error-icon" />
+          <Icon
+            className="vandal-graph__conn-error-icon"
+            name="error"
+            width={18}
+          />
           <div>Error connecting to the Archive Server</div>
         </div>
       );

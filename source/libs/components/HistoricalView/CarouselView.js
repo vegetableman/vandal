@@ -1,6 +1,5 @@
 import React from 'react';
-import { Carousel } from '../Common';
-import CloseIcon from './close.svg';
+import { Carousel, Icon } from '../Common';
 
 export default class CarouselView extends React.Component {
   state = {
@@ -47,7 +46,8 @@ export default class CarouselView extends React.Component {
             onChange={this.handleChange}
           />
         </div>
-        <CloseIcon
+        <Icon
+          name="carouselClose"
           className="vandal-historical-carousel__close"
           onClick={onClose}
         />

@@ -1,37 +1,32 @@
 import React from 'react';
 import Slider from 'react-slick';
 import cx from 'classnames';
-import ArrowRight from './arrow-right.svg';
-import ArrowLeft from './arrow-left.svg';
+import { Icon } from '../icon';
 import './style.css';
 
-function NextArrow(props) {
-  const { className, style, onClick } = props;
-  return (
-    <ArrowRight
-      style={{ ...style }}
-      onClick={onClick}
-      className={cx({
-        [className]: true,
-        'vandal-slide__right-arrow': true
-      })}
-    />
-  );
-}
+const NextArrow = ({ className, style, onClick }) => (
+  <Icon
+    name="arrowRight"
+    style={{ ...style }}
+    onClick={onClick}
+    className={cx({
+      [className]: true,
+      'vandal-slide__right-arrow': true
+    })}
+  />
+);
 
-function PrevArrow(props) {
-  const { className, style, onClick } = props;
-  return (
-    <ArrowLeft
-      style={{ ...style }}
-      onClick={onClick}
-      className={cx({
-        [className]: true,
-        'vandal-slide__left-arrow': true
-      })}
-    />
-  );
-}
+const PrevArrow = ({ className, style, onClick }) => (
+  <Icon
+    name="arrowLeft"
+    style={{ ...style }}
+    onClick={onClick}
+    className={cx({
+      [className]: true,
+      'vandal-slide__left-arrow': true
+    })}
+  />
+);
 
 const settings = {
   dots: false,
@@ -53,7 +48,7 @@ class Carousel extends React.Component {
   }
 
   render() {
-    const { images, selectedIndex = 0, getCaption } = this.props;
+    const { images, selectedIndex = 0 } = this.props;
 
     return (
       <Slider

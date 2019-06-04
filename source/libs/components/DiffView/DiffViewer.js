@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import ImageDiff from 'react-image-diff';
-import CloseIcon from './close.svg';
+import { Icon } from '../common';
 import { getDateTimeFromTS, toTwelveHourTime } from '../../utils';
 import './style.css';
 
@@ -170,7 +170,7 @@ export default class DiffViewer extends React.Component {
             onLoad={this.handleImgLoad}
           />
         </div>
-        <CloseIcon
+        <Icon
           data-for="vandal-diff-viewer--close"
           data-tip="Close [Esc]"
           className="vandal-diff-viewer__close"

@@ -12,7 +12,6 @@ module.exports = () => ({
     content: './source/content',
     frame: './source/frame',
     iframe: './source/iframe',
-    bustalert: './source/bustalert',
     background: './source/background',
     intercept: './source/intercept',
     options: './source/options'
@@ -71,7 +70,8 @@ module.exports = () => ({
       },
       {
         from: 'node_modules/webextension-polyfill/dist/browser-polyfill.min.js'
-      }
+      },
+      { from: '*', context: 'source/libs/assets/fonts', to: 'fonts' }
     ]),
     new ExtractTextPlugin('vandal.css', {
       allChunks: true

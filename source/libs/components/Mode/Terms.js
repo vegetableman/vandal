@@ -1,5 +1,4 @@
 import React from 'react';
-import SettingsIcon from './settings.svg';
 
 export default class Terms extends React.Component {
   state = {
@@ -33,8 +32,8 @@ export default class Terms extends React.Component {
             <p style={{ margin: 0, padding: 0 }}>
               Help Vandal manage this view by configuring your own screenshot
               service by clicking on the settings{' '}
-              <SettingsIcon className="vandal-terms-settings-icon" /> icon
-              above. Example screenshot services:
+              <Icon name="settings" className="vandal-terms-settings-icon" />{' '}
+              icon above. Example screenshot services:
               <a
                 style={{ color: '#fff', marginLeft: 10 }}
                 href="https://www.prerender.cloud/docs/api"

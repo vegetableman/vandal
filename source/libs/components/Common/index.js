@@ -6,3 +6,4 @@ export { default as ArchiveLoader } from './ArchiveLoader';
 export { default as URLLoader } from './URLLoader';
 export { default as Switch } from './Switch';
 export { default as withDialog } from './withDialog';
+export { default as Icon } from './icon';

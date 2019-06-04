@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import cx from 'classnames';
-import DownIcon from './down.svg';
 import VirtualList from 'react-tiny-virtual-list';
 import tinycolor from 'tinycolor2';
-import PrevIcon from './prev.svg';
-import NextIcon from './next.svg';
+import { Icon } from '../Common';
 import { Sparklines, SparklinesCurve } from 'react-sparklines';
 import './style.css';
 
@@ -161,16 +159,19 @@ const InputCalendar = props => {
   });
   return (
     <div className="vandal-cl__input-calendar">
-      <DownIcon
+      <Icon
+        name="dropdown"
         className="vandal-cl__input-calendar-filter-icon"
         onClick={toggleCalendar}
       />
       <div className="vandal-cl__input-calendar__nav">
-        <PrevIcon
+        <Icon
+          name="prevMonth"
           className="vandal-cl__input-calendar__nav__prev-icon"
           onClick={goToPrevious}
         />
-        <NextIcon
+        <Icon
+          name="nextMonth"
           className="vandal-cl__input-calendar__nav__next-icon"
           onClick={goToNext}
         />

@@ -6,7 +6,7 @@ import domLoaded from 'dom-loaded';
 
 // import * as pageDetect from './libs/page-detect';
 import { safeElementReady } from './libs/utils';
-import App from './libs/components/App';
+import App from './libs/components/app';
 import Drawer from './libs/components/Drawer';
 
 // Add globals for easier debugging

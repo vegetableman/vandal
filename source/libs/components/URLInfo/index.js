@@ -1,9 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { getDateTimeFromTS, toTwelveHourTime } from '../../utils';
-import { withDialog } from '../Common';
-import RedirectIcon from './redirect.svg';
-import ArrowIcon from './arrow.svg';
+import { withDialog, Icon } from '../Common';
 import './style.css';
 
 class URLInfo extends React.Component {
@@ -68,7 +66,8 @@ class URLInfo extends React.Component {
         {!!redirectTSCollection[redirectedTS] && (
           <div className="vandal__url-info__redirect-container">
             <div className="vandal__url-info__redirect-header">
-              <RedirectIcon
+              <Icon
+                name="redirect"
                 className="vandal__url-info__redirect-icon"
                 width={10}
               />
@@ -87,7 +86,8 @@ class URLInfo extends React.Component {
                       )}`}
                     </div>
                     {index !== _.size(redirectTSList) - 1 ? (
-                      <ArrowIcon
+                      <Icon
+                        name="pathArrow"
                         width={20}
                         className="vandal__url-info__redirect-path-icon"
                       />

@@ -24,11 +24,9 @@
 .vandal-frame__reload-icon {
   fill: var(--vandal-primary-icon-color);
   stroke: var(--vandal-primary-icon-color);
-  height: 25px;
   position: relative;
   stroke-width: 3px;
   top: 5px;
-  width: 25px;
 }
 
 .vandal-frame__stop-icon {
@@ -118,8 +116,6 @@
 
 .vandal-frame__timestamp-icon {
   fill: var(--vandal-primary-icon-color);
-  height: 28px;
-  width: 28px;
   position: relative;
   top: 3px;
 }
@@ -230,8 +226,6 @@
 
 .vandal-frame__donate-btn-icon {
   cursor: pointer;
-  width: 20px;
-  height: 20px;
   fill: var(--vandal-primary-icon-color);
 }
 

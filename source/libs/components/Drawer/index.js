@@ -3,13 +3,9 @@ import cx from 'classnames';
 import _ from 'lodash';
 import clickDrag from 'react-clickdrag';
 import ShadowDOM from 'react-shadow';
-import TimestampIcon from './timestamp.svg';
-import CloseIcon from './close.svg';
-import ImageIcon from './image.svg';
-import DocumentIcon from './document.svg';
 import './style.css';
 import { dateTimeDiff, formatDateTimeTS, stripArchiveUrl } from '../../utils';
-import { URLLoader } from '../Common';
+import { URLLoader, Icon } from '../Common';
 import { drawerStore } from '../../stores';
 
 class DrawerHeader extends React.Component {
@@ -29,7 +25,7 @@ class DrawerHeader extends React.Component {
     return (
       <div className="vandal__drawer__title-bar">
         <div className="vandal__drawer__title-bar__left">
-          <TimestampIcon className="vandal-drawer__timestamp-icon" />
+          <Icon name="timestamp" className="vandal-drawer__timestamp-icon" />
           <div className="vandal__drawer__scroll-container">
             <input
               type="checkbox"
@@ -45,7 +41,7 @@ class DrawerHeader extends React.Component {
             </label>
           </div>
         </div>
-        <CloseIcon className="vandal-drawer__close-icon" onClick={onClose} />
+        <Icon className="vandal-drawer__close-icon" onClick={onClose} />
       </div>
     );
   }
@@ -75,7 +71,7 @@ class Drawer extends React.Component {
 
   getIcon(url) {
     if (url.match(/\.(jpeg|jpg|gif|png|svg)$/)) {
-      return <ImageIcon className="vandal__drawer__item__image-icon" />;
+      return <Icon name="image" className="vandal__drawer__item__image-icon" />;
     } else if (_.endsWith(url, 'js')) {
       return (
         <span className="vandal__drawer__item__resource-icon vandal__drawer__item__resource-icon--js">
@@ -85,7 +81,9 @@ class Drawer extends React.Component {
     } else if (_.endsWith(url, 'css')) {
       return <span className="vandal__drawer__item__resource-icon">CSS</span>;
     } else {
-      return <DocumentIcon className="vandal__drawer__item__doc-icon" />;
+      return (
+        <Icon name="document" className="vandal__drawer__item__doc-icon" />
+      );
     }
   }
 

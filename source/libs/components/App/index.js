@@ -9,7 +9,6 @@ import URLHistory from '../URLHistory';
 import ShadowDOM from 'react-shadow';
 import memoizeOne from 'memoize-one';
 import Mode from '../Mode';
-import CloseIcon from './close.svg';
 import {
   api,
   getDateTsFromUrl,
@@ -20,7 +19,7 @@ import {
   stripIm,
   xhr
 } from '../../utils';
-import { Toast } from '../Common';
+import { Toast, Icon } from '../Common';
 import { historyStore, drawerStore, ThemeProvider } from '../../stores';
 import './style.css';
 import './tooltip.css';
@@ -544,7 +543,8 @@ export default class App extends React.PureComponent {
                           href={stripIm(frameUrl)}>
                           here
                         </a>
-                        <CloseIcon
+                        <Icon
+                          name="close"
                           className="vandal__toast-block__close"
                           onClick={this.handleCloseToast}
                         />
@@ -573,7 +573,8 @@ export default class App extends React.PureComponent {
                       No snapshots found for this url. Click on Save to create
                       one.
                     </span>
-                    <CloseIcon
+                    <Icon
+                      name="close"
                       className="vandal__toast-block__close"
                       onClick={this.handleCloseToast}
                     />
@@ -588,7 +589,8 @@ export default class App extends React.PureComponent {
                       Found an invalid session. Please reload this extension by
                       clicking on it's icon.
                     </span>
-                    <CloseIcon
+                    <Icon
+                      name="close"
                       className="vandal__toast-block__close"
                       onClick={this.handleCloseToast}
                     />

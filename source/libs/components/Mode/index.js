@@ -1,10 +1,7 @@
 import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import HistoricalView from '../HistoricalView';
-import DiffView from '../DiffView';
 import Terms from './Terms';
-import CloseIcon from './close.svg';
-import SettingsIcon from './settings.svg';
 import './style.css';
 
 export default class Mode extends React.Component {
@@ -74,7 +71,7 @@ export default class Mode extends React.Component {
               onClose={this.props.onClose}
             />
           </TabPanel>
-          <TabPanel className="vandal-mode__tab-panel">
+          {/* <TabPanel className="vandal-mode__tab-panel">
             <DiffView
               ref={_ref => (this.diffViewRef = _ref)}
               sparkline={sparkline}
@@ -82,14 +79,16 @@ export default class Mode extends React.Component {
               openURL={openURL}
               onClose={this.props.onClose}
             />
-          </TabPanel>
+          </TabPanel> */}
         </Tabs>
         <div className="vandal-mode__misc-container">
-          <SettingsIcon
+          <Icon
+            name="settings"
             className="vandal-mode__settings"
             onClick={this.handleOpenSettings}
           />
-          <CloseIcon
+          <Icon
+            name="close"
             className="vandal-mode__close"
             onClick={this.props.onClose}
           />

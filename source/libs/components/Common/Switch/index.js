@@ -1,25 +1,20 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import Switch from 'react-switch';
 
-export default class DefaultSwitch extends Component {
-  state = { checked: this.props.defaultValue };
+const DefaultSwitch = ({ label, defaultValue, onChange, ...others }) => {
+  const [checked, setChecked] = useState(defaultValue);
 
-  handleChange = checked => {
-    this.setState({ checked });
-    this.props.onChange(checked);
+  const toggleChange = checked => {
+    setChecked(checked);
+    onChange(checked);
   };
 
-  render() {
-    const { label, ...others } = this.props;
-    return (
-      <label>
-        <span>{label}</span>
-        <Switch
-          {...others}
-          onChange={this.handleChange}
-          checked={this.state.checked}
-        />
-      </label>
-    );
-  }
-}
+  return (
+    <label>
+      <span>{label}</span>
+      <Switch {...others} onChange={toggleChange} checked={checked} />
+    </label>
+  );
+};
+
+export default DefaultSwitch;

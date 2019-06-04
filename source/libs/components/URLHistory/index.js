@@ -7,10 +7,9 @@ import {
   toTwelveHourTime,
   isArchiveUrl
 } from '../../utils';
-import { withDialog } from '../Common';
+import { withDialog, Icon } from '../Common';
 import { HistoryProvider } from '../../stores';
 import './style.css';
-import ClearIcon from './clear.svg';
 
 class URLHistory extends React.Component {
   state = { err: null };
@@ -68,7 +67,8 @@ class URLHistory extends React.Component {
               )}
             </ul>
             <div className="vandal__url-history__footer">
-              <ClearIcon
+              <Icon
+                name="clear"
                 className="vandal__url-history__clear-icon"
                 onClick={clearRecords}
               />

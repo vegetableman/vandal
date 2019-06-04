@@ -5,7 +5,6 @@ import React from 'react';
 import CalendarLoader from './loader';
 import cx from 'classnames';
 import './style.css';
-import ErrorIcon from './error.svg';
 import InputCalendar from '../InputCalendar';
 
 class Calendar extends React.PureComponent {
@@ -177,7 +176,11 @@ export default class CalendarFilter extends React.PureComponent {
           </div>
           {showConnectionError && (
             <div className="vandal-cl__archive-error">
-              <ErrorIcon width={18} className="vandal-cl__conn-error-icon" />
+              <Icon
+                name="error"
+                width={18}
+                className="vandal-cl__conn-error-icon"
+              />
               <div>Error connecting to the Archive Server</div>
             </div>
           )}

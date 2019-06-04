@@ -1,14 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
 import URLBox from '../URLBox';
-import { VerticalMenu, Switch } from '../Common';
-import SaveIcon from './save.svg';
-import OpenIcon from './open.svg';
-import HeartIcon from './heart.svg';
-import ReloadIcon from './reload.svg';
-import TimestampIcon from './timestamp.svg';
-import RightNavIcon from './rightnav.svg';
-import LeftNavIcon from './leftnav.svg';
+import { VerticalMenu, Switch, Icon } from '../Common';
 import './style.css';
 
 const options = [
@@ -25,7 +18,11 @@ const options = [
     text: (
       <div className="vandal-vertical__wayback__item">
         <span>Wayback Machine</span>
-        <OpenIcon className="vandal-vertical__wayback__icon" width={11} />
+        <Icon
+          name="openURL"
+          width={11}
+          className="vandal-vertical__wayback__icon"
+        />
       </div>
     )
   }
@@ -118,7 +115,10 @@ export default class Frame extends React.PureComponent {
               title="Go back"
               disabled={_.indexOf(history, tempUrl || frameUrl) === 0}
               onClick={this.handleBack}>
-              <LeftNavIcon className="vandal-frame__backward-nav__icon" />
+              <Icon
+                name="leftNav"
+                className="vandal-frame__backward-nav__icon"
+              />
             </button>
             <button
               className="vandal-frame__forward-nav__btn"
@@ -129,17 +129,19 @@ export default class Frame extends React.PureComponent {
                   _.size(history) - 1
               }
               onClick={this.handleForward}>
-              <RightNavIcon className="vandal-frame__forward-nav__icon" />
+              <Icon
+                name="rightNav"
+                className="vandal-frame__forward-nav__icon"
+              />
             </button>
           </div>
           <button className="vandal-frame__left-reload__btn">
-            <ReloadIcon
-              width={15}
-              className={cx({
-                'vandal-frame__reload-icon': true
-              })}
+            <Icon
+              name="reload"
+              width={25}
+              height={25}
               onClick={this.handleReload}
-              title="reload"
+              className="vandal-frame__reload-icon"
             />
           </button>
         </div>
@@ -155,12 +157,17 @@ export default class Frame extends React.PureComponent {
               })}
               onClick={onSave}
               title="Save Page to Archive">
-              <SaveIcon className="vandal-frame__save-btn-icon" />
+              <Icon name="save" className="vandal-frame__save-btn-icon" />
             </button>
             <button
               className="vandal-frame__timestamp-btn"
               onClick={this.handleTimestampClick}>
-              <TimestampIcon className="vandal-frame__timestamp-icon" />
+              <Icon
+                className="vandal-frame__timestamp-icon"
+                name="timestamp"
+                width={28}
+                height={28}
+              />
             </button>
           </div>
           <div className="vandal-frame__right__2">
@@ -200,7 +207,12 @@ export default class Frame extends React.PureComponent {
               <a
                 href="https://archive.org/donate/?referrer=vandal"
                 target="_blank">
-                <HeartIcon className="vandal-frame__donate-btn-icon" />
+                <Icon
+                  name="heart"
+                  className="vandal-frame__donate-btn-icon"
+                  width={20}
+                  height={20}
+                />
               </a>
             </div>
           </div>

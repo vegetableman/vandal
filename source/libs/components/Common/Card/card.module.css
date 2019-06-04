@@ -1,0 +1,23 @@
+.card {
+  background: var(--vandal-primary-background-color);
+  border: 1px solid var(--vandal-primary-border-color);
+
+  left: 0;
+  min-width: 95px;
+  max-height: 500px;
+  position: absolute;
+  top: 0;
+  z-index: 1;
+}
+
+.card_empty {
+  box-shadow: none;
+}
+
+.card_title {
+  color: var(--vandal-text-color);
+  font-family: Helvetica;
+  font-size: 13px;
+  padding: 8px 5px 5px 9px;
+  text-align: left;
+}

@@ -13,9 +13,6 @@ import {
   smoothScrollX,
   Screenshooter
 } from '../../utils';
-import ErrorIcon from './error.svg';
-import LeftPaddleIcon from './leftpaddle.svg';
-import RightPaddleIcon from './rightpaddle.svg';
 
 const monthNames = [
   'January',
@@ -391,7 +388,8 @@ export default class MonthView extends React.Component {
                       {snapshot ? (
                         <React.Fragment>
                           {(_.get(snapshot, 'err') && (
-                            <ErrorIcon
+                            <Icon
+                              name="error"
                               className="vandal-historical-month__err"
                               title={_.get(snapshot, 'err')}
                             />
@@ -444,14 +442,20 @@ export default class MonthView extends React.Component {
                 <button
                   className="vandal-historical-month__btn vandal-historical-month__left-btn"
                   onClick={this.handleLeftPaddleClick}>
-                  <LeftPaddleIcon className="vandal-historical-month__nav-icon" />
+                  <Icon
+                    name="leftPaddle"
+                    className="vandal-historical-month__nav-icon"
+                  />
                 </button>
               )}
               {showRightPaddle && (
                 <button
                   className="vandal-historical-month__btn vandal-historical-month__right-btn"
                   onClick={this.handleRightPaddleClick}>
-                  <RightPaddleIcon className="vandal-historical-month__nav-icon" />
+                  <Icon
+                    name="rightPaddle"
+                    className="vandal-historical-month__nav-icon"
+                  />
                 </button>
               )}
             </div>

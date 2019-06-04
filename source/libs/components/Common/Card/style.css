@@ -132,6 +132,23 @@
   z-index: 1;
 }
 
+.card {
+  /* display: flex;
+  flex-direction: column; */
+
+  background: var(--vandal-primary-background-color);
+  border: 1px solid var(--vandal-primary-border-color);
+  /* box-shadow: rgba(0, 0, 0, 0.34) 1px 4px 4px -4px; */
+
+  left: 0;
+  min-width: 95px;
+  max-height: 500px;
+  /* overflow: auto; */
+  position: absolute;
+  top: 0;
+  z-index: 1;
+}
+
 .vandal-card__body {
   padding: 2px 0 5px 0;
   height: 100%;
@@ -147,6 +164,10 @@
 }
 
 .vandal-card--empty {
+  box-shadow: none;
+}
+
+.card_empty {
   box-shadow: none;
 }
 
