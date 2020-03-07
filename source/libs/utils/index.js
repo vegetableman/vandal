@@ -1,3 +1,4 @@
+import { useRef, useEffect, useCallback } from 'react';
 import select from 'select-dom';
 import domLoaded from 'dom-loaded';
 import elementReady from 'element-ready';
@@ -5,9 +6,42 @@ import OptionsSync from 'webext-options-sync';
 import ghInjection from 'github-injection';
 import _ from 'lodash';
 
+export { api, controller, xhr, abort } from './api';
+export { default as Screenshooter } from './screenshooter';
+export { default as useRefCallback } from './use-ref-callback';
+export { default as compareProps } from './compare-props';
+
 const options = new OptionsSync().getAll();
 
-const monthNames = [
+class Browser {
+  setBrowser(browser) {
+    this.browser = browser;
+  }
+
+  setBaseURL(url) {
+    this.baseURL = url;
+  }
+
+  setURL(url) {
+    this.url = url;
+  }
+
+  navigate(url) {
+    this.browser.src = `${this.baseURL}?url=${encodeURIComponent(url)}`;
+  }
+
+  reload() {
+    if (this.url) {
+      this.browser.src = `${this.baseURL}?url=${encodeURIComponent(this.url)}`;
+    } else {
+      this.browser.src = this.browser.src;
+    }
+  }
+}
+
+export const browser = new Browser();
+
+export const monthNames = [
   'Jan',
   'Feb',
   'Mar',
@@ -20,6 +54,21 @@ const monthNames = [
   'Oct',
   'Nov',
   'Dec'
+];
+
+export const longMonthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
 ];
 
 /**
@@ -184,9 +233,6 @@ export const getLocation = () => {
   if (w && w.location) return w.location.href;
 };
 
-export { api, controller, xhr } from './api';
-export { default as Screenshooter } from './screenshooter';
-
 function getPeriod(hour) {
   if (parseInt(hour) >= 12) {
     return 'pm';
@@ -247,7 +293,7 @@ const getDate = d => {
   };
 };
 
-export const getDateTsFromUrl = url => {
+export const getDateTsFromURL = url => {
   let match = tsRegexp.exec(url);
   if (!match) return;
   return {
@@ -272,6 +318,16 @@ export const getDateTimeFromTS = ts => {
     day,
     year
   };
+};
+
+export const countVersions = sparkline => {
+  if (_.isEmpty(sparkline)) return 0;
+  let count = 0;
+  for (let n in sparkline)
+    count += _.reduce(sparkline[n], (t, e) => {
+      return t + e;
+    });
+  return count;
 };
 
 const requestAnimFrame = (function() {
@@ -442,7 +498,8 @@ export const dateTimeDiff = function(dtmsec, captureTS) {
   };
 };
 
-export const isArchiveUrl = url => {
+export const isArchiveURL = url => {
+  if (!url) return false;
   const ua = new URL(url);
   return url && ua.host === 'web.archive.org' && ua.pathname !== '/';
 };
@@ -451,28 +508,18 @@ export const getUrlHost = url => {
   return url && _.replace(new URL(url).host, 'www.', '');
 };
 
-const stripRegExp = new RegExp(/https\:\/\/web\.archive\.org\/web\/\d+.*_\/*/);
-export const stripArchiveUrl = url => {
-  return url && isArchiveUrl(url) && stripRegExp.test(url)
+const stripRegExp = new RegExp(/https\:\/\/web\.archive\.org\/web\/\d+.*_?\/*/);
+export const stripArchiveURL = url => {
+  return url && isArchiveURL(url) && stripRegExp.test(url)
     ? _.nth(_.split(url, /web\/\d+(?:.*?)_?\//), 1)
     : url;
 };
 
-export const isUrlEqual = (a, b) => {
+export const isURLEqual = (a, b) => {
   if (!a || !b) return false;
   const urlA = new URL(a);
   const urlB = new URL(b);
   return urlA.host === urlB.host && urlA.pathname === urlB.pathname;
-};
-
-export const stripOffTag = url => {
-  try {
-    const sa = new URL(url);
-    sa.searchParams.delete('tag');
-    return sa.href;
-  } catch (ex) {
-    return url;
-  }
 };
 
 export const stripIm = url => {
@@ -540,4 +587,22 @@ export const smoothScrollX = (el, x) => {
     startX: startX,
     x: x
   });
+};
+
+export const useEventCallback = (fn, dependencies) => {
+  const ref = useRef(() => {
+    throw new Error('Cannot call an event handler while rendering.');
+  });
+
+  useEffect(() => {
+    ref.current = fn;
+  }, [fn, ...dependencies]);
+
+  return useCallback(
+    (...args) => {
+      const fn = ref.current;
+      return fn(...args);
+    },
+    [ref]
+  );
 };

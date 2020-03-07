@@ -1,5 +1,6 @@
 import React from 'react';
 import { Carousel, Icon } from '../common';
+import styles from './historical.module.css';
 
 export default class CarouselView extends React.Component {
   state = {
@@ -29,15 +30,17 @@ export default class CarouselView extends React.Component {
     const { caption } = this.state;
     return (
       <div
-        className="vandal-historical-carousel"
+        className={styles.carousel}
         onKeyDown={this.handleKeydown}
         ref={_ref => (this.carouselContainerRef = _ref)}
         tabIndex="0">
-        <div className="vandal-historical-caption">
-          <span className="title">{_.get(caption, 'title')}</span>
+        <div className={styles.caption}>
+          <span className={styles.caption__title}>
+            {_.get(caption, 'title')}
+          </span>
           <span className="date">{_.get(caption, 'date')}</span>
         </div>
-        <div className="vandal-historical-slider-container">
+        <div className={styles.slider__container}>
           <Carousel
             images={images}
             ref={_ref => (this.carouselRef = _ref)}
@@ -48,7 +51,7 @@ export default class CarouselView extends React.Component {
         </div>
         <Icon
           name="carouselClose"
-          className="vandal-historical-carousel__close"
+          className={styles.carousel__close}
           onClick={onClose}
         />
       </div>

@@ -4,7 +4,11 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
 const config = require('./config');
+
+const cssRegex = /\.css$/;
+const cssModuleRegex = /\.module\.css$/;
 
 module.exports = () => ({
   devtool: 'inline-source-map',
@@ -30,10 +34,27 @@ module.exports = () => ({
         }
       },
       {
-        test: /\.css$/,
+        test: cssRegex,
+        exclude: cssModuleRegex,
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: 'css-loader'
+        })
+      },
+      {
+        test: cssModuleRegex,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            {
+              loader: 'css-loader',
+              options: {
+                modules: true,
+                camelCase: true,
+                getLocalIdent: getCSSModuleLocalIdent
+              }
+            }
+          ]
         })
       },
       {
@@ -57,12 +78,18 @@ module.exports = () => ({
       {
         from: 'node_modules/webextension-polyfill/dist/browser-polyfill.min.js'
       },
+      {
+        from: 'source/libs/components/app/sw.js'
+      },
       { from: '*', context: 'source/libs/assets/fonts', to: 'fonts' }
     ]),
     new ExtractTextPlugin('vandal.css', {
       allChunks: true
     }),
-    new webpack.DefinePlugin({ ...config })
+    new webpack.DefinePlugin({ ...config }),
+    new webpack.ProvidePlugin({
+      _: 'lodash'
+    })
   ],
   optimization: {
     // Without this, function names will be garbled and enableFeature won't work

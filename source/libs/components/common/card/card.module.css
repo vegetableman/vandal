@@ -10,14 +10,69 @@
   z-index: 1;
 }
 
-.card_empty {
+.card___empty {
   box-shadow: none;
 }
 
-.card_title {
+.title {
   color: var(--vandal-text-color);
   font-family: Helvetica;
   font-size: 13px;
   padding: 8px 5px 5px 9px;
   text-align: left;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+  max-height: 500px;
+  padding: 2px 0 5px 0;
+  position: relative;
+}
+
+.body___noTitle {
+  padding: 5px 0 5px 0;
+}
+
+.body___title {
+  max-height: 459px;
+}
+
+.value {
+  align-items: center;
+  display: flex;
+  flex: 0 0 25px;
+
+  color: var(--vandal-text-color);
+  cursor: pointer;
+  font-size: 11px;
+  font-family: 'VANDAL__Cousine';
+  justify-content: space-between;
+  padding: 0 2px 0 10px;
+  width: 100%;
+}
+
+.value___selected {
+  text-decoration: underline;
+}
+
+.value:hover {
+  text-decoration: underline;
+}
+
+.redirectIcon {
+  fill: var(--vandal-card-status-icon);
+  margin: 0 3px 0 6px;
+}
+
+.redirectIcon___active {
+  fill: var(--vandal-link-color);
+  stroke-width: 2px;
+}
+
+.errorIcon {
+  fill: red;
+  margin: -1px 3px 0 6px;
 }

@@ -1,4 +1,5 @@
 {
   "prettier.jsxBracketSameLine": true,
-  "prettier.singleQuote": true
+  "prettier.singleQuote": true,
+  "eslint.enable": false
 }

@@ -99,22 +99,6 @@
   z-index: 9999999;
 }
 
-.vandal-historical-slider-container {
-  width: calc(100% - 700px);
-  height: 800px;
-  margin-top: -40px;
-}
-
-.vandal-historical-slider-container .slick-slider .slick-prev {
-  left: -10%;
-  top: 37%;
-}
-
-.vandal-historical-slider-container .slick-slider .slick-next {
-  right: -10%;
-  top: 38%;
-}
-
 .vandal-slide {
   height: 100vh;
   overflow: auto;

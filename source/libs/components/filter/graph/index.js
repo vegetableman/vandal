@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import cx from 'classnames';
 import _ from 'lodash';
 import {
@@ -9,22 +9,10 @@ import {
 } from 'react-sparklines';
 import GraphLoader from './loader.js';
 import Calendar from './calendar';
-import './style.css';
-
-const monthNames = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sept',
-  'Oct',
-  'Nov',
-  'Dec'
-];
+import { monthNames } from '../../../utils';
+import { Icon } from '../../common';
+import styles from './graph.module.css';
+import { useTheme } from '../../../hooks/index.js';
 
 const captureGraphScale = (years, maxcount) => {
   const scaled = [];
@@ -50,74 +38,103 @@ const captureGraphScaleIsRequired = years => {
   return Math.log1p(max) - Math.log1p(min) > 3;
 };
 
-export default class GraphFilter extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.currentDate = new Date();
-    this.state = {
-      years: {},
-      months: []
-    };
-  }
+const Bars = memo(
+  ({ theme, ...rest }) => {
+    return (
+      <SparklinesBars
+        {...rest}
+        style={{
+          stroke: theme === 'dark' ? '#5B85AC' : '#708090',
+          fill: theme === 'dark' ? '#5B85AC' : '#708090'
+        }}
+      />
+    );
+  },
+  (prevProps, newProps) =>
+    prevProps.width === newProps.width &&
+    prevProps.height === newProps.height &&
+    prevProps.margin === newProps.margin
+);
 
-  onMouseMove(month, monthIndex) {
-    return (point, index, x, y, offsetLeft) => {
-      this.props.onMouseMove({
-        x: x + offsetLeft - 150,
-        y: 200,
-        ts: month[index].ts,
-        day: index + 1,
-        monthName: monthNames[monthIndex],
-        monthIndex,
-        point
-      });
-    };
-  }
+const Curve = memo(
+  ({ theme, ...rest }) => {
+    return (
+      <SparklinesCurve
+        {...rest}
+        style={{
+          stroke: theme === 'dark' ? '#5B85AC' : '#708090',
+          fill: theme === 'dark' ? '#5B85AC' : '#708090'
+        }}
+      />
+    );
+  },
+  (prevProps, newProps) =>
+    prevProps.width === newProps.width &&
+    prevProps.height === newProps.height &&
+    prevProps.margin === newProps.margin
+);
 
-  getPosition(index) {
-    if (
-      !_.isNil(this.props.selectedMonthIndex) &&
-      index === this.props.selectedMonthIndex
-    ) {
-      return {
-        cx: _.get(this.props, 'selectedPoint.x'),
-        cy: _.get(this.props, 'selectedPoint.y')
-      };
-    } else if (index === this.state.monthIndex) {
-      return { cx: this.state.cx, cy: this.state.cy };
-    }
-  }
+const Spark = memo(
+  props => {
+    return <Sparklines {...props} />;
+  },
+  (prevProps, newProps) =>
+    prevProps.width === newProps.width &&
+    prevProps.height === newProps.height &&
+    prevProps.margin === newProps.margin &&
+    prevProps.min === newProps.min &&
+    prevProps.max === newProps.max
+);
 
-  render() {
+const GraphFilter = memo(
+  props => {
     let {
       sparkline,
       months,
-      selectedYear,
-      selectedMonth,
-      onChange,
-      onMouseLeave,
+      currentMonth,
+      currentYear,
+      onYearChange,
       onMonthChange,
-      showLoader,
-      showConnectionError,
-      theme
-    } = this.props;
+      showCalendarLoader,
+      showSparkError,
+      showCalendarError,
+      showSparkLoader
+    } = props;
 
-    if (showConnectionError) {
+    const { theme } = useTheme();
+
+    if (showSparkError || showCalendarError) {
       return (
-        <div className="vandal-graph__archive-error">
-          <Icon
-            className="vandal-graph__conn-error-icon"
-            name="error"
-            width={18}
-          />
-          <div>Error connecting to the Archive Server</div>
+        <div className={styles.error__container}>
+          <div
+            className={cx({
+              [styles.error]: true,
+              [styles.calendar__error]: props.showCalendarError
+            })}>
+            <Icon
+              name="networkErr"
+              width={35}
+              height={35}
+              className={styles.error__icon}
+            />
+          </div>
+          {(props.showSparkError && showSparkLoader && (
+            <div className={styles.error__msg}>Retrying...</div>
+          )) || (
+            <div className={styles.error__msg}>
+              ERR: {props.error || 'Request Failed'}
+            </div>
+          )}
+          <button className={styles.retry__btn} onClick={props.retry}>
+            Retry
+          </button>
         </div>
       );
     } else if (_.isEmpty(_.keys(sparkline))) return null;
 
     let date;
-    if (selectedYear && selectedMonth) {
-      date = `${selectedYear}-${_.padStart(selectedMonth, 2, '0')}`;
+    if (currentYear && currentMonth) {
+      date = `${currentYear}-${_.padStart(currentMonth, 2, '0')}`;
     }
 
     let maxcount = 0;
@@ -134,60 +151,47 @@ export default class GraphFilter extends React.PureComponent {
       maxcount = scaled[1];
     }
 
-    const startYear = 1996;
-    const endYear = this.currentDate.getUTCFullYear();
-    const yearWidth = 600 / (endYear - startYear + 1);
-    const height = 75;
-    const yscale = height / maxcount;
-
-    let sparklineYears = Object.keys(sparkline);
-    const years = _.map(sparklineYears, y => {
+    const years = _.map(Object.keys(sparkline), y => {
       return _.parseInt(y);
     });
 
     return (
-      <div className="vandal-graph">
-        <div className="vandal-graph__year-container">
-          {_.map(years, (y, i) => {
+      <div className={styles.root}>
+        <div className={styles.year__container}>
+          {_.map(years, y => {
             return (
               <div
                 className={cx({
-                  'vandal-graph__year': true,
-                  'vandal-graph__year--selected':
-                    theme !== 'dark' && selectedYear === y,
-                  'vandal-graph__year--selected--dark':
-                    theme === 'dark' && selectedYear === y
+                  [styles.year]: true,
+                  [styles.year___selected]:
+                    theme !== 'dark' && currentYear === y,
+                  [styles.year___selected___dark]:
+                    theme === 'dark' && currentYear === y
                 })}
                 key={`year-${y}`}
-                onClick={onChange(y)}>
-                <label className="vandal-graph__year__value">{y}</label>
-                <Sparklines
-                  className="vandal-graph__year__sparkline"
+                onClick={onYearChange(y)}>
+                <label className={styles.year__value}>{y}</label>
+                <Spark
                   data={sparkline[y]}
                   margin={0}
                   width={48}
-                  height={height}
+                  height={75}
                   min={0}
                   max={maxcount}>
-                  <SparklinesBars
-                    style={{
-                      stroke: theme === 'dark' ? '#5B85AC' : '#708090',
-                      fill: theme === 'dark' ? '#5B85AC' : '#708090'
-                    }}
-                  />
-                </Sparklines>
+                  <Bars theme={theme} />
+                </Spark>
               </div>
             );
           })}
         </div>
-        {showLoader && (
-          <div className="vandal-gh-loader-container">
+        {showCalendarLoader && (
+          <div className={styles.loader__container}>
             {_.map(monthNames, (m, index) => {
               return (
-                <div className="vandal-gh-loader-month" key={index}>
+                <div className={styles.loader__month} key={index}>
                   <GraphLoader
                     key={index}
-                    className="vandal-gh-loader"
+                    className={styles.loader}
                     theme={theme}
                   />
                 </div>
@@ -195,8 +199,8 @@ export default class GraphFilter extends React.PureComponent {
             })}
           </div>
         )}
-        {!showLoader && selectedYear && (
-          <div className="vandal-graph__month-container">
+        {!showCalendarLoader && currentYear && (
+          <div className={styles.month__container}>
             {!_.isEmpty(months) &&
               _.map(months, (m, index) => {
                 const countList = _.map(m, mc => mc.cnt);
@@ -214,33 +218,27 @@ export default class GraphFilter extends React.PureComponent {
                 return (
                   <div
                     className={cx({
-                      'vandal-graph__month': true,
-                      'vandal-graph__month--selected':
-                        theme !== 'dark' && index === selectedMonth - 1,
-                      'vandal-graph__month--selected--dark':
-                        theme === 'dark' && index === selectedMonth - 1
+                      [styles.month]: true,
+                      [styles.month___selected]:
+                        theme !== 'dark' && index === currentMonth - 1,
+                      [styles.month___selected___dark]:
+                        theme === 'dark' && index === currentMonth - 1
                     })}
-                    key={`month-${index}-${selectedYear}`}
+                    key={`month-${index}-${currentYear}`}
                     onClick={onMonthChange(index + 1)}>
-                    <span className="vandal-graph__month__value">
+                    <span className={styles.month__value}>
                       {monthNames[index]}
                     </span>
                     {!!max && (
-                      <Sparklines
-                        className="vandal-graph__month__sparkline"
+                      <Spark
                         points={points}
                         margin={0}
                         min={0}
                         max={!max ? max + 1 : max}
                         width={100}
                         height={20}>
-                        <SparklinesCurve
-                          style={{
-                            stroke: theme === 'dark' ? '#5B85AC' : '#708090',
-                            fill: theme === 'dark' ? '#5B85AC' : '#708090'
-                          }}
-                        />
-                      </Sparklines>
+                        <Curve theme={theme} />
+                      </Spark>
                     )}
                   </div>
                 );
@@ -250,22 +248,44 @@ export default class GraphFilter extends React.PureComponent {
                 return (
                   <div
                     className={cx({
-                      'vandal-graph__month': true,
-                      'vandal-graph__month--selected':
-                        index === selectedMonth - 1
+                      [styles.month]: true,
+                      [styles.month___selected]: index === currentMonth - 1
                     })}
-                    key={`month-${index}-${selectedYear}`}
+                    key={`month-${index}-${currentYear}`}
                     onClick={onMonthChange(index + 1)}>
-                    <span className="vandal-graph__month__value">
-                      {monthNames[index]}
-                    </span>
+                    <span className={styles.month__value}>{m}</span>
                   </div>
                 );
               })}
           </div>
         )}
-        {!showLoader && date && <Calendar date={date} {...this.props} />}
+        {!showCalendarLoader && date && (
+          <Calendar
+            date={date}
+            getColor={props.getColor}
+            onMouseMove={props.onMouseMove}
+            onMouseLeave={props.onMouseLeave}
+            onClick={props.onClick}
+          />
+        )}
       </div>
     );
-  }
-}
+  },
+  (prevProps, newProps) =>
+    prevProps.selectedYear === newProps.selectedYear &&
+    prevProps.selectedMonth === newProps.selectedMonth &&
+    prevProps.currentMonth === newProps.currentMonth &&
+    prevProps.currentYear === newProps.currentYear &&
+    prevProps.currentDay === newProps.currentDay &&
+    prevProps.showError === newProps.showError &&
+    prevProps.showCalendarLoader === newProps.showCalendarLoader &&
+    prevProps.showSparkError === newProps.showSparkError &&
+    prevProps.showSparkLoader === newProps.showSparkLoader &&
+    prevProps.showCalendarError === newProps.showCalendarError &&
+    prevProps.sparkline === newProps.sparkline &&
+    prevProps.months === newProps.months &&
+    prevProps.highlightedDay === newProps.highlightedDay &&
+    prevProps.showCard === newProps.showCard
+);
+
+export default GraphFilter;

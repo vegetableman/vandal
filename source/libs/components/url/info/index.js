@@ -1,86 +1,76 @@
-import React from 'react';
+import React, { useEffect, memo } from 'react';
 import _ from 'lodash';
-import { getDateTimeFromTS, toTwelveHourTime } from '../../../utils';
+import {
+  getDateTimeFromTS,
+  toTwelveHourTime,
+  compareProps
+} from '../../../utils';
 import { withDialog, Icon } from '../../common';
-import './style.css';
 
-class URLInfo extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.isDialogClosed &&
-      nextProps.isDialogClosed !== this.props.isDialogClosed
-    ) {
-      nextProps.onClose();
-    }
-  }
+import styles from './urlinfo.module.css';
+import boxStyle from '../box/urlbox.module.css';
 
-  render() {
-    const {
-      url,
-      redirectTSCollection,
-      selectedTS,
-      redirectedTS,
-      dialogRef
-    } = this.props;
-
-    const archiveURL = _.replace(url, 'im_', '');
+const URLInfo = memo(
+  ({
+    dialogRef,
+    // isDialogClosed,
+    url,
+    redirectTSCollection,
+    redirectedTS,
+    selectedTS,
+    onClose
+  }) => {
+    const archiveURL = `https://web.archive.org/web/${selectedTS}/${url}`;
+    const renderedURL = `https://web.archive.org/web/${redirectedTS ||
+      selectedTS}/${url}`;
     let infoDateObj;
     let redirectTSList = [];
-    if (redirectTSCollection[redirectedTS]) {
+
+    if (_.get(redirectTSCollection, redirectedTS)) {
       infoDateObj = getDateTimeFromTS(redirectedTS);
       redirectTSList = [redirectTSCollection[redirectedTS], redirectedTS];
     } else {
       infoDateObj = getDateTimeFromTS(selectedTS);
     }
 
+    // useEffect(() => {
+    //   isDialogClosed && onClose();
+    // }, [isDialogClosed]);
+
+    console.log('selectedTS', selectedTS, 'redirectedTS', redirectedTS);
+
     return (
-      <div className="vandal__url-info" ref={dialogRef}>
-        <ul className="vandal__url-info__list">
-          {!!redirectTSCollection[redirectedTS] && (
-            <li className="vandal__url-info__item">
-              <div className="vandal__url-info__label">Original URL :</div>
-              <a
-                className="vandal__url-info__link"
-                href={_.replace(url, /\d+/, redirectTSCollection[redirectedTS])}
-                target="_blank">
-                {_.replace(url, /\d+/, redirectTSCollection[redirectedTS])}
-              </a>
-            </li>
-          )}
-          <li className="vandal__url-info__item">
-            <div className="vandal__url-info__label">Rendered URL :</div>
-            <a className="vandal__url-info__link" href={url} target="_blank">
-              {url}
-            </a>
-          </li>
-          <li className="vandal__url-info__item">
-            <div className="vandal__url-info__label">Archive URL :</div>
-            <a
-              className="vandal__url-info__link"
-              href={archiveURL}
-              target="_blank">
+      <div className={styles.urlInfo} ref={dialogRef}>
+        <ul className={styles.infoList}>
+          <li className={styles.infoItem}>
+            <div className={styles.infoLabel}>Archive URL :</div>
+            <a className={styles.infoLink} href={archiveURL} target="_blank">
               {archiveURL}
             </a>
           </li>
+          <li className={styles.infoItem}>
+            <div className={styles.infoLabel}>Rendered URL :</div>
+            <a className={styles.infoLink} href={renderedURL} target="_blank">
+              {renderedURL}
+            </a>
+          </li>
         </ul>
-        {!!redirectTSCollection[redirectedTS] && (
-          <div className="vandal__url-info__redirect-container">
-            <div className="vandal__url-info__redirect-header">
+        {!!_.get(redirectTSCollection, redirectedTS) && (
+          <div className={styles.redirectContainer}>
+            <div className={styles.redirectHeader}>
               <Icon
                 name="redirect"
-                className="vandal__url-info__redirect-icon"
+                className={styles.redirectIcon}
                 width={10}
               />
-              <div className="vandal__url-info__redirect-title">
-                Redirect Path
-              </div>
+              <div className={styles.redirectTitle}>Redirect Path</div>
             </div>
-            <div className="vandal__url-info__redirect-list">
+            <div className={styles.redirectTSList}>
               {_.map(redirectTSList, (ts, index) => {
                 const dateObj = getDateTimeFromTS(ts);
                 return (
                   <React.Fragment key={ts}>
-                    <div className="vandal__url-info__redirect-list-item">
+                    <div className={styles.redirectListItem}>
                       {`${dateObj.humanizedDate} ${toTwelveHourTime(
                         dateObj.ts
                       )}`}
@@ -89,7 +79,7 @@ class URLInfo extends React.Component {
                       <Icon
                         name="pathArrow"
                         width={20}
-                        className="vandal__url-info__redirect-path-icon"
+                        className={styles.redirectPathIcon}
                       />
                     ) : null}
                   </React.Fragment>
@@ -98,9 +88,9 @@ class URLInfo extends React.Component {
             </div>
           </div>
         )}
-        <div className="vandal__url-info__note">
+        <div className={styles.infoNote}>
           Note: The time{' '}
-          <span className="vandal__url-info__date">{`${_.get(
+          <span className={styles.infoDate}>{`${_.get(
             infoDateObj,
             'humanizedDate'
           )} ${toTwelveHourTime(_.get(infoDateObj, 'ts'))}`}</span>{' '}
@@ -109,9 +99,15 @@ class URLInfo extends React.Component {
         </div>
       </div>
     );
-  }
-}
+  },
+  compareProps([
+    'redirectedTS',
+    'selectedTS',
+    'redirectTSCollection'
+    // 'isDialogClosed'
+  ])
+);
 
 export default withDialog(URLInfo, {
-  ignoreClickOnClass: '.vandal-url__date'
+  ignoreClickOnClass: `.${boxStyle.date}`
 });

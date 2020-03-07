@@ -85,3 +85,5 @@ jspm_packages
 
 # serverless
 .serverless
+
+report.*

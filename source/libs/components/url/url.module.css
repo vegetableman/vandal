@@ -1,0 +1,19 @@
+.toast__notfound {
+  left: calc(50% - 135px);
+}
+
+.toast__close {
+  cursor: pointer;
+  margin-left: 8px;
+  position: relative;
+  fill: #fff;
+  stroke: #fff;
+  stroke-width: 44px;
+  right: -6px;
+  top: -1px;
+  width: 10px;
+}
+
+.toast__redirect {
+  left: calc(50% - 50px);
+}

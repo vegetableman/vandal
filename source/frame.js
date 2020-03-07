@@ -156,14 +156,17 @@ function getSources() {
 }
 
 const mousedownHandler = () => {
-  chrome.runtime.sendMessage({ message: 'frameMouseDown' });
+  chrome.runtime.sendMessage({ message: '__VANDAL__FRAME__MOUSEDOWN' });
 };
 
 const messageHandler = async function(request, _, sendResponse) {
   console.log(request);
   if (!request) return;
   if (request.message === 'fetchSources') {
-    chrome.runtime.sendMessage({ message: 'frameSources', data: getSources() });
+    chrome.runtime.sendMessage({
+      message: '__VANDAL__FRAME__SOURCES',
+      data: getSources()
+    });
   } else if (request.message === 'highlightNode') {
     console.log(request.data.source);
     const node = imageMap[request.data.source];
@@ -185,64 +188,15 @@ const messageHandler = async function(request, _, sendResponse) {
   }
 };
 
-const VALID_TAGS = [
-  'DIV',
-  'ARTICLE',
-  'SECTION',
-  'A',
-  'P',
-  'H1',
-  'H2',
-  'H3',
-  'H4',
-  'H5',
-  'H6',
-  'BLOCKQUOTE',
-  'PRE',
-  'TD',
-  'TH',
-  'DL',
-  'IMG'
-];
-
 function onDomReady() {
-  const style = document.createElement('style');
-  style.setAttribute('type', 'text/css');
-  console.log('location: ', document.location.href);
-  style.innerHTML = `
-  @font-face {
-    font-family: 'VANDAL__Inconsolata';
-    src: url('chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Regular.eot?#iefix')
-        format('embedded-opentype'),
-      url('chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Regular.woff')
-        format('woff'),
-      url('chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Regular.ttf')
-        format('truetype'),
-      url('chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Regular.svg#Inconsolata-Regular')
-        format('svg');
-    font-weight: normal;
-    font-style: normal;
-  }
-  `;
-  document.head.appendChild(style);
   window.removeEventListener('mousedown', mousedownHandler);
   window.addEventListener('mousedown', mousedownHandler);
   chrome.runtime.onMessage.removeListener(messageHandler);
   chrome.runtime.onMessage.addListener(messageHandler);
-
-  // let index = 0;
-  // document.body.querySelectorAll('*').forEach(node => {
-  //   if (node && VALID_TAGS.indexOf(node.nodeName) > -1) {
-  //     node.setAttribute('data-vandal__index', index++);
-  //   }
-  // });
-
-  console.log('hello: frame: ', document.location.href);
-
-  // chrome.runtime.sendMessage({
-  //   message: 'frameHTML',
-  //   data: document.body.innerHTML
-  // });
 }
+
+const link = document.createElement('meta');
+link.setAttribute('charset', 'utf-8');
+document.head.appendChild(link);
 
 onDomReady();

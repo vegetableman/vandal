@@ -93,7 +93,7 @@ export const themeDB = {
   setTheme(value) {
     chrome.storage.sync.set({ [themeKey]: value }, () => {
       // Notify that we saved.
-      console.log('Settings saved');
+      console.info('ThemeDB: Settings saved');
     });
   },
 

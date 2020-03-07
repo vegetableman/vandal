@@ -1,11 +1,11 @@
-.vandal__url-info {
+.urlInfo {
   display: flex;
   flex-direction: column;
 
   min-height: 80px;
   position: absolute;
   background: var(--vandal-url-info-background-color);
-  width: calc(100% - 400px);
+  width: calc(100% - 348px);
   border-bottom: 1px solid var(--vandal-menu-border-color);
   border-right: 1px solid var(--vandal-menu-border-color);
   border-bottom-left-radius: 3px;
@@ -17,19 +17,19 @@
   z-index: 1;
 }
 
-.vandal__url-info__list {
+.infoList {
   margin: 0;
   padding: 5px 0;
 }
 
-.vandal__url-info__item {
+.infoItem {
   display: flex;
   align-items: center;
   font-size: 13px;
   padding: 5px 10px;
 }
 
-.vandal__url-info__label {
+.infoLabel {
   color: var(--vandal-text-color);
   flex: 0 0 100px;
   padding: 4px;
@@ -37,29 +37,30 @@
   font-size: 12px;
 }
 
-.vandal__url-info__link {
+.infoLink {
   color: var(--vandal-link-color);
   font-size: 13px;
   word-break: break-word;
 }
 
-.vandal__url-info__date {
+.infoDate {
   color: var(--vandal-url-info-color);
 }
 
-.vandal__url-info__redirect-title {
+.redirectTitle {
+  color: var(--vandal-text-color);
   font-size: 12.5px;
   font-family: Helvetica;
   padding-left: 7px;
 }
 
-.vandal__url-info__redirect-header {
+.redirectHeader {
   display: flex;
   align-items: center;
   padding: 0 0 0 20px;
 }
 
-.vandal__url-info__redirect-list {
+.redirectTSList {
   display: flex;
   align-items: center;
 
@@ -67,7 +68,7 @@
   padding: 10px 0 0 10px;
 }
 
-.vandal__url-info__redirect-list-item {
+.redirectListItem {
   border: 1px solid #ddd;
   border-radius: 5px;
   background: var(--vandal-url-info-redirect-background-color);
@@ -76,28 +77,30 @@
   margin: 0 5px 0 0;
 }
 
-.vandal__url-info__redirect-container {
+.redirectContainer {
   padding: 10px 0 15px 0;
 }
 
-.vandal__url-info__redirect-path-icon {
+.redirectPathIcon {
+  fill: var(--vandal-text-color);
+  stroke: var(--vandal-text-color);
   margin-right: 5px;
   position: relative;
   top: 3px;
 }
 
-.vandal__url-info__note {
+.infoNote {
   color: var(--vandal-text-color);
   font-size: 12px;
   padding: 3px 0 5px 15px;
 }
 
-.vandal__url-info__redirect-icon,
-.vandal__url-info__redirect-path-icon {
+.redirectIcon,
+.redirectPathIcon {
   fill: var(--vandal-text-color);
   stroke: var(--vandal-text-color);
 }
 
-.vandal__url-info__redirect-title {
+.infoRedirectTitle {
   color: var(--vandal-text-color);
 }

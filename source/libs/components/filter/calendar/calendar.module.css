@@ -1,0 +1,196 @@
+.calendar__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  color: var(--vandal-text-color);
+  padding: 0 0 7px 0;
+  font-size: 14px;
+}
+
+.input {
+  background: var(--vandal-input-background-color);
+  border: 1px solid var(--vandal-primary-border-color);
+  color: var(--vandal-input-color);
+  font-family: 'VANDAL__SourceSansPro';
+  font-size: 14px;
+  line-height: 16.1px;
+  width: 165px;
+  outline: none;
+  padding: 2px 5px 1px 5px;
+}
+
+.input::-webkit-datetime-edit-day-field:focus,
+.input::-webkit-datetime-edit-month-field:focus,
+.input::-webkit-datetime-edit-year-field:focus {
+  background: var(--vandal-text-selection-color);
+}
+
+.input::-webkit-clear-button {
+  display: none;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.calendar {
+  flex: 1;
+  justify-content: flex-start;
+  padding: 12px 0 0 0;
+}
+
+.week {
+  display: flex;
+  justify-content: flex-end;
+  flex: 0 0 23px;
+}
+
+.week:first-child {
+  margin: 0;
+}
+
+.last__week {
+  justify-content: flex-start;
+  margin-left: 5px;
+}
+
+.day {
+  flex: 0 0 25px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  height: 27px;
+  padding: 4px 0 0 0;
+}
+
+.day___active {
+  cursor: pointer;
+}
+
+.day___active .date {
+  color: var(--vandal-cl-day-active-color);
+}
+
+.date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--vandal-cl-day-color);
+  font-size: 12px;
+  font-family: Helvetica;
+  height: 100%;
+  margin-right: 2px;
+  padding: 3px 2px;
+  width: 100%;
+}
+
+.month {
+  display: flex;
+  flex-direction: column;
+  width: 180px;
+}
+
+.loader {
+  flex: 1;
+  margin-top: 10px;
+  overflow: initial;
+}
+
+.input__container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  width: 100%;
+}
+
+.input__container .vandal-vertical-menu-icon {
+  width: 25px;
+  height: 25px;
+}
+
+.input__container .vandal-vertical-menu__list {
+  background: #ffffff;
+  right: 10px;
+  top: 2px;
+}
+
+.input__container .vandal-vertical-menu__list__item:hover {
+  background: var(--vandal-secondary-background-color);
+}
+
+.input__container .vandal-vertical-menu:hover .vandal-vertical-menu-icon {
+  fill-opacity: 0.7;
+}
+
+.nav__container {
+  display: flex;
+}
+
+.error__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--vandal-cl-err-bg-color);
+  border-radius: 100%;
+  width: 90px;
+  height: 90px;
+  margin-top: 10px;
+}
+
+.calendar__error {
+  background: none;
+  width: auto;
+  height: auto;
+  margin-top: 30px;
+}
+
+.error__icon {
+  position: relative;
+  left: 1px;
+  top: 3px;
+  fill: var(--vandal-cl-err-icon-color);
+}
+
+.error__msg {
+  color: var(--vandal-text-color);
+  font-size: 13px;
+  position: relative;
+  text-align: center;
+  top: 8px;
+  width: 185px;
+}
+
+.retry__btn {
+  background: var(--vandal-cl-retry-bg-color);
+  box-shadow: none;
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 20px;
+  padding: 13px 10px;
+}
+
+.retryBtn:hover {
+  background: var(--vandal-cl-retry-bg-hover-color);
+}

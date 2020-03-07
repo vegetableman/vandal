@@ -1,19 +1,19 @@
-.vandal-vertical-menu-icon {
+.icon {
   cursor: pointer;
   width: 20px;
   height: 20px;
 }
 
-.vandal-vertical-menu-icon-container {
+.iconContainer {
   display: flex;
 }
 
-.vandal-vertical-menu {
+.menu {
   cursor: pointer;
   position: relative;
 }
 
-.vandal-vertical-menu__list {
+.list {
   display: flex;
   flex-direction: column;
 
@@ -24,23 +24,24 @@
   border-bottom-right-radius: 3px;
 
   list-style: none;
+  margin: 0;
+  padding: 0;
   position: absolute;
   right: 2px;
   top: 4px;
-  margin: 0;
-  padding: 0;
+  z-index: 1;
 }
 
-.vandal-vertical-menu__list__item {
+.listItem {
   color: var(--vandal-menu-item-color);
   font-size: 13px;
   padding: 6px 0 6px 10px;
 }
 
-.vandal-vertical-menu__list__item:last-child {
+.listItem:last-child {
   border-bottom: 0px;
 }
 
-.vandal-vertical-menu__list__item:hover {
+.listItem:hover {
   background: var(--vandal-menu-item-hover-background-color);
 }

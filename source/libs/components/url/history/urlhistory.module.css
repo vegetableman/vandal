@@ -1,4 +1,4 @@
-.vandal__url-history {
+.root {
   display: flex;
   flex-direction: column;
 
@@ -13,11 +13,11 @@
   right: 200px;
   user-select: none;
   padding: 0;
-  width: calc(100% - 400px);
+  width: calc(100% - 348px);
   z-index: 1;
 }
 
-.vandal__url-history__list {
+.list {
   background: var(--vandal-history-list-background-color);
   list-style: none;
   margin: 0;
@@ -27,7 +27,7 @@
   padding: 5px 0;
 }
 
-.vandal__url-history__item {
+.item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -38,20 +38,15 @@
   font-size: 13px;
 }
 
-.vandal__url-history__item--active {
+.item___active {
   color: var(--vandal-link-color);
 }
 
-.vandal__url-history__item:hover {
+.item:hover {
   background: var(--vandal-history-item-hover-background-color);
 }
 
-.vandal__url-history__header {
-  font-size: 14px;
-  padding: 10px 10px 5px 10px;
-}
-
-.vandal__url-history__footer {
+.footer {
   display: flex;
   align-items: center;
   flex: 0 0 25px;
@@ -62,7 +57,7 @@
   justify-content: flex-end;
 }
 
-.vandal__url-history__clear-icon {
+.clear__icon {
   cursor: pointer;
   stroke-width: 6px;
   stroke: var(--vandal-primary-icon-color);
@@ -70,18 +65,18 @@
   width: 14px;
 }
 
-.vandal__url-history__clear-icon:hover {
+.clear__icon:hover {
   stroke: var(--vandal-primary-icon-active-color);
   fill: var(--vandal-primary-icon-active-color);
 }
 
-.vandal__url-history__empty-msg {
+.empty__msg {
   color: var(--vandal-text-color);
   font-size: 14px;
   padding: 5px 11px 0 11px;
 }
 
-.vandal__url-history__date__item {
+.date {
   font-size: 12px;
   position: relative;
   top: 1px;

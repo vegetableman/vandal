@@ -1,8 +1,9 @@
 import React from 'react';
-import './style.css';
+import styles from './urlloader.module.css';
+import cx from 'classnames';
 
-const URLLoader = () => (
-  <div className="vandal-url-loader">
+const URLLoader = ({ className }) => (
+  <div className={cx({ [styles.loader]: true, [className]: true })}>
     <div />
   </div>
 );

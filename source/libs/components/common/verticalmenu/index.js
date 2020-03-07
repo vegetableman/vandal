@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState, forwardRef, useImperativeHandle, memo } from 'react';
 import _ from 'lodash';
 import cx from 'classnames';
 import withDialog from '../withdialog';
 import Icon from '../icon';
-import './style.css';
+
+import styles from './verticalmenu.module.css';
+import { compareProps } from '../../../utils';
 
 class List extends React.Component {
   componentWillReceiveProps(nextProps) {
@@ -18,15 +20,25 @@ class List extends React.Component {
   render() {
     const { options, handleOption, dialogRef } = this.props;
     return (
-      <ul className="vandal-vertical-menu__list" ref={dialogRef}>
+      <ul
+        className={cx({
+          [styles.list]: true,
+          [this.props.listClass]: !!this.props.listClass
+        })}
+        ref={dialogRef}>
         {_.map(options, (option, index) => {
           return option.title ? (
-            <li className="vandal-vertical-menu__list__item" key={index}>
+            <li
+              className={cx({
+                [styles.listItem]: true,
+                [this.props.listItemClass]: !!this.props.listItemClass
+              })}
+              key={index}>
               {option.text}
             </li>
           ) : (
             <li
-              className="vandal-vertical-menu__list__item"
+              className={styles.listItem}
               key={index}
               onMouseDown={handleOption(option.value, option.hideOnSelect)}>
               {option.text}
@@ -38,67 +50,70 @@ class List extends React.Component {
   }
 }
 
-const WithDialogList = withDialog(List);
+const WithDialogList = withDialog(List, {
+  ignoreClickOnClass: `.${styles.menu}`
+});
 
-class VerticalMenu extends React.PureComponent {
-  static defaultProps = {
-    onSelect: () => {},
-    show: null
-  };
+const VerticalMenu = memo(
+  forwardRef(({ onSelect = () => {}, ...props }, ref) => {
+    const [isVisible, toggleMenu] = useState(false);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      visible: false
+    const onOptionSelect = (value, hideOnSelect = true) => event => {
+      event.preventDefault();
+      event.stopPropagation();
+      onSelect(value, event);
+      if (hideOnSelect) {
+        toggleMenu(false);
+      }
     };
-    console.log('constructor: visible: ', this.state.visible);
-  }
 
-  handleOption = (value, hideOnSelect = true) => event => {
-    event.preventDefault();
-    event.stopPropagation();
-    this.props.onSelect(value, event);
-    if (hideOnSelect) {
-      this.setState({ visible: false });
-    }
-  };
+    useImperativeHandle(ref, () => ({
+      hideMenu() {
+        if (isVisible) toggleMenu(false);
+      }
+    }));
 
-  toggleMenu = e => {
-    this.setState(prevState => {
-      return { visible: !prevState.visible };
-    });
-  };
-
-  hideMenu = () => {
-    if (this.state.visible) this.setState({ visible: false });
-  };
-
-  render() {
-    const { options } = this.props;
-    const { visible } = this.state;
+    console.log('VerticalMenu:render');
 
     return (
       <div
         className={cx({
-          'vandal-vertical-menu': true,
-          'vandal-vertical-menu--selected': visible
-        })}
-        ref={_ref => (this.wrapperRef = _ref)}>
+          [styles.menu]: true,
+          [props.className]: !!props.className
+        })}>
         <div
-          className="vandal-vertical-menu-icon-container"
-          onClick={this.toggleMenu}>
-          <Icon name="verticalMenu" className="vandal-vertical-menu-icon" />
+          className={cx({
+            [styles.iconContainer]: true,
+            [props.iconContainerClass]: !!props.iconContainerClass
+          })}
+          onClick={() => {
+            toggleMenu(prevState => {
+              return !prevState;
+            });
+          }}>
+          <Icon
+            name="verticalMenu"
+            className={cx({
+              [styles.icon]: true,
+              [props.iconClass]: !!props.iconClass
+            })}
+          />
         </div>
-        {visible && (
+        {isVisible && (
           <WithDialogList
-            options={options}
-            handleOption={this.handleOption}
-            onClose={this.toggleMenu}
+            options={props.options}
+            handleOption={onOptionSelect}
+            onClose={() => {
+              toggleMenu(false);
+            }}
+            listClass={props.listClass}
+            listItemClass={props.listItemClass}
           />
         )}
       </div>
     );
-  }
-}
+  }),
+  compareProps(['options'])
+);
 
 export default VerticalMenu;

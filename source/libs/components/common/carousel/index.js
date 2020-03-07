@@ -1,7 +1,8 @@
 import React from 'react';
 import Slider from 'react-slick';
 import cx from 'classnames';
-import { Icon } from '../icon';
+import Icon from '../icon';
+import styles from './carousel.module.css';
 import './style.css';
 
 const NextArrow = ({ className, style, onClick }) => (
@@ -11,7 +12,7 @@ const NextArrow = ({ className, style, onClick }) => (
     onClick={onClick}
     className={cx({
       [className]: true,
-      'vandal-slide__right-arrow': true
+      [styles.rightArrow]: true
     })}
   />
 );
@@ -23,7 +24,7 @@ const PrevArrow = ({ className, style, onClick }) => (
     onClick={onClick}
     className={cx({
       [className]: true,
-      'vandal-slide__left-arrow': true
+      [styles.leftArrow]: true
     })}
   />
 );
@@ -59,7 +60,7 @@ class Carousel extends React.Component {
         ref={_ref => (this.sliderRef = _ref)}
         initialSlide={selectedIndex}>
         {_.map(images, (src, index) => (
-          <div key={index} className="vandal-slide">
+          <div key={index} className={styles.slide}>
             <img src={src} />
           </div>
         ))}

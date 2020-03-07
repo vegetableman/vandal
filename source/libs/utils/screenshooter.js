@@ -28,13 +28,16 @@ export default class Screenshooter {
     if (latest) {
       urlObj.searchParams.append('latest', true);
     }
-    let [snapshotPath, pathErr] = await api(urlObj.href, {
-      controller: this.fetchController,
-      noCacheReq,
-      noCacheRes
-    });
-    console.log('snapshotPath: ', snapshotPath);
-    return [snapshotPath, pathErr];
+    try {
+      let [snapshotPath, pathErr] = await api(urlObj.href, {
+        controller: this.fetchController,
+        noCacheReq,
+        noCacheRes
+      });
+      return [snapshotPath, pathErr];
+    } catch (ex) {
+      return [null, ex.message];
+    }
   };
 
   fetchPreRender = async (url, noCache = false) => {

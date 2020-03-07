@@ -18,6 +18,8 @@
     "webRequest",
     "webRequestBlocking",
     "webNavigation",
+    "http://*/*",
+    "https://*/*",
     "https://web.archive.org/*",
     "https://archive.org/*",
     "https://zzgi3cdqi7.execute-api.us-east-2.amazonaws.com/*",

@@ -1,0 +1,34 @@
+.calendar {
+  padding: 12px 0 0 0;
+}
+
+.calendarMonth {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.date {
+  color: var(--vandal-text-color);
+  font-size: 11px;
+  font-family: Helvetica;
+  padding: 5px 0;
+  width: 100%;
+  margin-right: 5px;
+}
+
+.day {
+  flex: 0 0 32px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.day___active {
+  cursor: pointer;
+}
+
+.day___active .date {
+  color: var(--vandal-cl-day-active-color);
+}

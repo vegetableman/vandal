@@ -1,0 +1,250 @@
+.modal__container {
+  display: flex;
+  justify-content: center;
+
+  background: rgb(var(--vandal-mode-background-color));
+  height: 100vh;
+  outline: none;
+  position: fixed;
+  top: 60px;
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+
+  height: 100%;
+  outline: none;
+  overflow: scroll;
+}
+
+.year__container {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: baseline;
+
+  height: 100%;
+  overflow: scroll;
+  padding: 10px 10px 100px 10px;
+  width: 1000px;
+}
+
+.year__container__month {
+  height: 75%;
+}
+
+.year {
+  display: flex;
+  flex-direction: column;
+
+  background: var(--vandal-mode-item-background-color);
+  border: 1px solid var(--vandal-mode-item-border-color);
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 800;
+  height: 181px;
+  margin: 10px;
+  width: 200px;
+}
+
+.year:hover,
+.month:hover {
+  background: var(--vandal-mode-item-hover-background-color);
+}
+
+.year:last-child {
+  margin-bottom: 80px;
+}
+
+.body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  color: var(--vandal-mode-item-title-color);
+  font-weight: 300;
+  flex: 0 0 30px;
+  font-size: 14px;
+}
+
+.value {
+  font-size: 13px;
+  margin: 0 0 0 8px;
+}
+
+.menu {
+  padding: 5px 0 4px 0;
+}
+
+.menu__icon {
+  fill: var(--vandal-mode-item-icon-color);
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--vandal-mode-item-info-color);
+  border-radius: 2px;
+  font-size: 11px;
+  font-family: Roboto;
+  font-weight: bold;
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  text-align: center;
+  top: 4px;
+  right: 4px;
+  visibility: hidden;
+}
+
+.year:hover .info,
+.month:hover .info {
+  visibility: visible;
+}
+
+.info__tooltip {
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 6px;
+  opacity: 1 !important;
+  padding: 7px 10px !important;
+  transition: none !important;
+}
+
+.carousel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: var(--vandal-mode-carousel-background-color);
+  position: absolute;
+  top: 0;
+  left: 0;
+  outline: none;
+  width: 100%;
+  height: 100%;
+  z-index: 9999999;
+}
+
+.year__selected .highlight {
+  background: var(--vandal-mode-item-highlight-background-color);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.year__selected .value {
+  color: var(--vandal-history-item-selection-color);
+  font-weight: bold;
+}
+
+.carousel__close {
+  cursor: pointer;
+  fill: var(--vandal-carousel-icon-color);
+  position: fixed;
+  height: 40px;
+  width: 40px;
+  right: 1.2%;
+  top: 64px;
+}
+
+.carousel__close:hover {
+  fill: var(--vandal-carousel-icon-hover-color);
+}
+
+.snapshot {
+  position: absolute;
+  height: 150px;
+  object-fit: cover;
+  top: 0;
+  width: 200px;
+}
+
+.caption {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  position: absolute;
+  top: 65px;
+  left: 100px;
+  font-size: 35px;
+  color: var(--vandal-text-bright-color);
+  font-weight: 100;
+  font-family: Helvetica;
+}
+
+.caption__title {
+  font-size: 12px;
+}
+
+.slider__container {
+  width: calc(100% - 700px);
+  max-height: 800px;
+  height: 100%;
+}
+
+.slider__container .slick-slider .slick-prev {
+  left: -10%;
+  top: 37%;
+}
+
+.slider__container .slick-slider .slick-next {
+  right: -10%;
+  top: 38%;
+}
+
+.err {
+  fill: #e45959;
+  width: 25px;
+}
+
+.misc__container {
+  position: absolute;
+  right: 9px;
+  top: 13px;
+}
+
+.settings {
+  cursor: pointer;
+  fill: var(--vandal-primary-icon-color);
+  height: 30px;
+  margin-right: 10px;
+  stroke-width: 25px;
+  width: 30px;
+}
+
+.settings:hover {
+  fill: var(--vandal-mode-item-icon-color);
+}
+
+.close {
+  cursor: pointer;
+  height: 30px;
+  width: 30px;
+  stroke-width: 25px;
+  stroke: var(--vandal-primary-icon-color);
+  fill: var(--vandal-primary-icon-color);
+}
+
+.close:hover {
+  stroke: var(--vandal-mode-item-icon-color);
+}
+
+.list {
+  width: 125px;
+  z-index: 1;
+}

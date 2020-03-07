@@ -2,3 +2,5 @@ node_modules
 test
 .build/
 distribution
+report*json
+.vscode

@@ -1,0 +1,32 @@
+.rightArrow {
+  display: block;
+  width: 60px !important;
+  height: 60px !important;
+  top: 35% !important;
+  right: -100px !important;
+  fill: var(--vandal-carousel-icon-color);
+}
+
+.leftArrow {
+  display: block;
+  left: -100px !important;
+  top: 35% !important;
+  width: 60px !important;
+  height: 60px !important;
+  fill: var(--vandal-carousel-icon-color);
+}
+
+.rightArrow:hover,
+.leftArrow:hover {
+  fill: var(--vandal-carousel-icon-hover-color);
+}
+
+.slide {
+  height: 100vh;
+  overflow: auto;
+}
+
+.slide img {
+  margin-bottom: 140px;
+  width: 100%;
+}

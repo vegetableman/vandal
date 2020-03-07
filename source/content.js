@@ -7,7 +7,7 @@ import domLoaded from 'dom-loaded';
 // import * as pageDetect from './libs/page-detect';
 import { safeElementReady } from './libs/utils';
 import App from './libs/components/app';
-import Drawer from './libs/components/Drawer';
+import Drawer from './libs/components/drawer';
 
 // Add globals for easier debugging
 // window.select = select;
@@ -37,7 +37,7 @@ async function onDomReady() {
 
   // use iframe.html as it's a web accessible resource
   /// to avoid blocked by client errors
-  const baseUrl = chrome.runtime.getURL('iframe.html');
+  const baseURL = chrome.runtime.getURL('iframe.html');
   const frame = document.createElement('iframe');
 
   let url = new URL(window.location.href);
@@ -62,7 +62,7 @@ async function onDomReady() {
 
   ReactDOM.render(
     <App
-      baseUrl={baseUrl}
+      baseURL={baseURL}
       ref={_ref => (_app = _ref)}
       url={url.href}
       root={container}
@@ -70,10 +70,7 @@ async function onDomReady() {
     />,
     box
   );
-  ReactDOM.render(
-    <Drawer getSelectedTS={() => _app.getSelectedTS()} frame={frame} />,
-    drawer
-  );
+  ReactDOM.render(<Drawer frame={frame} />, drawer);
 
   await Promise.resolve();
 }

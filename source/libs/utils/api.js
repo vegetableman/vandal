@@ -1,50 +1,50 @@
 import _ from 'lodash';
 
+let promiseResolve, promiseReject;
+
+const port = chrome.runtime.connect({ name: 'vandal' });
+port.onMessage.addListener(function(result) {
+  if (result.message === '__VANDAL__CLIENT__FETCH__RESPONSE') {
+    const [res, err] = _.nth(_.get(result, 'payload'), 0);
+    if (err && !disableReject) {
+      return promiseReject(err);
+    }
+    return promiseResolve([res, err]);
+  }
+});
+
 export const api = async (
   endpoint,
-  { controller, noCacheReq, noCacheRes, headers = {}, method = 'GET' } = {}
+  {
+    noCacheReq,
+    noCacheRes,
+    headers = {},
+    method = 'GET',
+    enableThrow = false,
+    xhr = false
+  } = {}
 ) => {
-  let request;
-  if (controller) {
-    const signal = controller.signal;
-    request = new Request(endpoint, { signal, headers });
-  } else {
-    request = new Request(endpoint, { headers });
-  }
-
-  if (!noCacheReq) {
-    const resFromCache = await caches.match(request);
-    if (_.get(resFromCache, 'status') === 200) {
-      return [await getResponse(resFromCache), null];
-    }
-  }
-
-  try {
-    const resFromFetch = await fetch(request.clone(), { method });
-    if (!noCacheRes && _.get(resFromFetch, 'status') === 200) {
-      const cache = await caches.open('__VANDAL__');
-      cache.put(request, resFromFetch.clone());
-    }
-
-    if (_.get(resFromFetch, 'status') === 200) {
-      return [await getResponse(resFromFetch), null];
-    }
-
-    throw new Error('Request failed');
-  } catch (err) {
-    console.log('API Error: ', err);
-    return [null, err.message];
-  }
+  return new Promise(function(resolve, reject) {
+    port.postMessage({
+      message: xhr ? '__VANDAL__CLIENT__XHR' : '__VANDAL__CLIENT__FETCH',
+      data: {
+        endpoint,
+        noCacheReq,
+        noCacheRes,
+        enableThrow,
+        headers,
+        method
+      }
+    });
+    promiseResolve = resolve;
+    promiseReject = reject;
+  });
 };
 
-const getResponse = async res => {
-  const contentType = _.get(res, 'headers').get('content-type');
-  if (_.endsWith(_.get(res, 'url'), '.png') || ~contentType.indexOf('image')) {
-    const responseBlob = await res.blob();
-    return URL.createObjectURL(responseBlob);
-  } else {
-    return await res.json();
-  }
+export const abort = () => {
+  port.postMessage({
+    message: '__VANDAL__CLIENT__FETCH__ABORT'
+  });
 };
 
 const promisifiedXHR = (

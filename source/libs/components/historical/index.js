@@ -1,34 +1,21 @@
-import React from 'react';
-import ReactTooltip from 'react-tooltip';
+import React, { useRef, useEffect } from 'react';
+import { useMachine } from '@xstate/react';
+// import ReactTooltip from 'react-tooltip';
 import _ from 'lodash';
 import cx from 'classnames';
-import pMapSeries from 'p-map-series';
-import MonthView from './monthView';
-import ImageLoader from './imageLoader';
-import CarouselView from './carouselView';
+import MonthView from './month/month.view';
+import ImageLoader from './loader';
+import CarouselView from './carousel.view';
+import Terms from './terms';
 import {
-  api,
   toTwelveHourTime,
-  getDateTsFromUrl,
-  Screenshooter
+  getDateTsFromURL,
+  longMonthNames
 } from '../../utils';
-import { VerticalMenu } from '../common';
-import './style.css';
-
-const monthNames = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
-];
+import { VerticalMenu, Icon } from '../common';
+import historicalMachine, { fetchSnapshot } from './historical.machine';
+import styles from './historical.module.css';
+import { useTheme } from '../../hooks';
 
 const options = [
   {
@@ -49,351 +36,234 @@ const options = [
   }
 ];
 
-export default class Historical extends React.Component {
-  state = {
-    archiveUrls: [],
-    isViewResized: false,
-    selectedYear: null,
-    showCarousel: null,
-    showMonthPanel: false,
-    selectedIndex: 0,
-    snapshots: [],
-    years: _.keys(this.props.sparkline)
-  };
+const Historical = props => {
+  const containerRef = useRef(null);
+  const { theme } = useTheme();
 
-  screeshooter = new Screenshooter();
-  archiveController = new AbortController();
-  containerRef = React.createRef();
-
-  handleOptions = (index, year, url) => async option => {
-    if (option === 'retry') {
-      const { snapshots, archiveUrls } = this.state;
-      snapshots[index] = null;
-
-      //reset
-      this.setState({
-        snapshots: [...snapshots]
-      });
-
-      this.retryController = new AbortController();
-
-      let archiveUrl = archiveUrls[index];
-      let [result, archiveErr] = await api(
-        `https://archive.org/wayback/available?url=${
-          this.props.url
-        }&timestamp=${year}12`,
-        {
-          controller: this.retryController,
-          noCacheReq: true
+  const [state, send] = useMachine(
+    historicalMachine.withConfig(
+      {
+        actions: {
+          notifyCarouselClose() {
+            if (containerRef) {
+              containerRef.current.focus();
+            }
+          }
         }
-      );
-
-      //return if failure
-      if (archiveErr) {
-        snapshots[index] = { data: null, err: archiveErr };
-        this.setSafeState({
-          snapshots: [...snapshots],
-          archiveUrls: [...archiveUrls]
-        });
-        return;
+      },
+      {
+        url: props.url,
+        years: props.years,
+        snapshots: [],
+        archiveURLs: []
       }
+    )
+  );
 
-      const closestURL = _.get(result, 'archived_snapshots.closest.url');
-      if (closestURL) {
-        archiveUrl = _.replace(
-          _.replace(closestURL, /\d+/, '$&im_'),
-          /https?/,
-          'https'
-        );
-      }
+  const { context: ctx } = state;
 
-      const [data, err] = await this.screeshooter.fetchScreenshot(archiveUrl, {
-        noCacheReq: true,
-        latest: true
+  const onOptionSelect = (index, year, archiveURL) => async option => {
+    if (option === 'retry') {
+      send('SET_SNAPSHOT', { payload: { index, value: null } });
+      const [snapshot, newArchiveURL] = await fetchSnapshot({
+        url: props.url,
+        year,
+        archiveURL
       });
 
-      snapshots[index] = { data, err };
-      archiveUrls[index] = archiveUrl;
-      this.setSafeState({
-        snapshots: [...snapshots],
-        archiveUrls: [...archiveUrls]
-      });
+      if (newArchiveURL) {
+        send('SET_ARCHIVE_URL', { payload: { index, value: newArchiveURL } });
+      }
+      const [data, err] = snapshot;
+      send('SET_SNAPSHOT', { payload: { index, value: { data, err } } });
     } else if (option === 'showMonths') {
-      this.setState({
-        selectedYear: this.state.years[index],
-        showMonthPanel: true
+      send('TOGGLE_MONTH_VIEW_OPEN', {
+        payload: { show: true, year }
       });
     } else if (option === 'openInNewTab') {
-      window.open(url, '_blank');
+      window.open(archiveURL, '_blank');
     } else if (option === 'openInVandal') {
-      this.props.openURL(url);
+      props.openURL(archiveURL);
     }
   };
 
-  handleEntered = () => {
+  const onEntered = () => {
     // delay the resize
     setTimeout(() => {
-      this.setState({ isViewResized: true });
+      send('TOGGLE_RESIZE_VIEW', { payload: { resize: true } });
     }, 10);
   };
-
-  handleExited = () => {
-    this.setState({ isViewResized: false });
+  const onExited = () => {
+    send('TOGGLE_RESIZE_VIEW', { payload: { resize: false } });
   };
 
-  handleClose = () => {
-    this.setState({ showMonthPanel: false, selectedYear: null });
-  };
-
-  getSnapshot = index => {
-    return this.state.snapshots[index];
-  };
-
-  handleYearCarousel = selectedIndex => () => {
-    this.setState({
-      images: _.map(this.state.years, (__, index) => {
-        return _.get(this.state.snapshots[index], 'data');
-      }),
-      selectedIndex,
-      showCarousel: 'year'
-    });
-  };
-
-  handleMonthCarousel = (selectedIndex, snapshots) => () => {
-    this.setState({
-      images: _.map(snapshots, 'data'),
-      selectedIndex,
-      showCarousel: 'month'
-    });
-  };
-
-  handleCarouselClose = () => {
-    this.setState({
-      showCarousel: null
-    });
-    if (this.containerRef) {
-      this.containerRef.current.focus();
+  const getCaption = index => {
+    if (ctx.carouselMode === 'month') {
+      return { title: ctx.selectedYear, date: longMonthNames[index] };
     }
+    return { title: 'YEAR', date: ctx.years[index] };
   };
 
-  getCaption = index => {
-    if (this.state.showCarousel === 'month') {
-      return { title: this.state.selectedYear, date: monthNames[index] };
-    }
-    return { title: 'YEAR', date: this.state.years[index] };
-  };
-
-  abort = () => {
-    this.screeshooter.abort();
-    this.archiveController.abort();
-    this.retryController && this.retryController.abort();
-  };
-
-  handleKeydown = e => {
+  const onKeyDown = e => {
     if (e.keyCode === 27) {
-      this.props.onClose();
+      props.onClose();
     }
   };
 
-  render() {
-    const {
-      images,
-      isViewResized,
-      selectedYear,
-      showMonthPanel,
-      showCarousel,
-      selectedIndex,
-      archiveUrls,
-      snapshots,
-      years
-    } = this.state;
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    if (containerRef) {
+      containerRef.current.focus();
+    }
+    send('LOAD_HISTORICAL');
+    return () => {
+      send('CLEANUP');
+    };
+  }, []);
 
-    const { theme } = this.props;
-
-    return (
-      <div
-        className="vandal-historical-view"
-        onKeyDown={this.handleKeydown}
-        ref={this.containerRef}
-        tabIndex="0">
+  return (
+    <div
+      className={styles.modal__container}
+      onKeyDown={onKeyDown}
+      ref={containerRef}
+      tabIndex="0">
+      {ctx.showTermModal && (
+        <Terms
+          onClose={() => {
+            send('CLOSE_TERM_MODAL');
+          }}
+        />
+      )}
+      <div className={styles.container} onKeyDown={onKeyDown} tabIndex="0">
         <div
           className={cx({
-            'vandal-historical-year-container': true,
-            'vandal-historical-year-container--month-view': isViewResized
+            [styles.year__container]: true,
+            [styles.year__container__month]: ctx.isViewResized
           })}>
-          {_.map(years, (year, index) => {
-            const url = archiveUrls[index];
-            const dateObj = getDateTsFromUrl(archiveUrls[index]);
-            const snapshot = snapshots[index];
+          {_.map(ctx.years, (year, index) => {
+            const archiveURL = ctx.archiveURLs[index];
+            const dateObj = getDateTsFromURL(archiveURL);
+            const snapshot = ctx.snapshots[index];
             return (
               <div
                 className={cx({
-                  'vandal-historical-year': true,
-                  'vandal-historical-year--selected': selectedYear === year
+                  [styles.year]: true,
+                  [styles.year__selected]: ctx.selectedYear === year
                 })}
                 key={year}>
                 <div
-                  className="vandal-historical-year__body"
-                  onClick={this.handleYearCarousel(index)}>
+                  className={styles.body}
+                  onClick={() => {
+                    send('TOGGLE_CAROUSEL_OPEN', {
+                      payload: {
+                        index,
+                        mode: 'year',
+                        show: true,
+                        images: _.map(ctx.snapshots, 'data')
+                      }
+                    });
+                  }}>
                   {snapshot ? (
                     <React.Fragment>
                       {(_.get(snapshot, 'err') && (
                         <Icon
                           name="error"
-                          className="vandal-historical-year__err"
+                          className={styles.err}
                           title={_.get(snapshot, 'err')}
                         />
                       )) || (
                         <img
-                          className="vandal-historical-year__snapshot"
+                          className={styles.snapshot}
                           src={_.get(snapshot, 'data')}
                         />
                       )}
-                      <div className="vandal-historical-year__body__highlight" />
+                      <div className={styles.highlight} />
                       {dateObj && (
                         <div
-                          className="vandal-historical-year__info"
+                          className={styles.info}
                           data-for={`vandal-historical-year--info-${year}`}
-                          data-tip={`Captured on ${
-                            dateObj.date
-                          }, ${toTwelveHourTime(dateObj.time)}`}>
+                          data-tip={`${dateObj.date}, ${toTwelveHourTime(
+                            dateObj.time
+                          )}`}>
                           i
                         </div>
                       )}
-                      <ReactTooltip
-                        className="vandal-historical-year--info-tooltip"
+                      {/* <ReactTooltip
+                        className={styles.info__tooltip}
                         id={`vandal-historical-year--info-${year}`}
                         effect="solid"
                         place="right"
                         insecure={false}
                         type={theme}
-                      />
+                      /> */}
                     </React.Fragment>
                   ) : (
                     <ImageLoader theme={theme} />
                   )}
                 </div>
-                <div className="vandal-historical-year__footer">
-                  <div className="vandal-historical-year__value">{year}</div>
+                <div className={styles.footer}>
+                  <div className={styles.value}>{year}</div>
                   <VerticalMenu
+                    iconClass={styles.menu__icon}
+                    className={styles.menu}
+                    listClass={styles.list}
                     options={options}
-                    onSelect={this.handleOptions(index, year, url)}
+                    onSelect={onOptionSelect(index, year, archiveURL)}
                   />
                 </div>
               </div>
             );
           })}
         </div>
-        {showMonthPanel && (
+        {ctx.showMonthPanel && (
           <MonthView
-            url={this.props.url}
-            year={selectedYear}
-            show={showMonthPanel}
-            onEntered={this.handleEntered}
-            onExited={this.handleExited}
-            onClose={this.handleClose}
-            openMonth={this.handleMonthCarousel}
+            url={ctx.url}
+            year={ctx.selectedYear}
+            show={ctx.showMonthPanel}
+            onEntered={onEntered}
+            onExited={onExited}
+            onClose={() => {
+              send('TOGGLE_MONTH_VIEW_CLOSE');
+            }}
+            openMonth={(index, snapshots) => () => {
+              send('TOGGLE_CAROUSEL_OPEN', {
+                payload: {
+                  show: true,
+                  mode: 'month',
+                  index,
+                  images: _.map(snapshots, 'data')
+                }
+              });
+            }}
             theme={theme}
-            openURL={this.props.openURL}
+            openURL={props.openURL}
           />
         )}
-        {showCarousel && (
+        {ctx.showCarousel && (
           <CarouselView
-            images={images}
-            selectedIndex={selectedIndex}
-            getCaption={this.getCaption}
-            onClose={this.handleCarouselClose}
+            images={ctx.images}
+            selectedIndex={ctx.selectedIndex}
+            getCaption={getCaption}
+            onClose={() => {
+              send('TOGGLE_CAROUSEL_CLOSE');
+            }}
           />
         )}
       </div>
-    );
-  }
+      <div className={styles.misc__container}>
+        <Icon
+          name="settings"
+          className={styles.settings}
+          onClick={() => {
+            chrome.runtime.sendMessage({
+              message: '__VANDAL__CLIENT__OPTTONS'
+            });
+          }}
+        />
+        <Icon name="close" className={styles.close} onClick={props.onClose} />
+      </div>
+    </div>
+  );
+};
 
-  async componentDidMount() {
-    this._isMounted = true;
-    document.body.style.overflow = 'hidden';
-    if (this.containerRef) {
-      this.containerRef.current.focus();
-    }
-    await this.loadSnapshots(this.props);
-  }
-
-  setSafeState = args => {
-    if (!this._isMounted) return;
-    this.setState(args);
-  };
-
-  componentWillUnmount() {
-    this._isMounted = false;
-    this.abort();
-    document.body.style.overflow = '';
-  }
-
-  async loadSnapshots(props) {
-    const years = _.keys(props.sparkline);
-    if (_.isEmpty(years)) return;
-
-    const { url } = this.props;
-
-    // Map serially, as archive times out if done concurrently
-    const timestampUrls = _.map(
-      years,
-      y => `https://archive.org/wayback/available?url=${url}&timestamp=${y}12`
-    );
-
-    const timestampUrlCount = _.size(timestampUrls);
-    const yearMapper = async (item, index) => {
-      let [result] = await api(item, {
-        controller: this.archiveController,
-        noCacheReq: false, //timestampUrlCount - 1 === index,
-        noCacheRes: false //timestampUrlCount - 1 === index
-      });
-      return result;
-    };
-    const timestampResult = await pMapSeries(timestampUrls, yearMapper);
-
-    const archiveUrls = _.map(timestampResult, result =>
-      _.replace(
-        _.replace(
-          _.get(result, 'archived_snapshots.closest.url'),
-          /\d+/,
-          '$&im_'
-        ),
-        /https?/,
-        'https'
-      )
-    );
-
-    this.setSafeState({ archiveUrls });
-
-    const urlCount = _.size(archiveUrls);
-    const snapshotMapper = async (url, index) => {
-      if (!this._isMounted) return;
-
-      if (!url) {
-        this.setSafeState({
-          snapshots: [
-            ...this.state.snapshots,
-            { data: null, err: 'Error fetching Archive URL' }
-          ]
-        });
-        return;
-      }
-
-      const isLast = false; // urlCount - 1 === index;
-      const [data, err] = await this.screeshooter.fetchScreenshot(url, {
-        noCacheReq: isLast,
-        noCacheRes: isLast,
-        latest: isLast
-      });
-
-      this.setSafeState({
-        snapshots: [...this.state.snapshots, { data, err }]
-      });
-
-      return;
-    };
-
-    await pMapSeries(archiveUrls, snapshotMapper);
-  }
-}
+export default Historical;

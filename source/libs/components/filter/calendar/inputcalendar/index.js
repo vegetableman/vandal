@@ -1,45 +1,49 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import _ from 'lodash';
 import cx from 'classnames';
+import { Sparklines, SparklinesCurve } from 'react-sparklines';
 import VirtualList from 'react-tiny-virtual-list';
 import tinycolor from 'tinycolor2';
-import { Icon } from '../../../common';
-import { Sparklines, SparklinesCurve } from 'react-sparklines';
-import './style.css';
+import { Icon, withDialog } from '../../../common';
+import { monthNames, compareProps } from '../../../../utils';
+import { colors } from '../../../../constants';
+import styles from './inputcalendar.module.css';
+import { useTheme } from '../../../../hooks';
 
-const monthNames = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec'
-];
-
-const getStyle = (count, isSelected) => {
+const getStyle = (count, isSelected, isCurrent, theme) => {
+  const isHighlighted = isSelected || isCurrent || count;
   return {
     backgroundColor: isSelected
-      ? '#ff8383'
+      ? colors[_.toUpper(theme)]['MATCH']
+      : isCurrent
+      ? colors.CURRENT
       : count
-      ? tinycolor('#d8f9d4')
+      ? tinycolor(colors.TS)
           .darken(Math.min(count, 30))
           .toString()
+      : 'inherit',
+    textDecoration: isCurrent ? 'underline' : 'none',
+    color: isHighlighted
+      ? colors.BL_33
+      : theme === 'dark'
+      ? colors.GY_DD
       : 'inherit'
   };
 };
+
+const ROW_HEIGHT = 55;
 
 const Calendar = ({
   years,
   selectedMonth,
   selectedYear,
+  currentMonth,
+  currentYear,
   sparkline,
-  onSelect
+  onSelect,
+  dialogRef,
+  onClose,
+  isDialogClosed
 }) => {
   let maxcount = 0;
   for (let year in sparkline) {
@@ -48,151 +52,171 @@ const Calendar = ({
     }
     maxcount = Math.max(maxcount, Math.max.apply(null, sparkline[year]));
   }
+
+  const { theme } = useTheme();
+
+  useEffect(() => {
+    if (isDialogClosed) {
+      onClose();
+    }
+  }, [isDialogClosed]);
+
+  const yearCount = _.size(years);
+
   return (
-    <VirtualList
-      width="100%"
-      height={190}
-      itemCount={_.size(years)}
-      itemSize={60}
-      renderItem={({ index, style }) => (
-        <div
-          className={cx({
-            'vandal-cl__calendar-year': true,
-            'vandal-cl__calendar-year--last': index === _.size(years) - 1
-          })}
-          key={index}
-          style={style}>
+    <div ref={dialogRef}>
+      <VirtualList
+        width="100%"
+        height={yearCount < 4 ? yearCount * ROW_HEIGHT + 10 : 190}
+        itemCount={yearCount}
+        itemSize={ROW_HEIGHT}
+        style={{ overflowX: 'hidden' }}
+        scrollToIndex={_.indexOf(years, currentYear)}
+        renderItem={({ index, style }) => (
           <div
-            className="vandal-cl__calendar-year__left"
-            onClick={onSelect(selectedMonth, years[index])}>
-            <div className="vandal-cl__calendar-year__label">
-              {years[index]}
-            </div>
-            <div>
-              <Sparklines
-                className="vandal-cl__calendar__sparkline"
-                data={sparkline[years[index]]}
-                margin={0}
-                min={0}
-                width={30}
-                height={10}>
-                <SparklinesCurve
-                  style={{
-                    stroke: '#708090',
-                    fill: '#708090'
-                  }}
-                />
-              </Sparklines>
-            </div>
-          </div>
-          <div className="vandal-cl__calendar-year__months">
-            {_.map(monthNames, (m, mindex) => {
-              return (
-                <div
-                  className="vandal-cl__calendar-year__month"
-                  key={mindex}
-                  onClick={onSelect(mindex + 1, years[index])}
-                  style={getStyle(
-                    _.nth(sparkline[years[index]], mindex),
-                    mindex + 1 === selectedMonth &&
-                      years[index] === selectedYear
-                  )}>
-                  <span className="vandal-cl__calendar-year__month__label">
-                    {m}
-                  </span>
-                </div>
-              );
+            className={cx({
+              [styles.calendarYear]: true
             })}
+            key={index}
+            style={style}>
+            <div
+              className={styles.calendarYear___left}
+              onClick={onSelect(selectedMonth, years[index])}>
+              <div className={styles.label}>{years[index]}</div>
+              <div>
+                <Sparklines
+                  data={sparkline[years[index]]}
+                  margin={0}
+                  min={0}
+                  width={30}
+                  height={10}>
+                  <SparklinesCurve
+                    style={{
+                      stroke: colors[_.toUpper(theme)]['CURVE'],
+                      fill: colors[_.toUpper(theme)]['CURVE']
+                    }}
+                  />
+                </Sparklines>
+              </div>
+            </div>
+            <div className={styles.months}>
+              {_.map(monthNames, (m, mindex) => {
+                return (
+                  <div
+                    className={styles.month}
+                    key={mindex}
+                    onClick={onSelect(mindex + 1, years[index])}
+                    style={getStyle(
+                      _.nth(sparkline[years[index]], mindex),
+                      mindex + 1 === selectedMonth &&
+                        years[index] === selectedYear,
+                      mindex + 1 === currentMonth &&
+                        years[index] === currentYear,
+                      theme
+                    )}>
+                    <span className={styles.monthLabel}>{m}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
-    />
+        )}
+      />
+    </div>
   );
 };
 
-let calendarEl;
-const onCalendarVisible = el => {
-  calendarEl = el;
-};
+const WithDialogCalendar = withDialog(Calendar, {
+  ignoreClickOnClass: `.${styles.filterIcon}`
+});
 
-const InputCalendar = props => {
-  const [isVisible, showCalendar] = useState(false);
-  const toggleCalendar = () => {
-    showCalendar(!isVisible);
-  };
-  const outsideClick = e => {
-    const path = _.toArray(e.composedPath());
-    if (
-      calendarEl &&
-      !_.some(
-        path,
-        node =>
-          node === calendarEl ||
-          (_.isElement(node) &&
-            node.matches('.vandal-cl__input-calendar-filter-icon'))
-      )
-    ) {
-      showCalendar(false);
-    }
-  };
-  useEffect(() => {
-    document.addEventListener('mousedown', outsideClick, false);
-    return () => {
-      calendarEl = null;
-      document.removeEventListener('mousedown', outsideClick, false);
-    };
-  }, []);
+const currentDateInstance = new Date();
+
+const InputCalendar = memo(props => {
+  const [isVisible, toggleCalendar] = useState(false);
 
   const {
     sparkline,
     goToPrevious,
     goToNext,
+    disableNext,
+    currentMonth,
     selectedMonth,
     selectedYear,
-    onSelect
+    currentYear,
+    onSelect,
+    onChange,
+    disabled,
+    date
   } = props;
 
   if (_.isEmpty(_.keys(sparkline))) return null;
+
   let sparklineYears = _.keys(sparkline);
   const years = _.map(sparklineYears, y => {
     return _.parseInt(y);
   });
+
   return (
-    <div className="vandal-cl__input-calendar">
-      <Icon
-        name="dropdown"
-        className="vandal-cl__input-calendar-filter-icon"
-        onClick={toggleCalendar}
-      />
-      <div className="vandal-cl__input-calendar__nav">
+    <div className={styles.inputCalendar}>
+      {!disabled && (
+        <Icon
+          name="dropdown"
+          className={styles.filterIcon}
+          onClick={() =>
+            toggleCalendar(isVisible => {
+              return !isVisible;
+            })
+          }
+        />
+      )}
+      <div className={styles.nav}>
         <Icon
           name="prevMonth"
-          className="vandal-cl__input-calendar__nav__prev-icon"
+          className={styles.prevIcon}
           onClick={goToPrevious}
         />
         <Icon
           name="nextMonth"
-          className="vandal-cl__input-calendar__nav__next-icon"
-          onClick={goToNext}
+          className={cx({
+            [styles.nextIcon]: true,
+            [styles.nextIcon__disabled]: disableNext
+          })}
+          onClick={disableNext ? () => {} : goToNext}
         />
       </div>
-      {props.children}
+      <input
+        autoFocus
+        className={styles.input}
+        defaultValue={date}
+        key={date}
+        disabled={disabled}
+        min="1996-01"
+        max={`${currentDateInstance.getFullYear()}-12`}
+        type="month"
+        onChange={onChange}
+      />
       {isVisible && (
-        <div className="vandal-cl__calendar" ref={onCalendarVisible}>
-          <Calendar
+        <div className={styles.calendar}>
+          <WithDialogCalendar
             years={years}
             sparkline={sparkline}
             selectedMonth={selectedMonth}
             selectedYear={selectedYear}
+            currentYear={currentYear}
+            currentMonth={currentMonth}
             onSelect={(...args) => () => {
               onSelect(...args);
-              toggleCalendar();
+              toggleCalendar(false);
+            }}
+            onClose={() => {
+              toggleCalendar(false);
             }}
           />
         </div>
       )}
     </div>
   );
-};
+}, compareProps(['sparkline', 'currentMonth', 'selectedMonth', 'selectedYear', 'currentYear', 'disabled', 'date']));
 
 export default InputCalendar;
