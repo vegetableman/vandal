@@ -36,8 +36,8 @@ const icons = {
       <path d="M86.13 59.37a3 3 0 0 0-3.73 2c-3.61 12.09-14.8 24.28-31.67 24.28-15.93 0-33-13.26-33-33 0-15.93 13.26-33 33-33 10.6 0 19.26 5.37 24.67 11.15l-16.13-.25a3 3 0 0 0 0 6l22.6.35a3 3 0 0 0 2.17-.88 3 3 0 0 0 .88-2.17l-.35-22.6a3 3 0 0 0-3-3 3 3 0 0 0-3 3l.22 14.21a39.61 39.61 0 0 0-28-11.9c-23.32 0-39 20.16-39 39s15.67 39 39 39c20 0 33.17-14.35 37.42-28.56a3 3 0 0 0-2.08-3.63z" />
     </svg>
   ),
-  timestamp: ({ ...props }) => (
-    <svg viewBox="0 10 100 125" {...props}>
+  resource: ({ ...props }) => (
+    <svg viewBox="0 -5 100 125" {...props}>
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -383,6 +383,16 @@ const icons = {
       </g>
     </svg>
   ),
+  infoWarn: ({ ...props }, ref) => (
+    <svg viewBox="0 0 24 24" {...props} ref={ref}>
+      <title>{props.title}</title>
+      <g>
+        <path d="M12 5.511c0.561 0 1.119 0.354 1.544 1.062l5.912 9.854c0.851 1.415 0.194 2.573-1.456 2.573h-12c-1.65 0-2.307-1.159-1.456-2.573l5.912-9.854c0.425-0.708 0.983-1.062 1.544-1.062zM12 3.511c-1.296 0-2.482 0.74-3.259 2.031l-5.912 9.856c-0.786 1.309-0.872 2.705-0.235 3.83s1.879 1.772 3.406 1.772h12c1.527 0 2.77-0.646 3.406-1.771s0.551-2.521-0.235-3.83l-5.912-9.854c-0.777-1.294-1.963-2.034-3.259-2.034z" />
+        <path d="M13.5 16.748c0 0-0.711 0.361-1.075 0.182-0.362-0.184-0.434-0.541-0.229-1.152l0.406-1.221c0.403-1.221-0.121-2.076-1.082-2.131-1.258-0.070-2.020 0.826-2.020 0.826s0.71-0.365 1.075-0.182c0.362 0.184 0.432 0.541 0.229 1.152l-0.406 1.221c-0.405 1.221 0.119 2.074 1.082 2.131 1.258 0.071 2.020-0.826 2.020-0.826z" />
+        <path d="M13.301 10c0 0.719-0.582 1.301-1.301 1.301s-1.301-0.582-1.301-1.301c0-0.719 0.582-1.301 1.301-1.301s1.301 0.582 1.301 1.301z" />
+      </g>
+    </svg>
+  ),
   networkErr: ({ ...props }) => (
     <svg viewBox="0 0 24 30" {...props}>
       <g>
@@ -431,11 +441,10 @@ const icons = {
 };
 
 const Icon = memo(
-  ({ name, ...others }) => icons[name](others),
-  (prevProps, newProps) =>
-    prevProps.name === newProps.name &&
-    prevProps.width === newProps.width &&
-    prevProps.className === newProps.className
+  React.forwardRef((props, ref) => {
+    const { name, ...others } = props;
+    return icons[name](others, ref);
+  }, (prevProps, newProps) => prevProps.name === newProps.name && prevProps.width === newProps.width && prevProps.className === newProps.className)
 );
 
 Icon.propTypes = {

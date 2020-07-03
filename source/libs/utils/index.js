@@ -6,10 +6,14 @@ import OptionsSync from 'webext-options-sync';
 import ghInjection from 'github-injection';
 import _ from 'lodash';
 
+import manhattanDistanceOfHash from './manhattan-distance';
 export { api, controller, xhr, abort } from './api';
 export { default as Screenshooter } from './screenshooter';
 export { default as useRefCallback } from './use-ref-callback';
 export { default as compareProps } from './compare-props';
+export { default as hamming } from './hamming';
+import scaleLog from './scalelog';
+export { processHistogram } from './histogram';
 
 const options = new OptionsSync().getAll();
 
@@ -90,7 +94,7 @@ export function safeOnAjaxedPages(callback) {
  * Prevent fn's errors from blocking the remaining tasks.
  * https://github.com/sindresorhus/refined-github/issues/678
  */
-export const enableFeature = async fn => {
+export const enableFeature = async (fn) => {
   const { disabledFeatures = '', logging = false } = await options;
   const log = logging ? console.log : () => {};
 
@@ -110,7 +114,7 @@ export const enableFeature = async fn => {
   }
 };
 
-export const isFeatureEnabled = async featureName => {
+export const isFeatureEnabled = async (featureName) => {
   const { disabledFeatures = '' } = await options;
   return disabledFeatures.includes(featureName);
 };
@@ -130,7 +134,7 @@ export const groupBy = (iterable, grouper) => {
 /**
  * Automatically stops checking for an element to appear once the DOM is ready.
  */
-export const safeElementReady = selector => {
+export const safeElementReady = (selector) => {
   const waiting = elementReady(selector);
 
   // Don't check ad-infinitum
@@ -190,7 +194,7 @@ export const wrapAll = (targets, wrapper) => {
 // [[0, 1, 2], [0, 1]] => [0, 0, 1, 1, 2]
 // Like lodash.zip
 export const flatZip = (table, limit = Infinity) => {
-  const maxColumns = Math.max(...table.map(row => row.length));
+  const maxColumns = Math.max(...table.map((row) => row.length));
   const zipped = [];
   for (let col = 0; col < maxColumns; col++) {
     for (const row of table) {
@@ -209,7 +213,7 @@ export const isMac = /Mac/.test(window.navigator.platform);
 
 export const metaKey = isMac ? 'metaKey' : 'ctrlKey';
 
-export const anySelector = selector => {
+export const anySelector = (selector) => {
   const prefix = document.head.style.MozOrient === '' ? 'moz' : 'webkit';
   return selector.replace(/:any\(/g, `:-${prefix}-any(`);
 };
@@ -281,7 +285,7 @@ const tsRegexp = new RegExp(/(\d+)i?m?\_?/);
 const tsDRegexp = new RegExp(/(\d+)/);
 const dateRegexp = new RegExp(/(\d{0,4})(\d{0,2})(\d{0,2})/);
 
-const getDate = d => {
+const getDate = (d) => {
   const dateArr = dateRegexp.exec(d);
   if (!dateArr) return d;
   return {
@@ -293,7 +297,7 @@ const getDate = d => {
   };
 };
 
-export const getDateTsFromURL = url => {
+export const getDateTsFromURL = (url) => {
   let match = tsRegexp.exec(url);
   if (!match) return;
   return {
@@ -303,7 +307,7 @@ export const getDateTsFromURL = url => {
   };
 };
 
-export const getDateTimeFromTS = ts => {
+export const getDateTimeFromTS = (ts) => {
   if (!ts) return;
   let match = tsDRegexp.exec(ts);
   if (!match) return ts;
@@ -320,7 +324,7 @@ export const getDateTimeFromTS = ts => {
   };
 };
 
-export const countVersions = sparkline => {
+export const countVersions = (sparkline) => {
   if (_.isEmpty(sparkline)) return 0;
   let count = 0;
   for (let n in sparkline)
@@ -347,18 +351,18 @@ export const clearRequestInterval = function(handle) {
   window.cancelAnimationFrame
     ? window.cancelAnimationFrame(handle.value)
     : window.webkitCancelAnimationFrame
-    ? window.webkitCancelAnimationFrame(handle.value)
-    : window.webkitCancelRequestAnimationFrame
-    ? window.webkitCancelRequestAnimationFrame(
-        handle.value
-      ) /* Support for legacy API */
-    : window.mozCancelRequestAnimationFrame
-    ? window.mozCancelRequestAnimationFrame(handle.value)
-    : window.oCancelRequestAnimationFrame
-    ? window.oCancelRequestAnimationFrame(handle.value)
-    : window.msCancelRequestAnimationFrame
-    ? window.msCancelRequestAnimationFrame(handle.value)
-    : clearInterval(handle);
+      ? window.webkitCancelAnimationFrame(handle.value)
+      : window.webkitCancelRequestAnimationFrame
+        ? window.webkitCancelRequestAnimationFrame(
+            handle.value
+          ) /* Support for legacy API */
+        : window.mozCancelRequestAnimationFrame
+          ? window.mozCancelRequestAnimationFrame(handle.value)
+          : window.oCancelRequestAnimationFrame
+            ? window.oCancelRequestAnimationFrame(handle.value)
+            : window.msCancelRequestAnimationFrame
+              ? window.msCancelRequestAnimationFrame(handle.value)
+              : clearInterval(handle);
 };
 
 export const requestInterval = function(fn, delay) {
@@ -392,7 +396,7 @@ export const requestInterval = function(fn, delay) {
   return handle;
 };
 
-const splitTimestamp = timestamp => {
+const splitTimestamp = (timestamp) => {
   if (typeof timestamp == 'number') {
     timestamp = timestamp.toString();
   }
@@ -406,7 +410,7 @@ const splitTimestamp = timestamp => {
   ];
 };
 
-const timestamp2datetime = timestamp => {
+export const timestamp2datetime = (timestamp) => {
   var tsArray = splitTimestamp(timestamp);
   return new Date(
     Date.UTC(
@@ -498,18 +502,18 @@ export const dateTimeDiff = function(dtmsec, captureTS) {
   };
 };
 
-export const isArchiveURL = url => {
+export const isArchiveURL = (url) => {
   if (!url) return false;
   const ua = new URL(url);
   return url && ua.host === 'web.archive.org' && ua.pathname !== '/';
 };
 
-export const getUrlHost = url => {
+export const getUrlHost = (url) => {
   return url && _.replace(new URL(url).host, 'www.', '');
 };
 
 const stripRegExp = new RegExp(/https\:\/\/web\.archive\.org\/web\/\d+.*_?\/*/);
-export const stripArchiveURL = url => {
+export const stripArchiveURL = (url) => {
   return url && isArchiveURL(url) && stripRegExp.test(url)
     ? _.nth(_.split(url, /web\/\d+(?:.*?)_?\//), 1)
     : url;
@@ -522,15 +526,15 @@ export const isURLEqual = (a, b) => {
   return urlA.host === urlB.host && urlA.pathname === urlB.pathname;
 };
 
-export const stripIm = url => {
+export const stripIm = (url) => {
   return _.replace(url, 'im_', '');
 };
 
-export const archiveAllLink = url => {
+export const archiveAllLink = (url) => {
   return `https://web.archive.org/web/*/${url}`;
 };
 
-export const formatDateTimeTS = dt => {
+export const formatDateTimeTS = (dt) => {
   return _.isString(dt)
     ? _.replace(
         _.replace(dt, dt.slice(-12, -4), toTwelveHourTime(dt.slice(-12, -4))),
@@ -594,9 +598,12 @@ export const useEventCallback = (fn, dependencies) => {
     throw new Error('Cannot call an event handler while rendering.');
   });
 
-  useEffect(() => {
-    ref.current = fn;
-  }, [fn, ...dependencies]);
+  useEffect(
+    () => {
+      ref.current = fn;
+    },
+    [fn, ...dependencies]
+  );
 
   return useCallback(
     (...args) => {
@@ -605,4 +612,123 @@ export const useEventCallback = (fn, dependencies) => {
     },
     [ref]
   );
+};
+
+export const b64ToArray = (b64Data) => {
+  const byteCharacters = atob(b64Data);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  return new Uint8Array(byteNumbers);
+};
+
+function meanOfHashes(captures = []) {
+  if (captures.length === 0) {
+    return null;
+  }
+
+  const sizeOfChunk = 8;
+
+  const lengthOfHash = captures[0].hash.length * sizeOfChunk;
+
+  const mean = new Array(lengthOfHash).fill(0);
+
+  for (let i = 0; i < captures.length; i++) {
+    let hash = captures[i].hash;
+    for (let j = 0; j < hash.length; j++) {
+      let hashChunkIndex = sizeOfChunk - 1;
+      let hashChunk = hash[j];
+      while (hashChunk !== 0) {
+        const meanIndex = j * sizeOfChunk + hashChunkIndex;
+        mean[meanIndex] += hashChunk & 1;
+        hashChunk >>= 1;
+        hashChunkIndex--;
+      }
+    }
+  }
+
+  const numOfCaptures = captures.length;
+  for (let i = 0; i < mean.length; i++) {
+    mean[i] /= numOfCaptures;
+  }
+
+  return mean;
+}
+
+function maxHashVariation(captures = []) {
+  // const l = captures.length;
+  // const startTime = Date.now();
+
+  const mean = meanOfHashes(captures);
+  // const variation = new Array(lengthOfHash);
+  let maxVariation = 0;
+
+  for (let i = 0; i < captures.length; i++) {
+    let hashVariation = manhattanDistanceOfHash(captures[i].hash, mean);
+    if (maxVariation < hashVariation) {
+      maxVariation = hashVariation;
+    }
+  }
+
+  // const delta = Date.now() - startTime;
+  // console.log(`diff:variation:maxHashVariation [${l}, ${delta}]`); // eslint-disable-line no-console
+
+  return maxVariation;
+}
+
+export const maxDistanceOfDay = (day, previousDay) => {
+  let items = day.items;
+  if (previousDay && previousDay.items.length > 0) {
+    items = items.concat(previousDay.items[previousDay.items.length - 1]);
+  }
+
+  // more accurate way to calculate max day distance: time complexity O(N^2)
+  // return maxPairwiseDistanceBetweenHashes(items);
+
+  // more efficient way to estimate day distance: time complexity O(N)
+  return maxHashVariation(items);
+};
+
+export const heatmapPalette = ['#ffed7a', '#96C161', '#428bca'];
+// export const heatmapPalette = ['#84a9ac', '#3b6978', '#204051'];
+
+const palette = {
+  nothingWasChangedColor: '#ddd',
+  // nothingWasChangedColor: '#cae8d5',
+  heatmapPaletteD3Color: scaleLog()
+    .domain([1.0, 1.5, 2.0])
+    .range(heatmapPalette)
+};
+
+export const colorHistogram = ({ histogram, maxValue }) => {
+  return histogram.map((b) => ({
+    ...b,
+    color:
+      b.begin === 0
+        ? palette.nothingWasChangedColor
+        : palette.heatmapPaletteD3Color(1 + (b.begin + b.end) / (2 * maxValue))
+  }));
+};
+
+export const getCurrentDate = () => {
+  const currentDate = new Date();
+  return `${currentDate.getDate()} ${
+    longMonthNames[currentDate.getMonth()]
+  }, ${currentDate.getFullYear()}`;
+};
+
+export const isCurrentDate = (d) => {
+  const dt = new Date(d);
+  return new Date(getCurrentDate()).getTime() === dt.getTime();
+};
+
+export const getLastDate = (d) => {
+  let last = new Date(d);
+  last.setHours(0);
+  last.setMinutes(0);
+  last.setSeconds(0);
+  last.setMonth(last.getMonth() + 1);
+  last.setDate(0);
+  return last;
 };

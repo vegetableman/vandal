@@ -80,4 +80,23 @@
   font-size: 12px;
   position: relative;
   top: 1px;
+  color: var(--vandal-history-item-selection-color);
+}
+
+.date__title {
+  border-bottom: 1px solid var(--vandal-history-separator-color);
+  line-height: 0.1em;
+  margin: 15px 0 15px 0;
+  text-align: left;
+  width: 100%;
+}
+
+.date__title > span {
+  background: var(--vandal-history-list-background-color);
+  color: var(--vandal-menu-item-color);
+  font-size: 13px;
+  padding: 0 5px;
+  position: relative;
+  left: 25px;
+  top: 2px;
 }

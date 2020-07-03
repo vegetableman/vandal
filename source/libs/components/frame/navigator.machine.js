@@ -1,6 +1,7 @@
 import { Machine, actions } from 'xstate';
 import _ from 'lodash';
 import { historyDB } from '../../utils/storage';
+import { longMonthNames, getCurrentDate } from '../../utils';
 const { assign } = actions;
 const navigatorMachine = Machine(
   {
@@ -36,24 +37,25 @@ const navigatorMachine = Machine(
                 actions: [
                   assign((ctx, e) => {
                     const { allRecords = [] } = ctx;
-                    const currentURL = _.get(e, 'payload.url');
-                    const redirect = _.get(e, 'payload.redirect');
+                    const url = _.get(e, 'payload.url');
+                    // const redirect = _.get(e, 'payload.redirect');
 
                     let currentRecords = [];
 
-                    if (redirect) {
-                      currentRecords = [
-                        ..._.slice(
-                          ctx.currentRecords,
-                          0,
-                          _.indexOf(ctx.currentRecords, ctx.currentURL)
-                        ),
-                        currentURL
-                      ];
-                    } else if (_.includes(ctx.currentRecords, currentURL)) {
+                    // if (redirect) {
+                    //   currentRecords = [
+                    //     ..._.slice(
+                    //       ctx.currentRecords,
+                    //       0,
+                    //       _.indexOf(ctx.currentRecords, ctx.currentURL)
+                    //     ),
+                    //     currentURL
+                    //   ];
+                    // } else
+                    if (_.includes(ctx.currentRecords, url)) {
                       currentRecords = [...ctx.currentRecords];
                     } else if (
-                      _.indexOf(ctx.currentRecords, ctx.currentURL) !==
+                      _.indexOf(ctx.currentRecords, url) !==
                       _.size(ctx.currentRecords) - 1
                     ) {
                       currentRecords = [
@@ -62,22 +64,21 @@ const navigatorMachine = Machine(
                           0,
                           _.indexOf(ctx.currentRecords, ctx.currentURL) + 1
                         ),
-                        currentURL
+                        url
                       ];
                     } else {
-                      currentRecords = [...ctx.currentRecords, currentURL];
+                      currentRecords = [...ctx.currentRecords, url];
                     }
 
-                    console.log(
-                      'UPDATE_HISTORY:browserHistory:',
-                      currentRecords
-                    );
-
                     return {
-                      currentURL,
-                      allRecords: !_.includes(allRecords, currentURL)
-                        ? [...allRecords, currentURL]
-                        : allRecords,
+                      currentURL: url,
+                      allRecords: [
+                        ...allRecords,
+                        {
+                          url,
+                          date: getCurrentDate()
+                        }
+                      ],
                       currentRecords
                     };
                   }),
@@ -133,20 +134,20 @@ const navigatorMachine = Machine(
   },
   {
     actions: {
-      persistHistory: async ctx => {
+      persistHistory: async (ctx) => {
         console.log('persistHistory:', ctx.currentURL);
         try {
           const isEnabled = await historyDB.isEnabled();
           if (!isEnabled) return;
-          historyDB.addRecord(ctx.url, ctx.currentURL);
+          historyDB.setRecords(ctx.url, ctx.allRecords);
         } catch (e) {}
       },
-      clearHistory: async ctx => {
+      clearHistory: async (ctx) => {
         await historyDB.clearRecords(ctx.url);
       }
     },
     services: {
-      loadHistory: async ctx => {
+      loadHistory: async (ctx) => {
         console.log('loadHistory----', ctx.url);
         const [records, err] = await historyDB.getRecords(ctx.url);
         console.log('db: ', records);

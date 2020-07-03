@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useMachine } from '@xstate/react';
-// import ReactTooltip from 'react-tooltip';
+import ReactTooltip from 'react-tooltip';
 import cx from 'classnames';
 import _ from 'lodash';
 import Transition from 'react-transition-group/Transition';
@@ -13,7 +13,8 @@ import {
 } from '../../../utils';
 import monthMachine, {
   memoizedGetMonths,
-  fetchSnapshot
+  fetchSnapshot,
+  cleanUp
 } from './month.machine.js';
 import { useTheme } from '../../../hooks';
 import styles from './month.module.css';
@@ -58,9 +59,7 @@ const transitionStyle = {
   transform: 'translateY(0)'
 };
 
-let isMounted = false;
-
-const MonthView = props => {
+const MonthView = (props) => {
   const [showRightPaddle, toggleRightPaddle] = useState(true);
   const [showLeftPaddle, toggleLeftPaddle] = useState(false);
   const [showPanel, toggleShowPanel] = useState(props.show);
@@ -90,11 +89,12 @@ const MonthView = props => {
     send('CLEAR_SNAPSHOTS');
     props.onExited();
     props.onClose();
+    cleanUp();
   };
   const onDebouncedEntered = _.debounce(props.onEntered, 250);
   const onDebouncedExited = _.debounce(onExited, 250);
 
-  const onOptionSelect = (index, archiveURL) => async option => {
+  const onOptionSelect = (index, archiveURL) => async (option) => {
     if (option === 'retry') {
       send('SET_SNAPSHOT', { payload: { index, value: null } });
       const [snapshot, newArchiveURL] = await fetchSnapshot({
@@ -116,12 +116,15 @@ const MonthView = props => {
     }
   };
 
-  useEffect(() => {
-    if (props.show) {
-      send('CLEAR_SNAPSHOTS');
-      send('LOAD_ARCHIVE_URLS', { payload: { year: props.year } });
-    }
-  }, [props.year]);
+  useEffect(
+    () => {
+      if (props.show) {
+        send('CLEAR_SNAPSHOTS');
+        send('LOAD_ARCHIVE_URLS', { payload: { year: props.year } });
+      }
+    },
+    [props.year]
+  );
 
   useEffect(() => {
     if (!monthScrollRef) return;
@@ -157,7 +160,7 @@ const MonthView = props => {
     }
   };
 
-  const onMouseWheel = e => {
+  const onMouseWheel = (e) => {
     const { current: monthScrollView } = monthScrollRef;
     e.stopPropagation();
     const max = monthScrollView.scrollWidth - monthScrollView.offsetWidth; // this might change if you have dynamic content, perhaps some mutation observer will be useful here
@@ -189,8 +192,6 @@ const MonthView = props => {
     );
   };
 
-  console.log('month snapshots:', ctx.snapshots);
-
   return (
     <Transition
       enter
@@ -199,7 +200,7 @@ const MonthView = props => {
       timeout={{ enter: ENTER_DURATION, exit: 0 }}
       onEntered={onEntered}
       onExited={onDebouncedExited}>
-      {state => (
+      {(state) => (
         <div
           className={styles.container}
           style={{
@@ -250,7 +251,7 @@ const MonthView = props => {
                             i
                           </div>
                         )}
-                        {/* <ReactTooltip
+                        <ReactTooltip
                           scrollHide
                           className={styles.month__info__tooltip}
                           id={`vandal-historical-month--info-${month}`}
@@ -259,7 +260,7 @@ const MonthView = props => {
                           outsidePlace="left"
                           place="right"
                           type={theme}
-                        /> */}
+                        />
                       </React.Fragment>
                     ) : (
                       <ImageLoader theme={theme} />

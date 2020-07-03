@@ -1,13 +1,13 @@
 import { Machine, assign } from 'xstate';
 import _ from 'lodash';
-import { stripArchiveURL, browser } from '../../utils';
-import { themeDB } from '../../utils/storage';
+import { stripArchiveURL } from '../../utils';
 
 const parentMachine = Machine({
   id: 'parent',
   initial: 'idle',
   context: {
-    isInvalidContext: false
+    isInvalidContext: false,
+    isFrameBusted: false
   },
   states: {
     idle: {
@@ -29,6 +29,11 @@ const parentMachine = Machine({
         TOGGLE_INVALID_CONTEXT: {
           actions: assign({
             isInvalidContext: (_ctx, e) => _.get(e, 'payload.value')
+          })
+        },
+        TOGGLE_BUSTED_ERROR: {
+          actions: assign({
+            isFrameBusted: (_ctx, e) => _.get(e, 'payload.value')
           })
         },
         EXIT: {

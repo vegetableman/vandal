@@ -42,9 +42,9 @@ const promisifiedXHR = (
   });
 };
 
-let fetchController = new AbortController();
+let requests = {};
 
-const getResponse = async res => {
+const getResponse = async (res) => {
   const contentType = _.get(res, 'headers').get('content-type');
   if (
     _.endsWith(_.get(res, 'url'), '.png') ||
@@ -52,6 +52,8 @@ const getResponse = async res => {
   ) {
     const responseBlob = await res.blob();
     return URL.createObjectURL(responseBlob);
+  } else if (contentType && ~contentType.indexOf('text/')) {
+    return await res.text();
   } else {
     try {
       return await res.json();
@@ -65,9 +67,10 @@ const fetchRequest = async ({
   endpoint,
   controller,
   method = 'GET',
+  body,
   headers = {},
-  noCacheReq,
-  noCacheRes,
+  fetchFromCache,
+  cacheResponse,
   enableThrow = false
 }) => {
   let request;
@@ -78,7 +81,7 @@ const fetchRequest = async ({
     request = new Request(endpoint, { headers });
   }
 
-  if (!noCacheReq) {
+  if (fetchFromCache) {
     const resFromCache = await caches.match(request);
     if (_.get(resFromCache, 'status') === 200) {
       return [await getResponse(resFromCache), null];
@@ -86,10 +89,13 @@ const fetchRequest = async ({
   }
 
   try {
-    const resFromFetch = await fetch(request.clone(), { method });
-    if (!noCacheRes && _.get(resFromFetch, 'status') === 200) {
-      const cache = await caches.open('__VANDAL__');
-      cache.put(request, resFromFetch.clone());
+    const resFromFetch = await fetch(request.clone(), { method, body });
+    if (
+      (fetchFromCache || cacheResponse) &&
+      _.get(resFromFetch, 'status') === 200
+    ) {
+      const responseCache = await caches.open('__VANDAL__');
+      responseCache.put(request, resFromFetch.clone());
     }
 
     if (_.get(resFromFetch, 'status') === 200) {
@@ -115,7 +121,7 @@ const xhr = async (...args) => {
   }
 };
 
-const getTimestamp = async url => {
+const getTimestamp = async (url) => {
   const [ts, err] = await xhr(url, {
     method: 'HEAD',
     fetchResHeader: 'Memento-Datetime'
@@ -123,7 +129,7 @@ const getTimestamp = async url => {
   return [ts, err];
 };
 
-const getContentLocation = async url => {
+const getContentLocation = async (url) => {
   const [ts, err] = await xhr(url, {
     method: 'HEAD',
     fetchResHeader: 'content-location'
@@ -132,9 +138,12 @@ const getContentLocation = async url => {
 };
 
 browser.browserAction.onClicked.addListener(() => {
-  browser.tabs.executeScript({ file: 'browser-polyfill.min.js' });
-  browser.tabs.insertCSS({ file: 'content.css' });
-  browser.tabs.executeScript({ file: 'content.js' });
+  browser.tabs.executeScript({
+    file: 'browser-polyfill.min.js',
+    matchAboutBlank: true
+  });
+  browser.tabs.insertCSS({ file: 'content.css', matchAboutBlank: true });
+  browser.tabs.executeScript({ file: 'content.js', matchAboutBlank: true });
 });
 
 const urlMap = {};
@@ -142,23 +151,34 @@ const urlMap = {};
 chrome.runtime.onConnect.addListener(function(port) {
   port.onMessage.addListener(function(event) {
     if (event.message === '__VANDAL__CLIENT__FETCH') {
+      const { uniqueId, meta, ...rest } = event.data;
+      requests[uniqueId] = { controller: new AbortController(), meta };
       fetchRequest({
-        controller: fetchController,
-        ...event.data
+        controller: requests[uniqueId].controller,
+        ...rest
       }).then(function(...args) {
+        delete requests[uniqueId];
         port.postMessage({
           message: '__VANDAL__CLIENT__FETCH__RESPONSE',
-          payload: args
+          payload: args,
+          uniqueId
         });
       });
     } else if (event.message === '__VANDAL__CLIENT__XHR') {
       const { endpoint, ...rest } = event.data;
-      xhr(endpoint, rest).then(result => {
+      xhr(endpoint, rest).then((result) => {
         console.log('result:', result);
       });
     } else if (event.message === '__VANDAL__CLIENT__FETCH__ABORT') {
-      fetchController.abort();
-      fetchController = new AbortController();
+      _.forEach(requests, (request, id) => {
+        if (
+          _.get(event, 'data.meta.type') === _.get(request, 'meta.type') &&
+          request.controller
+        ) {
+          request && request.controller.abort();
+          delete requests[id];
+        }
+      });
     }
   });
 });
@@ -169,13 +189,15 @@ chrome.runtime.onMessage.addListener(async function(
   sendResponse
 ) {
   const { message, data } = request;
-  if (message === 'getTimestamp') {
+  if (message === '__VANDAL__CLIENT__RESOURCE__TIMESTAMP') {
     getTimestamp(data).then(sendResponse);
     return true;
-  } else if (message === 'getContentLocation') {
-    getContentLocation(data).then(sendResponse);
-    return true;
-  } else if (message === '__VANDAL__CLIENT__OPTTONS') {
+  }
+  //  else if (message === 'getContentLocation') {
+  //   getContentLocation(data).then(sendResponse);
+  //   return true;
+  // }
+  else if (message === '__VANDAL__CLIENT__OPTTONS') {
     chrome.runtime.openOptionsPage();
   } else if (message) {
     chrome.tabs.query({ active: true }, function(tabs) {

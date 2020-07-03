@@ -125,6 +125,7 @@ body {
   --vandal-history-item-selection-color: #000000;
   --vandal-history-footer-background-color: #f5f5f5;
   --vandal-history-footer-border-color: #dddddd;
+  --vandal-history-separator-color: #dddddd;
 
   /* URL Loader */
   --vandal-url-loader-border-color: steelblue;
@@ -138,6 +139,7 @@ body {
   --vandal-cl-day-color: #333333;
   --vandal-cl-day-active-color: #333333;
   --vandal-total-count: #555555;
+  --vandal-total-bg-color: #ffffff;
   --vandal-cl-err-bg-color: #eeeeee;
   --vandal-cl-err-icon-color: #555555;
   --vandal-cl-retry-bg-color: #eeeeee;
@@ -150,6 +152,7 @@ body {
 
   /* Card */
   --vandal-card-status-icon: #555555;
+  --vandal-card-progress-color: #29d;
 
   /* Tooltips */
   --vandal-tooltip-background-color: #ffffff;
@@ -234,6 +237,7 @@ body {
   --vandal-history-item-selection-color: #ffffff;
   --vandal-history-footer-background-color: #4a4949;
   --vandal-history-footer-border-color: #333333;
+  --vandal-history-separator-color: #6d6d6d;
 
   /* URL Loader */
   --vandal-url-loader-border-color: #ff920b;
@@ -247,6 +251,7 @@ body {
   --vandal-cl-day-color: #dddddd;
   --vandal-cl-day-active-color: #ffffff;
   --vandal-total-count: #dddddd;
+  --vandal-total-bg-color: transparent;
   --vandal-cl-err-bg-color: #777777;
   --vandal-cl-err-icon-color: #ffffff;
   --vandal-cl-retry-bg-color: #eeeeee;
@@ -259,6 +264,7 @@ body {
 
   /* Card */
   --vandal-card-status-icon: #dddddd;
+  --vandal-card-progress-color: #ff920b;
 
   /* Tooltips */
   --vandal-tooltip-background-color: #4e4c4c;

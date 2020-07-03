@@ -162,12 +162,12 @@ const mousedownHandler = () => {
 const messageHandler = async function(request, _, sendResponse) {
   console.log(request);
   if (!request) return;
-  if (request.message === 'fetchSources') {
+  if (request.message === '__VANDAL__CLIENT__FETCH__SOURCES') {
     chrome.runtime.sendMessage({
       message: '__VANDAL__FRAME__SOURCES',
       data: getSources()
     });
-  } else if (request.message === 'highlightNode') {
+  } else if (request.message === '__VANDAL__CLIENT__HIGHLIGHT__NODE') {
     console.log(request.data.source);
     const node = imageMap[request.data.source];
     if (!node) {
@@ -177,10 +177,7 @@ const messageHandler = async function(request, _, sendResponse) {
       overlay = new Overlay();
     }
     overlay.highlight(node, request.data.ts, request.data.scrollOnHighlight);
-  } else if (
-    request.message === 'removeHighlight' ||
-    request.message === 'drawerClosed'
-  ) {
+  } else if (request.message === '__VANDAL__CLIENT__REMOVE__HIGHLIGHT') {
     if (overlay) {
       overlay.remove();
       overlay = null;

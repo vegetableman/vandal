@@ -5,7 +5,7 @@ export const historyDB = {
   addRecord(suffix, value) {
     if (!value) return;
     const key = `${historyPrefix}__${suffix}`;
-    chrome.storage.sync.get([key], svalue => {
+    chrome.storage.sync.get([key], (svalue) => {
       let collection = [value];
       const match = _.includes(svalue[key], value);
       if (match) return;
@@ -19,10 +19,19 @@ export const historyDB = {
     });
   },
 
+  setRecords(suffix, collection) {
+    if (!collection || _.isEmpty(collection)) return;
+    const key = `${historyPrefix}__${suffix}`;
+    chrome.storage.sync.set({ [key]: collection }, function() {
+      // Notify that we saved.
+      console.log('Settings saved');
+    });
+  },
+
   async getRecords(suffix) {
-    const promisifiedGet = key => {
+    const promisifiedGet = (key) => {
       return new Promise((resolve, reject) => {
-        chrome.storage.sync.get([key], value => {
+        chrome.storage.sync.get([key], (value) => {
           if (chrome.runtime.lastError) {
             return reject(chrome.runtime.lastError);
           }
@@ -40,7 +49,7 @@ export const historyDB = {
   },
 
   async clearRecords(suffix) {
-    const promisifiedClear = key => {
+    const promisifiedClear = (key) => {
       return new Promise((resolve, reject) => {
         chrome.storage.sync.remove(key, function() {
           if (chrome.runtime.lastError) {
@@ -60,9 +69,9 @@ export const historyDB = {
   },
 
   isEnabled() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       const key = '__VANDAL__HIST__LOGGING__ENABLED';
-      chrome.storage.sync.get(key, value => {
+      chrome.storage.sync.get(key, (value) => {
         return _.isUndefined(value[key]) ? resolve(true) : resolve(value[key]);
       });
     });
@@ -80,8 +89,8 @@ export const drawerDB = {
   },
 
   getHeight() {
-    return new Promise(resolve => {
-      chrome.storage.sync.get([drawerKey], value => {
+    return new Promise((resolve) => {
+      chrome.storage.sync.get([drawerKey], (value) => {
         return resolve(value[drawerKey]);
       });
     });
@@ -98,8 +107,8 @@ export const themeDB = {
   },
 
   getTheme() {
-    return new Promise(resolve => {
-      chrome.storage.sync.get([themeKey], value => {
+    return new Promise((resolve) => {
+      chrome.storage.sync.get([themeKey], (value) => {
         return resolve(value[themeKey]);
       });
     });

@@ -1,4 +1,5 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { useState, useEffect, memo, useRef } from 'react';
+import PerfectScrollbar from 'perfect-scrollbar';
 import _ from 'lodash';
 import cx from 'classnames';
 import { Sparklines, SparklinesCurve } from 'react-sparklines';
@@ -16,18 +17,18 @@ const getStyle = (count, isSelected, isCurrent, theme) => {
     backgroundColor: isSelected
       ? colors[_.toUpper(theme)]['MATCH']
       : isCurrent
-      ? colors.CURRENT
-      : count
-      ? tinycolor(colors.TS)
-          .darken(Math.min(count, 30))
-          .toString()
-      : 'inherit',
+        ? colors.MATCH
+        : count
+          ? tinycolor(colors.TS)
+              .darken(Math.min(count, 30))
+              .toString()
+          : 'inherit',
     textDecoration: isCurrent ? 'underline' : 'none',
     color: isHighlighted
       ? colors.BL_33
       : theme === 'dark'
-      ? colors.GY_DD
-      : 'inherit'
+        ? colors.GY_DD
+        : 'inherit'
   };
 };
 
@@ -54,33 +55,44 @@ const Calendar = ({
   }
 
   const { theme } = useTheme();
+  const scrollContainerRef = useRef(null);
+
+  useEffect(
+    () => {
+      if (isDialogClosed) {
+        onClose();
+      }
+    },
+    [isDialogClosed]
+  );
 
   useEffect(() => {
-    if (isDialogClosed) {
-      onClose();
+    if (scrollContainerRef.current) {
+      new PerfectScrollbar(scrollContainerRef.current.rootNode);
     }
-  }, [isDialogClosed]);
+  }, []);
 
   const yearCount = _.size(years);
-
+  const rowHeight = yearCount == 1 ? ROW_HEIGHT + 3 : ROW_HEIGHT;
   return (
     <div ref={dialogRef}>
       <VirtualList
+        ref={scrollContainerRef}
         width="100%"
-        height={yearCount < 4 ? yearCount * ROW_HEIGHT + 10 : 190}
+        className={styles.scroll__container}
+        height={yearCount < 4 ? yearCount * rowHeight : 190}
         itemCount={yearCount}
-        itemSize={ROW_HEIGHT}
-        style={{ overflowX: 'hidden' }}
+        itemSize={rowHeight}
         scrollToIndex={_.indexOf(years, currentYear)}
         renderItem={({ index, style }) => (
           <div
             className={cx({
-              [styles.calendarYear]: true
+              [styles.calendar__year]: true
             })}
             key={index}
             style={style}>
             <div
-              className={styles.calendarYear___left}
+              className={styles.calendar__year___left}
               onClick={onSelect(selectedMonth, years[index])}>
               <div className={styles.label}>{years[index]}</div>
               <div>
@@ -114,7 +126,7 @@ const Calendar = ({
                         years[index] === currentYear,
                       theme
                     )}>
-                    <span className={styles.monthLabel}>{m}</span>
+                    <span className={styles.month__label}>{m}</span>
                   </div>
                 );
               })}
@@ -127,12 +139,12 @@ const Calendar = ({
 };
 
 const WithDialogCalendar = withDialog(Calendar, {
-  ignoreClickOnClass: `.${styles.filterIcon}`
+  ignoreClickOnClass: `.${styles.filter__icon}`
 });
 
 const currentDateInstance = new Date();
 
-const InputCalendar = memo(props => {
+const InputCalendar = memo((props) => {
   const [isVisible, toggleCalendar] = useState(false);
 
   const {
@@ -150,21 +162,26 @@ const InputCalendar = memo(props => {
     date
   } = props;
 
+  console.log('disableNext:', disableNext);
+
   if (_.isEmpty(_.keys(sparkline))) return null;
 
   let sparklineYears = _.keys(sparkline);
-  const years = _.map(sparklineYears, y => {
+  const years = _.map(sparklineYears, (y) => {
     return _.parseInt(y);
   });
 
   return (
-    <div className={styles.inputCalendar}>
+    <div className={styles.input__calendar}>
       {!disabled && (
         <Icon
           name="dropdown"
-          className={styles.filterIcon}
+          className={cx({
+            [styles.filter__icon]: true,
+            [styles.filter__icon___active]: isVisible
+          })}
           onClick={() =>
-            toggleCalendar(isVisible => {
+            toggleCalendar((isVisible) => {
               return !isVisible;
             })
           }
@@ -173,21 +190,24 @@ const InputCalendar = memo(props => {
       <div className={styles.nav}>
         <Icon
           name="prevMonth"
-          className={styles.prevIcon}
+          className={styles.prev__icon}
           onClick={goToPrevious}
         />
         <Icon
           name="nextMonth"
           className={cx({
-            [styles.nextIcon]: true,
-            [styles.nextIcon__disabled]: disableNext
+            [styles.next__icon]: true,
+            [styles.next__icon___disabled]: disableNext
           })}
           onClick={disableNext ? () => {} : goToNext}
         />
       </div>
       <input
         autoFocus
-        className={styles.input}
+        className={cx({
+          [styles.input]: true,
+          [styles.input___open]: isVisible
+        })}
         defaultValue={date}
         key={date}
         disabled={disabled}
@@ -217,6 +237,6 @@ const InputCalendar = memo(props => {
       )}
     </div>
   );
-}, compareProps(['sparkline', 'currentMonth', 'selectedMonth', 'selectedYear', 'currentYear', 'disabled', 'date']));
+}, compareProps(['sparkline', 'currentMonth', 'selectedMonth', 'selectedYear', 'currentYear', 'disabled', 'date', 'disableNext']));
 
 export default InputCalendar;

@@ -1,4 +1,4 @@
-import React, { useEffect, memo } from 'react';
+import React, { memo } from 'react';
 import _ from 'lodash';
 import {
   getDateTimeFromTS,
@@ -11,15 +11,7 @@ import styles from './urlinfo.module.css';
 import boxStyle from '../box/urlbox.module.css';
 
 const URLInfo = memo(
-  ({
-    dialogRef,
-    // isDialogClosed,
-    url,
-    redirectTSCollection,
-    redirectedTS,
-    selectedTS,
-    onClose
-  }) => {
+  ({ dialogRef, url, redirectTSCollection, redirectedTS, selectedTS }) => {
     const archiveURL = `https://web.archive.org/web/${selectedTS}/${url}`;
     const renderedURL = `https://web.archive.org/web/${redirectedTS ||
       selectedTS}/${url}`;
@@ -32,10 +24,6 @@ const URLInfo = memo(
     } else {
       infoDateObj = getDateTimeFromTS(selectedTS);
     }
-
-    // useEffect(() => {
-    //   isDialogClosed && onClose();
-    // }, [isDialogClosed]);
 
     console.log('selectedTS', selectedTS, 'redirectedTS', redirectedTS);
 
@@ -100,12 +88,7 @@ const URLInfo = memo(
       </div>
     );
   },
-  compareProps([
-    'redirectedTS',
-    'selectedTS',
-    'redirectTSCollection'
-    // 'isDialogClosed'
-  ])
+  compareProps(['redirectedTS', 'selectedTS', 'redirectTSCollection'])
 );
 
 export default withDialog(URLInfo, {

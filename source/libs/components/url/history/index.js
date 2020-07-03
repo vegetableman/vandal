@@ -1,63 +1,78 @@
 import React from 'react';
-import cx from 'classnames';
 import {
   getDateTsFromURL,
   getDateTimeFromTS,
   toTwelveHourTime,
   isArchiveURL,
-  browser
+  browser,
+  isCurrentDate
 } from '../../../utils';
 import { withDialog, Icon } from '../../common';
 
 import styles from './urlhistory.module.css';
 import boxStyle from '../box/urlbox.module.css';
 
-const URLHistory = ({ currentIndex, dialogRef, history, clearHistory }) => {
-  const err = false;
+const formatHistoryByDate = (history) => {
+  return _.reduce(
+    history,
+    (acc, h) => {
+      if (!acc[h.date]) {
+        acc[h.date] = [];
+      }
+      acc[h.date].push(h.url);
+      return acc;
+    },
+    {}
+  );
+};
 
-  const historyCount = _.size(history);
-  const isLast = currentIndex === historyCount - 1;
-
+const URLHistory = ({ dialogRef, history, clearHistory, onClick }) => {
+  const dhistory = formatHistoryByDate(history);
   return (
     <div className={styles.root} ref={dialogRef}>
       <ul className={styles.list}>
-        {!err &&
-          _.map(_.reverse(_.slice(history)), (url, index) => {
-            const dateTimeObj = isArchiveURL(url)
-              ? getDateTimeFromTS(_.get(getDateTsFromURL(url), 'ts'))
-              : null;
+        {_.map(
+          _.keys(dhistory).sort((a, b) => new Date(b) - new Date(a)),
+          (date) => {
             return (
-              <li
-                className={cx({
-                  [styles.item]: true,
-                  [styles.item___active]:
-                    isLast && !index
-                      ? true
-                      : historyCount - currentIndex - 1 === index
-                })}
-                key={url}
-                onClick={() => {
-                  browser.navigate(url);
-                }}>
-                <div>{url}</div>
-                {dateTimeObj && (
-                  <div className={styles.date}>{`${_.get(
-                    dateTimeObj,
-                    'humanizedDate'
-                  )} ${toTwelveHourTime(_.get(dateTimeObj, 'ts'))}`}</div>
-                )}
-              </li>
+              <div key={date}>
+                <h3 className={styles.date__title}>
+                  <span>{isCurrentDate(date) ? 'Recently Visted' : date}</span>
+                </h3>
+                <div>
+                  {_.map(_.reverse(_.slice(dhistory[date])), (url, index) => {
+                    const dateTimeObj = isArchiveURL(url)
+                      ? getDateTimeFromTS(_.get(getDateTsFromURL(url), 'ts'))
+                      : null;
+                    return (
+                      <li
+                        className={styles.item}
+                        key={index}
+                        onClick={() => {
+                          browser.navigate(url);
+                          onClick();
+                        }}>
+                        <div>{url}</div>
+                        {dateTimeObj && (
+                          <div className={styles.date}>{`${_.get(
+                            dateTimeObj,
+                            'humanizedDate'
+                          )} ${toTwelveHourTime(
+                            _.get(dateTimeObj, 'ts')
+                          )}`}</div>
+                        )}
+                      </li>
+                    );
+                  })}
+                </div>
+              </div>
             );
-          })}
-        {!err && _.isEmpty(history) && (
+          }
+        )}
+        {_.isEmpty(history) && (
           <div className={styles.empty__msg}>
             No logs found. To disable storage of navigation history across
             sessions, go to Extension options.
-          </div>
-        )}
-        {err && (
-          <div className={styles.empty__msg}>
-            Error fetching records. Please try again.
           </div>
         )}
       </ul>

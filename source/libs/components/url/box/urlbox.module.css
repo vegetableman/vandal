@@ -21,7 +21,7 @@
   justify-content: center;
 }
 
-.urlIcon {
+.url__icon {
   width: 18px;
   height: 18px;
   fill: var(--vandal-primary-icon-color);
@@ -41,7 +41,7 @@
   padding: 8px 0 5px 2px;
 }
 
-.timetravelContainer {
+.timetravel__container {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -71,11 +71,11 @@
   }
 }
 
-.dateLoader {
+.date__loader {
   animation: blink ease-in-out 1s infinite;
 }
 
-.infoIcon {
+.info__icon {
   --vandal-primary-icon-color: #000000;
   fill: var(--vandal-primary-icon-color);
   stroke: var(--vandal-primary-icon-color);
@@ -85,34 +85,34 @@
   left: -8px;
 }
 
-.infoIcon circle {
+.info__icon circle {
   --vandal-primary-icon-color: #000000;
   stroke: var(--vandal-primary-icon-color);
 }
 
-.infoIcon path {
+.info__icon path {
   --vandal-primary-icon-color: #000000;
   fill: var(--vandal-primary-icon-color);
 }
 
-.infoIcon___dark {
+.info__icon___dark {
   --vandal-primary-icon-color: #ffffff;
   fill: var(--vandal-primary-icon-color);
   stroke: var(--vandal-primary-icon-color);
 }
 
-.infoIcon___dark circle {
+.info__icon___dark circle {
   --vandal-primary-icon-color: #ffffff;
   stroke: var(--vandal-primary-icon-color);
 }
 
-.infoIcon___dark path {
+.info__icon___dark path {
   --vandal-primary-icon-color: #ffffff;
   fill: var(--vandal-primary-icon-color);
 }
 
 .date:hover,
-.dateInfo {
+.date__info {
   background: var(--vandal-blink-background-color);
   user-select: none;
 }
@@ -123,7 +123,7 @@
   position: relative;
 }
 
-.timetravelBtn {
+.timetravel__btn {
   display: flex;
   justify-content: center;
   flex: 0 0 35px;
@@ -133,11 +133,24 @@
   height: 100%;
 }
 
-.timetravelBtn:hover {
+@keyframes blinking {
+  0% {
+    background-color: transparent;
+  }
+  100% {
+    background: var(--vandal-secondary-background-color);
+  }
+}
+
+.timetravel__btn___updated {
+  animation: blinking 1s ease-in 3;
+}
+
+.timetravel__btn:hover {
   background: var(--vandal-secondary-background-color);
 }
 
-.timetravelBtn___selected {
+.timetravel__btn___selected {
   background: var(--vandal-secondary-background-color);
 }
 
@@ -145,8 +158,8 @@
   fill: var(--vandal-primary-icon-color);
 }
 
-.timetravelBtn:hover .timetravelIcon,
-.timetravelBtn___selected .timetravelIcon {
+.timetravel__btn:hover .timetravelIcon,
+.timetravel__btn___selected .timetravelIcon {
   fill: var(--vandal-primary-icon-active-color);
 }
 
@@ -164,7 +177,7 @@
   display: flex;
 }
 
-.historyBtn {
+.history__btn {
   background: none;
   border: 0;
   cursor: pointer;
@@ -174,13 +187,13 @@
   outline: none;
 }
 
-.historyBtn___active {
+.history__btn___active {
   border-left: 1px solid var(--vandal-date-border-color);
   background: var(--vandal-date-background-color);
 }
 
-.historyBtn:hover .caret,
-.historyBtn___active .caret {
+.history__btn:hover .caret,
+.history__btn___active .caret {
   fill: var(--vandal-primary-icon-active-color);
   stroke: var(--vandal-primary-icon-active-color);
 }
@@ -195,7 +208,11 @@
   transform: rotate(90deg);
 }
 
-.historyBtn:hover .caret {
+.history__btn:hover .caret {
   fill: var(--vandal-primary-icon-active-color);
   stroke: var(--vandal-primary-icon-active-color);
+}
+
+.date__text {
+  padding-top: 2.5px;
 }

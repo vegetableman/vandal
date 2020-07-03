@@ -1,37 +1,28 @@
 import { Machine, actions } from 'xstate';
 import memoizeOne from 'memoize-one';
-import { Screenshooter, api } from '../../../utils';
+import { Screenshooter, api, abort, longMonthNames } from '../../../utils';
 import each from 'promise-each';
 
 const { assign } = actions;
 
-export const monthNames = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
-];
+const screenshooter = new Screenshooter();
 
-const getMonths = selectedYear => {
+export const cleanUp = () => {
+  abort({ meta: { type: 'month-available' } });
+  screenshooter.abort({ type: 'month-screenshot' });
+};
+
+const getMonths = (selectedYear) => {
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth();
-  let months = monthNames;
+  let months = longMonthNames;
   if (currentYear === +selectedYear) {
-    months = monthNames.slice(0, currentMonth + 1);
+    months = longMonthNames.slice(0, currentMonth + 1);
   }
   return months;
 };
 export const memoizedGetMonths = memoizeOne(getMonths);
 
-const screenshooter = new Screenshooter();
 export const fetchSnapshot = async ({ url, index, year, archiveURL }) => {
   let [result, archiveErr] = await api(
     `https://archive.org/wayback/available?url=${url}&timestamp=${year}${_.padStart(
@@ -40,7 +31,7 @@ export const fetchSnapshot = async ({ url, index, year, archiveURL }) => {
       0
     )}`,
     {
-      noCacheReq: true
+      cacheResponse: true
     }
   );
   if (archiveErr) {
@@ -58,7 +49,7 @@ export const fetchSnapshot = async ({ url, index, year, archiveURL }) => {
 
   return [
     await screenshooter.fetchScreenshot(archiveURL, {
-      noCacheReq: true,
+      cacheResponse: true,
       latest: true
     }),
     closestURL ? archiveURL : null
@@ -145,7 +136,7 @@ const monthMachine = Machine(
   },
   {
     services: {
-      fetchArchiveLinks: ctx => async callback => {
+      fetchArchiveLinks: (ctx) => async (callback) => {
         const { year, url, months } = ctx;
         const selectedYear = +year;
         const currentYear = new Date().getFullYear();
@@ -164,8 +155,13 @@ const monthMachine = Machine(
         const timestampURLCount = _.size(timestampURLs);
         const snapshotMapper = async (url, index) => {
           const [result] = await api(url, {
-            noCacheReq: isCurrentYearSelected && index === currentMonth,
-            noCacheRes: isCurrentYearSelected && index === currentMonth
+            // noCacheReq: isCurrentYearSelected && index === currentMonth,
+            // noCacheRes: isCurrentYearSelected && index === currentMonth,
+            fetchFromCache:
+              index !== currentMonth ||
+              (index === currentMonth && !isCurrentYearSelected),
+            // disableCache: isCurrentYearSelected && index === currentMonth,
+            meta: { type: 'month-available' }
           });
           let archiveURL = _.replace(
             _.replace(
@@ -178,11 +174,15 @@ const monthMachine = Machine(
           );
 
           const [data, err] = await screenshooter.fetchScreenshot(archiveURL, {
-            noCacheReq:
-              isCurrentYearSelected && timestampURLCount - 1 === index,
-            noCacheRes:
-              isCurrentYearSelected && timestampURLCount - 1 === index,
-            latest: isCurrentYearSelected && timestampURLCount - 1 === index
+            // noCacheReq:
+            //   isCurrentYearSelected && timestampURLCount - 1 === index,
+            // noCacheRes:
+            //   isCurrentYearSelected && timestampURLCount - 1 === index,
+            fetchFromCache:
+              timestampURLCount - 1 !== index ||
+              (timestampURLCount - 1 === index && !isCurrentYearSelected),
+            latest: isCurrentYearSelected && timestampURLCount - 1 === index,
+            type: 'month-screenshot'
           });
           callback({
             type: 'ADD_SNAPSHOT',

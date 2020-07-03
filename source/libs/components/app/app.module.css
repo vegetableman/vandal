@@ -9,6 +9,7 @@
   font: normal 16px 'VANDAL__SourceSansPro';
   font-weight: normal;
   line-height: normal;
+  letter-spacing: 0;
   height: 60px;
   max-width: none;
   width: 100%;
@@ -18,6 +19,8 @@
 
 .container * {
   box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: #949090;
 }
 
 .overlay {
@@ -28,4 +31,16 @@
 
 .context__err {
   left: 41%;
+}
+
+.wayback__icon {
+  fill: white;
+  position: relative;
+  top: 3px;
+  left: 4px;
+}
+
+.wayback__link {
+  margin-left: 3px;
+  color: #fff;
 }

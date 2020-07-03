@@ -10,14 +10,14 @@ import { compareProps, useEventCallback } from '../../utils';
 import { Toast, Icon } from '../common';
 import styles from './url.module.css';
 
-const URL = memo(props => {
+const URL = memo((props) => {
   const [state, send, service] = useMachine(urlMachine);
   const showURLInfo = state.matches('menus.info.open');
   const showURLHistory = state.matches('menus.history.open');
   const [isNoSnapErorr, setSnapError] = useState(false);
 
   const onMessage = useEventCallback(
-    request => {
+    (request) => {
       if (request.message === '__VANDAL__FRAME__MOUSEDOWN') {
         if (service.state.matches('menus.history.open')) {
           send('TOGGLE_HISTORY');
@@ -33,20 +33,18 @@ const URL = memo(props => {
     chrome.runtime.onMessage.addListener(onMessage);
   }, []);
 
-  useEffect(() => {
-    if (props.noSparklineFound) {
-      setSnapError(true);
-    } else if (isNoSnapErorr && !props.noSparklineFound) {
-      setSnapError(false);
-    }
-  }, [props.noSparklineFound]);
-
-  console.log(
-    'rsxxxx---',
-    _.get(props.redirectTSCollection, props.redirectedTS) === props.selectedTS,
-    'isLoadingCalendar:',
-    props.isLoadingCalendar
+  useEffect(
+    () => {
+      if (props.noSparklineFound) {
+        setSnapError(true);
+      } else if (isNoSnapErorr && !props.noSparklineFound) {
+        setSnapError(false);
+      }
+    },
+    [props.noSparklineFound]
   );
+
+  console.log('URL:render');
 
   return (
     <React.Fragment>
@@ -54,6 +52,7 @@ const URL = memo(props => {
         url={props.url}
         redirectedTS={props.redirectedTS}
         redirectTSCollection={props.redirectTSCollection}
+        sparklineLoaded={props.sparklineLoaded}
         selectedTS={props.selectedTS}
         showURLHistory={showURLHistory}
         showURLInfo={showURLInfo}
@@ -63,8 +62,16 @@ const URL = memo(props => {
           if (props.showTimeTravel) {
             props.toggleTimeTravel();
           }
+          if (service.state.matches('menus.info.open')) {
+            send('TOGGLE_INFO');
+          }
         }}
-        toggleURLInfo={() => send('TOGGLE_INFO')}
+        toggleURLInfo={() => {
+          send('TOGGLE_INFO');
+          if (service.state.matches('menus.history.open')) {
+            send('TOGGLE_HISTORY');
+          }
+        }}
         toggleTimeTravel={() => {
           props.toggleTimeTravel();
           if (service.state.matches('menus.history.open')) {
@@ -83,9 +90,11 @@ const URL = memo(props => {
       )}
       {showURLHistory && (
         <URLHistory
-          currentIndex={props.currentIndex}
           history={props.history}
           clearHistory={props.clearHistory}
+          onClick={() => {
+            send('TOGGLE_HISTORY');
+          }}
         />
       )}
       <Toast className={styles.toast__notfound} show={isNoSnapErorr} exit={0}>
@@ -105,33 +114,48 @@ const URL = memo(props => {
       <Toast
         className={styles.toast__redirect}
         closeTimeout={2000}
-        show={
-          _.get(props.redirectTSCollection, props.redirectedTS) ===
-            props.selectedTS && props.isLoadingCalendar
-        }>
-        <div style={{ textAlign: 'center', width: '100%' }}>Redirecting...</div>
+        show={props.isRedirecting}>
+        <div style={{ textAlign: 'center', width: '100%' }}>
+          Redirecting to different timestamp ...
+        </div>
       </Toast>
+      {/* <Toast
+        className={styles.toast__url}
+        show={props.isOverCapacity}>
+        <div style={{ textAlign: 'center', width: '100%' }}>
+          Number of snapshots for this url has exceeded the download limit. Some
+          of the navigation controls have been disabled.
+        </div>
+      </Toast> */}
     </React.Fragment>
   );
-}, compareProps(['isRedirect', 'isLoadingCalendar', 'noSparklineFound', 'redirectedTS', 'selectedTS', 'redirectTSCollection', 'url', 'showTimeTravel', 'currentIndex', 'history']));
+}, compareProps(['isRedirecting', 'noSparklineFound', 'isOverCapacity', 'sparklineLoaded', 'redirectedTS', 'selectedTS', 'redirectTSCollection', 'url', 'showTimeTravel', 'history']));
 
-const URLContainer = props => {
+const URLContainer = memo((props) => {
   const {
     state: ttstate,
     state: { context: ctx }
   } = useTimeTravel();
 
+  console.log(
+    'URLContainer:selectedTS:',
+    ctx.selectedTS,
+    ctx.redirectedTS,
+    props
+  );
+
   return (
     <URL
       {...props}
-      isRedirect={ctx.isRedirect}
-      isLoadingCalendar={ttstate.matches('sparklineLoaded.loadingCalendar')}
       noSparklineFound={ttstate.matches('noSparklineFound')}
+      sparklineLoaded={ttstate.matches('sparklineLoaded')}
+      isRedirecting={_.get(ttstate, 'event.type') === 'SET_REDIRECT_INFO'}
       redirectedTS={ctx.redirectedTS}
+      isOverCapacity={ctx.isOverCapacity}
       redirectTSCollection={ctx.redirectTSCollection}
       selectedTS={ctx.selectedTS}
     />
   );
-};
+}, compareProps(['showTimeTravel', 'url']));
 
 export default URLContainer;

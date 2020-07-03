@@ -1,18 +1,23 @@
 import { Machine, assign } from 'xstate';
 import _ from 'lodash';
-import { xhr } from '../../utils';
+import { xhr, api } from '../../utils';
 
 const ROOT_URL = 'https://web.archive.org';
+const jobRegExp = new RegExp(
+  "/watchJob('(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)')/"
+);
+
 const saveMachine = Machine(
   {
     id: 'save',
     initial: 'close',
     context: {
       savedArchiveURL: null,
-      imURL: null
+      progress: 0
     },
     states: {
       open: {
+        id: 'open',
         initial: 'loading',
         on: {
           CLOSE: 'close'
@@ -28,50 +33,50 @@ const saveMachine = Machine(
               onDone: {
                 target: 'success',
                 actions: assign({
-                  savedArchiveURL: (_ctx, e) => `${ROOT_URL}${e.data}`,
-                  imURL: (_ctx, e) =>
-                    _.replace(
-                      _.replace(`${ROOT_URL}${e.data}`, /\d+/, '$&im_'),
-                      /https?/,
-                      'https'
-                    )
+                  savedArchiveURL: (_ctx, e) => `${ROOT_URL}${e.data}`
                 })
               },
-              onError: 'failure'
-            },
-            on: {
-              REJECT: 'failure'
+              onError: 'failure.rejection'
             }
           },
-          success: {},
           failure: {
-            initial: 'rejection',
             states: {
-              rejection: {},
-              timeout: {}
+              rejection: {
+                on: {
+                  SAVE: '#open'
+                }
+              },
+              timeout: {
+                on: {
+                  SAVE: '#open'
+                }
+              }
             }
+          },
+          success: {
+            entry: 'reloadSparkline'
           }
         }
       },
       close: {
         on: {
-          OPEN: 'open'
+          SAVE: 'open'
         }
       }
     },
     on: {
       OPEN_URL_IN_VANDAL: {
         target: 'close',
-        actions: 'updateVandalURL'
+        actions: 'setBrowserURL'
       }
     }
   },
   {
     services: {
-      saveToArchive: (_ctx, e) =>
+      saveToArchive: (_ctx, e) => (callback) =>
         new Promise(async (resolve, reject) => {
           const [contentLocation, err] = await xhr(
-            `${ROOT_URL}/save/${e.value}`,
+            `${ROOT_URL}/save/${_.get(e, 'payload.url')}`,
             {
               method: 'HEAD',
               fetchResHeader: 'content-location'

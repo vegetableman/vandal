@@ -1,49 +1,60 @@
 import _ from 'lodash';
 
-let promiseResolve, promiseReject;
+let promiseMap = {};
 
 const port = chrome.runtime.connect({ name: 'vandal' });
 port.onMessage.addListener(function(result) {
   if (result.message === '__VANDAL__CLIENT__FETCH__RESPONSE') {
+    const p = { ...promiseMap[result.uniqueId] };
+    delete promiseMap[result.uniqueId];
     const [res, err] = _.nth(_.get(result, 'payload'), 0);
-    if (err && !disableReject) {
-      return promiseReject(err);
+    if (err) {
+      return p.reject(err);
     }
-    return promiseResolve([res, err]);
+    return p.resolve([res, err]);
   }
 });
 
 export const api = async (
   endpoint,
   {
-    noCacheReq,
-    noCacheRes,
+    fetchFromCache,
+    cacheResponse,
     headers = {},
     method = 'GET',
     enableThrow = false,
-    xhr = false
+    xhr = false,
+    meta,
+    body
   } = {}
 ) => {
   return new Promise(function(resolve, reject) {
+    const uniqueId = _.uniqueId();
     port.postMessage({
       message: xhr ? '__VANDAL__CLIENT__XHR' : '__VANDAL__CLIENT__FETCH',
       data: {
         endpoint,
-        noCacheReq,
-        noCacheRes,
+        fetchFromCache,
+        cacheResponse,
         enableThrow,
         headers,
-        method
+        method,
+        uniqueId,
+        meta,
+        body
       }
     });
-    promiseResolve = resolve;
-    promiseReject = reject;
+    promiseMap[uniqueId] = {
+      resolve,
+      reject
+    };
   });
 };
 
-export const abort = () => {
+export const abort = (payload = {}) => {
   port.postMessage({
-    message: '__VANDAL__CLIENT__FETCH__ABORT'
+    message: '__VANDAL__CLIENT__FETCH__ABORT',
+    data: { ...payload }
   });
 };
 

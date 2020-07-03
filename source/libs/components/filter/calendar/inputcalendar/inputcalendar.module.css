@@ -1,4 +1,4 @@
-.filterIcon {
+.filter__icon {
   fill: var(--vandal-primary-icon-color);
   bottom: 0;
   cursor: pointer;
@@ -10,11 +10,12 @@
   width: 14px;
 }
 
-.inputCalendar {
+.input__calendar {
   position: relative;
 }
 
-.filterIcon:hover {
+.filter__icon:hover,
+.filter__icon___active {
   fill: var(--vandal-primary-icon-active-color);
 }
 
@@ -22,22 +23,23 @@
   background: var(--vandal-primary-background-color);
   border: 1px solid var(--vandal-primary-border-color);
   border-radius: 3px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
   position: absolute;
   max-height: 190px;
   width: 244px;
   right: 0;
   z-index: 1;
 }
-.calendarYear {
+.calendar__year {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 
-  padding: 0 6px 0 0;
-  box-sizing: content-box !important;
+  padding: 4px 6px 0 0;
 }
 
-.calendarYear___left {
+.calendar__year___left {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -47,10 +49,10 @@
   font-size: 12px;
   flex: 50px 0 0;
   padding: 5px 10px 0 10px;
-  height: 50px;
+  height: 44px;
 }
 
-.calendarYear___left:hover .calendarYearLabel {
+.calendar__year___left:hover .calendar__year__label {
   text-decoration: underline;
 }
 
@@ -80,7 +82,7 @@
   background: #ddd;
 }
 
-.month:hover .monthLabel {
+.month:hover .month__label {
   text-decoration: underline;
 }
 
@@ -97,30 +99,30 @@
   justify-content: center;
 }
 
-.prevIcon {
+.prev__icon {
   width: 15px;
   height: 14px;
   transform: rotate(180deg);
   fill: var(--vandal-primary-icon-color);
 }
 
-.nextIcon {
+.next__icon {
   width: 14px;
   height: 14px;
   fill: var(--vandal-primary-icon-color);
 }
 
-.nextIcon__disabled {
+.next__icon___disabled {
   fill: var(--vandal-cl-disabled-icon-color);
 }
 
-.prevIcon:hover,
-.nextIcon:hover {
+.prev__icon:hover,
+.next__icon:hover {
   cursor: pointer;
   fill: var(--vandal-primary-icon-active-color);
 }
 
-.nextIcon__disabled:hover {
+.next__icon___disabled:hover {
   cursor: default;
   fill: var(--vandal-cl-disabled-icon-color);
 }
@@ -135,10 +137,10 @@
   color: var(--vandal-input-color);
   font-family: 'VANDAL__SourceSansPro';
   font-size: 14px;
-  line-height: 16.1px;
+  line-height: 19.1px;
   width: 165px;
   outline: none;
-  padding: 2px 5px 1px 5px;
+  padding: 3px 5px 0px 5px;
 }
 
 .input::-webkit-datetime-edit-day-field:focus,
@@ -149,4 +151,19 @@
 
 .input::-webkit-clear-button {
   display: none;
+}
+
+.input___open {
+  border-bottom: 0;
+}
+
+.scroll__container {
+  visibility: hidden;
+  transition: visibility 0s linear 0s, opacity 300ms;
+}
+
+.scroll__container > div,
+.scroll__container:hover,
+.scroll__container:focus {
+  visibility: visible;
 }

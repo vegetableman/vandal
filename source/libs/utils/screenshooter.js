@@ -1,10 +1,8 @@
-import { api } from './api';
+import { api, abort } from './api';
 
 export default class Screenshooter {
   constructor() {
     this.loadURL();
-    // this.loadPre();
-    this.fetchController = new AbortController();
   }
 
   loadURL = () => {
@@ -16,13 +14,13 @@ export default class Screenshooter {
     this.captureURL = 'https://service.prerender.cloud/screenshot';
   };
 
-  abort = () => {
-    this.fetchController.abort();
+  abort = ({ type = 'screenshot' }) => {
+    abort({ meta: { type } });
   };
 
   fetchScreenshot = async (
     url,
-    { noCacheReq = false, noCacheRes = false, latest = false }
+    { fetchFromCache, cacheResponse, latest = false, type = 'screenshot' }
   ) => {
     const urlObj = new URL(`${this.captureURL}?url=${url}`);
     if (latest) {
@@ -30,29 +28,13 @@ export default class Screenshooter {
     }
     try {
       let [snapshotPath, pathErr] = await api(urlObj.href, {
-        controller: this.fetchController,
-        noCacheReq,
-        noCacheRes
+        fetchFromCache,
+        cacheResponse,
+        meta: { type }
       });
       return [snapshotPath, pathErr];
     } catch (ex) {
       return [null, ex.message];
     }
-  };
-
-  fetchPreRender = async (url, noCache = false) => {
-    var pHeaders = new Headers();
-    pHeaders.append(
-      'X-Prerender-Token',
-      'dXMtd2VzdC0yOjU3MzhhNGJiLWMzNjItNGJkYS1hYjM5LWNlNWQ0ZTYwZTZiZg.BNuwm8aJE9USPdPZp1PZnVdGQJCzHH_DHpPUKdZTKPY'
-    );
-    let [snapshot, pathErr] = await api(`${this.captureURL}/${url}`, {
-      headers: pHeaders,
-      noCacheReq: noCache,
-      noCacheRes: noCache,
-      controller: this.fetchController
-    });
-    console.log('snapshot: ', snapshot);
-    return snapshot;
   };
 }

@@ -32,9 +32,6 @@ const frameMachine = Machine(
               open: {
                 on: {
                   TOGGLE_TIMETRAVEL: 'close',
-                  LOAD_SPARKLINE: {
-                    actions: 'loadSparkline'
-                  },
                   SET_SELECTED_TABINDEX: {
                     actions: assign((_ctx, e) => {
                       return {
@@ -52,13 +49,6 @@ const frameMachine = Machine(
             states: {
               open: { on: { TOGGLE_HISTORICAL_MODE: 'close' } },
               close: { on: { TOGGLE_HISTORICAL_MODE: 'open' } }
-            }
-          },
-          changes: {
-            initial: 'close',
-            states: {
-              open: { on: { TOGGLE_CHANGES_MODE: 'close' } },
-              close: { on: { TOGGLE_CHANGES_MODE: 'open' } }
             }
           },
           diff: {

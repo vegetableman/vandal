@@ -54,8 +54,27 @@
   border-radius: 3px;
   cursor: pointer;
   height: 30px;
+  margin-left: 6px;
   width: 33px;
   outline: none;
+}
+
+.resource__btn {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  height: 30px;
+  margin-left: 8px;
+  outline: none;
+  width: 30px;
+}
+
+.resource__icon {
+  fill: var(--vandal-primary-icon-color);
+  height: 28px;
+  width: 28px;
+  position: relative;
+  top: 3px;
 }
 
 .save__btn:hover {
@@ -175,11 +194,11 @@
 
 .donate__icon {
   cursor: pointer;
-  fill: var(--vandal-primary-icon-color);
+  fill: #ff2626;
 }
 
 .donate__btn:hover .donate__icon {
-  fill: #ef3f3f;
+  fill: #f50b0b;
 }
 
 .navigation {
@@ -304,4 +323,23 @@
 .toast__open__btn:hover,
 .toast__close__btn:hover {
   background: #ffffff33;
+}
+
+.toast__close__icon {
+  cursor: pointer;
+  margin-left: 8px;
+  position: relative;
+  fill: #fff;
+  stroke: #fff;
+  stroke-width: 44px;
+  right: -6px;
+  top: -1px;
+  width: 10px;
+}
+
+.tooltip {
+  border-radius: 2px !important;
+  transition: none !important;
+  padding: 5px 10px 3px 10px !important;
+  font-size: 12px !important;
 }

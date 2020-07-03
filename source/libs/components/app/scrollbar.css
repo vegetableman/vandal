@@ -1,6 +1,6 @@
 /*
- * Container style
- */
+* Container style
+*/
 .ps {
   overflow: hidden !important;
   overflow-anchor: none;
@@ -8,10 +8,9 @@
   touch-action: auto;
   -ms-touch-action: auto;
 }
-
 /*
- * Scrollbar rail styles
- */
+  * Scrollbar rail styles
+  */
 .ps__rail-x {
   display: none;
   opacity: 0;
@@ -23,25 +22,23 @@
   /* please don't change 'position' */
   position: absolute;
 }
-
 .ps__rail-y {
   display: none;
   opacity: 0;
   transition: background-color 0.2s linear, opacity 0.2s linear;
   -webkit-transition: background-color 0.2s linear, opacity 0.2s linear;
+  /* width: 15px; */
   width: 7px;
   /* there must be 'right' or 'left' for ps__rail-y */
   right: 0;
   /* please don't change 'position' */
   position: absolute;
 }
-
 .ps--active-x > .ps__rail-x,
 .ps--active-y > .ps__rail-y {
   display: block;
   background-color: transparent;
 }
-
 .ps:hover > .ps__rail-x,
 .ps:hover > .ps__rail-y,
 .ps--focus > .ps__rail-x,
@@ -50,23 +47,21 @@
 .ps--scrolling-y > .ps__rail-y {
   opacity: 0.6;
 }
-
 .ps .ps__rail-x:hover,
 .ps .ps__rail-y:hover,
 .ps .ps__rail-x:focus,
 .ps .ps__rail-y:focus,
 .ps .ps__rail-x.ps--clicking,
 .ps .ps__rail-y.ps--clicking {
-  background-color: #eee;
+  /* background-color: #eee; */
   opacity: 0.9;
 }
-
 /*
- * Scrollbar thumb styles
- */
+  * Scrollbar thumb styles
+  */
 .ps__thumb-x {
   background-color: #aaa;
-  border-radius: 6px;
+  border-radius: 0px;
   transition: background-color 0.2s linear, height 0.2s ease-in-out;
   -webkit-transition: background-color 0.2s linear, height 0.2s ease-in-out;
   height: 6px;
@@ -75,40 +70,36 @@
   /* please don't change 'position' */
   position: absolute;
 }
-
 .ps__thumb-y {
-  background-color: var(--vandal-primary-icon-color);
-  border-radius: 6px;
+  background-color: #aaa;
+  border-radius: 0px;
   transition: background-color 0.2s linear, width 0.2s ease-in-out;
   -webkit-transition: background-color 0.2s linear, width 0.2s ease-in-out;
-  width: 5px;
+  /* width: 6px; */
+  width: 3px;
   /* there must be 'right' for ps__thumb-y */
   right: 2px;
   /* please don't change 'position' */
   position: absolute;
 }
-
 .ps__rail-x:hover > .ps__thumb-x,
 .ps__rail-x:focus > .ps__thumb-x,
 .ps__rail-x.ps--clicking .ps__thumb-x {
   background-color: #999;
   height: 11px;
 }
-
 .ps__rail-y:hover > .ps__thumb-y,
 .ps__rail-y:focus > .ps__thumb-y,
 .ps__rail-y.ps--clicking .ps__thumb-y {
   background-color: #999;
-  width: 8px;
+  width: 3px;
 }
-
 /* MS supports */
 @supports (-ms-overflow-style: none) {
   .ps {
     overflow: auto !important;
   }
 }
-
 @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
   .ps {
     overflow: auto !important;

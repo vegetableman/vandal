@@ -5,11 +5,16 @@ import each from 'promise-each';
 const { assign } = actions;
 const screenshooter = new Screenshooter();
 
+export const cleanUp = () => {
+  abort({ meta: { type: 'available' } });
+  screenshooter.abort();
+};
+
 export const fetchSnapshot = async ({ url, year, archiveURL }) => {
   let [result, archiveErr] = await api(
     `https://archive.org/wayback/available?url=${url}&timestamp=${year}12`,
     {
-      noCacheReq: true
+      cacheResponse: true
     }
   );
   if (archiveErr) {
@@ -27,7 +32,7 @@ export const fetchSnapshot = async ({ url, year, archiveURL }) => {
 
   return [
     await screenshooter.fetchScreenshot(archiveURL, {
-      noCacheReq: true,
+      cacheResponse: true,
       latest: true
     }),
     closestURL ? archiveURL : null
@@ -122,12 +127,6 @@ const historicalMachine = Machine(
           showTermModal: false
         })
       },
-      CLEANUP: {
-        actions: assign((_ctx, e) => {
-          abort();
-          return {};
-        })
-      },
       ADD_SNAPSHOT: {
         actions: assign((ctx, e) => {
           return {
@@ -159,19 +158,20 @@ const historicalMachine = Machine(
   },
   {
     services: {
-      fetchArchiveLinks: ctx => async callback => {
+      fetchArchiveLinks: (ctx) => async (callback) => {
         const timestampURLs = _.map(
           ctx.years,
-          y =>
-            `https://archive.org/wayback/available?url=${ctx.url}&timestamp=${y}12`
+          (y) =>
+            `https://archive.org/wayback/available?url=${
+              ctx.url
+            }&timestamp=${y}12`
         );
 
         const timestampURLCount = _.size(timestampURLs);
         const snapshotMapper = async (item, index) => {
           let [result] = await api(item, {
-            noCacheReq: timestampURLCount - 1 === index,
-            noCacheRes: timestampURLCount - 1 === index,
-            disableReject: true
+            fetchFromCache: timestampURLCount - 1 !== index,
+            meta: { type: 'available' }
           });
           let archiveURL = _.replace(
             _.replace(
@@ -184,8 +184,7 @@ const historicalMachine = Machine(
           );
 
           const [data, err] = await screenshooter.fetchScreenshot(archiveURL, {
-            noCacheReq: timestampURLCount - 1 === index,
-            noCacheRes: timestampURLCount - 1 === index,
+            fetchFromCache: timestampURLCount - 1 !== index,
             latest: timestampURLCount - 1 === index
           });
           callback({

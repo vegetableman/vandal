@@ -12,8 +12,8 @@ import { useTheme } from '../../../hooks';
 
 import styles from './urlbox.module.css';
 
-const URLBox = memo(props => {
-  const getTS = props => {
+const URLBox = memo((props) => {
+  const getTS = (props) => {
     if (props.redirectedTS) {
       return props.redirectedTS;
     }
@@ -36,12 +36,16 @@ const URLBox = memo(props => {
   const [showFrameLoader, toggleFrameLoader] = useState(false);
   const { theme } = useTheme();
 
-  useEffect(() => {
-    setCurrentTs(getTS(props));
-  }, [props.redirectedTS, props.selectedTS]);
+  useEffect(
+    () => {
+      setCurrentTs(getTS(props));
+    },
+    [props.redirectedTS, props.selectedTS]
+  );
 
   let frameLoaderTimeout;
-  const onMessage = async request => {
+  const onMessage = async (request) => {
+    console.log('urlbox:', request.message);
     switch (request.message) {
       case '__VANDAL__NAV__BEFORENAVIGATE':
         toggleURLLoader(true);
@@ -76,17 +80,21 @@ const URLBox = memo(props => {
     };
   }, []);
 
+  console.log('URLBOX:currentTS:', currentTS);
+
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <div className={styles.favicon}>
           {showURLLoader && <URLLoader />}
-          {!currentTS && !showURLLoader && (
-            <Icon name="globe" className={styles.urlIcon} />
-          )}
-          {!!currentTS && !showURLLoader && (
-            <Icon name="archive" className={styles.archiveIcon} />
-          )}
+          {!currentTS &&
+            !showURLLoader && (
+              <Icon name="globe" className={styles.url__icon} />
+            )}
+          {!!currentTS &&
+            !showURLLoader && (
+              <Icon name="archive" className={styles.archiveIcon} />
+            )}
         </div>
         <input
           type="text"
@@ -95,8 +103,8 @@ const URLBox = memo(props => {
           readOnly
         />
         <button
-          className={cx(styles.historyBtn, {
-            [styles.historyBtn___active]: props.showURLHistory
+          className={cx(styles.history__btn, {
+            [styles.history__btn___active]: props.showURLHistory
           })}
           onClick={props.toggleURLHistory}>
           <Icon name="bottomCaret" className={styles.caret} />
@@ -106,8 +114,8 @@ const URLBox = memo(props => {
         <div
           className={cx({
             [styles.date]: true,
-            [styles.dateLoader]: showFrameLoader,
-            [styles.dateInfo]: props.showURLInfo && !showFrameLoader
+            [styles.date__loader]: showFrameLoader,
+            [styles.date__info]: props.showURLInfo && !showFrameLoader
           })}
           onClick={props.toggleURLInfo}>
           {showFrameLoader && (
@@ -117,22 +125,23 @@ const URLBox = memo(props => {
             <Icon
               name="info"
               className={cx({
-                [styles.infoIcon]: true,
-                [styles.infoIcon___dark]: theme === 'dark'
+                [styles.info__icon]: true,
+                [styles.info__icon___dark]: theme === 'dark'
               })}
             />
           )}
-          <div>
+          <div className={styles.date__text}>
             <span style={{ marginRight: '3px' }}>{dateObj.humanizedDate}</span>{' '}
             <span>{toTwelveHourTime(dateObj.ts)}</span>
           </div>
         </div>
       )}
-      <div className={styles.timetravelContainer}>
+      <div className={styles.timetravel__container}>
         <div
           className={cx({
-            [styles.timetravelBtn]: true,
-            [styles.timetravelBtn___selected]: props.showTimeTravel
+            [styles.timetravel__btn]: true,
+            [styles.timetravel__btn___selected]: props.showTimeTravel,
+            [styles.timetravel__btn___updated]: props.sparklineLoaded
           })}
           onClick={props.toggleTimeTravel}>
           <Icon className={styles.timetravelIcon} name="history" width={22} />
@@ -140,6 +149,6 @@ const URLBox = memo(props => {
       </div>
     </div>
   );
-}, compareProps(['redirectedTS', 'selectedTS', 'url', 'redirectTSCollection', 'showURLHistory', 'showURLInfo', 'showTimeTravel']));
+}, compareProps(['redirectedTS', 'selectedTS', 'url', 'redirectTSCollection', 'showURLHistory', 'showURLInfo', 'showTimeTravel', 'sparklineLoaded']));
 
 export default URLBox;

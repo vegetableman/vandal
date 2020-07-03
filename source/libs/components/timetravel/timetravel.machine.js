@@ -1,9 +1,17 @@
-import { Machine, send, actions } from 'xstate';
+import { Machine, actions, spawn, send } from 'xstate';
 import memoizeOne from 'memoize-one';
-import { api, abort, getDateTimeFromTS, browser } from '../../utils';
+import {
+  api,
+  abort,
+  getDateTimeFromTS,
+  browser
+  // getLastDate
+} from '../../utils';
+import cardMachine from '../common/card/card.machine';
 const { assign } = actions;
 
 const ROOT_URL = 'https://web.archive.org';
+const MAX_COUNT_IN_YEAR = 36000;
 
 const memoizedDateTimeFromTS = memoizeOne(getDateTimeFromTS);
 
@@ -35,6 +43,7 @@ export const getTSFromCurrentYear = (type, months, selectedTS) => {
   }
 };
 
+// Find day with snapshot in current year
 export const findDayFromTs = (
   currentDay,
   currentMonth,
@@ -62,36 +71,46 @@ export const findDayFromTs = (
   }
 
   const findDay = (day, month) => {
-    let tsDayArr;
+    let tsDayArr, cnt;
 
     if (isPrev) {
+      // In same month
       if (day) {
         tsDayArr = _.get(months[month - 1][day - 1], 'ts');
-      } else {
+      }
+      // Check previous month
+      else if (month > 1) {
         month = month - 1;
         day = _.size(months[month - 1]);
         tsDayArr = _.get(months[month - 1][day - 1], 'ts');
       }
     } else {
+      // In same month
       if (day < _.size(months[month - 1])) {
         tsDayArr = _.get(months[month - 1][day - 1], 'ts');
-      } else {
+      }
+      // Check next month
+      else if (month < 12) {
         month = month + 1;
         day = 1;
-        tsDayArr = _.get(months[month][day - 1], 'ts');
+        tsDayArr = _.get(months[month - 1][day - 1], 'ts');
       }
     }
+
+    cnt = _.get(months[month - 1][day - 1], 'cnt');
 
     if (!_.isEmpty(tsDayArr)) {
       return {
         month,
         day,
-        ts: _.last(tsDayArr)
+        ts: _.last(tsDayArr),
+        size: _.size(tsDayArr),
+        cnt
       };
     } else if (isPrev && day > 0) {
-      findDay(day - 1, month);
+      return findDay(day - 1, month);
     } else if (!isPrev && day <= dayCount) {
-      findDay(day + 1, month);
+      return findDay(day + 1, month);
     }
   };
 
@@ -112,12 +131,15 @@ export const findDayFromTs = (
   };
 };
 
+// const memoizedfindPrevDayFromTs = memoizeOne(findDayFromTs);
+// const memoizedfindNextDayFromTs = memoizeOne(findDayFromTs);
+
 export const findCalendarFromTS = (sparkline, year, dir) => {
   const isPrev = dir === 'prev';
-  const findTS = year => {
+  const findTS = (year) => {
     const month = isPrev
-      ? _.findLastIndex(sparkline[year], m => m > 0)
-      : _.findIndex(sparkline[year], m => m > 0);
+      ? _.findLastIndex(sparkline[year], (m) => m > 0)
+      : _.findIndex(sparkline[year], (m) => m > 0);
     if (month > -1) {
       return {
         year,
@@ -133,13 +155,20 @@ const fetchCalendar = async (url, year) => {
   if (!url || !year) {
     return [null, null];
   }
-  return await api(
+
+  // TODO: remove this old api
+  /*return await api(
     `https://web.archive.org/__wb/calendarcaptures?url=${encodeURIComponent(
       url
     )}&selected_year=${year}`,
     {
-      noCacheReq: true,
-      noCacheRes: true,
+      enableThrow: true
+    }
+  );*/
+
+  return await api(
+    `${ROOT_URL}/cdx/search/cdx?url=${url}&from=${`${year}0101`}&to=${`${year}1231`}`,
+    {
       enableThrow: true
     }
   );
@@ -153,14 +182,17 @@ const memoizedFetchCalendar = memoizeOne(fetchCalendar, (arg1, arg2) => {
   );
 });
 
+const jobs = {};
+
 const timetravelMachine = Machine(
   {
     id: 'timetravel',
     initial: 'idle',
     context: {
       url: null,
-      months: null,
       sparkline: null,
+      calendar: null,
+      currentSnapshots: null,
 
       selectedTS: null,
       redirectedTS: null,
@@ -184,44 +216,65 @@ const timetravelMachine = Machine(
         target: 'loadingSparkline',
         actions: assign((_ctx, e) => {
           return {
-            url: _.get(e, 'payload.url'),
-            redirectedTS: null
+            url: _.get(e, 'payload.url')
+            // redirectedTS: null
           };
         })
       },
-      RESET__CALENDAR: {
+      RESET_SPARKLINE: {
         target: 'loadingSparkline',
-        actions: assign((_ctx, e) => {
+        actions: assign((ctx, e) => {
           return {
-            url: _.get(e, 'payload.url'),
-            selectedTS: _.get(e, 'payload.ts', null),
-            currentYear: null,
-            currentMonth: (_ctx, e) =>
-              _.get(memoizedDateTimeFromTS(ctx.lastTS), 'month'),
-            currentYear: (_ctx, e) =>
-              _.get(memoizedDateTimeFromTS(ctx.lastTS), 'year'),
-            redirectedTS: null
+            url: _.get(e, 'payload.url', ctx.url),
+            selectedTS: _.get(e, 'payload.ts', ctx.selectedTS),
+            // currentMonth: (_ctx, e) =>
+            //   _.get(memoizedDateTimeFromTS(ctx.lastTS), 'month'),
+            // currentYear: (_ctx, e) =>
+            //   _.get(memoizedDateTimeFromTS(ctx.lastTS), 'year'),
+            redirectedTS: null,
+            calendar: null
           };
         })
       },
       SET_REDIRECT_INFO: {
         target: 'sparklineLoaded.loadingCalendar',
-        actions: assign((_ctx, e) => {
-          const ts = _.get(e.payload, 'redirectedTS');
+        actions: assign((ctx, e) => {
+          const ts = _.get(e, 'payload.redirectedTS');
+          const isReset = _.get(e, 'payload.isReset');
+          const redirectTSCollection = ctx.redirectTSCollection || {};
+          redirectTSCollection[ts] = ctx.selectedTS;
+
+          // fetch all the snapshots for a date and select the appropriate one on redirect
+          // handles the redirect in case of RESET_SPARKLINE
+          const date = _.get(
+            ctx.calendar,
+            `[${ctx.currentYear}][[${ctx.currentMonth - 1}][${ctx.currentDay -
+              1}]`
+          );
+
+          let selectedTS = ctx.selectedTS;
+          if (
+            isReset ||
+            (!_.includes(_.get(date, 'ts'), ctx.selectedTS) &&
+              _.includes(_.get(date, 'ts'), ts))
+          ) {
+            selectedTS = ts;
+          }
+
           return {
             redirectedTS: ts,
-            redirectTSCollection: _.get(e.payload, 'redirectTSCollection'),
-            currentMonth: _.get(memoizedDateTimeFromTS(ts), 'month'),
-            currentYear: _.get(memoizedDateTimeFromTS(ts), 'year'),
-            currentDay: _.get(memoizedDateTimeFromTS(ts), 'day')
+            selectedTS,
+            redirectTSCollection,
+            currentMonth: _.get(memoizedDateTimeFromTS(selectedTS), 'month'),
+            currentYear: _.get(memoizedDateTimeFromTS(selectedTS), 'year')
           };
         })
       },
-      RESET__TS: {
+      RESET_CALENDAR: {
         target: 'sparklineLoaded.loadingCalendar',
-        actions: assign((ctx, _e) => {
+        actions: assign((ctx, e) => {
           return {
-            selectedTS: null,
+            selectedTS: _.get(e, 'payload.ts', null),
             redirectedTS: null,
             currentYear: _.get(
               memoizedDateTimeFromTS(ctx.lastTS),
@@ -232,26 +285,105 @@ const timetravelMachine = Machine(
               memoizedDateTimeFromTS(ctx.lastTS),
               'month',
               new Date().getMonth() + 1
-            )
+            ),
+            calendar: null
           };
         })
       },
-      GOTO__LINK_TS: {
+      GOTO__URL_TS: {
         target: 'sparklineLoaded.loadingCalendar',
         actions: assign((ctx, e) => {
-          const ts = _.get(e, 'payload.value');
+          const ts = _.get(e, 'payload.ts');
+          const selectedTS =
+            ts !== ctx.selectedTS && ctx.redirectTSCollection[ts]
+              ? ctx.redirectTSCollection[ts]
+              : ts;
+          // const selectedTS = ctx.redirectTSCollection[ts]
+          //   ? ctx.redirectTSCollection[ts]
+          //   : ts;
+          // If snapshot is manually selected, navigate to it or go to original redirected one
+          // const isNavigatedTS = ctx.selectedTS === ts;
+          // const selectedTS =
+          //   isNavigatedTS || !ctx.redirectTSCollection[ts]
+          //     ? ts
+          //     : ctx.redirectTSCollection[ts];
+          const months = _.get(ctx.calendar, ctx.currentYear);
+          const date = _.get(
+            months,
+            `[${ctx.currentMonth - 1}][${ctx.currentDay - 1}]`
+          );
+          const tsList = _.get(date, 'ts');
           return {
-            selectedTS: ctx.redirectTSCollection[ts] || ts,
-            redirectedTS: ctx.redirectTSCollection[ts] ? ts : null,
-            currentMonth: _.get(memoizedDateTimeFromTS(ts), 'month'),
-            currentYear: _.get(memoizedDateTimeFromTS(ts), 'year'),
-            currentDay: _.get(memoizedDateTimeFromTS(ts), 'day')
+            selectedTS,
+            redirectedTS:
+              ctx.selectedTS !== ts && ctx.redirectTSCollection[ts] ? ts : null,
+            // redirectedTS:
+            //   !isNavigatedTS && ctx.redirectTSCollection[ts] ? ts : null
+            currentMonth: _.get(memoizedDateTimeFromTS(selectedTS), 'month'),
+            currentYear: _.get(memoizedDateTimeFromTS(selectedTS), 'year'),
+            currentDay: _.get(memoizedDateTimeFromTS(selectedTS), 'day')
           };
+        })
+      },
+      // TOGGLE_CARD: {
+      //   actions: assign({
+      //     showCard: (_ctx, e) => e.value
+      //   })
+      // },
+      // SET_CARD: {
+      //   actions: assign({
+      //     showCard: (_ctx, e) => _.get(e, 'payload.show'),
+      //     card: (_ctx, e) => _.get(e, 'payload.value')
+      //   })
+      // },
+      HIDE_LIMIT_TOOLTIP: {
+        actions: assign({
+          showLimitTooltip: false
+        })
+      },
+      ON_SNAPSHOTS: {
+        actions: assign((ctx, e) => {
+          const { month, day, year } = getDateTimeFromTS(
+            _.get(e, 'payload.date')
+          );
+          const snapshots = _.get(e, 'payload.snapshots');
+          const { calendar } = ctx;
+          _.set(calendar, `${year}.${month - 1}.${day - 1}.__CACHED__`, true);
+          _.set(
+            calendar,
+            `${year}.${month - 1}.${day - 1}.ts`,
+            _.map(_.map(snapshots, 'value'), (s) => +s)
+          );
+          _.set(
+            calendar,
+            `${year}.${month - 1}.${day - 1}.st`,
+            _.map(snapshots, 'status')
+          );
+        })
+      },
+      UPDATE_CALENDAR_CB: {
+        actions: assign({
+          calendar: (_ctx, e) => {
+            console.log(
+              'loadOtherMonths:ix:',
+              _.get(e, 'payload.i'),
+              _.get(e, 'payload.year')
+            );
+            return _.get(e, 'payload.calendar');
+          }
         })
       }
     },
     states: {
-      idle: {},
+      idle: {
+        entry: [
+          assign({
+            cardRef: () => spawn(cardMachine)
+            // prevCardRef: () => spawn(cardMachine),
+            // nextCardRef: () => spawn(cardMachine)
+          })
+        ]
+      },
       loadingSparkline: {
         id: 'loadingSparkline',
         after: {
@@ -262,18 +394,38 @@ const timetravelMachine = Machine(
           src: 'fetchSparkline',
           onDone: {
             target: 'processingSparkline',
-            actions: assign({
-              sparkline: (_ctx, e) => _.get(e, 'data.years'),
-              firstTS: (_ctx, e) => +_.get(e, 'data.first_ts'),
-              lastTS: (_ctx, e) => +_.get(e, 'data.last_ts'),
-              currentMonth: (_ctx, e) =>
-                _.get(
-                  memoizedDateTimeFromTS(+_.get(e, 'data.last_ts')),
-                  'month'
-                ),
-              currentYear: (_ctx, e) =>
-                _.get(memoizedDateTimeFromTS(+_.get(e, 'data.last_ts')), 'year')
-            })
+            actions: [
+              assign({
+                sparkline: (_ctx, e) => _.get(e, 'data.years'),
+                firstTS: (_ctx, e) => +_.get(e, 'data.first_ts'),
+                lastTS: (_ctx, e) => +_.get(e, 'data.last_ts'),
+                currentMonth: (_ctx, e) =>
+                  _.get(
+                    memoizedDateTimeFromTS(
+                      +_.get(e, 'data.ts', _.get(e, 'data.last_ts'))
+                    ),
+                    'month'
+                  ),
+                currentYear: (_ctx, e) =>
+                  _.get(
+                    memoizedDateTimeFromTS(
+                      +_.get(e, 'data.ts', _.get(e, 'data.last_ts'))
+                    ),
+                    'year'
+                  )
+              }),
+              assign({
+                isOverCapacity: (ctx, e) =>
+                  _.reduce(
+                    _.get(ctx.sparkline, ctx.currentYear),
+                    (a, b) => a + b,
+                    0
+                  ) > MAX_COUNT_IN_YEAR
+              }),
+              assign({
+                showLimitTooltip: (ctx) => ctx.isOverCapacity
+              })
+            ]
           },
           onError: {
             target: 'sparklineError.rejected',
@@ -348,7 +500,14 @@ const timetravelMachine = Machine(
               src: 'fetchCalendar',
               onDone: {
                 target: 'processingCalendar',
-                actions: ['setMonths', 'setSelectedTS', 'setCurrentDay']
+                actions: [
+                  'setCalendar',
+                  'setSelectedTS',
+                  'setSelectedDay',
+                  'updateRedirectCollection',
+                  'setLastTS',
+                  'updateCard'
+                ]
               },
               onError: {
                 target: 'calendarError.rejected',
@@ -398,6 +557,9 @@ const timetravelMachine = Machine(
             }
           },
           calendarLoaded: {
+            invoke: {
+              src: 'loadOtherMonths'
+            },
             on: {
               RELOAD_SPARKLINE: {
                 target: '#loadingSparkline'
@@ -409,20 +571,20 @@ const timetravelMachine = Machine(
                 target: 'loadingCalendar',
                 actions: [
                   assign({
-                    selectedTS: ctx => ctx.firstTS
+                    selectedTS: (ctx) => ctx.firstTS
                   }),
                   assign({
-                    currentDay: ctx =>
+                    currentDay: (ctx) =>
                       _.get(memoizedDateTimeFromTS(ctx.selectedTS), 'day'),
-                    currentMonth: ctx =>
+                    currentMonth: (ctx) =>
                       _.get(memoizedDateTimeFromTS(ctx.selectedTS), 'month'),
-                    currentYear: ctx =>
+                    currentYear: (ctx) =>
                       _.get(memoizedDateTimeFromTS(ctx.selectedTS), 'year')
                   }),
                   'setBrowserURL'
                 ]
               },
-              GOTO__DATE: {
+              GOTO__TS_DATE: {
                 actions: [
                   assign({
                     selectedTS: (_ctx, e) => _.get(e, 'payload.ts'),
@@ -441,7 +603,7 @@ const timetravelMachine = Machine(
                   currentYear: (_ctx, e) => _.get(e, 'payload.year')
                 })
               },
-              GOTO__CURRENT_TS: {
+              GOTO__CURRENT_SEL_TS: {
                 target: 'loadingCalendar',
                 actions: assign((_ctx, e) => {
                   const ts = e.value;
@@ -462,7 +624,6 @@ const timetravelMachine = Machine(
                     return {
                       selectedTS: ts,
                       redirectedTS: null,
-                      // redirectTSCollection: {},
                       currentMonth: _.get(memoizedDateTimeFromTS(ts), 'month'),
                       currentYear: _.get(memoizedDateTimeFromTS(ts), 'year'),
                       currentDay: _.get(memoizedDateTimeFromTS(ts), 'day')
@@ -484,30 +645,20 @@ const timetravelMachine = Machine(
                 target: 'loadingCalendar',
                 actions: [
                   assign({
-                    selectedTS: ctx => {
+                    selectedTS: (ctx) => {
                       return ctx.lastTS;
                     }
                   }),
                   assign({
-                    currentDay: ctx =>
+                    currentDay: (ctx) =>
                       _.get(memoizedDateTimeFromTS(ctx.selectedTS), 'day'),
-                    currentMonth: ctx =>
+                    currentMonth: (ctx) =>
                       _.get(memoizedDateTimeFromTS(ctx.selectedTS), 'month'),
-                    currentYear: ctx =>
+                    currentYear: (ctx) =>
                       _.get(memoizedDateTimeFromTS(ctx.selectedTS), 'year')
                   }),
                   'setBrowserURL'
                 ]
-              },
-              TOGGLE_CARD: {
-                actions: assign({
-                  showCard: (_ctx, e) => e.value
-                })
-              },
-              SET_CARD: {
-                actions: assign({
-                  card: (_ctx, e) => e.value
-                })
               },
               SET_DATE_HIGHLIGHTED: {
                 actions: assign({
@@ -528,47 +679,55 @@ const timetravelMachine = Machine(
   },
   {
     actions: {
-      enterLoadingCalendar: assign({
-        currentMonth: ctx =>
-          ctx.selectedTS
-            ? _.get(memoizedDateTimeFromTS(ctx.selectedTS), 'month')
-            : ctx.currentMonth,
-        currentYear: ctx =>
-          ctx.selectedTS
-            ? _.get(memoizedDateTimeFromTS(ctx.selectedTS), 'year')
-            : ctx.currentYear,
-        currentDay: ctx =>
-          ctx.selectedTS
-            ? _.get(memoizedDateTimeFromTS(ctx.selectedTS), 'day')
-            : ctx.currentDay
-      }),
-      setMonths: assign({
-        months: (_ctx, e) => {
-          return _.chain(_.get(e, 'data.calendarData'))
-            .map(month => _.compact(_.flatten(month)))
-            .map(m =>
-              _.map(m, mx => ({
-                cnt: mx.cnt ? mx.cnt : 0,
-                ts: mx.ts,
-                st: mx.st
-              }))
-            )
-            .value();
+      setCalendar: assign({
+        calendar: (ctx, e) => {
+          let { calendar, currentYear } = ctx;
+          if (
+            _.get(calendar, currentYear) &&
+            _.get(ctx, 'calendar.url') === ctx.url &&
+            !_.get(e, 'data.payload.force')
+          ) {
+            return calendar;
+          }
+
+          // const months = _.chain(_.get(e, 'data.months'))
+          //   .map((month) => _.compact(_.flatten(month)))
+          //   .map((m) =>
+          //     _.map(m, (mx) => ({
+          //       cnt: mx.cnt ? mx.cnt : 0,
+          //       ts: mx.ts,
+          //       st: mx.st
+          //     }))
+          //   )
+          //   .value();
+          // if (!calendar) {
+          //   calendar = {};
+          // }
+          // const currDate = new Date();
+          // if (currentYear === currDate.getFullYear() && ctx.currentSnapshots) {
+          //   months[currDate.getMonth()][currDate.getDate() - 1] =
+          //     ctx.currentSnapshots;
+          // }
+          // calendar[currentYear] = months;
+          // calendar['url'] = ctx.url;
+          // return calendar;
+
+          return _.get(e, 'data.calendar');
         }
       }),
       setSelectedTS: assign({
         selectedTS: (ctx, e) => {
           if (
             ctx.selectedTS &&
-            // ctx.isRedirect &&
             ctx.redirectTSCollection[ctx.redirectedTS] === ctx.selectedTS
           ) {
             return ctx.selectedTS;
           }
           const month = _.get(e, 'data.payload.month');
           if (!month) return ctx.selectedTS;
+          const months = _.get(ctx.calendar, ctx.currentYear);
           const tsArray = _.compact(
-            _.flatten(_.map(_.flatten(ctx.months[month - 1]), 'ts'))
+            _.flatten(_.map(_.flatten(months[month - 1]), 'ts'))
           );
           const dir = _.get(e, 'data.payload.meta.dir');
           if (dir === 'prev') {
@@ -580,67 +739,340 @@ const timetravelMachine = Machine(
           }
         }
       }),
-      setCurrentDay: assign({
+      setSelectedDay: assign({
         currentDay: (ctx, e) => {
-          return _.get(memoizedDateTimeFromTS(ctx.selectedTS), 'day', null);
+          return _.get(
+            memoizedDateTimeFromTS(ctx.selectedTS),
+            'day',
+            ctx.currentDay
+          );
         }
       }),
-      setBrowserURL: ctx => {
+      updateRedirectCollection: assign({
+        redirectTSCollection: (ctx, e) => {
+          const { redirectTSCollection } = ctx;
+          if (_.get(redirectTSCollection, ctx.selectedTS)) {
+            delete redirectTSCollection[ctx.selectedTS];
+          }
+          return redirectTSCollection;
+        }
+      }),
+      setLastTS: assign({
+        lastTS: (ctx, e) => _.get(e, 'data.lastTS', ctx.lastTS)
+      }),
+      setBrowserURL: (ctx) => {
         browser.navigate(
           `https://web.archive.org/web/${ctx.selectedTS}/${ctx.url}`
         );
+      },
+      updateCard: (ctx) => {
+        const cardCtx = _.get(ctx, 'cardRef.state.context');
+        if (ctx.highlightedDay && cardCtx.showCard) {
+          const date = _.get(
+            ctx.calendar,
+            `[${ctx.currentYear}][${ctx.currentMonth -
+              1}][${ctx.highlightedDay - 1}]`
+          );
+          const status = _.get(date, 'st', []);
+          ctx.cardRef.send({
+            type: 'SHOW_CARD',
+            payload: {
+              ...cardCtx.card,
+              ...{
+                ts: _.map(_.get(date, 'ts'), (value, i) => {
+                  return { value, status: status[i] };
+                })
+              }
+            }
+          });
+        }
       }
     },
     services: {
-      fetchSparkline: ctx => {
+      fetchSparkline: (ctx, e) => {
+        console.log('fetchSparkline', ctx.selectedTS, _.get(e, 'payload.ts'));
         return new Promise(async (resolve, reject) => {
           const [sparklineData, err] = await api(
             `${ROOT_URL}/__wb/sparkline?url=${encodeURIComponent(
               ctx.url
-            )}&collection=web&output=json`,
-            {
-              noCacheReq: true,
-              noCacheRes: true
-            }
+            )}&collection=web&output=json`
           );
 
           if (err) {
             return reject(err);
           }
-          console.log('fetchSparkline:', sparklineData);
-          return resolve(sparklineData);
+
+          // const currDate = new Date();
+          // const date = `${currDate.getFullYear()}${_.padStart(
+          //   currDate.getMonth() + 1,
+          //   2,
+          //   '0'
+          // )}${_.padStart(currDate.getDate(), 2, '0')}`;
+
+          // const result = await api(
+          //   `${ROOT_URL}/cdx/search/cdx?url=${ctx.url}&from=${date}&to=${date}`
+          // );
+
+          // let cdx;
+          // if (result) {
+          //   cdx = _.reduce(
+          //     _.compact(_.split(_.nth(result, 0), '\n')),
+          //     (acc, data) => {
+          //       if (!acc['ts']) {
+          //         acc['ts'] = [];
+          //       }
+          //       if (!acc['st']) {
+          //         acc['st'] = [];
+          //       }
+          //       acc['ts'].push(+_.nth(data.split(' '), 1));
+          //       acc['st'].push(+_.nth(data.split(' '), 4));
+          //       return acc;
+          //     },
+          //     {}
+          //   );
+          //   cdx.cnt = _.size(_.get(cdx, 'ts'));
+          //   const count = _.nth(
+          //     _.get(sparklineData, `years.${currDate.getFullYear()}`),
+          //     currDate.getMonth()
+          //   );
+          //   if (_.get(cdx, 'cnt') && (!count || count < _.get(cdx, 'cnt'))) {
+          //     if (!_.get(sparklineData, `years.${currDate.getFullYear()}`)) {
+          //       _.set(
+          //         sparklineData,
+          //         `years.${currDate.getFullYear()}`,
+          //         new Array(12).fill(0)
+          //       );
+          //     }
+
+          //     _.set(
+          //       _.get(sparklineData, `years.${currDate.getFullYear()}`),
+          //       currDate.getMonth(),
+          //       _.get(cdx, 'cnt')
+          //     );
+          //   }
+
+          //   if (!!_.get(cdx, 'cnt')) {
+          //     if (
+          //       !_.get(sparklineData, 'last_ts') ||
+          //       _.get(sparklineData, 'last_ts') !== _.last(_.get(cdx, 'ts'))
+          //     ) {
+          //       _.set(sparklineData, 'last_ts', _.last(_.get(cdx, 'ts')));
+          //     }
+          //     if (!_.get(sparklineData, 'first_ts')) {
+          //       _.set(sparklineData, 'first_ts', _.last(_.get(cdx, 'ts')));
+          //     }
+          //   }
+          // }
+
+          return resolve({
+            ...sparklineData,
+            ts: _.get(e, 'payload.ts'),
+            force: _.get(e, 'payload.force')
+          });
         });
       },
       fetchCalendar: (ctx, e) => {
         return new Promise(async (resolve, reject) => {
-          let calendarData, err;
-          if (_.get(e, 'payload.force')) {
+          const force = _.get(e, 'payload.force');
+          if (force) {
             memoizedFetchCalendar.apply({}, []);
           }
-          try {
-            [calendarData, err] = await memoizedFetchCalendar(
-              ctx.url,
-              ctx.currentYear
+
+          if (
+            !force &&
+            _.get(ctx.calendar, `${ctx.currentYear}.${ctx.currentMonth - 1}`) &&
+            (!_.get(e, 'payload.url') ||
+              _.get(ctx.calendar, 'url') === _.get(e, 'payload.url'))
+          ) {
+            return resolve({
+              months: ctx.calendar[ctx.currentYear],
+              payload: e.payload
+            });
+          }
+
+          let response, err;
+          let calendar;
+          let lastTS;
+
+          if (ctx.isOverCapacity) {
+            [response, err] = await api(
+              `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${
+                ctx.currentYear
+              }${_.padStart(ctx.currentMonth, 2, '0')}&groupby=day`
             );
-          } catch (ex) {
-            console.log('fetchCalendar error:', ex.message);
-            memoizedFetchCalendar.apply({}, []);
-            err = ex.message;
+
+            if (err) {
+              return reject(err);
+            }
+
+            calendar = _.reduce(
+              response.items,
+              (acc, item) => {
+                const date = _.nth(item, 0);
+                _.set(
+                  acc,
+                  `${ctx.currentYear}.${ctx.currentMonth - 1}.${_.parseInt(
+                    date
+                  ) - 1}.cnt`,
+                  _.parseInt(_.nth(item, 2))
+                );
+                return acc;
+              },
+              ctx.calendar || {}
+            );
+          } else {
+            try {
+              [response, err] = await memoizedFetchCalendar(
+                ctx.url,
+                ctx.currentYear
+              );
+            } catch (ex) {
+              console.log('fetchCalendar error:', ex.message);
+              memoizedFetchCalendar.apply({}, []);
+              err = ex.message;
+            }
+
+            if (err) {
+              return reject(err);
+            }
+
+            calendar = _.reduce(
+              _.compact(_.split(response, '\n')),
+              (acc, data) => {
+                const ts = +_.nth(data.split(' '), 1);
+                const st = +_.nth(data.split(' '), 4);
+                const { year, month, day } = getDateTimeFromTS(ts);
+                if (
+                  _.indexOf(
+                    _.get(acc, `${year}.${month - 1}.${day - 1}.ts`),
+                    ts
+                  ) > -1
+                ) {
+                  return acc;
+                }
+                _.set(
+                  acc,
+                  `${year}.${month - 1}.${day - 1}.ts`,
+                  _.concat(
+                    _.get(acc, `${year}.${month - 1}.${day - 1}.ts`, []),
+                    ts
+                  )
+                );
+                _.set(
+                  acc,
+                  `${year}.${month - 1}.${day - 1}.st`,
+                  _.concat(
+                    _.get(acc, `${year}.${month - 1}.${day - 1}.st`, []),
+                    st
+                  )
+                );
+                _.set(
+                  acc,
+                  `${year}.${month - 1}.${day - 1}.cnt`,
+                  _.size(_.get(acc, `${year}.${month - 1}.${day - 1}.ts`))
+                );
+                return acc;
+              },
+              {
+                ...ctx.calendar,
+                [ctx.currentYear]: [
+                  ...Array.from(new Array(12).keys()).map(() => [])
+                ]
+              }
+            );
+
+            const { year: lastTSYear } = getDateTimeFromTS(ctx.lastTS);
+            if (ctx.currentYear === lastTSYear) {
+              lastTS = _.last(
+                _.get(
+                  _.last(
+                    _.nth(
+                      _.get(calendar, ctx.currentYear),
+                      ctx.currentMonth - 1
+                    )
+                  ),
+                  'ts'
+                )
+              );
+            }
           }
-          console.log('fetchCalendar:', calendarData, err);
-          if (err) {
-            return reject(err);
-          }
-          return resolve({ calendarData, payload: e.payload });
+
+          calendar.url = ctx.url;
+
+          return resolve({ calendar, lastTS, payload: e.payload });
         });
+      },
+      loadOtherMonths: (ctx) => async (callback) => {
+        if (!ctx.isOverCapacity) {
+          return;
+        }
+
+        if (!jobs[ctx.currentYear]) {
+          jobs[ctx.currentYear] = [];
+        }
+
+        _.each(_.keys(jobs), (year) => {
+          if (!_.isEmpty(jobs[year]) && jobs[year] !== ctx.currentYear) {
+            abort({ meta: { type: 'captures' } });
+            jobs[year] = [];
+          }
+        });
+
+        let last = 12;
+        if (ctx.currentYear === new Date().getFullYear()) {
+          last = _.get(memoizedDateTimeFromTS(ctx.lastTS), 'month');
+        }
+
+        for (let i = last; i > 0; i--) {
+          let response, err;
+
+          if (
+            _.get(ctx.calendar, `${ctx.currentYear}.${i - 1}`) ||
+            ~_.indexOf(jobs[ctx.currentYear], i)
+          ) {
+            continue;
+          }
+
+          jobs[ctx.currentYear].push(i);
+
+          [response, err] = await api(
+            `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${
+              ctx.currentYear
+            }${_.padStart(i, 2, '0')}&groupby=day`,
+            {
+              meta: { type: 'captures' }
+            }
+          );
+
+          let calendar = _.reduce(
+            response.items,
+            (acc, item) => {
+              const date = _.nth(item, 0);
+              _.set(
+                acc,
+                `${ctx.currentYear}.${i - 1}.${_.parseInt(date) - 1}.cnt`,
+                _.parseInt(_.nth(item, 2))
+              );
+              return acc;
+            },
+            ctx.calendar || {}
+          );
+
+          callback({
+            type: 'UPDATE_CALENDAR_CB',
+            payload: { calendar, i, year: ctx.currentYear }
+          });
+
+          jobs[ctx.currentYear].pop(i);
+        }
       }
     },
     guards: {
-      isSparklineEmpty: ctx => {
+      isSparklineEmpty: (ctx) => {
         return _.isEmpty(ctx.sparkline);
       },
-      isCalendarEmpty: ctx => {
-        return _.isEmpty(ctx.months);
+      isCalendarEmpty: (ctx) => {
+        return _.isEmpty(_.get(ctx.calendar, ctx.currentYear));
       }
     }
   }

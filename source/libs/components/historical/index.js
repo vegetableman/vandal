@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useMachine } from '@xstate/react';
-// import ReactTooltip from 'react-tooltip';
+import ReactTooltip from 'react-tooltip';
 import _ from 'lodash';
 import cx from 'classnames';
 import MonthView from './month/month.view';
@@ -13,7 +13,10 @@ import {
   longMonthNames
 } from '../../utils';
 import { VerticalMenu, Icon } from '../common';
-import historicalMachine, { fetchSnapshot } from './historical.machine';
+import historicalMachine, {
+  fetchSnapshot,
+  cleanUp
+} from './historical.machine';
 import styles from './historical.module.css';
 import { useTheme } from '../../hooks';
 
@@ -36,7 +39,7 @@ const options = [
   }
 ];
 
-const Historical = props => {
+const Historical = (props) => {
   const containerRef = useRef(null);
   const { theme } = useTheme();
 
@@ -62,7 +65,7 @@ const Historical = props => {
 
   const { context: ctx } = state;
 
-  const onOptionSelect = (index, year, archiveURL) => async option => {
+  const onOptionSelect = (index, year, archiveURL) => async (option) => {
     if (option === 'retry') {
       send('SET_SNAPSHOT', { payload: { index, value: null } });
       const [snapshot, newArchiveURL] = await fetchSnapshot({
@@ -97,14 +100,14 @@ const Historical = props => {
     send('TOGGLE_RESIZE_VIEW', { payload: { resize: false } });
   };
 
-  const getCaption = index => {
+  const getCaption = (index) => {
     if (ctx.carouselMode === 'month') {
       return { title: ctx.selectedYear, date: longMonthNames[index] };
     }
     return { title: 'YEAR', date: ctx.years[index] };
   };
 
-  const onKeyDown = e => {
+  const onKeyDown = (e) => {
     if (e.keyCode === 27) {
       props.onClose();
     }
@@ -117,7 +120,7 @@ const Historical = props => {
     }
     send('LOAD_HISTORICAL');
     return () => {
-      send('CLEANUP');
+      cleanUp();
     };
   }, []);
 
@@ -188,14 +191,14 @@ const Historical = props => {
                           i
                         </div>
                       )}
-                      {/* <ReactTooltip
+                      <ReactTooltip
                         className={styles.info__tooltip}
                         id={`vandal-historical-year--info-${year}`}
                         effect="solid"
                         place="right"
                         insecure={false}
                         type={theme}
-                      /> */}
+                      />
                     </React.Fragment>
                   ) : (
                     <ImageLoader theme={theme} />
