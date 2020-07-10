@@ -1,11 +1,8 @@
 import { Machine, assign } from 'xstate';
 import _ from 'lodash';
-import { xhr, api } from '../../utils';
+import { xhr } from '../../utils';
 
 const ROOT_URL = 'https://web.archive.org';
-const jobRegExp = new RegExp(
-  "/watchJob('(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)')/"
-);
 
 const saveMachine = Machine(
   {
@@ -73,7 +70,7 @@ const saveMachine = Machine(
   },
   {
     services: {
-      saveToArchive: (_ctx, e) => (callback) =>
+      saveToArchive: (_ctx, e) =>
         new Promise(async (resolve, reject) => {
           const [contentLocation, err] = await xhr(
             `${ROOT_URL}/save/${_.get(e, 'payload.url')}`,

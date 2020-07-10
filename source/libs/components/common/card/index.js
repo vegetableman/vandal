@@ -93,6 +93,7 @@ const Card = memo((props) => {
     redirectedTS,
     redirectTSCollection,
     loadSnaphots,
+    abort,
     isLoadingSnapshots,
     __CACHED__
   } = props;
@@ -101,13 +102,17 @@ const Card = memo((props) => {
     return null;
   }
 
-  useEffect(() => {
-    if (!__CACHED__ && _.isEmpty(ts)) {
-      loadSnaphots(
-        `${year}${_.padStart(month, 2, '0')}${_.padStart(day, 2, '0')}`
-      );
-    }
-  }, []);
+  useEffect(
+    () => {
+      abort();
+      if (!__CACHED__ && _.isEmpty(ts)) {
+        loadSnaphots(
+          `${year}${_.padStart(month, 2, '0')}${_.padStart(day, 2, '0')}`
+        );
+      }
+    },
+    [ts]
+  );
 
   return (
     <div
@@ -180,6 +185,9 @@ const CardContainer = memo((props) => {
             date
           }
         });
+      }}
+      abort={() => {
+        props.cardRef.send('CLEANUP');
       }}
     />
   );

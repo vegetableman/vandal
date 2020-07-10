@@ -83,6 +83,9 @@ function findElementsByTagName(currWindow, tag) {
 let imageMap = {},
   overlay;
 
+let ARCHIVE_STATIC_PATH = 'https://web.archive.org/_static/';
+let ARCHIVE_DONATE_PATH = 'https://archive.org/includes/donate.php';
+
 function getSources() {
   imageMap = {};
   overlay = null;
@@ -96,7 +99,8 @@ function getSources() {
       !imgs[i].src ||
       imgs[i].src.startsWith(prefix) ||
       !imgs[i].src.startsWith(window.location.origin) ||
-      imgs[i].src.startsWith('data:')
+      imgs[i].src.startsWith('data:') ||
+      imgs[i].src.startsWith(ARCHIVE_STATIC_PATH)
     ) {
       continue;
     }
@@ -117,7 +121,11 @@ function getSources() {
 
   let iframes = findElementsByTagName(window, 'iframe');
   for (let i = 0, len = iframes.length; i < len; i++) {
-    if (!iframes[i].src || (iframes[i].id && iframes[i].id === 'playback')) {
+    if (
+      !iframes[i].src ||
+      (iframes[i].id && iframes[i].id === 'playback') ||
+      iframes[i].src.startsWith(ARCHIVE_DONATE_PATH)
+    ) {
       continue;
     }
     srcList.push(iframes[i].src);
@@ -128,7 +136,8 @@ function getSources() {
     if (
       !scripts[i].src ||
       scripts[i].src.startsWith(prefix) ||
-      !scripts[i].src.startsWith(window.location.origin)
+      !scripts[i].src.startsWith(window.location.origin) ||
+      scripts[i].src.startsWith(ARCHIVE_STATIC_PATH)
     ) {
       continue;
     }
@@ -141,7 +150,8 @@ function getSources() {
     if (
       !links[i].href ||
       links[i].href.startsWith(prefix) ||
-      !links[i].href.startsWith(window.location.origin)
+      !links[i].href.startsWith(window.location.origin) ||
+      links[i].href.startsWith(ARCHIVE_STATIC_PATH)
     ) {
       continue;
     }

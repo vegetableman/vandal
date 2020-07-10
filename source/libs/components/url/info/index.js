@@ -25,40 +25,38 @@ const URLInfo = memo(
       infoDateObj = getDateTimeFromTS(selectedTS);
     }
 
-    console.log('selectedTS', selectedTS, 'redirectedTS', redirectedTS);
-
     return (
-      <div className={styles.urlInfo} ref={dialogRef}>
-        <ul className={styles.infoList}>
-          <li className={styles.infoItem}>
-            <div className={styles.infoLabel}>Archive URL :</div>
-            <a className={styles.infoLink} href={archiveURL} target="_blank">
+      <div className={styles.info} ref={dialogRef}>
+        <ul className={styles.list}>
+          <li className={styles.item}>
+            <div className={styles.label}>Archive URL :</div>
+            <a className={styles.link} href={archiveURL} target="_blank">
               {archiveURL}
             </a>
           </li>
-          <li className={styles.infoItem}>
-            <div className={styles.infoLabel}>Rendered URL :</div>
-            <a className={styles.infoLink} href={renderedURL} target="_blank">
+          <li className={styles.item}>
+            <div className={styles.label}>Rendered URL :</div>
+            <a className={styles.link} href={renderedURL} target="_blank">
               {renderedURL}
             </a>
           </li>
         </ul>
         {!!_.get(redirectTSCollection, redirectedTS) && (
-          <div className={styles.redirectContainer}>
-            <div className={styles.redirectHeader}>
+          <div className={styles.redirect__container}>
+            <div className={styles.redirect__header}>
               <Icon
                 name="redirect"
-                className={styles.redirectIcon}
+                className={styles.redirect__icon}
                 width={10}
               />
-              <div className={styles.redirectTitle}>Redirect Path</div>
+              <div className={styles.redirect__title}>Redirect Path</div>
             </div>
-            <div className={styles.redirectTSList}>
+            <div className={styles.redirect__ts__list}>
               {_.map(redirectTSList, (ts, index) => {
                 const dateObj = getDateTimeFromTS(ts);
                 return (
                   <React.Fragment key={ts}>
-                    <div className={styles.redirectListItem}>
+                    <div className={styles.redirect__ts__list__item}>
                       {`${dateObj.humanizedDate} ${toTwelveHourTime(
                         dateObj.ts
                       )}`}
@@ -67,7 +65,7 @@ const URLInfo = memo(
                       <Icon
                         name="pathArrow"
                         width={20}
-                        className={styles.redirectPathIcon}
+                        className={styles.redirect__path__icon}
                       />
                     ) : null}
                   </React.Fragment>
@@ -76,9 +74,9 @@ const URLInfo = memo(
             </div>
           </div>
         )}
-        <div className={styles.infoNote}>
+        <div className={styles.note}>
           Note: The time{' '}
-          <span className={styles.infoDate}>{`${_.get(
+          <span className={styles.date}>{`${_.get(
             infoDateObj,
             'humanizedDate'
           )} ${toTwelveHourTime(_.get(infoDateObj, 'ts'))}`}</span>{' '}

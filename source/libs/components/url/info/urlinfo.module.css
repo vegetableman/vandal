@@ -1,4 +1,4 @@
-.urlInfo {
+.info {
   display: flex;
   flex-direction: column;
 
@@ -17,19 +17,19 @@
   z-index: 1;
 }
 
-.infoList {
+.list {
   margin: 0;
   padding: 5px 0;
 }
 
-.infoItem {
+.item {
   display: flex;
   align-items: center;
   font-size: 13px;
   padding: 5px 10px;
 }
 
-.infoLabel {
+.label {
   color: var(--vandal-text-color);
   flex: 0 0 100px;
   padding: 4px;
@@ -37,30 +37,30 @@
   font-size: 12px;
 }
 
-.infoLink {
+.link {
   color: var(--vandal-link-color);
   font-size: 13px;
   word-break: break-word;
 }
 
-.infoDate {
+.date {
   color: var(--vandal-url-info-color);
 }
 
-.redirectTitle {
+.redirect__title {
   color: var(--vandal-text-color);
   font-size: 12.5px;
   font-family: Helvetica;
   padding-left: 7px;
 }
 
-.redirectHeader {
+.redirect__header {
   display: flex;
   align-items: center;
   padding: 0 0 0 20px;
 }
 
-.redirectTSList {
+.redirect__ts__list {
   display: flex;
   align-items: center;
 
@@ -68,7 +68,7 @@
   padding: 10px 0 0 10px;
 }
 
-.redirectListItem {
+.redirect__ts__list__item {
   border: 1px solid #ddd;
   border-radius: 5px;
   background: var(--vandal-url-info-redirect-background-color);
@@ -77,11 +77,11 @@
   margin: 0 5px 0 0;
 }
 
-.redirectContainer {
+.redirect__container {
   padding: 10px 0 15px 0;
 }
 
-.redirectPathIcon {
+.redirect__path__icon {
   fill: var(--vandal-text-color);
   stroke: var(--vandal-text-color);
   margin-right: 5px;
@@ -89,18 +89,18 @@
   top: 3px;
 }
 
-.infoNote {
+.note {
   color: var(--vandal-text-color);
   font-size: 12px;
   padding: 3px 0 5px 15px;
 }
 
-.redirectIcon,
-.redirectPathIcon {
+.redirect__icon,
+.redirect__path__icon {
   fill: var(--vandal-text-color);
   stroke: var(--vandal-text-color);
 }
 
-.infoRedirectTitle {
+.redirect__title {
   color: var(--vandal-text-color);
 }

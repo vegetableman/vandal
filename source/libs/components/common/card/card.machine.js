@@ -1,5 +1,5 @@
 import { Machine, assign, sendParent } from 'xstate';
-import { api } from '../../../utils';
+import { api, abort } from '../../../utils';
 
 const ROOT_URL = 'http://web.archive.org';
 
@@ -38,6 +38,13 @@ const cardMachine = Machine(
         actions: assign({
           showCard: false,
           card: null
+        })
+      },
+      CLEANUP: {
+        target: 'idle',
+        actions: assign((_ctx, e) => {
+          abort({ meta: { type: 'card' } });
+          return {};
         })
       }
     },
@@ -105,7 +112,10 @@ const cardMachine = Machine(
           const [data, err] = await api(
             `${ROOT_URL}/__wb/calendarcaptures/2?url=${encodeURIComponent(
               ctx.url
-            )}&date=${date}`
+            )}&date=${date}`,
+            {
+              meta: { type: 'card' }
+            }
           );
 
           if (err) {

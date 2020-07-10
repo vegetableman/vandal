@@ -129,7 +129,7 @@ class NavigationHandler {
   };
 
   completedHandler = (details) => {
-    const { tabId, frameId } = details;
+    const { tabId, frameId, url } = details;
 
     //if the user reloaded, then invalidate the tab
     //and remove listeners
@@ -148,7 +148,10 @@ class NavigationHandler {
     }
     log('Completed');
     hasNavigationCompleted = true;
-    chrome.tabs.sendMessage(tabId, { message: '__VANDAL__NAV__COMPLETE' });
+    chrome.tabs.sendMessage(tabId, {
+      message: '__VANDAL__NAV__COMPLETE',
+      data: { url }
+    });
   };
 
   historyHandler = (details) => {

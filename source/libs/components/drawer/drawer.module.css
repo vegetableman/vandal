@@ -12,7 +12,7 @@
   -webkit-font-smoothing: initial;
 }
 
-.titleBar {
+.title__bar {
   display: flex;
   align-items: center;
 
@@ -22,7 +22,7 @@
   cursor: ns-resize;
 
   font-size: 14px;
-  flex: 0 0 32px;
+  flex: 0 0 35px;
 }
 
 .list {
@@ -49,16 +49,16 @@
   overflow: auto;
 }
 
-.timestampIcon {
+.timestamp__icon {
   fill: var(--vandal-primary-icon-active-color);
   height: 25px;
   padding: 0 5px;
   width: 25px;
   position: relative;
-  top: 2.5px;
+  top: 0.5px;
 }
 
-.closeIcon {
+.close__icon {
   cursor: pointer;
   height: 20px;
   padding: 5px 10px 0 0;
@@ -68,26 +68,20 @@
   stroke: var(--vandal-drawer-icon-color);
 }
 
-.titleBarLeft {
+.title__bar__left {
   display: flex;
   flex: 1;
   align-items: flex-end;
 }
 
-.timestampTitle {
-  font-size: 14px;
-  position: relative;
-  top: 1.5px;
-}
-
-.itemLeft {
+.item__left {
   display: flex;
   align-items: flex-start;
   flex: 1;
   max-width: calc(100% - 500px);
 }
 
-.imageIcon {
+.image__icon {
   flex: 0 0 20px;
 
   height: 22px;
@@ -98,7 +92,11 @@
   stroke: var(--vandal-drawer-icon-color);
 }
 
-.resourceIcon {
+.image__icon path {
+  fill: var(--vandal-drawer-icon-color);
+}
+
+.resource__icon {
   flex: 0 0 20px;
 
   text-transform: uppercase;
@@ -111,11 +109,11 @@
   color: var(--vandal-drawer-icon-color);
 }
 
-.resourceIcon___js {
+.resource__icon___js {
   text-align: center;
 }
 
-.docIcon {
+.doc__icon {
   flex: 0 0 20px;
   height: 22px;
   width: 20px;
@@ -123,13 +121,13 @@
   stroke: var(--vandal-drawer-icon-color);
 }
 
-.jsIcon {
+.js__icon {
   height: 22px;
   padding: 0 5px 0 0;
   width: 20px;
 }
 
-.itemLink {
+.item__link {
   color: var(--vandal-input-color);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -137,36 +135,82 @@
   margin-left: 5px;
 }
 
-.itemLink:hover {
+.item__link:hover {
   text-decoration: underline;
 }
 
-.timestampLoader {
-  border: 2px solid var(--vandal-primary-border-color);
-  border-radius: 50%;
-  border-top: 2px solid #3498db;
-  width: 10px;
-  height: 10px;
-  -webkit-animation: spin 2s linear infinite; /* Safari */
-  animation: spin 2s linear infinite;
-  position: relative;
-  top: 3px;
-  left: 3px;
-  margin-right: 10px;
-}
-
-.itemTimestamp {
+.item__timestamp {
   flex: 0 0 500px;
   display: flex;
   justify-content: space-between;
 }
 
-.itemTimestamp___plus {
+.timestamp__delta {
+  color: #333333;
+  padding: 0 5px;
+}
+
+.timestamp__delta___plus {
   background: #bff1bf;
 }
 
-.itemTimestamp___minus {
+.timestamp__delta___minus {
   background: #fbcaca;
+}
+
+.scroll__container {
+  margin-left: 5px;
+}
+
+.scroll__checkbox {
+  margin-right: 7px;
+  position: relative;
+  top: 1px;
+}
+
+.timestamps___empty,
+.timestamps___loading {
+  color: var(--vandal-text-color);
+  font-size: 14px;
+  padding: 0 12px;
+}
+
+.ts__loader > div {
+  margin: 3px 4px 2px 3px;
+  height: 9px;
+  width: 9px;
+}
+
+.timestamp__delta___err {
+  color: #333333;
+  background: #ff9f9f;
+  padding: 0 5px;
+}
+
+.timestamp__delta___notfound {
+  color: #333333;
+  background: #e6e6e6;
+  padding: 0 5px;
+}
+
+.timestamp__value {
+  padding: 0 10px 0 0;
+  color: var(--vandal-text-color);
+}
+
+.info {
+  font-size: 13px;
+  padding: 10px 12px 7px 12px;
+  color: var(--vandal-drawer-text-color);
+}
+
+.info__link,
+.info__highlight {
+  color: var(--vandal-link-color);
+}
+
+.scroll__label {
+  color: var(--vandal-input-color);
 }
 
 @-webkit-keyframes spin {
@@ -185,48 +229,4 @@
   100% {
     transform: rotate(360deg);
   }
-}
-
-.scrollContainer {
-  margin-left: 5px;
-}
-
-.scrollCheckbox {
-  margin-right: 7px;
-}
-
-.timestamps___empty,
-.timestamps___loading {
-  color: var(--vandal-text-color);
-  font-size: 15px;
-  padding: 0 12px;
-}
-
-.urlLoader > div {
-  margin: 3px 4px 2px 3px;
-  height: 9px;
-  width: 9px;
-}
-
-.item___err {
-  background: #e6e6e6;
-}
-
-.timestampValue {
-  padding: 0 10px 0 0;
-  color: var(--vandal-text-color);
-}
-
-.info {
-  font-size: 13px;
-  padding: 10px 12px 7px 12px;
-  color: var(--vandal-drawer-text-color);
-}
-
-.infoLink {
-  color: var(--vandal-link-color);
-}
-
-.scrollLabel {
-  color: var(--vandal-input-color);
 }

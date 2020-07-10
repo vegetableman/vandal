@@ -119,14 +119,6 @@ const URL = memo((props) => {
           Redirecting to different timestamp ...
         </div>
       </Toast>
-      {/* <Toast
-        className={styles.toast__url}
-        show={props.isOverCapacity}>
-        <div style={{ textAlign: 'center', width: '100%' }}>
-          Number of snapshots for this url has exceeded the download limit. Some
-          of the navigation controls have been disabled.
-        </div>
-      </Toast> */}
     </React.Fragment>
   );
 }, compareProps(['isRedirecting', 'noSparklineFound', 'isOverCapacity', 'sparklineLoaded', 'redirectedTS', 'selectedTS', 'redirectTSCollection', 'url', 'showTimeTravel', 'history']));
@@ -156,6 +148,6 @@ const URLContainer = memo((props) => {
       selectedTS={ctx.selectedTS}
     />
   );
-}, compareProps(['showTimeTravel', 'url']));
+}, compareProps(['showTimeTravel', 'url', 'history']));
 
 export default URLContainer;

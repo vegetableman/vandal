@@ -471,6 +471,13 @@ const timetravelMachine = Machine(
         }
       },
       noSparklineFound: {
+        entry: [
+          assign({
+            selectedTS: null,
+            redirectedTS: null
+          }),
+          'notifyNoSparkline'
+        ],
         on: {
           RETRY: {
             target: '#loadingSparkline',
@@ -786,6 +793,11 @@ const timetravelMachine = Machine(
             }
           });
         }
+      },
+      notifyNoSparkline: () => {
+        chrome.runtime.sendMessage({
+          message: '__VANDAL__CLIENT__NOSPARKLINEFOUND'
+        });
       }
     },
     services: {
@@ -801,68 +813,6 @@ const timetravelMachine = Machine(
           if (err) {
             return reject(err);
           }
-
-          // const currDate = new Date();
-          // const date = `${currDate.getFullYear()}${_.padStart(
-          //   currDate.getMonth() + 1,
-          //   2,
-          //   '0'
-          // )}${_.padStart(currDate.getDate(), 2, '0')}`;
-
-          // const result = await api(
-          //   `${ROOT_URL}/cdx/search/cdx?url=${ctx.url}&from=${date}&to=${date}`
-          // );
-
-          // let cdx;
-          // if (result) {
-          //   cdx = _.reduce(
-          //     _.compact(_.split(_.nth(result, 0), '\n')),
-          //     (acc, data) => {
-          //       if (!acc['ts']) {
-          //         acc['ts'] = [];
-          //       }
-          //       if (!acc['st']) {
-          //         acc['st'] = [];
-          //       }
-          //       acc['ts'].push(+_.nth(data.split(' '), 1));
-          //       acc['st'].push(+_.nth(data.split(' '), 4));
-          //       return acc;
-          //     },
-          //     {}
-          //   );
-          //   cdx.cnt = _.size(_.get(cdx, 'ts'));
-          //   const count = _.nth(
-          //     _.get(sparklineData, `years.${currDate.getFullYear()}`),
-          //     currDate.getMonth()
-          //   );
-          //   if (_.get(cdx, 'cnt') && (!count || count < _.get(cdx, 'cnt'))) {
-          //     if (!_.get(sparklineData, `years.${currDate.getFullYear()}`)) {
-          //       _.set(
-          //         sparklineData,
-          //         `years.${currDate.getFullYear()}`,
-          //         new Array(12).fill(0)
-          //       );
-          //     }
-
-          //     _.set(
-          //       _.get(sparklineData, `years.${currDate.getFullYear()}`),
-          //       currDate.getMonth(),
-          //       _.get(cdx, 'cnt')
-          //     );
-          //   }
-
-          //   if (!!_.get(cdx, 'cnt')) {
-          //     if (
-          //       !_.get(sparklineData, 'last_ts') ||
-          //       _.get(sparklineData, 'last_ts') !== _.last(_.get(cdx, 'ts'))
-          //     ) {
-          //       _.set(sparklineData, 'last_ts', _.last(_.get(cdx, 'ts')));
-          //     }
-          //     if (!_.get(sparklineData, 'first_ts')) {
-          //       _.set(sparklineData, 'first_ts', _.last(_.get(cdx, 'ts')));
-          //     }
-          //   }
-          // }
 
           return resolve({
             ...sparklineData,

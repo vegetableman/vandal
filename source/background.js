@@ -121,29 +121,13 @@ const xhr = async (...args) => {
   }
 };
 
-const getTimestamp = async (url) => {
-  const [ts, err] = await xhr(url, {
-    method: 'HEAD',
-    fetchResHeader: 'Memento-Datetime'
-  });
-  return [ts, err];
-};
-
-const getContentLocation = async (url) => {
-  const [ts, err] = await xhr(url, {
-    method: 'HEAD',
-    fetchResHeader: 'content-location'
-  });
-  return [ts, err];
-};
-
 browser.browserAction.onClicked.addListener(() => {
   browser.tabs.executeScript({
     file: 'browser-polyfill.min.js',
     matchAboutBlank: true
   });
-  browser.tabs.insertCSS({ file: 'content.css', matchAboutBlank: true });
-  browser.tabs.executeScript({ file: 'content.js', matchAboutBlank: true });
+  browser.tabs.insertCSS({ file: 'content.css' });
+  browser.tabs.executeScript({ file: 'content.js' });
 });
 
 const urlMap = {};
@@ -163,11 +147,6 @@ chrome.runtime.onConnect.addListener(function(port) {
           payload: args,
           uniqueId
         });
-      });
-    } else if (event.message === '__VANDAL__CLIENT__XHR') {
-      const { endpoint, ...rest } = event.data;
-      xhr(endpoint, rest).then((result) => {
-        console.log('result:', result);
       });
     } else if (event.message === '__VANDAL__CLIENT__FETCH__ABORT') {
       _.forEach(requests, (request, id) => {
@@ -189,15 +168,7 @@ chrome.runtime.onMessage.addListener(async function(
   sendResponse
 ) {
   const { message, data } = request;
-  if (message === '__VANDAL__CLIENT__RESOURCE__TIMESTAMP') {
-    getTimestamp(data).then(sendResponse);
-    return true;
-  }
-  //  else if (message === 'getContentLocation') {
-  //   getContentLocation(data).then(sendResponse);
-  //   return true;
-  // }
-  else if (message === '__VANDAL__CLIENT__OPTTONS') {
+  if (message === '__VANDAL__CLIENT__OPTTONS') {
     chrome.runtime.openOptionsPage();
   } else if (message) {
     chrome.tabs.query({ active: true }, function(tabs) {

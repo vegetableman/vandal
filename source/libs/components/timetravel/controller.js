@@ -252,7 +252,8 @@ const Controller = memo((props) => {
             !isTSVisible() ||
             props.sparklineError ||
             props.isOverCapacity ||
-            props.calendarError
+            props.calendarError ||
+            props.loadingCalendar
           }
           onClick={() => {
             onDateNavigation('next');

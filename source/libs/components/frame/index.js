@@ -192,11 +192,7 @@ const Frame = (props) => {
     [options, theme]
   );
 
-  console.log(
-    'frame state:',
-    _.get(state, 'context.timetravelRef.state'),
-    state
-  );
+  console.log('frame state:', state, allRecords);
 
   const disableBack =
     _.indexOf(navState.context.currentRecords, navState.context.currentURL) <=
@@ -273,7 +269,7 @@ const Frame = (props) => {
             </button>
             <button
               data-for="vandal-drawer"
-              data-tip="Show Resource Drawer"
+              data-tip="Show Timestamps"
               className={cx({
                 [styles.resource__btn]: true
               })}
@@ -295,6 +291,18 @@ const Frame = (props) => {
               type="dark"
               delayShow={1000}
               offset={{ bottom: 8, left: 0 }}
+            />
+            <ReactTooltip
+              id="vandal-drawer"
+              className={styles.tooltip}
+              arrowColor={colors.BL}
+              textColor={colors.WHITE}
+              backgroundColor={colors.BL}
+              effect="solid"
+              place="bottom"
+              type="dark"
+              delayShow={1000}
+              offset={{ bottom: 8, left: -8 }}
             />
           </div>
           <div className={styles.vertical__menu__container}>
