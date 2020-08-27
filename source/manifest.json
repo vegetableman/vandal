@@ -24,7 +24,8 @@
     "https://archive.org/*",
     "https://zzgi3cdqi7.execute-api.us-east-2.amazonaws.com/*",
     "*://d1smdru0lrhqpr.cloudfront.net/*",
-    "http://service.prerender.cloud/*"
+    "http://service.prerender.cloud/*",
+    "*://*/*"
   ],
   "browser_action": {
     "default_icon": "icon.png",

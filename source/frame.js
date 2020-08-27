@@ -8,6 +8,25 @@ class Overlay {
     this.container.appendChild(this.node);
     this.container.appendChild(this.tip);
     doc.body.appendChild(this.container);
+    const style = document.createElement('style');
+    style.appendChild(
+      document.createTextNode(`
+    @font-face {
+      font-family: 'VANDAL__Inconsolata';
+      src: url('chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Bold.eot?#iefix')
+          format('embedded-opentype'),
+        url('chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Bold.woff')
+          format('woff'),
+        url('chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Bold.ttf')
+          format('truetype'),
+        url('chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Bold.svg#Inconsolata-Bold')
+          format('svg');
+      font-weight: bold;
+      font-style: normal;
+    }
+    `)
+    );
+    doc.head.appendChild(style);
 
     this.container.style.cssText = `
       position: fixed;

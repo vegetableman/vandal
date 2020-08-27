@@ -82,10 +82,10 @@ const Frame = (props) => {
     })
   );
 
-  const onSave = () => {
-    sendtoSaveMachine({ type: 'SAVE', payload: { url: props.url } });
-  };
-  const debouncedSave = _.debounce(onSave, 250);
+  // const onSave = () => {
+  //   sendtoSaveMachine({ type: 'SAVE', payload: { url: props.url } });
+  // };
+  // const debouncedSave = _.debounce(onSave, 250);
 
   const [navState, sendToNav] = useMachine(
     navigatorMachine.withConfig(
@@ -252,21 +252,24 @@ const Frame = (props) => {
             clearHistory={() => {
               sendToNav('CLEAR_HISTORY');
             }}
+            isSaving={saveState.matches('open.loading')}
             toggleTimeTravel={() => send('TOGGLE_TIMETRAVEL')}
           />
         </div>
         <div className={styles.right}>
-          <div className={styles.save__btn__container}>
-            <button
+          <div className={styles.right__action__container}>
+            {/* <button
               data-for="vandal-save"
               data-tip="Save Page to Archive"
               className={cx({
                 [styles.save__btn]: true,
                 [styles.save__btn__disabled]: saveState.matches('open.loading')
               })}
-              onClick={debouncedSave}>
+              onClick={() => {
+                window.open('https://web.archive.org/save', '_blank');
+              }}>
               <Icon name="save" className={styles.save__btn__icon} />
-            </button>
+            </button> */}
             <button
               data-for="vandal-drawer"
               data-tip="Show Timestamps"
@@ -302,7 +305,7 @@ const Frame = (props) => {
               place="bottom"
               type="dark"
               delayShow={1000}
-              offset={{ bottom: 8, left: -8 }}
+              offset={{ bottom: 8, left: 0 }}
             />
           </div>
           <div className={styles.vertical__menu__container}>
@@ -348,6 +351,9 @@ const Frame = (props) => {
             )}
             onClose={() => {
               send('TOGGLE_HISTORICAL_MODE');
+            }}
+            openURL={(url) => {
+              browser.navigate(url);
             }}
           />
         )}

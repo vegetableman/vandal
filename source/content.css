@@ -95,6 +95,7 @@ body {
   --vandal-text-bright-color: #333333;
   --vandal-tooltip-color: #333333;
   --vandal-link-color: blue;
+  --vandal-link-selected-color: #d9e2ff;
   --vandal-url-info-color: navy;
   --vandal-drawer-text-color: #555555;
   --vandal-drawer-icon-color: #333333;
@@ -164,7 +165,7 @@ body {
   --vandal-timetravel-tab-inactive-color: #373737;
 
   /* Historical */
-  --vandal-mode-background-color: 232, 232, 232;
+  --vandal-mode-background-color: 66, 66, 66;
   --vandal-mode-border-color: #cccccc;
   --vandal-mode-tab-title-color: #333333;
   --vandal-mode-tab-background-color: #51adfb;
@@ -175,12 +176,12 @@ body {
   --vandal-mode-item-hover-background-color: #d4d4d4;
   --vandal-mode-item-title-color: #333333;
   --vandal-mode-item-icon-color: #000000;
-  --vandal-mode-carousel-background-color: #dddddda6;
+  --vandal-mode-carousel-background-color: #333333d4;
   --vandal-mode-cc-hover-background-color: #dadada;
   --vandal-mode-item-highlight-background-color: #079e072b;
 
-  --vandal-carousel-icon-color: #777777;
-  --vandal-carousel-icon-hover-color: #333333;
+  --vandal-carousel-icon-color: #ffffff9e;
+  --vandal-carousel-icon-hover-color: #ffffff;
 
   --vandal-input-nav-background-color: #eeeeee;
   --vandal-input-nav-border-color: var(--vandal-primary-border-color);
@@ -204,6 +205,7 @@ body {
   --vandal-text-bright-color: #ffffff;
   --vandal-tooltip-color: #ffffff;
   --vandal-link-color: orange;
+  --vandal-link-selected-color: #6b3e0e;
   --vandal-url-info-color: #ffa500d1;
   --vandal-drawer-text-color: #dddddd;
   --vandal-drawer-icon-color: #ffffff;

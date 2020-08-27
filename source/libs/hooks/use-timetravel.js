@@ -82,7 +82,9 @@ const TimetravelProvider = ({ children, machine }) => {
           }
           // Go to latest month/year
           else if (timetravelMachine.state.matches('sparklineLoaded')) {
-            timetravelMachine.send('RESET_CALENDAR');
+            timetravelMachine.send('RESET_CALENDAR', {
+              payload: { reset: strippedOffURL !== ctx.url }
+            });
           }
         }
         break;

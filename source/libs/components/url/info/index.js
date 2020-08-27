@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import cx from 'classnames';
 import _ from 'lodash';
 import {
   getDateTimeFromTS,
@@ -12,9 +13,12 @@ import boxStyle from '../box/urlbox.module.css';
 
 const URLInfo = memo(
   ({ dialogRef, url, redirectTSCollection, redirectedTS, selectedTS }) => {
-    const archiveURL = `https://web.archive.org/web/${selectedTS}/${url}`;
-    const renderedURL = `https://web.archive.org/web/${redirectedTS ||
-      selectedTS}/${url}`;
+    const archiveURL = selectedTS
+      ? `https://web.archive.org/web/${selectedTS}/${url}`
+      : null;
+    const renderedURL = redirectedTS
+      ? `https://web.archive.org/web/${redirectedTS}/${url}`
+      : null;
     let infoDateObj;
     let redirectTSList = [];
 
@@ -28,18 +32,28 @@ const URLInfo = memo(
     return (
       <div className={styles.info} ref={dialogRef}>
         <ul className={styles.list}>
-          <li className={styles.item}>
-            <div className={styles.label}>Archive URL :</div>
-            <a className={styles.link} href={archiveURL} target="_blank">
-              {archiveURL}
-            </a>
-          </li>
-          <li className={styles.item}>
-            <div className={styles.label}>Rendered URL :</div>
-            <a className={styles.link} href={renderedURL} target="_blank">
-              {renderedURL}
-            </a>
-          </li>
+          {archiveURL && (
+            <li className={styles.item}>
+              <div className={styles.label}>Archive URL :</div>
+              <a className={styles.link} href={archiveURL} target="_blank">
+                {archiveURL}
+              </a>
+            </li>
+          )}
+          {(!!_.get(redirectTSCollection, redirectedTS) || renderedURL) && (
+            <li className={styles.item}>
+              <div
+                className={cx({
+                  [styles.label]: true,
+                  [styles.label__rendered]: true
+                })}>
+                Rendered URL :
+              </div>
+              <a className={styles.link} href={renderedURL} target="_blank">
+                {renderedURL}
+              </a>
+            </li>
+          )}
         </ul>
         {!!_.get(redirectTSCollection, redirectedTS) && (
           <div className={styles.redirect__container}>

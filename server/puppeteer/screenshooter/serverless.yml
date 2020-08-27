@@ -2,7 +2,7 @@ service: screenshooter
 
 provider:
   name: aws
-  runtime: nodejs6.10
+  runtime: nodejs12.x
   memorySize: 1536
   profile: vandal-admin
   timeout: 180

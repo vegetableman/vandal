@@ -24,7 +24,8 @@ export const fetchSnapshot = async ({ url, year, archiveURL }) => {
   const closestURL = _.get(result, 'archived_snapshots.closest.url');
   if (closestURL) {
     archiveURL = _.replace(
-      _.replace(closestURL, /\d+/, '$&im_'),
+      closestURL,
+      // _.replace(closestURL, /\d+/, '$&im_'),
       /https?/,
       'https'
     );
@@ -32,7 +33,6 @@ export const fetchSnapshot = async ({ url, year, archiveURL }) => {
 
   return [
     await screenshooter.fetchScreenshot(archiveURL, {
-      cacheResponse: true,
       latest: true
     }),
     closestURL ? archiveURL : null
@@ -128,12 +128,19 @@ const historicalMachine = Machine(
         })
       },
       ADD_SNAPSHOT: {
-        actions: assign((ctx, e) => {
-          return {
-            archiveURLs: [...ctx.archiveURLs, _.get(e, 'payload.archiveURL')],
-            snapshots: [...ctx.snapshots, _.get(e, 'payload.snapshot')]
-          };
-        })
+        actions: [
+          assign((ctx, e) => {
+            return {
+              archiveURLs: [...ctx.archiveURLs, _.get(e, 'payload.archiveURL')],
+              snapshots: [...ctx.snapshots, _.get(e, 'payload.snapshot')]
+            };
+          }),
+          assign((ctx) => {
+            return {
+              images: _.map(ctx.snapshots, 'data')
+            };
+          })
+        ]
       },
       SET_SNAPSHOT: {
         actions: assign((ctx, e) => {
@@ -174,17 +181,17 @@ const historicalMachine = Machine(
             meta: { type: 'available' }
           });
           let archiveURL = _.replace(
-            _.replace(
-              _.get(result, 'archived_snapshots.closest.url'),
-              /\d+/,
-              '$&im_'
-            ),
+            _.get(result, 'archived_snapshots.closest.url'),
+            // _.replace(
+            //   _.get(result, 'archived_snapshots.closest.url'),
+            //   /\d+/,
+            //   '$&im_'
+            // ),
             /https?/,
             'https'
           );
 
           const [data, err] = await screenshooter.fetchScreenshot(archiveURL, {
-            fetchFromCache: timestampURLCount - 1 !== index,
             latest: timestampURLCount - 1 === index
           });
           callback({

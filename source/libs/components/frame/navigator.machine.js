@@ -70,15 +70,25 @@ const navigatorMachine = Machine(
                       currentRecords = [...ctx.currentRecords, url];
                     }
 
+                    console.log(
+                      'navigator:url:',
+                      url,
+                      'allRecords:',
+                      allRecords
+                    );
+
                     return {
                       currentURL: url,
-                      allRecords: [
-                        ...allRecords,
-                        {
-                          url,
-                          date: getCurrentDate()
-                        }
-                      ],
+                      allRecords:
+                        _.get(_.last(allRecords), 'url') !== url
+                          ? [
+                              ...allRecords,
+                              {
+                                url,
+                                date: getCurrentDate()
+                              }
+                            ]
+                          : allRecords,
                       currentRecords
                     };
                   }),

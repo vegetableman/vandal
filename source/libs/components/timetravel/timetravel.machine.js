@@ -286,7 +286,7 @@ const timetravelMachine = Machine(
               'month',
               new Date().getMonth() + 1
             ),
-            calendar: null
+            calendar: _.get(e, 'payload.reset') ? null : ctx.calendar
           };
         })
       },
@@ -605,7 +605,7 @@ const timetravelMachine = Machine(
               GOTO__TS_YEAR: {
                 target: 'loadingCalendar',
                 actions: assign({
-                  selectedTS: null,
+                  // selectedTS: null,
                   currentMonth: (_ctx, e) => _.get(e, 'payload.month'),
                   currentYear: (_ctx, e) => _.get(e, 'payload.year')
                 })

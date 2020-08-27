@@ -9,7 +9,7 @@ const screenshooter = new Screenshooter();
 
 export const cleanUp = () => {
   abort({ meta: { type: 'month-available' } });
-  screenshooter.abort({ type: 'month-screenshot' });
+  screenshooter.abort('month-screenshot');
 };
 
 const getMonths = (selectedYear) => {

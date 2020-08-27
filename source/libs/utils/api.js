@@ -23,7 +23,6 @@ export const api = async (
     headers = {},
     method = 'GET',
     enableThrow = false,
-    xhr = false,
     meta,
     body
   } = {}
@@ -31,7 +30,7 @@ export const api = async (
   return new Promise(function(resolve, reject) {
     const uniqueId = _.uniqueId();
     port.postMessage({
-      message: xhr ? '__VANDAL__CLIENT__XHR' : '__VANDAL__CLIENT__FETCH',
+      message: '__VANDAL__CLIENT__FETCH',
       data: {
         endpoint,
         fetchFromCache,
@@ -56,44 +55,4 @@ export const abort = (payload = {}) => {
     message: '__VANDAL__CLIENT__FETCH__ABORT',
     data: { ...payload }
   });
-};
-
-const promisifiedXHR = (
-  url,
-  { method = 'GET', fetchResHeader, abortFn = () => {} }
-) => {
-  return new Promise(function(resolve, reject) {
-    let xhrRequest = new XMLHttpRequest();
-    xhrRequest.open(method, url);
-    xhrRequest.onload = function() {
-      if (this.status >= 200 && this.status < 300) {
-        if (fetchResHeader) {
-          return resolve(xhrRequest.getResponseHeader(fetchResHeader));
-        }
-        resolve(xhrRequest.response);
-      } else {
-        reject({
-          status: this.status,
-          statusText: xhrRequest.statusText
-        });
-      }
-    };
-    xhrRequest.onerror = function() {
-      reject({
-        status: this.status,
-        statusText: xhrRequest.statusText
-      });
-    };
-    xhrRequest.send();
-    abortFn(xhrRequest);
-  });
-};
-
-export const xhr = async (...args) => {
-  try {
-    const res = await promisifiedXHR(...args);
-    return [res, null];
-  } catch (err) {
-    return [null, err];
-  }
 };

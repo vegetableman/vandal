@@ -1,6 +1,5 @@
 const setup = require('./starter-kit/setup');
 const shortid = require('shortid');
-const jimp = require('jimp');
 const CDN_PREFIX = 'https://d1smdru0lrhqpr.cloudfront.net/';
 
 exports.handler = async (event, context, callback) => {
@@ -40,32 +39,40 @@ exports.run = async (url, latest) => {
 
   const browser = await setup.getBrowser();
   const page = await browser.newPage();
-  await page.goto(url, {
-    waitUntil: 'networkidle2',
-    timeout: 25000
-  });
-  await page.screenshot({ path: '/tmp/screenshot.png', fullPage: true });
-  const fs = require('fs');
-  const screenshot = await new Promise((resolve, reject) => {
-    fs.readFile('/tmp/screenshot.png', (err, data) => {
-      if (err) return reject(err);
-      resolve(data);
+  try {
+    await page.setViewport({
+      width: 1600,
+      height: 1200
     });
-  });
-  // let buffer = null;
-  // if (resize) {
-  //   const image = await jimp.read(screenshot);
-  //   image.resize(800, 600);
-  //   buffer = await image.getBufferAsync(jimp.AUTO);
-  // }
-  await s3
-    .putObject({
-      Bucket: process.env.CHROME_BUCKET,
-      Key: key,
-      Body: screenshot
-    })
-    .promise();
+    await page.emulateMedia('screen');
+    await page.goto(url, {
+      waitUntil: 'networkidle2',
+      timeout: 25000
+    });
+    const data = await page.screenshot({
+      // path: '/tmp/screenshot.png',
+      fullPage: true,
+      type: 'png'
+    });
+    // const fs = require('fs');
+    // const screenshot = await new Promise((resolve, reject) => {
+    //   fs.readFile('/tmp/screenshot.png', (err, data) => {
+    //     if (err) return reject(err);
+    //     resolve(data);
+    //   });
+    // });
+    // await s3
+    //   .putObject({
+    //     Bucket: process.env.CHROME_BUCKET,
+    //     Key: key,
+    //     Body: screenshot
+    //   })
+    //   .promise();
 
-  await page.close();
-  return CDN_PREFIX + encodeURIComponent(key);
+    await page.close();
+    return data;
+    // return CDN_PREFIX + encodeURIComponent(key);
+  } catch (err) {
+    console.log(err);
+  }
 };

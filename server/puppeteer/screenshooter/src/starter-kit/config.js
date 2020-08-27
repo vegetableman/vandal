@@ -3,6 +3,7 @@ const path = require('path');
 const launchOptionForLambda = [
   // error when launch(); No usable sandbox! Update your kernel
   '--no-sandbox',
+  '--disable-setuid-sandbox',
   // error when launch(); Failed to load libosmesa.so
   '--disable-gpu',
   // freeze when newPage()

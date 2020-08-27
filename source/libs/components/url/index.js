@@ -14,7 +14,7 @@ const URL = memo((props) => {
   const [state, send, service] = useMachine(urlMachine);
   const showURLInfo = state.matches('menus.info.open');
   const showURLHistory = state.matches('menus.history.open');
-  const [isNoSnapErorr, setSnapError] = useState(false);
+  const [isNoSnapError, setSnapError] = useState(false);
 
   const onMessage = useEventCallback(
     (request) => {
@@ -35,13 +35,13 @@ const URL = memo((props) => {
 
   useEffect(
     () => {
-      if (props.noSparklineFound) {
-        setSnapError(true);
-      } else if (isNoSnapErorr && !props.noSparklineFound) {
+      if (isNoSnapError && (!props.noSparklineFound || props.isSaving)) {
         setSnapError(false);
+      } else if (props.noSparklineFound) {
+        setSnapError(true);
       }
     },
-    [props.noSparklineFound]
+    [props.noSparklineFound, props.isSaving]
   );
 
   console.log('URL:render');
@@ -79,15 +79,16 @@ const URL = memo((props) => {
           }
         }}
       />
-      {showURLInfo && (
-        <URLInfo
-          url={props.url}
-          selectedTS={props.selectedTS}
-          redirectedTS={props.redirectedTS}
-          redirectTSCollection={props.redirectTSCollection}
-          onClose={() => send('TOGGLE_INFO')}
-        />
-      )}
+      {showURLInfo &&
+        props.selectedTS && (
+          <URLInfo
+            url={props.url}
+            selectedTS={props.selectedTS}
+            redirectedTS={props.redirectedTS}
+            redirectTSCollection={props.redirectTSCollection}
+            onClose={() => send('TOGGLE_INFO')}
+          />
+        )}
       {showURLHistory && (
         <URLHistory
           history={props.history}
@@ -97,7 +98,7 @@ const URL = memo((props) => {
           }}
         />
       )}
-      <Toast className={styles.toast__notfound} show={isNoSnapErorr} exit={0}>
+      <Toast className={styles.toast__notfound} show={isNoSnapError} exit={0}>
         <div>
           <span>
             No snapshots found for this url. Click on Save to create one.
@@ -121,7 +122,7 @@ const URL = memo((props) => {
       </Toast>
     </React.Fragment>
   );
-}, compareProps(['isRedirecting', 'noSparklineFound', 'isOverCapacity', 'sparklineLoaded', 'redirectedTS', 'selectedTS', 'redirectTSCollection', 'url', 'showTimeTravel', 'history']));
+}, compareProps(['isRedirecting', 'noSparklineFound', 'isOverCapacity', 'sparklineLoaded', 'redirectedTS', 'selectedTS', 'redirectTSCollection', 'url', 'showTimeTravel', 'history', 'isSaving']));
 
 const URLContainer = memo((props) => {
   const {
@@ -146,8 +147,9 @@ const URLContainer = memo((props) => {
       isOverCapacity={ctx.isOverCapacity}
       redirectTSCollection={ctx.redirectTSCollection}
       selectedTS={ctx.selectedTS}
+      isSaving={props.isSaving}
     />
   );
-}, compareProps(['showTimeTravel', 'url', 'history']));
+}, compareProps(['showTimeTravel', 'url', 'history', 'isSaving']));
 
 export default URLContainer;

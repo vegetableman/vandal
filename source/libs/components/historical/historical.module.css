@@ -39,14 +39,17 @@
   flex-direction: column;
 
   background: var(--vandal-mode-item-background-color);
-  border: 1px solid var(--vandal-mode-item-border-color);
+  /* border: 1px solid var(--vandal-mode-item-border-color); */
   color: #fff;
   cursor: pointer;
   font-size: 16px;
   font-weight: 800;
-  height: 181px;
-  margin: 10px;
-  width: 200px;
+  /* height: 181px; */
+  /* margin: 10px; */
+  /* width: 200px; */
+  height: 185px;
+  margin: 25px;
+  width: 265px;
 }
 
 .year:hover,
@@ -167,10 +170,13 @@
 
 .snapshot {
   position: absolute;
-  height: 150px;
-  object-fit: cover;
+  /* height: 150px; */
+  /* object-fit: cover; */
+  object-fit: fill;
   top: 0;
-  width: 200px;
+  /* width: 200px; */
+  height: 100%;
+  width: 100%;
 }
 
 .caption {
@@ -182,7 +188,7 @@
   top: 65px;
   left: 100px;
   font-size: 35px;
-  color: var(--vandal-text-bright-color);
+  color: white;
   font-weight: 100;
   font-family: Helvetica;
 }
@@ -193,7 +199,7 @@
 
 .slider__container {
   width: calc(100% - 700px);
-  max-height: 800px;
+  max-height: 720px;
   height: 100%;
 }
 
@@ -220,7 +226,8 @@
 
 .settings {
   cursor: pointer;
-  fill: var(--vandal-primary-icon-color);
+  /* fill: var(--vandal-primary-icon-color); */
+  fill: #ddd;
   height: 30px;
   margin-right: 10px;
   stroke-width: 25px;
@@ -228,7 +235,8 @@
 }
 
 .settings:hover {
-  fill: var(--vandal-mode-item-icon-color);
+  /* fill: var(--vandal-mode-item-icon-color); */
+  fill: #fff;
 }
 
 .close {
@@ -236,12 +244,15 @@
   height: 30px;
   width: 30px;
   stroke-width: 25px;
-  stroke: var(--vandal-primary-icon-color);
-  fill: var(--vandal-primary-icon-color);
+  /* stroke: var(--vandal-primary-icon-color); */
+  /* fill: var(--vandal-primary-icon-color); */
+  fill: #ddd;
+  stroke: #ddd;
 }
 
 .close:hover {
-  stroke: var(--vandal-mode-item-icon-color);
+  /* stroke: var(--vandal-mode-item-icon-color); */
+  stroke: #fff;
 }
 
 .list {

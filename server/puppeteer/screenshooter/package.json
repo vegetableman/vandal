@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "jimp": "^0.5.6",
-    "puppeteer": "1.1.1",
+    "puppeteer": "^2.0.0",
     "shortid": "^2.2.13",
     "tar": "^4.0.1"
   },

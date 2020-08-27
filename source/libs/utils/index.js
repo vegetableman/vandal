@@ -7,7 +7,9 @@ import ghInjection from 'github-injection';
 import _ from 'lodash';
 
 import manhattanDistanceOfHash from './manhattan-distance';
-export { api, controller, xhr, abort } from './api';
+export { api, controller, abort } from './api';
+export { default as xhr } from './xhr';
+export { default as fetch } from './fetch';
 export { default as Screenshooter } from './screenshooter';
 export { default as useRefCallback } from './use-ref-callback';
 export { default as compareProps } from './compare-props';

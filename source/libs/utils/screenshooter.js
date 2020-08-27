@@ -1,4 +1,5 @@
-import { api, abort } from './api';
+import { abort } from './api';
+import { fetch } from '.';
 
 export default class Screenshooter {
   constructor() {
@@ -7,32 +8,25 @@ export default class Screenshooter {
 
   loadURL = () => {
     this.captureURL = VANDAL_SCREENSHOT_API;
-    this.path = VANDAL_SCREENSHOT_CDN;
   };
 
-  loadPre = () => {
-    this.captureURL = 'https://service.prerender.cloud/screenshot';
-  };
-
-  abort = ({ type = 'screenshot' }) => {
+  abort = (type = 'screenshot') => {
     abort({ meta: { type } });
   };
 
-  fetchScreenshot = async (
-    url,
-    { fetchFromCache, cacheResponse, latest = false, type = 'screenshot' }
-  ) => {
+  fetchScreenshot = async (url, { latest }) => {
     const urlObj = new URL(`${this.captureURL}?url=${url}`);
     if (latest) {
       urlObj.searchParams.append('latest', true);
     }
     try {
-      let [snapshotPath, pathErr] = await api(urlObj.href, {
-        fetchFromCache,
-        cacheResponse,
-        meta: { type }
+      const [snapshotURL, err] = await fetch({
+        endpoint: urlObj.href,
+        fetchFromCache: true,
+        cacheResponse: true,
+        meta: { type: 'screenshot' }
       });
-      return [snapshotPath, pathErr];
+      return [snapshotURL, err];
     } catch (ex) {
       return [null, ex.message];
     }

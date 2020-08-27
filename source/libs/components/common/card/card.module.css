@@ -4,7 +4,7 @@
 
   left: 0;
   width: 95px;
-  min-height: 30px;
+  min-height: 27px;
   max-height: 400px;
   position: absolute;
   top: 0;
@@ -61,6 +61,7 @@
 
 .value___selected {
   color: var(--vandal-link-color);
+  background: var(--vandal-link-selected-color);
   text-decoration: underline;
 }
 

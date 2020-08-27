@@ -54,14 +54,14 @@ class Carousel extends React.Component {
     return (
       <Slider
         {...settings}
-        afterChange={index => {
+        afterChange={(index) => {
           this.props.onChange(index);
         }}
-        ref={_ref => (this.sliderRef = _ref)}
+        ref={(_ref) => (this.sliderRef = _ref)}
         initialSlide={selectedIndex}>
         {_.map(images, (src, index) => (
           <div key={index} className={styles.slide}>
-            <img src={src} />
+            {src ? <img src={src} /> : null}
           </div>
         ))}
       </Slider>

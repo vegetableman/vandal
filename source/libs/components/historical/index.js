@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { useMachine } from '@xstate/react';
 import ReactTooltip from 'react-tooltip';
 import _ from 'lodash';
@@ -10,7 +10,8 @@ import Terms from './terms';
 import {
   toTwelveHourTime,
   getDateTsFromURL,
-  longMonthNames
+  longMonthNames,
+  useEventCallback
 } from '../../utils';
 import { VerticalMenu, Icon } from '../common';
 import historicalMachine, {
@@ -21,10 +22,10 @@ import styles from './historical.module.css';
 import { useTheme } from '../../hooks';
 
 const options = [
-  {
-    value: 'showMonths',
-    text: 'Show Months'
-  },
+  // {
+  //   value: 'showMonths',
+  //   text: 'Show Months'
+  // },
   {
     value: 'openInVandal',
     text: 'Open in Vandal'
@@ -65,30 +66,36 @@ const Historical = (props) => {
 
   const { context: ctx } = state;
 
-  const onOptionSelect = (index, year, archiveURL) => async (option) => {
-    if (option === 'retry') {
-      send('SET_SNAPSHOT', { payload: { index, value: null } });
-      const [snapshot, newArchiveURL] = await fetchSnapshot({
-        url: props.url,
-        year,
-        archiveURL
-      });
+  // console.log('archiveURLs', ctx.archiveURLs);
 
-      if (newArchiveURL) {
-        send('SET_ARCHIVE_URL', { payload: { index, value: newArchiveURL } });
+  const onOptionSelect = useEventCallback(
+    (index, year) => async (option) => {
+      const archiveURL = ctx.archiveURLs[index];
+      if (option === 'retry') {
+        send('SET_SNAPSHOT', { payload: { index, value: null } });
+        const [snapshot, newArchiveURL] = await fetchSnapshot({
+          url: props.url,
+          year,
+          archiveURL
+        });
+
+        if (newArchiveURL) {
+          send('SET_ARCHIVE_URL', { payload: { index, value: newArchiveURL } });
+        }
+        const [data, err] = snapshot;
+        send('SET_SNAPSHOT', { payload: { index, value: { data, err } } });
+      } else if (option === 'showMonths') {
+        send('TOGGLE_MONTH_VIEW_OPEN', {
+          payload: { show: true, year }
+        });
+      } else if (option === 'openInNewTab') {
+        window.open(archiveURL, '_blank');
+      } else if (option === 'openInVandal') {
+        props.openURL(archiveURL);
       }
-      const [data, err] = snapshot;
-      send('SET_SNAPSHOT', { payload: { index, value: { data, err } } });
-    } else if (option === 'showMonths') {
-      send('TOGGLE_MONTH_VIEW_OPEN', {
-        payload: { show: true, year }
-      });
-    } else if (option === 'openInNewTab') {
-      window.open(archiveURL, '_blank');
-    } else if (option === 'openInVandal') {
-      props.openURL(archiveURL);
-    }
-  };
+    },
+    [ctx.archiveURLs]
+  );
 
   const onEntered = () => {
     // delay the resize
@@ -197,7 +204,7 @@ const Historical = (props) => {
                         effect="solid"
                         place="right"
                         insecure={false}
-                        type={theme}
+                        type={'dark'}
                       />
                     </React.Fragment>
                   ) : (
@@ -211,7 +218,7 @@ const Historical = (props) => {
                     className={styles.menu}
                     listClass={styles.list}
                     options={options}
-                    onSelect={onOptionSelect(index, year, archiveURL)}
+                    onSelect={(option) => onOptionSelect(index, year)(option)}
                   />
                 </div>
               </div>
@@ -254,7 +261,7 @@ const Historical = (props) => {
         )}
       </div>
       <div className={styles.misc__container}>
-        <Icon
+        {/* <Icon
           name="settings"
           className={styles.settings}
           onClick={() => {
@@ -262,7 +269,7 @@ const Historical = (props) => {
               message: '__VANDAL__CLIENT__OPTTONS'
             });
           }}
-        />
+        /> */}
         <Icon name="close" className={styles.close} onClick={props.onClose} />
       </div>
     </div>
