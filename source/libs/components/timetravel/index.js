@@ -5,7 +5,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import tinycolor from 'tinycolor2';
 import memoizeOne from 'memoize-one';
 
-import { Card, withDialog, Icon } from '../common';
+import { Card, withDialog, Icon, Spinner } from '../common';
 import {
   getDateTimeFromTS,
   countVersions,
@@ -58,8 +58,8 @@ const TimeTravel = (props) => {
     if (selectedTS) {
       const {
         day: selectedDay,
-        month: selectedMonth,
-        year: selectedYear
+        // month: selectedMonth,
+        // year: selectedYear
       } = memoizedDateTimeFromTS(selectedTS);
       match =
         selectedDay === day &&
@@ -346,7 +346,10 @@ const TimeTravel = (props) => {
       ref={props.dialogRef}>
       {state.matches('loadingSparkline') &&
         _.get(state, 'event.type') !== 'RELOAD_SPARKLINE_ON_ERROR' && (
-          <div className={styles.timetravel__loader}>Loading...</div>
+          <div className={styles.loader}>
+            <Spinner />
+            <span className={styles.loader__text}>Bending Time...</span>
+          </div>
         )}
       {!state.matches('sparklineLoaded.calendarError') &&
         !state.matches('sparklineError.timeout') && (

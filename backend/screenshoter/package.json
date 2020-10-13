@@ -1,0 +1,17 @@
+{
+  "name": "screenshoter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chrome-aws-lambda": "^5.3.0",
+    "serverless": "^2.1.1",
+    "sharp": "^0.26.1"
+  }
+}

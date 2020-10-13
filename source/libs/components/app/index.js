@@ -15,15 +15,14 @@ import './tooltip.css';
 import './scrollbar.css';
 
 import styles from './app.module.css';
+import { IntroProvider, useIntro } from '../../hooks/use-intro';
 
 const App = (props) => {
   const sendExit = () => {
     chrome.runtime.sendMessage({ message: '___VANDAL__CLIENT__EXIT' });
   };
 
-  const notifyThemeChanged = (ctx) => {
-    props.root.setAttribute('data-theme', ctx.theme);
-  };
+  const { showIntro, toggleIntro } = useIntro();
 
   const [state, sendToParentMachine] = useMachine(
     parentMachine.withConfig(
@@ -34,7 +33,7 @@ const App = (props) => {
           },
           notifyExit: () => {
             sendExit();
-            window.location.href = props.url;
+            window.location.reload();
           }
         }
       },
@@ -51,18 +50,22 @@ const App = (props) => {
     switch (request.message) {
       case '__VANDAL__NAV__BEFORENAVIGATE':
       case '__VANDAL__NAV__HISTORYCHANGE':
-        sendToParentMachine({ type: 'SET_URL', value: url });
+        sendToParentMachine({ type: 'SET_URL', payload: { url } });
         break;
       case '__VANDAL__NAV__COMMIT':
-        sendToParentMachine({ type: 'SET_URL', value: url });
+        sendToParentMachine({ type: 'SET_URL', payload: { url } });
         browser.setURL(url);
         break;
       case '__VANDAL__NAV__BUSTED':
         if (ctx.url) {
-          sendToParentMachine('TOGGLE_BUSTED_ERROR', {
-            payload: { value: true }
-          });
+          // sendToParentMachine('TOGGLE_BUSTED_ERROR', {
+          //   payload: { value: true }
+          // });
         }
+        break;
+      case '__VANDAL__NAV__NOTFOUND':
+        console.log('not found', url);
+        sendToParentMachine('CHECK_AVAILABILITY');
         break;
     }
   };
@@ -95,50 +98,111 @@ const App = (props) => {
   }, []);
 
   return (
-    <ShadowDOM
-      include={[
-        'chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/vandal.css'
-      ]}>
-      <div className="vandal__root vandal-root">
-        <ThemeProvider notifyThemeChanged={notifyThemeChanged}>
-          <div className={styles.container}>
-            <Frame
-              loaded={ctx.loaded}
-              onExit={() => sendToParentMachine('EXIT')}
-              url={ctx.url}
-            />
-            <Toast
-              err
-              className={styles.context__err}
-              show={ctx.isInvalidContext}
-              exit={0}>
-              <span>Found an Invalid Session. Please reload Vandal.</span>
-            </Toast>
-            <Toast
-              err
-              className={styles.context__err}
-              show={ctx.isFrameBusted}
-              exit={0}>
-              <span>
-                Houston, we have a problem!. Click here to open this URL on
+    <div className={styles.container}>
+      <Frame
+        loaded={ctx.loaded}
+        onExit={() => sendToParentMachine('EXIT')}
+        url={ctx.url}
+      />
+      <Toast
+        err
+        className={styles.context__err}
+        show={ctx.isInvalidContext}
+        exit={0}>
+        <span>Found an Invalid Session. Please reload Vandal.</span>
+      </Toast>
+      <Toast
+        err
+        className={styles.context__err}
+        show={ctx.isFrameBusted}
+        exit={0}>
+        <span>
+          Houston, we have a problem!. Click here to open this URL on
                 <a
-                  href={`https://web.archive.org/web/*/${props.url}`}
-                  target="_blank"
-                  className={styles.wayback__link}>
-                  Wayback Machine
+            href={`https://web.archive.org/web/*/${props.url}`}
+            target="_blank"
+            className={styles.wayback__link}>
+            Wayback Machine
                 </a>
-                <Icon
-                  name="openURL"
-                  width={11}
-                  className={styles.wayback__icon}
-                />
+          <Icon
+            name="openURL"
+            width={11}
+            className={styles.wayback__icon}
+          />
+        </span>
+      </Toast>
+      <Toast
+        className={styles.toast__notfound}
+        show={state.matches('checkAvailability')}>
+        <span>
+          You have landed on a defunct page!. Checking availability...
               </span>
-            </Toast>
-          </div>
-        </ThemeProvider>
-      </div>
-    </ShadowDOM>
+      </Toast>
+      <Toast
+        className={styles.toast__notfound}
+        show={state.matches('snapshotFound')}>
+        <div>
+          <span>Found snapshot recorded on {ctx.availableDate}</span>
+          <button
+            className={styles.toast__open__btn}
+            onClick={() => {
+              browser.navigate(ctx.availableURL);
+              sendToParentMachine('CLOSE');
+            }}>
+            View Snapshot
+                </button>
+          <Icon
+            name="close"
+            className={styles.toast__close__icon}
+            onClick={() => {
+              sendToParentMachine('CLOSE');
+            }}
+          />
+        </div>
+      </Toast>
+      <Toast
+        err
+        className={styles.toast__notfound}
+        show={state.matches('availabilityError')}>
+        <div>
+          <span>Error finding snapshot. Please try again later.</span>
+          <Icon
+            name="close"
+            className={styles.toast__close__icon}
+            onClick={() => {
+              sendToParentMachine('CLOSE');
+            }}
+          />
+        </div>
+      </Toast>
+      {showIntro && <div className={styles.modal__container} onClick={() => {
+        toggleIntro(false);
+      }}>
+        <img className={styles.cover} src={chrome.runtime.getURL("images/cover-art.png")} />
+      </div>}
+    </div>
+
   );
 };
 
-export default App;
+
+const AppContainer = (props) => {
+  const notifyThemeChanged = (ctx) => {
+    props.root.setAttribute('data-theme', ctx.theme);
+  };
+
+  return (<ShadowDOM
+    include={[
+      'chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/vandal.css'
+    ]}>
+    <div className="vandal__root vandal-root">
+      <ThemeProvider notifyThemeChanged={notifyThemeChanged}>
+        <IntroProvider>
+          <App {...props} />
+        </IntroProvider>
+      </ThemeProvider>
+    </div>
+  </ShadowDOM>)
+}
+
+export default AppContainer;

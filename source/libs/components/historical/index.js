@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useMachine } from '@xstate/react';
 import ReactTooltip from 'react-tooltip';
 import _ from 'lodash';
@@ -19,13 +19,9 @@ import historicalMachine, {
   cleanUp
 } from './historical.machine';
 import styles from './historical.module.css';
-import { useTheme } from '../../hooks';
+import { useTheme, useTimeTravel } from '../../hooks';
 
 const options = [
-  // {
-  //   value: 'showMonths',
-  //   text: 'Show Months'
-  // },
   {
     value: 'openInVandal',
     text: 'Open in Vandal'
@@ -43,8 +39,9 @@ const options = [
 const Historical = (props) => {
   const containerRef = useRef(null);
   const { theme } = useTheme();
+  const { state: ttstate } = useTimeTravel();
 
-  const [state, send] = useMachine(
+  const [state, send, service] = useMachine(
     historicalMachine.withConfig(
       {
         actions: {
@@ -57,16 +54,15 @@ const Historical = (props) => {
       },
       {
         url: props.url,
-        years: props.years,
+        years: _.keys(_.get(ttstate, 'context.sparkline')),
         snapshots: [],
-        archiveURLs: []
+        archiveURLs: [],
+        isHistoricalEnabled: true
       }
     )
   );
 
   const { context: ctx } = state;
-
-  // console.log('archiveURLs', ctx.archiveURLs);
 
   const onOptionSelect = useEventCallback(
     (index, year) => async (option) => {
@@ -115,7 +111,10 @@ const Historical = (props) => {
   };
 
   const onKeyDown = (e) => {
+    e.stopPropagation();
     if (e.keyCode === 27) {
+      cleanUp();
+      service.stop();
       props.onClose();
     }
   };
@@ -125,13 +124,32 @@ const Historical = (props) => {
     if (containerRef) {
       containerRef.current.focus();
     }
-    send('LOAD_HISTORICAL');
-    return () => {
+    service.onStop(() => {
       cleanUp();
-    };
+    });
   }, []);
 
-  return (
+  useEffect(
+    () => {
+      const years = _.keys(_.get(ttstate, 'context.sparkline'));
+      if (!_.isEmpty(years)) {
+        send('INIT_HISTORICAL', {
+          payload: { years, url: props.url }
+        });
+      }
+    },
+    [_.get(ttstate, 'context.sparkline'), props.url]
+  );
+
+  return !!ttstate.matches('loadingSparkline') ? (
+    <div
+      className={styles.modal__container}
+      onKeyDown={onKeyDown}
+      ref={containerRef}
+      tabIndex="0">
+      Loading...
+    </div>
+  ) : (
     <div
       className={styles.modal__container}
       onKeyDown={onKeyDown}
@@ -143,6 +161,19 @@ const Historical = (props) => {
             send('CLOSE_TERM_MODAL');
           }}
         />
+      )}
+      {!ctx.isHistoricalEnabled && (
+        <div className={styles.disabled__overlay}>
+          <div className={styles.disabled__modal}>
+            Vandal Savage:
+            <p>Historical View is no longer operational!</p>
+            <p>
+              Wish I hadn't destroyed this planet and disrupted the
+              gravitational balance in the solar system.
+            </p>
+            <p>Well, time for lunch !</p>
+          </div>
+        </div>
       )}
       <div className={styles.container} onKeyDown={onKeyDown} tabIndex="0">
         <div
@@ -176,11 +207,21 @@ const Historical = (props) => {
                   {snapshot ? (
                     <React.Fragment>
                       {(_.get(snapshot, 'err') && (
-                        <Icon
-                          name="error"
-                          className={styles.err}
-                          title={_.get(snapshot, 'err')}
-                        />
+                        <div className={styles.err_container}>
+                          <Icon
+                            name="error"
+                            className={styles.err}
+                            title={_.get(snapshot, 'err')}
+                          />
+                          <button
+                            className={styles.retry__btn}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onOptionSelect(index, year)('retry');
+                            }}>
+                            Retry
+                          </button>
+                        </div>
                       )) || (
                         <img
                           className={styles.snapshot}
@@ -260,16 +301,7 @@ const Historical = (props) => {
           />
         )}
       </div>
-      <div className={styles.misc__container}>
-        {/* <Icon
-          name="settings"
-          className={styles.settings}
-          onClick={() => {
-            chrome.runtime.sendMessage({
-              message: '__VANDAL__CLIENT__OPTTONS'
-            });
-          }}
-        /> */}
+      <div className={styles.action__container}>
         <Icon name="close" className={styles.close} onClick={props.onClose} />
       </div>
     </div>

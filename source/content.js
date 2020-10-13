@@ -20,6 +20,7 @@ const archiveRegExp = /\/web\/\d+(?:im_)?\/(.*)/;
 async function onDomReady() {
   document.body.innerHTML = '';
   document.body.style.marginLeft = 0;
+  document.body.style.paddingLeft = 0;
 
   const box = document.createElement('div');
   box.className = 'vandal-box';

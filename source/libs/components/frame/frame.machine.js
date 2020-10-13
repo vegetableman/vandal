@@ -50,13 +50,6 @@ const frameMachine = Machine(
               open: { on: { TOGGLE_HISTORICAL_MODE: 'close' } },
               close: { on: { TOGGLE_HISTORICAL_MODE: 'open' } }
             }
-          },
-          diff: {
-            initial: 'close',
-            states: {
-              open: { on: { TOGGLE_DIFF_MODE: 'close' } },
-              close: { on: { TOGGLE_DIFF_MODE: 'open' } }
-            }
           }
         }
       }

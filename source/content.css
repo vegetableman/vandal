@@ -137,6 +137,8 @@ body {
   /* Timetravel */
   --vandal-timetravel-footer-background-color: #f1f1f1;
   --vandal-timetravel-footer-border-color: #cccccc;
+  --vandal-timetravel-btn-intro-background-color: #F4F0EA;
+  --vandal-timetravel-btn-intro-fill-color: #c72000;
   --vandal-cl-day-color: #333333;
   --vandal-cl-day-active-color: #333333;
   --vandal-total-count: #555555;
@@ -185,6 +187,9 @@ body {
 
   --vandal-input-nav-background-color: #eeeeee;
   --vandal-input-nav-border-color: var(--vandal-primary-border-color);
+  --vandal-overlay-background-color: #777777bf;
+  --vandal-overlay-text-color: #ffffff;
+  --vandal-overlay-arrow-color: #000000;
 }
 
 .vandal[data-theme='dark'] {
@@ -250,6 +255,8 @@ body {
   /* Timetravel */
   --vandal-timetravel-footer-background-color: #4e4c4c;
   --vandal-timetravel-footer-border-color: #777777;
+  --vandal-timetravel-btn-intro-background-color: #b18b0c;
+  --vandal-timetravel-btn-intro-fill-color: var(--vandal-primary-icon-color);
   --vandal-cl-day-color: #dddddd;
   --vandal-cl-day-active-color: #ffffff;
   --vandal-total-count: #dddddd;
@@ -298,17 +305,32 @@ body {
 
   --vandal-input-nav-background-color: var(--vandal-input-background-color);
   --vandal-input-nav-border-color: var(--vandal-input-background-color);
+  --vandal-overlay-background-color: #1e1e23bf;
+  --vandal-overlay-text-color: #eac030;
+  --vandal-overlay-arrow-color: #ffffff;
+}
+
+.vandal,
+.vandal-box {
+  padding: 0;
+  margin: 0;
 }
 
 .vandal-iframe {
   height: 100%;
   width: 100%;
+  padding: 0;
+  margin: 0;
 }
 
 .vandal__root {
   opacity: 0;
+  padding: 0;
+  margin: 0;
 }
 
 .vandal__root.resolved {
   opacity: 1;
+  padding: 0;
+  margin: 0;
 }

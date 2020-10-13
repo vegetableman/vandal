@@ -129,7 +129,9 @@ class NavigationHandler {
   };
 
   completedHandler = (details) => {
-    const { tabId, frameId, url } = details;
+    const { tabId, frameId, url, statusCode } = details;
+
+    console.log('statusCode:', statusCode);
 
     //if the user reloaded, then invalidate the tab
     //and remove listeners
@@ -340,8 +342,12 @@ const eventMap = {
     handler: 'completedHandler'
   },
   onErrorOccurred: {
-    type: 'webNavigation',
-    handler: 'errorHandler'
+    type: 'webRequest',
+    handler: 'errorHandler',
+    options: {
+      urls: requestFilters,
+      types: ['sub_frame']
+    }
   },
   onHistoryStateUpdated: {
     type: 'webNavigation',
@@ -416,6 +422,7 @@ function addListeners() {
       if (
         !chrome.webRequest[event].hasListener(navigationHandler[value.handler])
       ) {
+        console.log('webRequest:event:', event);
         chrome.webRequest[event].addListener(
           navigationHandler[value.handler],
           value.options,
@@ -424,6 +431,25 @@ function addListeners() {
       }
     }
   }
+  chrome.webRequest.onCompleted.addListener(
+    function(details) {
+      console.log('onCompleted:details:', details);
+      if (
+        isValidTab(details.tabId) &&
+        isValidFrame(details.tabId, details.frameId) &&
+        details.statusCode >= 400
+      ) {
+        chrome.tabs.sendMessage(details.tabId, {
+          message: '__VANDAL__NAV__NOTFOUND',
+          data: { url: details.url }
+        });
+      }
+    },
+    {
+      urls: requestFilters,
+      types: ['sub_frame']
+    }
+  );
 }
 
 function init() {

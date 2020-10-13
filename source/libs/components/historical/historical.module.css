@@ -17,17 +17,26 @@
   height: 100%;
   outline: none;
   overflow: scroll;
+  width: 100%;
 }
 
 .year__container {
-  display: flex;
+  /* display: flex;
   flex-wrap: wrap;
   align-content: baseline;
+  justify-content: center; */
+  display: grid;
+  grid-column-gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(265px, 1fr));
+  grid-template-rows: repeat(auto-fill, minmax(185px, 1fr));
+  grid-row-gap: 30px;
+  padding: 30px 40px;
 
   height: 100%;
-  overflow: scroll;
-  padding: 10px 10px 100px 10px;
-  width: 1000px;
+  overflow: auto;
+  /* overflow: scroll; */
+  /* padding: 10px 10px 100px 10px; */
+  width: 100%;
 }
 
 .year__container__month {
@@ -48,7 +57,7 @@
   /* margin: 10px; */
   /* width: 200px; */
   height: 185px;
-  margin: 25px;
+  /* margin: 25px; */
   width: 265px;
 }
 
@@ -160,7 +169,7 @@
   position: fixed;
   height: 40px;
   width: 40px;
-  right: 1.2%;
+  right: 0.6%;
   top: 64px;
 }
 
@@ -216,12 +225,14 @@
 .err {
   fill: #e45959;
   width: 25px;
+  height: 25px;
 }
 
-.misc__container {
+.action__container {
   position: absolute;
   right: 9px;
   top: 13px;
+  z-index: 1;
 }
 
 .settings {
@@ -258,4 +269,55 @@
 .list {
   width: 125px;
   z-index: 1;
+}
+
+.disabled__overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background: #35353594;
+  height: 100%;
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+}
+
+.disabled__modal {
+  background: #333;
+  border-radius: 5px;
+  color: #fff;
+  font-family: Roboto;
+  font-size: 14px;
+  height: 200px;
+  margin-top: -7%;
+  padding: 20px 15px;
+  top: 30%;
+  width: 400px;
+}
+
+.retry__btn {
+  /* background: var(--vandal-cl-retry-bg-color);
+  box-shadow: none;
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 20px;
+  padding: 13px 10px; */
+  background: #8c8c8c;
+  border-radius: 3px;
+  border: 0;
+  color: #fff;
+  font-size: 12px;
+  margin-top: 5px;
+  padding: 12px 10px 10px 10px;
+}
+
+.err_container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 25px;
 }

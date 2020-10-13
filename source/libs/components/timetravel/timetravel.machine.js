@@ -1,12 +1,6 @@
-import { Machine, actions, spawn, send } from 'xstate';
+import { Machine, actions, spawn } from 'xstate';
 import memoizeOne from 'memoize-one';
-import {
-  api,
-  abort,
-  getDateTimeFromTS,
-  browser
-  // getLastDate
-} from '../../utils';
+import { api, abort, getDateTimeFromTS, browser } from '../../utils';
 import cardMachine from '../common/card/card.machine';
 const { assign } = actions;
 
@@ -307,12 +301,12 @@ const timetravelMachine = Machine(
           //   isNavigatedTS || !ctx.redirectTSCollection[ts]
           //     ? ts
           //     : ctx.redirectTSCollection[ts];
-          const months = _.get(ctx.calendar, ctx.currentYear);
-          const date = _.get(
-            months,
-            `[${ctx.currentMonth - 1}][${ctx.currentDay - 1}]`
-          );
-          const tsList = _.get(date, 'ts');
+          // const months = _.get(ctx.calendar, ctx.currentYear);
+          // const date = _.get(
+          //   months,
+          //   `[${ctx.currentMonth - 1}][${ctx.currentDay - 1}]`
+          // );
+          // const tsList = _.get(date, 'ts');
           return {
             selectedTS,
             redirectedTS:
@@ -379,8 +373,6 @@ const timetravelMachine = Machine(
         entry: [
           assign({
             cardRef: () => spawn(cardMachine)
-            // prevCardRef: () => spawn(cardMachine),
-            // nextCardRef: () => spawn(cardMachine)
           })
         ]
       },

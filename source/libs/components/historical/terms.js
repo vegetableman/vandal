@@ -6,7 +6,7 @@ export default class Terms extends React.Component {
   };
 
   handleChange = () => {
-    this.setState(prevState => ({ disableClose: !prevState.disableClose }));
+    this.setState((prevState) => ({ disableClose: !prevState.disableClose }));
   };
 
   render() {
@@ -21,15 +21,15 @@ export default class Terms extends React.Component {
             <b>Vandal Savage</b>: This is an outrage !
             <p>
               A colony of giant cockroaches have stolen compute resources from
-              Vandal, needed to sustain the Historical and Diff View. As a
-              result, the screenshot service required to capture archive
-              snapshots is being run on meagre resources.
+              Vandal needed to sustain the Historical View. As a result, the
+              screenshot service required to capture archive snapshots is being
+              run on meagre resources.
             </p>{' '}
             <p style={{ margin: 0, padding: 0 }}>
               As for now, it's only a matter of time until this service runs out
               of operational juice, until, Vandal figures out another way.
             </p>
-            <p style={{ margin: 0, padding: 0 }}>
+            {/* <p style={{ margin: 0, padding: 0 }}>
               Help Vandal manage this view by configuring your own screenshot
               service by clicking on the settings{' '}
               <Icon name="settings" className="vandal-terms-settings-icon" />{' '}
@@ -47,7 +47,7 @@ export default class Terms extends React.Component {
                 target="_blank">
                 https://screen.rip/
               </a>
-            </p>
+            </p> */}
           </div>
           <div className="vandal-terms__input-container">
             <label className="vandal-terms__input-label">

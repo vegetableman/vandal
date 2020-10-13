@@ -100,7 +100,7 @@ const URLInfo = memo(
       </div>
     );
   },
-  compareProps(['redirectedTS', 'selectedTS', 'redirectTSCollection'])
+  compareProps(['redirectedTS', 'selectedTS', 'redirectTSCollection', 'url'])
 );
 
 export default withDialog(URLInfo, {

@@ -1,0 +1,27 @@
+service: screenshot-as-a-service
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  profile: vandal-serverless-admin
+  memorySize: 2048
+  region: us-east-2
+  versionFunctions: false
+
+functions:
+    screenshot:
+      handler: index.handler
+      timeout: 180
+      layers:
+        - arn:aws:lambda:us-east-2:764866452798:layer:chrome-aws-lambda:19
+        - arn:aws:lambda:us-east-2:164948460044:layer:sharp:2
+      events:
+        - http:
+            method: get
+            path: screenshot
+            integration: lambda
+            request:
+              template:
+                application/json: '{ "url" : "$input.params(''url'')"}'
+            async: true 
+

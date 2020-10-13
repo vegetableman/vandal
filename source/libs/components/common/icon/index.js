@@ -436,6 +436,13 @@ const icons = {
         </g>
       </g>
     </svg>
+  ),
+  introArrow: ({ ...props }) => (
+    <svg viewBox="0 0 92 177" {...props} fill="none">
+      <title>{props.title}</title>
+      <path d="M0.5 175.5C0.5 175.5 80 148 80 3.5" strokeWidth="2" />
+      <path d="M68 15.5L80 2.5L90.5 15.5" strokeWidth="2" />
+    </svg>
   )
 };
 

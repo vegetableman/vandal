@@ -130,6 +130,7 @@
 
   border-left: 1px solid var(--vandal-border-separator-color);
   cursor: pointer;
+  position: relative;
   height: 100%;
 }
 
@@ -146,6 +147,10 @@
   animation: blinking 1s ease-in 3;
 }
 
+.timetravel__btn__intro {
+  background-color: var(--vandal-timetravel-btn-intro-background-color) !important;
+}
+
 .timetravel__btn:hover {
   background: var(--vandal-secondary-background-color);
 }
@@ -154,20 +159,24 @@
   background: var(--vandal-secondary-background-color);
 }
 
-.timetravelIcon {
+.timetravel__icon {
   fill: var(--vandal-primary-icon-color);
 }
 
-.timetravel__btn:hover .timetravelIcon,
-.timetravel__btn___selected .timetravelIcon {
+.timetravel__btn:hover .timetravel__icon,
+.timetravel__btn___selected .timetravel__icon {
   fill: var(--vandal-primary-icon-active-color);
+}
+
+.timetravel__icon__intro {
+  fill: var(--vandal-timetravel-btn-intro-fill-color) !important;
 }
 
 .vandal-url__wayback:hover {
   background: var(--vandal-secondary-background-color);
 }
 
-.archiveIcon {
+.archive__icon {
   width: 12px;
   height: 12px;
   fill: var(--vandal-primary-icon-color);
@@ -215,4 +224,36 @@
 
 .date__text {
   padding-top: 2.5px;
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  top: 30px;
+  width: 106px;
+}
+
+.intro_arrow__icon {
+  stroke: var(--vandal-overlay-arrow-color);
+  position: relative;
+  left: 9px;
+}
+
+.intro_arrow__icon__intro {
+
+}
+
+.intro__text {
+  color: var(--vandal-overlay-text-color);
+  font-family: VANDAL__SourceSansPro;
+  font-size: 14px;
+  position: relative;
+  left: -25px;
+  bottom: -5px;
+  font-weight: 800;
+  font-style: italic;
 }

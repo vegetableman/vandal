@@ -13,6 +13,7 @@ export { default as fetch } from './fetch';
 export { default as Screenshooter } from './screenshooter';
 export { default as useRefCallback } from './use-ref-callback';
 export { default as compareProps } from './compare-props';
+export { default as Lambda } from './lambda';
 export { default as hamming } from './hamming';
 import scaleLog from './scalelog';
 export { processHistogram } from './histogram';
@@ -514,7 +515,9 @@ export const getUrlHost = (url) => {
   return url && _.replace(new URL(url).host, 'www.', '');
 };
 
-const stripRegExp = new RegExp(/https\:\/\/web\.archive\.org\/web\/\d+.*_?\/*/);
+const stripRegExp = new RegExp(
+  /https?\:\/\/web\.archive\.org\/web\/\d+.*_?\/*/
+);
 export const stripArchiveURL = (url) => {
   return url && isArchiveURL(url) && stripRegExp.test(url)
     ? _.nth(_.split(url, /web\/\d+(?:.*?)_?\//), 1)

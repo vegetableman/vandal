@@ -81,7 +81,8 @@ module.exports = () => ({
       {
         from: 'source/libs/components/app/sw.js'
       },
-      { from: '*', context: 'source/libs/assets/fonts', to: 'fonts' }
+      { from: '*', context: 'source/libs/assets/fonts', to: 'fonts' },
+      { from: '*', context: 'source/libs/assets/images', to: 'images' }
     ]),
     new ExtractTextPlugin('vandal.css', {
       allChunks: true

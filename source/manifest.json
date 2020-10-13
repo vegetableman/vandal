@@ -13,6 +13,7 @@
   },
   "permissions": [
     "storage",
+    "unlimitedStorage",
     "activeTab",
     "pageCapture",
     "webRequest",
@@ -31,7 +32,10 @@
     "default_icon": "icon.png",
     "browser_style": true
   },
-  "optional_permissions": ["http://*/*", "https://*/*"],
+  "optional_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
   "icons": {
     "128": "icon.png"
   },
@@ -49,6 +53,7 @@
     "persistent": true
   },
   "web_accessible_resources": [
+    "images/*",
     "vandal.css",
     "fonts/sourcesanspro-regular-webfont.woff",
     "fonts/sourcesanspro-regular-webfont.woff2",

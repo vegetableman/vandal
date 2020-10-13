@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef, useMemo } from 'react';
+import React, { useEffect, useCallback, useRef, useMemo, useState } from 'react';
 import ReactTooltip from 'react-tooltip';
 import cx from 'classnames';
 import { useMachine } from '@xstate/react';
@@ -55,6 +55,7 @@ const Frame = (props) => {
   const { frameu, tempUrl, history, ...others } = props;
   const [state, send, frameService] = useMachine(frameMachine);
   const { theme, setTheme } = useTheme();
+  const [showAbout, toggleAbout] = useState(false);
   const verticalMenuRef = useRef(null);
 
   const onOptionSelect = (option) => {
@@ -66,6 +67,9 @@ const Frame = (props) => {
       send('TOGGLE_DIFF_MODE');
     } else if (option === 'histView') {
       send('TOGGLE_HISTORICAL_MODE');
+    }
+    else if (option === "about") {
+      toggleAbout(true);
     }
   };
 
@@ -184,6 +188,10 @@ const Frame = (props) => {
           hideOnSelect: false
         },
         {
+          value: "about",
+          text: "About"
+        },
+        {
           value: 'exit',
           text: 'Exit'
         }
@@ -200,19 +208,22 @@ const Frame = (props) => {
 
   const disableForward =
     _.indexOf(navState.context.currentRecords, navState.context.currentURL) ===
-      -1 ||
+    -1 ||
     _.lastIndexOf(
       navState.context.currentRecords,
       navState.context.currentURL
     ) ===
-      _.size(navState.context.currentRecords) - 1;
+    _.size(navState.context.currentRecords) - 1;
 
-  console.log('frame:render');
+  console.log('frame:render', state);
 
   return (
     <TimetravelProvider machine={state.context.timetravelRef}>
       <div className={styles.root}>
         <div className={styles.left}>
+          <div className={styles.logo__container}>
+            <img className={styles.logo} src={chrome.runtime.getURL("images/icon.png")} />
+          </div>
           <div className={styles.navigation}>
             <button
               data-for="vandal-back"
@@ -346,9 +357,6 @@ const Frame = (props) => {
         {state.matches('idle.historical.open') && (
           <Historical
             url={props.url}
-            years={_.keys(
-              _.get(state, 'context.timetravelRef.state.context.sparkline')
-            )}
             onClose={() => {
               send('TOGGLE_HISTORICAL_MODE');
             }}
@@ -469,6 +477,20 @@ const Frame = (props) => {
           delayShow={1000}
           offset={{ bottom: 0, left: 0 }}
         />
+        {showAbout && <div className={styles.modal__container} >
+          <div className={styles.modal}>
+            <img className={styles.cover} src={chrome.runtime.getURL("images/cover-art.png")} />
+            <div>
+              <span>Unlike, say, a published book, the web is always changing. Some of these changes may not be in the best interests of those seeking information.</span>
+              <span>The Internet archive is an excellent resource to navigate through those changing tides of thought, censorship and access.</span>
+              <span>Please donate to Internet Archive to encourage this ongoing work. Thank you!</span>
+            </div>
+            <div>
+              <span>Built by Vignesh Anand</span> Source Code: <a href="https://github.com/vegetableman/vandal">Github</a>
+              You can reach me at: <a href="https://twitter.com/vgnanand">@vgnanand</a>
+            </div>
+          </div>
+        </div>}
       </div>
     </TimetravelProvider>
   );

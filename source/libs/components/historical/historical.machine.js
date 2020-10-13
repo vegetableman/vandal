@@ -1,11 +1,12 @@
 import { Machine, actions } from 'xstate';
 import { Screenshooter, api, abort } from '../../utils';
-import each from 'promise-each';
 
 const { assign } = actions;
 const screenshooter = new Screenshooter();
 
+let isSTOPPED = false;
 export const cleanUp = () => {
+  isSTOPPED = true;
   abort({ meta: { type: 'available' } });
   screenshooter.abort();
 };
@@ -23,18 +24,11 @@ export const fetchSnapshot = async ({ url, year, archiveURL }) => {
 
   const closestURL = _.get(result, 'archived_snapshots.closest.url');
   if (closestURL) {
-    archiveURL = _.replace(
-      closestURL,
-      // _.replace(closestURL, /\d+/, '$&im_'),
-      /https?/,
-      'https'
-    );
+    archiveURL = _.replace(closestURL, /https?/, 'https');
   }
 
   return [
-    await screenshooter.fetchScreenshot(archiveURL, {
-      latest: true
-    }),
+    await screenshooter.fetchScreenshot(archiveURL),
     closestURL ? archiveURL : null
   ];
 };
@@ -42,7 +36,7 @@ export const fetchSnapshot = async ({ url, year, archiveURL }) => {
 const historicalMachine = Machine(
   {
     id: 'historical',
-    initial: 'init',
+    initial: 'unknown',
     context: {
       url: null,
       years: null,
@@ -53,19 +47,41 @@ const historicalMachine = Machine(
       showMonthPanel: false,
       showCarousel: null,
       showTermModal: false,
+      isHistoricalEnabled: true,
       snapshots: [],
       archiveURLs: []
     },
     states: {
-      init: {
-        on: {
-          LOAD_HISTORICAL: {
-            target: 'loadingHistorical'
+      unknown: {},
+      initHistorical: {
+        id: 'initHistorical',
+        invoke: {
+          src: 'checkHistoricalAvailable',
+          onDone: {
+            target: 'processingHistorical',
+            actions: [
+              assign({
+                isHistoricalEnabled: (_ctx, e) => _.get(e, 'data.isAvailable')
+              })
+            ]
           }
         }
       },
+      processingHistorical: {
+        on: {
+          '': [
+            {
+              target: 'loadingHistorical',
+              cond: 'isHistoricalAvailable'
+            },
+            {
+              target: 'historicalUnAvailable'
+            }
+          ]
+        }
+      },
+      historicalUnAvailable: {},
       loadingHistorical: {
-        id: 'loadingHistorical',
         invoke: {
           id: 'fetchArchiveLinks',
           src: 'fetchArchiveLinks'
@@ -73,6 +89,17 @@ const historicalMachine = Machine(
       }
     },
     on: {
+      INIT_HISTORICAL: {
+        target: 'initHistorical',
+        actions: assign((_ctx, e) => {
+          return {
+            years: _.get(e, 'payload.years'),
+            url: _.get(e, 'payload.url'),
+            snapshots: [],
+            archiveURLs: []
+          };
+        })
+      },
       TOGGLE_CAROUSEL_OPEN: {
         actions: assign((_ctx, e) => {
           return {
@@ -166,6 +193,7 @@ const historicalMachine = Machine(
   {
     services: {
       fetchArchiveLinks: (ctx) => async (callback) => {
+        isSTOPPED = false;
         const timestampURLs = _.map(
           ctx.years,
           (y) =>
@@ -174,22 +202,32 @@ const historicalMachine = Machine(
             }&timestamp=${y}12`
         );
 
+        console.log('timestampURLs:', timestampURLs);
+
         const timestampURLCount = _.size(timestampURLs);
         const snapshotMapper = async (item, index) => {
           let [result] = await api(item, {
             fetchFromCache: timestampURLCount - 1 !== index,
             meta: { type: 'available' }
           });
+
+          console.log('snapshot result:', result);
+
           let archiveURL = _.replace(
             _.get(result, 'archived_snapshots.closest.url'),
-            // _.replace(
-            //   _.get(result, 'archived_snapshots.closest.url'),
-            //   /\d+/,
-            //   '$&im_'
-            // ),
             /https?/,
             'https'
           );
+
+          if (!archiveURL) {
+            return callback({
+              type: 'ADD_SNAPSHOT',
+              payload: {
+                snapshot: { data: null, err: 'Archive URL not found' },
+                archiveURL
+              }
+            });
+          }
 
           const [data, err] = await screenshooter.fetchScreenshot(archiveURL, {
             latest: timestampURLCount - 1 === index
@@ -200,7 +238,32 @@ const historicalMachine = Machine(
           });
         };
 
-        return Promise.resolve(timestampURLs).then(each(snapshotMapper));
+        try {
+          timestampURLs.reduce(function(prev, curr, i) {
+            return prev.then(function() {
+              if (isSTOPPED) {
+                throw new Error('Service has Stopped');
+              }
+              return snapshotMapper(curr, i);
+            });
+          }, Promise.resolve());
+        } catch (ex) {}
+      },
+      checkHistoricalAvailable: (ctx) => {
+        return new Promise(async (resolve, reject) => {
+          const [data, err] = await api(VANDAL_SCREENSHOT_IS_AVAILABLE);
+          if (err) {
+            return reject(err);
+          }
+          return resolve({
+            isAvailable: _.get(JSON.parse(data), 'isAvailable')
+          });
+        });
+      }
+    },
+    guards: {
+      isHistoricalAvailable: (ctx, e) => {
+        return ctx.isHistoricalEnabled;
       }
     }
   }

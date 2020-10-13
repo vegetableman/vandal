@@ -11,8 +11,10 @@ import {
 import { useTheme } from '../../../hooks';
 
 import styles from './urlbox.module.css';
+import { useIntro } from '../../../hooks/use-intro';
 
 const URLBox = memo((props) => {
+  const { showIntro, toggleIntro } = useIntro();
   const getTS = (props) => {
     if (props.redirectedTS) {
       return props.redirectedTS;
@@ -93,7 +95,7 @@ const URLBox = memo((props) => {
             )}
           {!!currentTS &&
             !showURLLoader && (
-              <Icon name="archive" className={styles.archiveIcon} />
+              <Icon name="archive" className={styles.archive__icon} />
             )}
         </div>
         <input
@@ -141,10 +143,25 @@ const URLBox = memo((props) => {
           className={cx({
             [styles.timetravel__btn]: true,
             [styles.timetravel__btn___selected]: props.showTimeTravel,
-            [styles.timetravel__btn___updated]: props.sparklineLoaded
+            [styles.timetravel__btn___updated]: props.sparklineLoaded,
+            [styles.timetravel__btn__intro]: showIntro
           })}
-          onClick={props.toggleTimeTravel}>
-          <Icon className={styles.timetravelIcon} name="history" width={22} />
+          onClick={() => {
+            toggleIntro(false);
+            props.toggleTimeTravel();
+          }}>
+          <Icon className={cx({ [styles.timetravel__icon]: true, [styles.timetravel__icon__intro]: showIntro })} name="history" width={22} />
+          {showIntro && <div className={styles.intro} onClick={() => {
+            toggleIntro(false);
+          }}>
+            <Icon
+              name="introArrow"
+              width={92}
+              height={177}
+              className={styles.intro_arrow__icon}
+            />
+            <span className={styles.intro__text}>Buckle up!</span>
+          </div>}
         </div>
       </div>
     </div>

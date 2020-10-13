@@ -1,13 +1,14 @@
 const getResponse = async (res, meta) => {
   const contentType = _.get(res, 'headers').get('content-type');
-  const metaType = _.get(meta, 'type');
-  if (metaType === 'screenshot') {
-    let response = await res.json();
-    let arrayBufferView = new Uint8Array(_.get(response, 'buffer.data'));
-    let blob = new Blob([arrayBufferView], { type: 'image/jpeg' });
-    let urlCreator = window.URL || window.webkitURL;
-    return urlCreator.createObjectURL(blob);
-  } else if (
+  // const metaType = _.get(meta, 'type');
+  // if (metaType === 'screenshot') {
+  //   let response = await res.json();
+  //   let arrayBufferView = new Uint8Array(_.get(response, 'buffer.data'));
+  //   let blob = new Blob([arrayBufferView], { type: 'image/jpeg' });
+  //   let urlCreator = window.URL || window.webkitURL;
+  //   return urlCreator.createObjectURL(blob);
+  // } else
+  if (
     _.endsWith(_.get(res, 'url'), '.png') ||
     (contentType && ~contentType.indexOf('image'))
   ) {
