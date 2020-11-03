@@ -1,7 +1,7 @@
 import { Machine, actions } from 'xstate';
 import _ from 'lodash';
 import { historyDB } from '../../utils/storage';
-import { longMonthNames, getCurrentDate } from '../../utils';
+import { getCurrentDate } from '../../utils';
 const { assign } = actions;
 const navigatorMachine = Machine(
   {
@@ -10,10 +10,9 @@ const navigatorMachine = Machine(
     context: {
       allRecords: [],
       currentRecords: [],
+      currentIndex: 0,
       url: null,
-      currentURL: null,
-      isBackEnabled: false,
-      isForwardEnabled: false
+      currentURL: null
     },
     states: {
       idle: {
@@ -33,52 +32,129 @@ const navigatorMachine = Machine(
         states: {
           unknown: {
             on: {
+              UPDATE_HISTORY_ONCOMMIT: {
+                actions: [
+                  assign((ctx, e) => {
+                    console.log(
+                      'UPDATE_HISTORY_ONCOMMIT',
+                      _.get(e, 'payload.type'),
+                      'currentIndex:',
+                      ctx.currentIndex,
+                      ctx.previousIndex,
+                      'url:',
+                      _.get(e, 'payload.url'),
+                      'currentRecords:',
+                      ctx.currentRecords
+                    );
+
+                    const transitionType = _.get(e, 'payload.type');
+                    const url = _.get(e, 'payload.url');
+                    if (transitionType === 'redirect') {
+                      return {
+                        currentURL: _.get(e, 'payload.url'),
+                        currentRecords: [...ctx.currentRecords, url]
+                      };
+                    }
+
+                    if (
+                      transitionType !== 'auto' ||
+                      _.isEmpty(ctx.currentRecords) ||
+                      _.size(ctx.currentRecords) === 1
+                    ) {
+                      return ctx;
+                    }
+
+                    let currentIndex;
+
+                    if (
+                      _.lastIndexOf(ctx.prevRecords, url) < ctx.previousIndex
+                    ) {
+                      currentIndex = Math.max(ctx.previousIndex - 1, 0);
+                    } else {
+                      currentIndex = Math.min(
+                        ctx.previousIndex + 1,
+                        _.size(ctx.prevRecords) - 1
+                      );
+                    }
+
+                    console.log(
+                      'UPDATE_HISTORY_ONCOMMIT',
+                      _.get(e, 'payload.url'),
+                      transitionType,
+                      'currentIndex:',
+                      currentIndex,
+                      'prevRecords:',
+                      ctx.currentRecords,
+                      ctx.prevRecords
+                    );
+
+                    return {
+                      currentURL: _.get(e, 'payload.url'),
+                      currentRecords: ctx.prevRecords,
+                      currentIndex
+                    };
+                  })
+                ]
+              },
               UPDATE_HISTORY: {
                 actions: [
                   assign((ctx, e) => {
                     const { allRecords = [] } = ctx;
                     const url = _.get(e, 'payload.url');
-                    // const redirect = _.get(e, 'payload.redirect');
+                    const transitionType = _.get(e, 'payload.type');
 
                     let currentRecords = [];
+                    let currentIndex = ctx.currentIndex;
 
-                    // if (redirect) {
-                    //   currentRecords = [
-                    //     ..._.slice(
-                    //       ctx.currentRecords,
-                    //       0,
-                    //       _.indexOf(ctx.currentRecords, ctx.currentURL)
-                    //     ),
-                    //     currentURL
-                    //   ];
-                    // } else
-                    if (_.includes(ctx.currentRecords, url)) {
-                      currentRecords = [...ctx.currentRecords];
-                    } else if (
-                      _.indexOf(ctx.currentRecords, url) !==
-                      _.size(ctx.currentRecords) - 1
+                    if (
+                      (transitionType === 'auto' &&
+                        !_.isEmpty(ctx.currentRecords)) ||
+                      ctx.isBack ||
+                      ctx.isForward ||
+                      ctx.isReload ||
+                      url === _.last(ctx.currentRecords)
                     ) {
+                      currentRecords = ctx.currentRecords;
+                      if (ctx.isBack) {
+                        currentIndex = Math.max(currentIndex - 1, 0);
+                      } else if (ctx.isForward) {
+                        currentIndex = Math.max(currentIndex + 1, 0);
+                      }
+                    } else if (
+                      _.last(ctx.currentRecords) === url &&
+                      currentIndex === _.lastIndexOf(ctx.currentRecords, url)
+                    ) {
+                      //if reload, do nothing
+                    } else {
                       currentRecords = [
                         ..._.slice(
                           ctx.currentRecords,
                           0,
-                          _.indexOf(ctx.currentRecords, ctx.currentURL) + 1
+                          Math.max(currentIndex + 1, 0)
                         ),
                         url
                       ];
-                    } else {
-                      currentRecords = [...ctx.currentRecords, url];
+                      currentIndex = Math.max(_.size(currentRecords) - 1, 0);
                     }
 
                     console.log(
-                      'navigator:url:',
+                      'UPDATE_HISTORY',
+                      'currentIndex:',
+                      currentIndex,
+                      'url:',
                       url,
-                      'allRecords:',
-                      allRecords
+                      'currentRecords:',
+                      currentRecords
                     );
 
                     return {
+                      isBack: false,
+                      isForward: false,
+                      isReload: false,
                       currentURL: url,
+                      prevRecords: ctx.currentRecords,
+                      previousIndex: ctx.currentIndex,
+                      currentIndex,
                       allRecords:
                         _.get(_.last(allRecords), 'url') !== url
                           ? [
@@ -108,11 +184,13 @@ const navigatorMachine = Machine(
               GO_BACK: {
                 actions: [
                   assign((ctx, e) => {
-                    const { currentRecords, currentURL } = ctx;
+                    const { currentRecords, currentIndex } = ctx;
                     return {
+                      isBack: true,
+                      isForward: false,
                       currentURL: _.nth(
                         currentRecords,
-                        Math.max(_.indexOf(currentRecords, currentURL) - 1, 0)
+                        Math.max(currentIndex - 1, 0)
                       )
                     };
                   }),
@@ -122,18 +200,27 @@ const navigatorMachine = Machine(
               GO_FORWARD: {
                 actions: [
                   assign((ctx, e) => {
-                    const { currentRecords, currentURL } = ctx;
+                    const { currentRecords, currentIndex } = ctx;
                     return {
+                      isForward: true,
+                      isBack: false,
                       currentURL: _.nth(
                         currentRecords,
-                        Math.min(
-                          _.lastIndexOf(currentRecords, currentURL) + 1,
-                          _.size(currentRecords) - 1
-                        )
+                        Math.min(currentIndex + 1, _.size(currentRecords) - 1)
                       )
                     };
                   }),
                   'updateVandalURL'
+                ]
+              },
+              RELOAD: {
+                actions: [
+                  assign((ctx, e) => {
+                    return {
+                      isReload: true
+                    };
+                  }),
+                  'reloadVandalURL'
                 ]
               }
             }

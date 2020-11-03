@@ -179,7 +179,7 @@ function getSources() {
     }
   }
   // deduplicate
-  return srcList.filter(function(el, i, arr) {
+  return srcList.filter(function (el, i, arr) {
     return arr.indexOf(el) === i;
   });
 }
@@ -188,7 +188,7 @@ const mousedownHandler = () => {
   chrome.runtime.sendMessage({ message: '__VANDAL__FRAME__MOUSEDOWN' });
 };
 
-const messageHandler = async function(request, _, sendResponse) {
+const messageHandler = async function (request, _, sendResponse) {
   console.log(request);
   if (!request) return;
   if (request.message === '__VANDAL__CLIENT__FETCH__SOURCES') {
@@ -219,6 +219,10 @@ function onDomReady() {
   window.addEventListener('mousedown', mousedownHandler);
   chrome.runtime.onMessage.removeListener(messageHandler);
   chrome.runtime.onMessage.addListener(messageHandler);
+
+  // window.onpopstate = function (event) {
+  //   var r = confirm("You pressed a Back button! Are you sure?!");
+  // }
 }
 
 const link = document.createElement('meta');

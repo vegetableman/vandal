@@ -26,9 +26,8 @@ const formatHistoryByDate = (history) => {
   );
 };
 
-const URLHistory = ({ dialogRef, history, clearHistory, onClick }) => {
+const URLHistory = ({ dialogRef, history, clearHistory, onSelect }) => {
   const dhistory = formatHistoryByDate(history);
-  console.log('navigator:dhistory:', dhistory);
   return (
     <div className={styles.root} ref={dialogRef}>
       <ul className={styles.list}>
@@ -51,7 +50,7 @@ const URLHistory = ({ dialogRef, history, clearHistory, onClick }) => {
                         key={index}
                         onClick={() => {
                           browser.navigate(url);
-                          onClick();
+                          onSelect();
                         }}>
                         <div>{url}</div>
                         {dateTimeObj && (

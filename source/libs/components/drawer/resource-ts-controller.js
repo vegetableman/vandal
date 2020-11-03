@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { xhr } from '../../utils';
+import { api } from '../../utils';
 
 class ResourceTSController {
   constructor() {
@@ -8,11 +8,10 @@ class ResourceTSController {
 
   loadTimestamps = (sources, callback) => {
     _.every(sources, async (source, index) => {
-      const [ts, err] = await xhr(source, {
+      const [ts, err] = await api(_.replace(source, /(\d+)im\_?/, "$1"), {
         method: 'HEAD',
         fetchResHeader: 'Memento-Datetime'
       });
-      console.log('source', source, index);
       if (!this.isAborted) {
         callback(ts, err, index);
       }

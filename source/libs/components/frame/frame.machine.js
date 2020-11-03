@@ -50,6 +50,13 @@ const frameMachine = Machine(
               open: { on: { TOGGLE_HISTORICAL_MODE: 'close' } },
               close: { on: { TOGGLE_HISTORICAL_MODE: 'open' } }
             }
+          },
+          resourcedrawer: {
+            initial: 'close',
+            states: {
+              open: { on: { TOGGLE_RESOURCEL_DRAWER: 'close' } },
+              close: { on: { TOGGLE_RESOURCEL_DRAWER: 'open' } }
+            }
           }
         }
       }

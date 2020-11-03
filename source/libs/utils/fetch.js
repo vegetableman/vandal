@@ -33,6 +33,7 @@ const fetchRequest = async ({
   body,
   headers = {},
   fetchFromCache,
+  fetchResHeader,
   cacheResponse,
   enableThrow = false
 }) => {
@@ -53,6 +54,11 @@ const fetchRequest = async ({
 
   try {
     const resFromFetch = await fetch(request.clone(), { method, body });
+    if (fetchResHeader) {
+      console.log("fetchResHeader", resFromFetch.headers.get(fetchResHeader));
+      const responseHeader = resFromFetch.headers.get(fetchResHeader)
+      return [responseHeader, null];
+    }
     if (
       (fetchFromCache || cacheResponse) &&
       _.get(resFromFetch, 'status') === 200

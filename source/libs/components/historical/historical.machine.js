@@ -197,8 +197,7 @@ const historicalMachine = Machine(
         const timestampURLs = _.map(
           ctx.years,
           (y) =>
-            `https://archive.org/wayback/available?url=${
-              ctx.url
+            `https://archive.org/wayback/available?url=${ctx.url
             }&timestamp=${y}12`
         );
 
@@ -230,7 +229,7 @@ const historicalMachine = Machine(
           }
 
           const [data, err] = await screenshooter.fetchScreenshot(archiveURL, {
-            latest: timestampURLCount - 1 === index
+            latest: false //timestampURLCount - 1 === index
           });
           callback({
             type: 'ADD_SNAPSHOT',
@@ -239,24 +238,24 @@ const historicalMachine = Machine(
         };
 
         try {
-          timestampURLs.reduce(function(prev, curr, i) {
-            return prev.then(function() {
+          timestampURLs.reduce(function (prev, curr, i) {
+            return prev.then(function () {
               if (isSTOPPED) {
                 throw new Error('Service has Stopped');
               }
               return snapshotMapper(curr, i);
             });
           }, Promise.resolve());
-        } catch (ex) {}
+        } catch (ex) { }
       },
       checkHistoricalAvailable: (ctx) => {
         return new Promise(async (resolve, reject) => {
-          const [data, err] = await api(VANDAL_SCREENSHOT_IS_AVAILABLE);
+          const [result, err] = await api(VANDAL_SCREENSHOT_IS_AVAILABLE);
           if (err) {
             return reject(err);
           }
           return resolve({
-            isAvailable: _.get(JSON.parse(data), 'isAvailable')
+            isAvailable: _.get(result, 'isAvailable')
           });
         });
       }

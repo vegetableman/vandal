@@ -54,6 +54,10 @@ async function onDomReady() {
 
   console.log('content:url:', url);
 
+  window.onpopstate = function (event) {
+    var r = confirm("You pressed a Back button! Are you sure?!");
+  }
+
   ReactDOM.render(
     <App
       baseURL={baseURL}

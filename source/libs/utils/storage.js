@@ -12,7 +12,7 @@ export const historyDB = {
       if (_.isArray(svalue[key])) {
         collection = [...svalue[key], ...collection];
       }
-      chrome.storage.local.set({ [key]: collection }, function () {
+      chrome.storage.local.set({ [key]: collection }, function() {
         // Notify that we saved.
         console.log('Settings saved');
       });
@@ -22,7 +22,7 @@ export const historyDB = {
   setRecords(suffix, collection) {
     if (!collection || _.isEmpty(collection)) return;
     const key = `${historyPrefix}__${suffix}`;
-    chrome.storage.local.set({ [key]: collection }, function () {
+    chrome.storage.local.set({ [key]: collection }, function() {
       // Notify that we saved.
       console.log('Settings saved');
     });
@@ -51,7 +51,7 @@ export const historyDB = {
   async clearRecords(suffix) {
     const promisifiedClear = (key) => {
       return new Promise((resolve, reject) => {
-        chrome.storage.local.remove(key, function () {
+        chrome.storage.local.remove(key, function() {
           if (chrome.runtime.lastError) {
             return reject(chrome.runtime.lastError);
           }
@@ -115,7 +115,6 @@ export const themeDB = {
   }
 };
 
-
 const introKey = '__VANDAL__INTRO__STORAGE';
 export const introDB = {
   setIntro(value) {
@@ -129,6 +128,42 @@ export const introDB = {
     return new Promise((resolve) => {
       chrome.storage.local.get(introKey, (value) => {
         return resolve(value[introKey]);
+      });
+    });
+  }
+};
+
+const historicalKey = '__VANDAL__HIST_INFO__STORAGE';
+export const historicalDB = {
+  setInfo(value) {
+    chrome.storage.local.set({ [historicalKey]: value }, () => {
+      // Notify that we saved.
+      console.info('HistoricalDB: Settings saved');
+    });
+  },
+
+  getInfo() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(historicalKey, (value) => {
+        return resolve(value[historicalKey]);
+      });
+    });
+  }
+};
+
+const appKey = '__VANDAL__APP__STORAGE';
+export const appDB = {
+  setDonateState(value) {
+    chrome.storage.local.set({ [appKey + '__DONATE']: value }, () => {
+      // Notify that we saved.
+      console.info('donateDB: Settings saved');
+    });
+  },
+
+  getDonateState() {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(appKey + '__DONATE', (value) => {
+        return resolve(value[appKey + '__DONATE']);
       });
     });
   }

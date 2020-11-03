@@ -172,7 +172,7 @@ const memoizedFetchCalendar = memoizeOne(fetchCalendar, (arg1, arg2) => {
   return (
     arg1 === arg2 ||
     _.replace(arg1, 'https://', 'http://') ===
-      _.replace(arg2, 'https://', 'http://')
+    _.replace(arg2, 'https://', 'http://')
   );
 });
 
@@ -220,7 +220,8 @@ const timetravelMachine = Machine(
         actions: assign((ctx, e) => {
           return {
             url: _.get(e, 'payload.url', ctx.url),
-            selectedTS: _.get(e, 'payload.ts', ctx.selectedTS),
+            // selectedTS: _.get(e, 'payload.ts', ctx.selectedTS),
+            selectedTS: _.get(e, 'payload.ts'),
             // currentMonth: (_ctx, e) =>
             //   _.get(memoizedDateTimeFromTS(ctx.lastTS), 'month'),
             // currentYear: (_ctx, e) =>
@@ -243,7 +244,7 @@ const timetravelMachine = Machine(
           const date = _.get(
             ctx.calendar,
             `[${ctx.currentYear}][[${ctx.currentMonth - 1}][${ctx.currentDay -
-              1}]`
+            1}]`
           );
 
           let selectedTS = ctx.selectedTS;
@@ -770,7 +771,7 @@ const timetravelMachine = Machine(
           const date = _.get(
             ctx.calendar,
             `[${ctx.currentYear}][${ctx.currentMonth -
-              1}][${ctx.highlightedDay - 1}]`
+            1}][${ctx.highlightedDay - 1}]`
           );
           const status = _.get(date, 'st', []);
           ctx.cardRef.send({
@@ -838,8 +839,7 @@ const timetravelMachine = Machine(
 
           if (ctx.isOverCapacity) {
             [response, err] = await api(
-              `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${
-                ctx.currentYear
+              `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${ctx.currentYear
               }${_.padStart(ctx.currentMonth, 2, '0')}&groupby=day`
             );
 
@@ -978,8 +978,7 @@ const timetravelMachine = Machine(
           jobs[ctx.currentYear].push(i);
 
           [response, err] = await api(
-            `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${
-              ctx.currentYear
+            `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${ctx.currentYear
             }${_.padStart(i, 2, '0')}&groupby=day`,
             {
               meta: { type: 'captures' }

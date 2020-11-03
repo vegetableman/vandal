@@ -57,7 +57,7 @@ const TimeTravel = (props) => {
     let match = false;
     if (selectedTS) {
       const {
-        day: selectedDay,
+        day: selectedDay
         // month: selectedMonth,
         // year: selectedYear
       } = memoizedDateTimeFromTS(selectedTS);
@@ -189,7 +189,7 @@ const TimeTravel = (props) => {
   };
 
   const onRetry = () => {
-    if (!ctx.sparkline) {
+    if (!ctx.sparkline || state.matches('sparklineError')) {
       send('RELOAD_SPARKLINE_ON_ERROR');
       return;
     }
@@ -336,6 +336,8 @@ const TimeTravel = (props) => {
 
   let { month: selectedMonth, year: selectedYear } =
     memoizedDateTimeFromTS(ctx.selectedTS) || {};
+
+  console.log('timetravel state:', state);
 
   return (
     <div
@@ -505,6 +507,7 @@ const TimeTravel = (props) => {
       {((!!(ctx.firstTS || ctx.lastTS || !ctx.sparkline) &&
         !state.matches('sparklineError') &&
         !state.matches('loadingSparkline') &&
+        !state.matches('sparklineLoaded.unknown') &&
         !state.matches('sparklineLoaded.calendarError') &&
         !state.matches('sparklineLoaded.loadingCalendar')) ||
         isManualReload) && (

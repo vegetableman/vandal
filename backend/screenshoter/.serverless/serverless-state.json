@@ -27,6 +27,12 @@
               "LogGroupName": "/aws/lambda/screenshot-as-a-service-dev-screenshot"
             }
           },
+          "IsDashhistoricalDashavailableLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/screenshot-as-a-service-dev-is-historical-available"
+            }
+          },
           "IamRoleLambdaExecution": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -69,6 +75,9 @@
                         "Resource": [
                           {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/screenshot-as-a-service-dev-screenshot:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/screenshot-as-a-service-dev-is-historical-available:*"
                           }
                         ]
                       },
@@ -80,6 +89,9 @@
                         "Resource": [
                           {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/screenshot-as-a-service-dev-screenshot:*:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/screenshot-as-a-service-dev-is-historical-available:*:*"
                           }
                         ]
                       }
@@ -108,7 +120,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/screenshot-as-a-service/dev/1600704151439-2020-09-21T16:02:31.439Z/screenshot-as-a-service.zip"
+                "S3Key": "serverless/screenshot-as-a-service/dev/1603248876426-2020-10-21T02:54:36.426Z/screenshot-as-a-service.zip"
               },
               "FunctionName": "screenshot-as-a-service-dev-screenshot",
               "Handler": "index.handler",
@@ -124,6 +136,32 @@
             },
             "DependsOn": [
               "ScreenshotLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "IsDashhistoricalDashavailableLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/screenshot-as-a-service/dev/1603248876426-2020-10-21T02:54:36.426Z/screenshot-as-a-service.zip"
+              },
+              "FunctionName": "screenshot-as-a-service-dev-is-historical-available",
+              "Handler": "is-available.handler",
+              "MemorySize": 2048,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs12.x",
+              "Timeout": 6
+            },
+            "DependsOn": [
+              "IsDashhistoricalDashavailableLogGroup",
               "IamRoleLambdaExecution"
             ]
           },
@@ -148,6 +186,68 @@
                 ]
               },
               "PathPart": "screenshot",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceIsDashhistoricalDashavailable": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "is-historical-available",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodIsDashhistoricalDashavailableOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true,
+                    "method.response.header.Access-Control-Allow-Credentials": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'",
+                      "method.response.header.Access-Control-Allow-Credentials": "'false'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceIsDashhistoricalDashavailable"
+              },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -303,7 +403,50 @@
               ]
             }
           },
-          "ApiGatewayDeployment1600704151452": {
+          "ApiGatewayMethodIsDashhistoricalDashavailableGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceIsDashhistoricalDashavailable"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "IsDashhistoricalDashavailableLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayDeployment1603248876436": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -312,7 +455,9 @@
               "StageName": "dev"
             },
             "DependsOn": [
-              "ApiGatewayMethodScreenshotGet"
+              "ApiGatewayMethodIsDashhistoricalDashavailableOptions",
+              "ApiGatewayMethodScreenshotGet",
+              "ApiGatewayMethodIsDashhistoricalDashavailableGet"
             ]
           },
           "ScreenshotLambdaPermissionApiGateway": {
@@ -321,6 +466,53 @@
               "FunctionName": {
                 "Fn::GetAtt": [
                   "ScreenshotLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "apigateway.",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    }
+                  ]
+                ]
+              },
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "IsDashhistoricalDashavailableLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "IsDashhistoricalDashavailableLambdaFunction",
                   "Arn"
                 ]
               },
@@ -469,12 +661,49 @@
         "memory": 2048,
         "runtime": "nodejs12.x",
         "vpc": {}
+      },
+      "is-historical-available": {
+        "handler": "is-available.handler",
+        "events": [
+          {
+            "http": {
+              "method": "get",
+              "path": "is-historical-available",
+              "cors": {
+                "origins": [
+                  "*"
+                ],
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ],
+                "allowCredentials": false
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "name": "screenshot-as-a-service-dev-is-historical-available",
+        "package": {},
+        "memory": 2048,
+        "timeout": 6,
+        "runtime": "nodejs12.x",
+        "vpc": {}
       }
     },
     "artifact": "/Users/viven/Opensource/vandal/backend/screenshoter/.serverless/screenshot-as-a-service.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/screenshot-as-a-service/dev/1600704151439-2020-09-21T16:02:31.439Z",
+    "artifactDirectoryName": "serverless/screenshot-as-a-service/dev/1603248876426-2020-10-21T02:54:36.426Z",
     "artifact": "screenshot-as-a-service.zip"
   }
 }

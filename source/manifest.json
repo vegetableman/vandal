@@ -19,6 +19,7 @@
     "webRequest",
     "webRequestBlocking",
     "webNavigation",
+    "tabs",
     "http://*/*",
     "https://*/*",
     "https://web.archive.org/*",

@@ -1,16 +1,28 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import themeMachine from '../components/app/theme.machine';
 import { useMachine } from '@xstate/react';
 
-const defaultValue = { theme: 'light', setTheme: () => {} };
+const defaultValue = { theme: 'light', setTheme: () => { } };
 const ThemeContext = createContext(defaultValue);
+const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
 const ThemeProvider = ({ children, notifyThemeChanged }) => {
   const [state, send] = useMachine(
     themeMachine.withConfig({
-      actions: { notifyThemeChanged }
+      actions: { notifyThemeChanged },
+    }, {
+      theme: darkModeMediaQuery.matches ? 'dark' : 'light'
     })
   );
+
+  useEffect(() => {
+    darkModeMediaQuery.addListener((e) => {
+      const darkModeOn = e.matches;
+      send('SET_THEME', {
+        payload: { theme: darkModeOn ? 'dark' : 'light' }
+      });
+    });
+  }, [])
 
   const value = {
     theme: _.get(state, 'context.theme'),

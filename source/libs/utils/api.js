@@ -3,7 +3,7 @@ import _ from 'lodash';
 let promiseMap = {};
 
 const port = chrome.runtime.connect({ name: 'vandal' });
-port.onMessage.addListener(function(result) {
+port.onMessage.addListener(function (result) {
   if (result.message === '__VANDAL__CLIENT__FETCH__RESPONSE') {
     const p = { ...promiseMap[result.uniqueId] };
     delete promiseMap[result.uniqueId];
@@ -19,6 +19,7 @@ export const api = async (
   endpoint,
   {
     fetchFromCache,
+    fetchResHeader,
     cacheResponse,
     headers = {},
     method = 'GET',
@@ -27,12 +28,13 @@ export const api = async (
     body
   } = {}
 ) => {
-  return new Promise(function(resolve, reject) {
+  return new Promise(function (resolve, reject) {
     const uniqueId = _.uniqueId();
     port.postMessage({
       message: '__VANDAL__CLIENT__FETCH',
       data: {
         endpoint,
+        fetchResHeader,
         fetchFromCache,
         cacheResponse,
         enableThrow,

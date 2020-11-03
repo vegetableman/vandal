@@ -8,7 +8,10 @@ module.exports = {
   VANDAL_SCREENSHOT_API: JSON.stringify(
     'https://vandal-puppeteer.netlify.app/.netlify/functions/take-screenshot-prod'
   ),
+  // VANDAL_SCREENSHOT_IS_AVAILABLE: JSON.stringify(
+  //   'https://vandal-puppeteer.netlify.app/.netlify/functions/is-screenshots-available'
+  // )
   VANDAL_SCREENSHOT_IS_AVAILABLE: JSON.stringify(
-    'https://vandal-puppeteer.netlify.app/.netlify/functions/is-screenshots-available'
+    'https://hug7g8oxyb.execute-api.us-east-2.amazonaws.com/dev/is-historical-available'
   )
 };

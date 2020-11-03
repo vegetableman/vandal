@@ -1,4 +1,10 @@
-import React, { useEffect, useCallback, useRef, useMemo, useState } from 'react';
+import React, {
+  useEffect,
+  useCallback,
+  useRef,
+  useMemo,
+  useState
+} from 'react';
 import ReactTooltip from 'react-tooltip';
 import cx from 'classnames';
 import { useMachine } from '@xstate/react';
@@ -35,20 +41,20 @@ const options = [
         />
       </div>
     )
-  },
-  {
-    value: 'changeView',
-    text: (
-      <div className={styles.vertical__wayback__item}>
-        <span>Changes</span>
-        <Icon
-          name="openURL"
-          width={11}
-          className={styles.vertical__wayback__icon}
-        />
-      </div>
-    )
   }
+  // {
+  //   value: 'changeView',
+  //   text: (
+  //     <div className={styles.vertical__wayback__item}>
+  //       <span>Changes</span>
+  //       <Icon
+  //         name="openURL"
+  //         width={11}
+  //         className={styles.vertical__wayback__icon}
+  //       />
+  //     </div>
+  //   )
+  // }
 ];
 
 const Frame = (props) => {
@@ -67,8 +73,7 @@ const Frame = (props) => {
       send('TOGGLE_DIFF_MODE');
     } else if (option === 'histView') {
       send('TOGGLE_HISTORICAL_MODE');
-    }
-    else if (option === "about") {
+    } else if (option === 'about') {
       toggleAbout(true);
     }
   };
@@ -91,12 +96,15 @@ const Frame = (props) => {
   // };
   // const debouncedSave = _.debounce(onSave, 250);
 
-  const [navState, sendToNav] = useMachine(
+  const [navState, sendToNav, navService] = useMachine(
     navigatorMachine.withConfig(
       {
         actions: {
           updateVandalURL: (ctx) => {
             browser.navigate(ctx.currentURL);
+          },
+          reloadVandalURL: () => {
+            browser.reload();
           }
         }
       },
@@ -106,10 +114,6 @@ const Frame = (props) => {
       }
     )
   );
-
-  const onReload = () => {
-    browser.reload();
-  };
 
   useEffect(
     () => {
@@ -125,11 +129,33 @@ const Frame = (props) => {
     const frameURL = _.get(request.data, 'url');
 
     switch (request.message) {
+      /*  case '__VANDAL__NAV__BEFORENAVIGATE':
+        // sendToNav('BEFORE_NAVIGATION', {
+        //   payload: {
+        //     url: frameURL
+        //   }
+        // });
+        break; */
       case '__VANDAL__NAV__COMMIT':
+        // case '__VANDAL__NAV__HISTORYCHANGE':
+        const transitionType = _.get(request.data, 'type');
+        console.log('transitionType:', transitionType);
+        sendToNav('UPDATE_HISTORY_ONCOMMIT', {
+          payload: {
+            url: frameURL,
+            type: transitionType
+          }
+        });
+        break;
+
+      case '__VANDAL__NAV__BEFORENAVIGATE':
+      // case '__VANDAL__NAV__COMMIT':
       case '__VANDAL__NAV__HISTORYCHANGE':
+        console.log('commit:request:', request);
         sendToNav('UPDATE_HISTORY', {
           payload: {
-            url: frameURL
+            url: frameURL,
+            type: _.get(request.data, 'type')
           }
         });
         break;
@@ -173,7 +199,7 @@ const Frame = (props) => {
               <Switch
                 width={30}
                 height={15}
-                label="Dark Theme"
+                label="Dark Mode"
                 defaultValue={theme === 'dark'}
                 checkedIcon={false}
                 uncheckedIcon={false}
@@ -188,8 +214,8 @@ const Frame = (props) => {
           hideOnSelect: false
         },
         {
-          value: "about",
-          text: "About"
+          value: 'about',
+          text: 'About'
         },
         {
           value: 'exit',
@@ -200,7 +226,12 @@ const Frame = (props) => {
     [options, theme]
   );
 
-  console.log('frame state:', state, allRecords);
+  console.log(
+    'frame state:',
+    navState.context.currentURL,
+    navState.context.currentIndex,
+    navState.context.currentRecords
+  );
 
   const disableBack =
     _.indexOf(navState.context.currentRecords, navState.context.currentURL) <=
@@ -208,28 +239,31 @@ const Frame = (props) => {
 
   const disableForward =
     _.indexOf(navState.context.currentRecords, navState.context.currentURL) ===
-    -1 ||
+      -1 ||
     _.lastIndexOf(
       navState.context.currentRecords,
       navState.context.currentURL
     ) ===
-    _.size(navState.context.currentRecords) - 1;
+      _.size(navState.context.currentRecords) - 1;
 
-  console.log('frame:render', state);
+  // console.log('frame:render', state);
 
   return (
     <TimetravelProvider machine={state.context.timetravelRef}>
       <div className={styles.root}>
         <div className={styles.left}>
           <div className={styles.logo__container}>
-            <img className={styles.logo} src={chrome.runtime.getURL("images/icon.png")} />
+            <img
+              className={styles.logo}
+              src={chrome.runtime.getURL('images/icon.png')}
+            />
           </div>
           <div className={styles.navigation}>
             <button
               data-for="vandal-back"
               data-tip="Go back"
               className={styles.backward__nav__btn}
-              disabled={disableBack}
+              disabled={disableBack && !navState.context.isForward}
               onClick={() => sendToNav('GO_BACK')}>
               <Icon name="leftNav" className={styles.backward__nav__icon} />
             </button>
@@ -237,7 +271,7 @@ const Frame = (props) => {
               className={styles.forward__nav__btn}
               data-for="vandal-forward"
               data-tip="Go forward"
-              disabled={disableForward}
+              disabled={disableForward && !navState.context.isBack}
               onClick={() => sendToNav('GO_FORWARD')}>
               <Icon name="rightNav" className={styles.forward__nav__icon} />
             </button>
@@ -249,8 +283,10 @@ const Frame = (props) => {
             <Icon
               name="reload"
               width={25}
-              height={25}
-              onClick={onReload}
+              height={20}
+              onClick={() => {
+                sendToNav('RELOAD');
+              }}
               className={styles.reload__icon}
             />
           </button>
@@ -285,9 +321,13 @@ const Frame = (props) => {
               data-for="vandal-drawer"
               data-tip="Show Timestamps"
               className={cx({
-                [styles.resource__btn]: true
+                [styles.resource__btn]: true,
+                [styles.resource__btn__active]: state.matches(
+                  'idle.resourcedrawer.open'
+                )
               })}
               onClick={() => {
+                send('TOGGLE_RESOURCEL_DRAWER');
                 chrome.runtime.sendMessage({
                   message: '__VANDAL__CLIENT__TOGGLEDRAWER'
                 });
@@ -334,9 +374,7 @@ const Frame = (props) => {
               className={styles.donate__btn}
               data-for="vandal-donate"
               data-tip="Donate to Archive">
-              <a
-                href="https://archive.org/donate/?referrer=vandal"
-                target="_blank">
+              <a href="https://archive.org/donate/?ref=vandal" target="_blank">
                 <Icon
                   name="heart"
                   className={styles.donate__icon}
@@ -365,11 +403,11 @@ const Frame = (props) => {
             }}
           />
         )}
-        <Toast
+        {/* <Toast
           className={styles.toast__save}
           show={saveState.matches('open.loading')}>
           <div>Saving Page to Archive...</div>
-        </Toast>
+        </Toast> */}
         <Toast
           err
           className={`${styles.toast__save} ${styles.toast__save___error}`}
@@ -477,20 +515,110 @@ const Frame = (props) => {
           delayShow={1000}
           offset={{ bottom: 0, left: 0 }}
         />
-        {showAbout && <div className={styles.modal__container} >
-          <div className={styles.modal}>
-            <img className={styles.cover} src={chrome.runtime.getURL("images/cover-art.png")} />
-            <div>
-              <span>Unlike, say, a published book, the web is always changing. Some of these changes may not be in the best interests of those seeking information.</span>
-              <span>The Internet archive is an excellent resource to navigate through those changing tides of thought, censorship and access.</span>
-              <span>Please donate to Internet Archive to encourage this ongoing work. Thank you!</span>
-            </div>
-            <div>
-              <span>Built by Vignesh Anand</span> Source Code: <a href="https://github.com/vegetableman/vandal">Github</a>
-              You can reach me at: <a href="https://twitter.com/vgnanand">@vgnanand</a>
+        {showAbout && (
+          <div
+            className={styles.modal__container}
+            onClick={(e) => {
+              if (e.target && !e.target.closest('[data-parent="dialog"]')) {
+                toggleAbout(false);
+              }
+            }}>
+            <div className={styles.modal} data-parent="dialog">
+              <Icon
+                name="close"
+                className={styles.about__close__icon}
+                onClick={() => {
+                  toggleAbout(false);
+                }}
+              />
+              <div className={styles.cover}>
+                <img
+                  className={styles.icon}
+                  src={chrome.runtime.getURL('images/icon-black.png')}
+                />
+                <img
+                  className={styles.icon__title}
+                  src={chrome.runtime.getURL('images/logo-title.png')}
+                />
+                <div className={styles.version}>Version 1.0.0</div>
+              </div>
+              <div className={styles.about}>
+                <div style={{ fontSize: 14 }}>
+                  <div>
+                    Created by: Vignesh Anand{' '}
+                    <a href="https://twitter.com/vgnanand" target="_blank">
+                      @vgnanand
+                    </a>
+                  </div>
+                  <div>
+                    Built using the{' '}
+                    <Icon name="archive" className={styles.archive__icon} />{' '}
+                    <b>Internet Archive</b> API.
+                  </div>
+                  <div>
+                    Source Code:{' '}
+                    <a
+                      href="https://github.com/vegetableman/vandal"
+                      target="_blank">
+                      Github
+                    </a>
+                  </div>
+                </div>
+                <div className={styles.ack}>
+                  <p style={{ color: '#333333' }}>
+                    The web is always changing and these changes may not be in
+                    the best interests of those seeking information. The{' '}
+                    <b>Internet Archive</b> is an excellent resource to navigate
+                    through those changing tides of thought, censorship and
+                    access.&nbsp;
+                    <a
+                      href="https://archive.org/donate/?ref=vandal"
+                      target="blank"
+                      style={{ fontWeight: 'bold' }}>
+                      Please support the Internet Archive to encourage this
+                      ongoing work
+                    </a>. Thank you!
+                  </p>
+                </div>
+                <div style={{ fontSize: 13 }}>
+                  Icons by:{' '}
+                  <a href="https://thenounproject.com/christian_antonius/">
+                    Christian Antonius
+                  </a>,{' '}
+                  <a href="https://thenounproject.com/ralfschmitzer/">
+                    Ralf Schmitzer
+                  </a>,{' '}
+                  <a href="https://thenounproject.com/parksunghyo126/">
+                    Park Sung Hyo
+                  </a>,<a href="https://thenounproject.com/bhuvan.mahes/">
+                    Bhuvan
+                  </a>
+                  <a href="https://thenounproject.com/cosmac/">Sewon Park</a>,{' '}
+                  <a href="https://thenounproject.com/alfadesign/">
+                    Alfa Design
+                  </a>,{' '}
+                  <a href="https://thenounproject.com/emmanuelroy/">
+                    Emmanuel Roy
+                  </a>,{' '}
+                  <a href="https://thenounproject.com/unlimicon/">unlimicon</a>,{' '}
+                  <a href="https://thenounproject.com/hui_qin/">Hui Qin Ng</a>,{' '}
+                  <a href="https://thenounproject.com/bluetip/">
+                    Bluetip Design
+                  </a>,{' '}
+                  <a href="https://thenounproject.com/imicons/">
+                    iconsmind.com
+                  </a>,{' '}
+                  <a href="https://thenounproject.com/mikicon/">mikicon</a>,{' '}
+                  <a href="https://thenounproject.com/bharatkumara321">
+                    Bharat
+                  </a>,{' '}
+                  <a href="https://thenounproject.com/inspign/">Aaron K. Kim</a>,{' '}
+                  <a href="https://thenounproject.com/iconsguru/">i cons</a>
+                </div>
+              </div>
             </div>
           </div>
-        </div>}
+        )}
       </div>
     </TimetravelProvider>
   );

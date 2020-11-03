@@ -93,7 +93,7 @@ const URL = memo((props) => {
         <URLHistory
           history={props.history}
           clearHistory={props.clearHistory}
-          onClick={() => {
+          onSelect={() => {
             send('TOGGLE_HISTORY');
           }}
         />
@@ -101,7 +101,14 @@ const URL = memo((props) => {
       <Toast className={styles.toast__notfound} show={isNoSnapError} exit={0}>
         <div>
           <span>
-            No snapshots found for this url. Click on Save to create one.
+            No snapshots found for this URL.
+            <a
+              target="_blank"
+              href="https://web.archive.org/save"
+              className={styles.save__link}>
+              <span>Navigate to web archive to save it</span>
+              <Icon name="openURL" width={9} className={styles.save__icon} />
+            </a>
           </span>
           <Icon
             name="close"

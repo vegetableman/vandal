@@ -5,7 +5,7 @@
   min-height: 75px;
   position: absolute;
   background: var(--vandal-url-info-background-color);
-  width: calc(100% - 348px);
+  width: calc(100% - 390px);
   border-bottom: 1px solid var(--vandal-menu-border-color);
   border-right: 1px solid var(--vandal-menu-border-color);
   border-bottom-left-radius: 3px;
@@ -97,6 +97,7 @@
   color: var(--vandal-text-color);
   font-size: 12px;
   padding: 3px 0 5px 15px;
+  text-align: left;
 }
 
 .redirect__icon,

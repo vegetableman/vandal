@@ -173,8 +173,8 @@ const Drawer = (props) => {
         <div className={styles.info}>
           <div>
             This panel displays{' '}
-            <span className={styles.info__highlight}>timestamps</span> and{' '}
-            <span className={styles.info__highlight}>time difference</span> for
+            <span className={styles.info__highlight}>time difference</span> and{' '}
+            <span className={styles.info__highlight}>timestamps</span> for
             all the page elements compared to the page. Some elements may vary
             significantly in capture timestamp from the base URL of the page,
             depending on the web crawling process. To know more, click{' '}
@@ -229,8 +229,8 @@ const Drawer = (props) => {
                       {ts || err || isValid ? (
                         getIcon(source)
                       ) : (
-                        <URLLoader className={styles.ts__loader} />
-                      )}
+                          <URLLoader className={styles.ts__loader} />
+                        )}
                       <a
                         href={source}
                         target="_blank"
@@ -247,10 +247,10 @@ const Drawer = (props) => {
                             Not Archived
                           </span>
                         ) : (
-                          <span className={styles.timestamp__delta___err}>
-                            Failed to fetch Resource
-                          </span>
-                        ))}
+                            <span className={styles.timestamp__delta___err}>
+                              Failed to fetch Resource
+                            </span>
+                          ))}
                       {!err &&
                         (ts ? (
                           <span

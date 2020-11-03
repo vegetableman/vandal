@@ -1,4 +1,5 @@
 import React, { useState, useEffect, memo } from 'react';
+import ReactTooltip from 'react-tooltip';
 import cx from 'classnames';
 import ArchiveLoader from './loader';
 import { URLLoader, Icon } from '../../common';
@@ -12,6 +13,7 @@ import { useTheme } from '../../../hooks';
 
 import styles from './urlbox.module.css';
 import { useIntro } from '../../../hooks/use-intro';
+import { colors } from '../../../constants';
 
 const URLBox = memo((props) => {
   const { showIntro, toggleIntro } = useIntro();
@@ -36,6 +38,7 @@ const URLBox = memo((props) => {
   const dateObj = currentTS ? getDateTimeFromTS(currentTS) : {};
   const [showURLLoader, toggleURLLoader] = useState(false);
   const [showFrameLoader, toggleFrameLoader] = useState(false);
+  const [showReadOnly, toggleReadOnly] = useState(false);
   const { theme } = useTheme();
 
   useEffect(
@@ -51,8 +54,8 @@ const URLBox = memo((props) => {
     switch (request.message) {
       case '__VANDAL__NAV__BEFORENAVIGATE':
         toggleURLLoader(true);
-        console.log('urlbox:beforenavigate');
         const URL = _.get(request.data, 'url');
+        console.log('urlbox:beforenavigate', URL);
         if (isArchiveURL(URL)) {
           toggleFrameLoader(true);
           if (frameLoaderTimeout) {
@@ -82,8 +85,6 @@ const URLBox = memo((props) => {
     };
   }, []);
 
-  console.log('URLBOX:currentTS:', currentTS);
-
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
@@ -103,6 +104,25 @@ const URLBox = memo((props) => {
           className={styles.input}
           value={props.url}
           readOnly
+          onMouseEnter={() => {
+            toggleReadOnly(true);
+          }}
+          onMouseOut={(e) => {
+            if (e.relatedTarget && e.relatedTarget.hasAttribute('data-for')) {
+              return;
+            }
+            toggleReadOnly(false);
+          }}
+        />
+        <Icon
+          style={{ visibility: showReadOnly ? 'visible' : 'hidden' }}
+          data-for="vandal-readonly"
+          data-tip="URL is non-editable"
+          name="readOnly"
+          className={styles.readonly__icon}
+          onMouseLeave={() => {
+            toggleReadOnly(false);
+          }}
         />
         <button
           className={cx(styles.history__btn, {
@@ -150,20 +170,46 @@ const URLBox = memo((props) => {
             toggleIntro(false);
             props.toggleTimeTravel();
           }}>
-          <Icon className={cx({ [styles.timetravel__icon]: true, [styles.timetravel__icon__intro]: showIntro })} name="history" width={22} />
-          {showIntro && <div className={styles.intro} onClick={() => {
-            toggleIntro(false);
-          }}>
-            <Icon
-              name="introArrow"
-              width={92}
-              height={177}
-              className={styles.intro_arrow__icon}
-            />
-            <span className={styles.intro__text}>Buckle up!</span>
-          </div>}
+          <Icon
+            className={cx({
+              [styles.timetravel__icon]: true,
+              [styles.timetravel__icon__intro]: showIntro
+            })}
+            name="history"
+            width={22}
+          />
+          {showIntro && (
+            <div
+              className={styles.intro}
+              onClick={() => {
+                toggleIntro(false);
+              }}>
+              <Icon
+                name="introArrow"
+                width={92}
+                height={177}
+                className={styles.intro_arrow__icon}
+              />
+              <span className={styles.intro__text}>Get started!</span>
+            </div>
+          )}
         </div>
       </div>
+      <ReactTooltip
+        border
+        className={styles.tooltip}
+        id="vandal-readonly"
+        effect="solid"
+        place="right"
+        type={theme}
+        textColor={colors.WHITE}
+        backgroundColor={colors.BL}
+        borderColor={colors.BL}
+        arrowColor={colors.BL}
+        delayHide={100}
+        delayShow={100}
+        offset={{ left: -5 }}
+      />
     </div>
   );
 }, compareProps(['redirectedTS', 'selectedTS', 'url', 'redirectTSCollection', 'showURLHistory', 'showURLInfo', 'showTimeTravel', 'sparklineLoaded']));

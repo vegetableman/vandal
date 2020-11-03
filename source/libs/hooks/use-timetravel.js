@@ -91,6 +91,7 @@ const TimetravelProvider = ({ children, machine }) => {
       case '__VANDAL__NAV__REDIRECTMISMATCH':
         break;
       case '__VANDAL__NAV__COMMIT':
+        console.log('__VANDAL__NAV__COMMIT:1', frameURL, request);
         if (_.get(request, 'data.type') === 'redirect') {
           const redirectedTS = _.parseInt(
             _.get(getDateTsFromURL(frameURL), 'ts')
@@ -99,6 +100,7 @@ const TimetravelProvider = ({ children, machine }) => {
           console.log('redirectedTS:', redirectedTS, 'linkTS:', linkTS);
 
           console.log(
+            'redirectedTS:',
             'strippedOffURL:',
             strippedOffURL,
             'historyURL:',

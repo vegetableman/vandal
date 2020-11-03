@@ -243,10 +243,6 @@
   left: 9px;
 }
 
-.intro_arrow__icon__intro {
-
-}
-
 .intro__text {
   color: var(--vandal-overlay-text-color);
   font-family: VANDAL__SourceSansPro;
@@ -256,4 +252,24 @@
   bottom: -5px;
   font-weight: 800;
   font-style: italic;
+}
+
+.readonly__icon {
+  fill: var(--vandal-primary-icon-color); 
+  height: 15px;
+  position: relative;
+  right: 25px;
+  top: 6px;
+  width: 15px;
+}
+
+.readonly__icon--hide {
+  visibility: hidden;
+}
+
+.tooltip {
+  border-radius: 2px !important;
+  transition: none !important;
+  padding: 5px 10px 3px 10px !important;
+  font-size: 12px !important;
 }

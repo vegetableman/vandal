@@ -23,5 +23,13 @@ functions:
             request:
               template:
                 application/json: '{ "url" : "$input.params(''url'')"}'
-            async: true 
+            async: true
+    
+    is-historical-available:
+      handler: is-available.handler
+      events:
+        - http:
+            method: get
+            path: is-historical-available
+            cors: true
 

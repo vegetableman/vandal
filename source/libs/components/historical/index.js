@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useMachine } from '@xstate/react';
 import ReactTooltip from 'react-tooltip';
 import _ from 'lodash';
@@ -13,6 +13,7 @@ import {
   longMonthNames,
   useEventCallback
 } from '../../utils';
+import { historicalDB } from '../../utils/storage';
 import { VerticalMenu, Icon } from '../common';
 import historicalMachine, {
   fetchSnapshot,
@@ -20,6 +21,7 @@ import historicalMachine, {
 } from './historical.machine';
 import styles from './historical.module.css';
 import { useTheme, useTimeTravel } from '../../hooks';
+import { CSSTransition } from 'react-transition-group';
 
 const options = [
   {
@@ -40,6 +42,7 @@ const Historical = (props) => {
   const containerRef = useRef(null);
   const { theme } = useTheme();
   const { state: ttstate } = useTimeTravel();
+  const [showInfoModal, toggleInfoModal] = useState(false);
 
   const [state, send, service] = useMachine(
     historicalMachine.withConfig(
@@ -127,6 +130,17 @@ const Historical = (props) => {
     service.onStop(() => {
       cleanUp();
     });
+    const loadInfo = async () => {
+      const infoCount = await historicalDB.getInfo();
+      if (!infoCount || _.parseInt(infoCount) > 10) {
+        setTimeout(() => {
+          toggleInfoModal(true);
+        }, 250);
+      } else {
+        historicalDB.setInfo(_.parseInt(infoCount) + 1);
+      }
+    };
+    loadInfo();
   }, []);
 
   useEffect(
@@ -162,16 +176,33 @@ const Historical = (props) => {
           }}
         />
       )}
-      {!ctx.isHistoricalEnabled && (
+      {state.matches('historicalUnAvailable') && (
         <div className={styles.disabled__overlay}>
           <div className={styles.disabled__modal}>
-            Vandal Savage:
-            <p>Historical View is no longer operational!</p>
-            <p>
-              Wish I hadn't destroyed this planet and disrupted the
-              gravitational balance in the solar system.
-            </p>
-            <p>Well, time for lunch !</p>
+            <div className={styles.disabled__cover__container}>
+              <img src={chrome.runtime.getURL('images/warning.png')} />
+            </div>
+            <div style={{ padding: '0 10px 10px 10px' }}>
+              <h2 style={{ fontSize: '14px' }}>
+                Historical View is no longer operational!
+              </h2>
+              <p style={{ fontSize: '14px' }}>
+                <i>
+                  "No! I am out of Power! Wish I hadn't destroyed this planet
+                  and disrupted the gravitational balance in the solar
+                  system.... Well, time for lunch !"
+                </i>{' '}
+                - Vandal
+              </p>
+              <span style={{ fontSize: '14px' }}>
+                To know more, click{' '}
+                <a
+                  target="_blank"
+                  href="https://github.com/vegetableman/vandal/issues/1">
+                  here
+                </a>
+              </span>
+            </div>
           </div>
         </div>
       )}
@@ -304,6 +335,70 @@ const Historical = (props) => {
       <div className={styles.action__container}>
         <Icon name="close" className={styles.close} onClick={props.onClose} />
       </div>
+      {showInfoModal && state.matches('loadingHistorical') ? (
+        <div className={styles.info__modal__container}>
+          <CSSTransition
+            in={true}
+            appear={true}
+            mountOnEnter={true}
+            unmountOnExit={true}
+            classNames={{
+              appear: styles.modal__appear,
+              appearActive: styles.modal__appear__active,
+              enter: styles.modal__enter,
+              enterActive: styles.modal__enter__active,
+              exit: styles.modal__exit,
+              exitActive: styles.modal__exit__active
+            }}
+            timeout={{ enter: 1000, exit: 1000 }}>
+            <div className={styles.info__modal}>
+              <img
+                className={styles.info__cover}
+                src={chrome.runtime.getURL('images/historical-cover-art.png')}
+              />
+              <div
+                style={{
+                  padding: '0 20px'
+                }}>
+                <p style={{ fontSize: 14 }}>
+                  It's 3000 PA (Post Apocalypse), the cockroaches have taken
+                  over. And the Zero point energy generator that could power the
+                  timetravel machine has been stolen by a colony of giant
+                  roaches.
+                </p>
+                <p style={{ fontSize: 14 }}>
+                  Resources are low.{' '}
+                  <a
+                    href="https://archive.org/donate/?ref=vandal"
+                    target="blank"
+                    style={{ color: '#a50025' }}>
+                    Fund the Internet Archive to keep Vandal running.
+                  </a>
+                </p>
+              </div>
+              <button
+                className={styles.info__button}
+                onClick={() => {
+                  toggleInfoModal(false);
+                  historicalDB.setInfo(1);
+                }}>
+                <span className={styles.info__button__text}>Got it</span>{' '}
+                <Icon name="thumbsUp" fill="#D2B13D" width="18" />
+              </button>
+              <h3
+                style={{
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: '#777',
+                  padding: '0px 20px'
+                }}>
+                Note: The Historical View is experimental and might be disabled
+                in the possible future.
+              </h3>
+            </div>
+          </CSSTransition>
+        </div>
+      ) : null}
     </div>
   );
 };

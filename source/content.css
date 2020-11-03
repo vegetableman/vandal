@@ -70,13 +70,13 @@ body {
 }
 
 .vandal {
-  display: flex;
-  flex-direction: column;
+  display: flex !important;
+  flex-direction: column !important;
 
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  top: 0;
+  position: fixed !important;
+  height: 100% !important;
+  width: 100% !important;
+  top: 0 !important;
 
   --vandal-primary-background-color: #f6f6f6;
   --vandal-secondary-background-color: #f5f5f5;
@@ -137,8 +137,8 @@ body {
   /* Timetravel */
   --vandal-timetravel-footer-background-color: #f1f1f1;
   --vandal-timetravel-footer-border-color: #cccccc;
-  --vandal-timetravel-btn-intro-background-color: #F4F0EA;
-  --vandal-timetravel-btn-intro-fill-color: #c72000;
+  --vandal-timetravel-btn-intro-background-color: #f4f0ea;
+  --vandal-timetravel-btn-intro-fill-color: #ab6025;
   --vandal-cl-day-color: #333333;
   --vandal-cl-day-active-color: #333333;
   --vandal-total-count: #555555;
@@ -263,7 +263,7 @@ body {
   --vandal-total-bg-color: transparent;
   --vandal-cl-err-bg-color: #777777;
   --vandal-cl-err-icon-color: #ffffff;
-  --vandal-cl-retry-bg-color: #eeeeee;
+  --vandal-cl-retry-bg-color: #777777;
   --vandal-cl-retry-bg-hover-color: #eaeaea;
   --vandal-cl-disabled-icon-color: #949494;
 

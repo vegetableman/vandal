@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import _ from 'lodash';
 import ShadowDOM from 'react-shadow';
 import { useMachine } from '@xstate/react';
@@ -6,8 +6,9 @@ import { useMachine } from '@xstate/react';
 import Frame from '../frame';
 import { Toast, Icon } from '../common';
 import parentMachine from './parent.machine';
-import { browser } from '../../utils';
+import { browser, dateDiffInDays } from '../../utils';
 import { ThemeProvider } from '../../hooks';
+import { appDB } from '../../utils/storage';
 
 // TODO: put this somewhere else?
 import './normalize.css';
@@ -23,6 +24,7 @@ const App = (props) => {
   };
 
   const { showIntro, toggleIntro } = useIntro();
+  const [showDonateModal, toggleDonateModal] = useState(false);
 
   const [state, sendToParentMachine] = useMachine(
     parentMachine.withConfig(
@@ -51,8 +53,10 @@ const App = (props) => {
       case '__VANDAL__NAV__BEFORENAVIGATE':
       case '__VANDAL__NAV__HISTORYCHANGE':
         sendToParentMachine({ type: 'SET_URL', payload: { url } });
+        browser.setURL(url);
         break;
       case '__VANDAL__NAV__COMMIT':
+        console.log('__VANDAL__NAV__COMMIT:', url);
         sendToParentMachine({ type: 'SET_URL', payload: { url } });
         browser.setURL(url);
         break;
@@ -72,13 +76,47 @@ const App = (props) => {
 
   const checkValidity = () => {
     try {
-      chrome.runtime.sendMessage({ message: '___VANDAL__CLIENT__CHECKVALID' });
+      chrome.runtime.sendMessage(
+        { message: '___VANDAL__CLIENT__CHECKVALID' },
+        function(response) {
+          if (!_.get(response, 'isValid')) {
+            sendToParentMachine('TOGGLE_INVALID_CONTEXT', {
+              payload: { value: true }
+            });
+          }
+        }
+      );
     } catch (ex) {
       if (ex.message && ex.message.indexOf('invalidated') > -1) {
         sendToParentMachine('TOGGLE_INVALID_CONTEXT', {
           payload: { value: true }
         });
       }
+    }
+  };
+
+  const checkDonate = async () => {
+    const donateState = await appDB.getDonateState();
+    console.log('donateState:', donateState);
+
+    if (!_.get(donateState, 'date')) {
+      appDB.setDonateState({
+        __v: 1,
+        date: new Date().toString()
+      });
+    } else if (
+      dateDiffInDays(new Date(_.get(donateState, 'date')), new Date()) > 5 &&
+      _.get(donateState, '__v') === 1
+    ) {
+      toggleDonateModal(true);
+      appDB.setDonateState({
+        __v: 2,
+        date: new Date().toString()
+      });
+    } else if (
+      dateDiffInDays(new Date(_.get(donateState, 'date')), new Date()) > 30
+    ) {
+      toggleDonateModal(true);
     }
   };
 
@@ -91,6 +129,7 @@ const App = (props) => {
     chrome.runtime.onMessage.addListener(onMessage);
     document.addEventListener('visibilitychange', checkValidity);
     document.addEventListener('beforeunload', sendExit);
+    checkDonate();
     return () => {
       document.removeEventListener('beforeunload', sendExit);
       chrome.runtime.onMessage.removeListener(onMessage);
@@ -118,17 +157,13 @@ const App = (props) => {
         exit={0}>
         <span>
           Houston, we have a problem!. Click here to open this URL on
-                <a
+          <a
             href={`https://web.archive.org/web/*/${props.url}`}
             target="_blank"
             className={styles.wayback__link}>
             Wayback Machine
-                </a>
-          <Icon
-            name="openURL"
-            width={11}
-            className={styles.wayback__icon}
-          />
+          </a>
+          <Icon name="openURL" width={11} className={styles.wayback__icon} />
         </span>
       </Toast>
       <Toast
@@ -136,7 +171,7 @@ const App = (props) => {
         show={state.matches('checkAvailability')}>
         <span>
           You have landed on a defunct page!. Checking availability...
-              </span>
+        </span>
       </Toast>
       <Toast
         className={styles.toast__notfound}
@@ -150,7 +185,7 @@ const App = (props) => {
               sendToParentMachine('CLOSE');
             }}>
             View Snapshot
-                </button>
+          </button>
           <Icon
             name="close"
             className={styles.toast__close__icon}
@@ -175,34 +210,80 @@ const App = (props) => {
           />
         </div>
       </Toast>
-      {showIntro && <div className={styles.modal__container} onClick={() => {
-        toggleIntro(false);
-      }}>
-        <img className={styles.cover} src={chrome.runtime.getURL("images/cover-art.png")} />
-      </div>}
+      {showIntro && (
+        <div
+          className={styles.modal__container}
+          onClick={() => {
+            toggleIntro(false);
+          }}>
+          <img
+            className={styles.cover}
+            src={chrome.runtime.getURL('images/cover-art.png')}
+          />
+        </div>
+      )}
+      {showDonateModal && (
+        <div className={styles.modal__container}>
+          <div className={styles.donate__modal}>
+            <Icon
+              name="close"
+              className={styles.donate__modal__close}
+              onClick={() => {
+                toggleDonateModal(false);
+              }}
+            />
+            <img src={chrome.runtime.getURL('images/donate.png')} />
+            <div className={styles.donate__text}>
+              <div>
+                <button
+                  className={styles.donate__button}
+                  onClick={() => {
+                    window.open(
+                      'https://archive.org/donate/?ref=vandal',
+                      '_blank'
+                    );
+                  }}>
+                  DONATE
+                </button>
+                <span
+                  style={{ color: '#555555', fontSize: 14, fontWeight: 700 }}>
+                  to the Internet Archive
+                </span>
+              </div>
+              <p style={{ fontSize: 13, marginTop: 15, color: '#555555' }}>
+                A Time Machine is only as good as its Power Source. And Vandal
+                relies on the mighty{' '}
+                <span style={{ color: '#864D23' }}>Internet Archive</span>. To
+                allow it's continued existence, please donate to the Internet
+                Archive.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-
   );
 };
-
 
 const AppContainer = (props) => {
   const notifyThemeChanged = (ctx) => {
     props.root.setAttribute('data-theme', ctx.theme);
   };
 
-  return (<ShadowDOM
-    include={[
-      'chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/vandal.css'
-    ]}>
-    <div className="vandal__root vandal-root">
-      <ThemeProvider notifyThemeChanged={notifyThemeChanged}>
-        <IntroProvider>
-          <App {...props} />
-        </IntroProvider>
-      </ThemeProvider>
-    </div>
-  </ShadowDOM>)
-}
+  return (
+    <ShadowDOM
+      include={[
+        'chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/vandal.css'
+      ]}>
+      <div className="vandal__root vandal-root">
+        <ThemeProvider notifyThemeChanged={notifyThemeChanged}>
+          <IntroProvider>
+            <App {...props} />
+          </IntroProvider>
+        </ThemeProvider>
+      </div>
+    </ShadowDOM>
+  );
+};
 
 export default AppContainer;

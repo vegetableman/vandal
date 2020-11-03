@@ -33,6 +33,7 @@
 .logo__container {
   display: flex;
   margin-right: 20px;
+  margin-bottom: 3px;
 }
 
 .reload__icon {
@@ -40,7 +41,7 @@
   stroke: var(--vandal-primary-icon-color);
   position: relative;
   stroke-width: 3px;
-  top: 5px;
+  /* top: 5px; */
 }
 
 .stop__icon {
@@ -92,6 +93,10 @@
   margin-left: 15px;
   width: 33px;
   outline: none;
+}
+
+.resource__btn__active {
+  background: var(--vandal-secondary-background-color);
 }
 
 .resource__icon {
@@ -230,7 +235,7 @@
 
 .navigation {
   display: flex;
-  margin: 0 25px 0 0;
+  margin: -2.5px 25px 0 0;
 }
 
 .backward__nav__icon {
@@ -271,9 +276,17 @@
 
 .backward__nav__btn:hover .backward__nav__icon,
 .forward__nav__btn:hover .forward__nav__icon,
-.reloadBtn:hover .reload__icon {
+.reload__btn:hover .reload__icon {
   stroke: var(--vandal-primary-icon-active-color);
   fill: var(--vandal-primary-icon-active-color);
+}
+
+.reload__btn:hover .reload__icon {
+  transform: scale(1.1);
+}
+
+.reload__btn:active .reload__icon {
+  transform: scale(1);
 }
 
 .forward__nav__btn:disabled,
@@ -387,12 +400,71 @@
   display: flex;
   flex-direction: column;
 
-  background-color: #ffffff;
+  background-color: #f3f0ea;
+  border-radius: 3px;
+  box-sizing: content-box !important;
+  box-shadow: rgb(0 0 0 / 39%) 0px 1px 5px;
+  height: 465px;
+  margin-top: 80px;
+  padding: 20px;
+  position: relative;
+  width: 400px;
 }
 
 .cover {
-  box-shadow: rgb(0 0 0 / 39%) 0px 1px 5px;
-  border-radius: 3px;
-  margin-top: 120px;
-  width: 485px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  padding: 5px 20px 20px 10px;
+}
+
+.icon {
+  width: 90px;
+}
+
+.icon__title {
+  margin-top: 20px;
+  width: 200px;
+}
+
+.ack {
+  font-size: 14px;
+  line-height: 21px;
+}
+
+.version {
+  font-weight: 800;
+  margin-top: 15px;
+  font-family: Helvetica;
+  font-size: 13px;
+  color: #777777;
+}
+
+.about {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.archive__icon {
+  width: 12px;
+  height: 12px;
+  fill: #000000;
+  position: relative;
+  top: 0.9px;
+}
+
+.about__close__icon {
+  cursor: pointer;
+  fill: #333;
+  position: absolute;
+  stroke: #333;
+  stroke-width: 44px;
+  right: 10px;
+  top: 10px;
+  width: 15px;
+  z-index: 1111;
 }

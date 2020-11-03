@@ -1,5 +1,5 @@
 .toast__notfound {
-  left: calc(50% - 135px);
+  left: calc(50% - 170px);
 }
 
 .toast__close {
@@ -16,4 +16,17 @@
 
 .toast__redirect {
   left: calc(50% - 50px);
+}
+
+.save__link {
+  color: #fff;
+  margin-left: 3px;
+}
+
+.save__icon {
+  fill: #fff;
+  position: relative;
+  margin-left: 9px;
+  top: 3px;
+  right: 5px;
 }

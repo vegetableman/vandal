@@ -135,10 +135,13 @@ const CalendarFilter = memo((props) => {
     debouncedCalendarChange(e);
   });
 
+  console.log('calendar:', props);
+
   return (
     <div className={styles.container}>
       <div className={styles.calendar__container}>
         {!props.showSparkError &&
+          !_.isEmpty(_.keys(props.sparkline)) &&
           !props.showErrLoader && (
             <div className={styles.label}>Select Date :</div>
           )}

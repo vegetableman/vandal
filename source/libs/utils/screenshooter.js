@@ -5,13 +5,13 @@ import { Lambda } from '../utils';
 export default class Screenshooter {
   constructor() {
     // console.log('aws:', aws);
-    this.loadURL();
-    this.controllers = [];
+    // this.loadURL();
+    // this.controllers = [];
   }
 
-  loadURL = () => {
-    this.captureURL = VANDAL_SCREENSHOT_API;
-  };
+  // loadURL = () => {
+  //   this.captureURL = VANDAL_SCREENSHOT_API;
+  // };
 
   abort = (type = 'screenshot') => {
     abort({ meta: { type } });
@@ -24,9 +24,9 @@ export default class Screenshooter {
     // Lambda.clear();
   };
 
-  fetchScreenshot = async (endpoint, { latest }) => {
+  fetchScreenshot = async (endpoint, config = {}) => {
     try {
-      if (!latest) {
+      if (!config.latest) {
         const resFromCache = await caches.match(endpoint);
         if (resFromCache) {
           const blob = await resFromCache.blob();
@@ -47,7 +47,7 @@ export default class Screenshooter {
         let blob = new Blob([arrayBufferView], { type: 'image/jpeg' });
         let urlCreator = window.URL || window.webkitURL;
         const objectURL = urlCreator.createObjectURL(blob);
-        if (!latest) {
+        if (!config.latest) {
           const responseCache = await caches.open('__VANDAL__');
           responseCache.put(endpoint, new Response(blob));
         }

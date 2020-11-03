@@ -99,7 +99,7 @@ export function safeOnAjaxedPages(callback) {
  */
 export const enableFeature = async (fn) => {
   const { disabledFeatures = '', logging = false } = await options;
-  const log = logging ? console.log : () => {};
+  const log = logging ? console.log : () => { };
 
   const filename = fn.name.replace(/_/g, '-');
   if (/^$|^anonymous$/.test(filename)) {
@@ -337,28 +337,28 @@ export const countVersions = (sparkline) => {
   return count;
 };
 
-const requestAnimFrame = (function() {
+const requestAnimFrame = (function () {
   return (
     window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
     window.oRequestAnimationFrame ||
     window.msRequestAnimationFrame ||
-    function(/* function */ callback, /* DOMElement */ element) {
+    function (/* function */ callback, /* DOMElement */ element) {
       window.setTimeout(callback, 1000 / 60);
     }
   );
 })();
 
-export const clearRequestInterval = function(handle) {
+export const clearRequestInterval = function (handle) {
   window.cancelAnimationFrame
     ? window.cancelAnimationFrame(handle.value)
     : window.webkitCancelAnimationFrame
       ? window.webkitCancelAnimationFrame(handle.value)
       : window.webkitCancelRequestAnimationFrame
         ? window.webkitCancelRequestAnimationFrame(
-            handle.value
-          ) /* Support for legacy API */
+          handle.value
+        ) /* Support for legacy API */
         : window.mozCancelRequestAnimationFrame
           ? window.mozCancelRequestAnimationFrame(handle.value)
           : window.oCancelRequestAnimationFrame
@@ -368,7 +368,7 @@ export const clearRequestInterval = function(handle) {
               : clearInterval(handle);
 };
 
-export const requestInterval = function(fn, delay) {
+export const requestInterval = function (fn, delay) {
   if (
     !window.requestAnimationFrame &&
     !window.webkitRequestAnimationFrame &&
@@ -427,7 +427,7 @@ export const timestamp2datetime = (timestamp) => {
   );
 };
 
-export const dateTimeDiff = function(dtmsec, captureTS) {
+export const dateTimeDiff = function (dtmsec, captureTS) {
   if (!dtmsec || !captureTS) return;
   let diff = Date.parse(dtmsec) - Date.parse(timestamp2datetime(captureTS));
   let prefix = '';
@@ -542,10 +542,10 @@ export const archiveAllLink = (url) => {
 export const formatDateTimeTS = (dt) => {
   return _.isString(dt)
     ? _.replace(
-        _.replace(dt, dt.slice(-12, -4), toTwelveHourTime(dt.slice(-12, -4))),
-        'GMT',
-        ''
-      )
+      _.replace(dt, dt.slice(-12, -4), toTwelveHourTime(dt.slice(-12, -4))),
+      'GMT',
+      ''
+    )
     : dt;
 };
 
@@ -584,7 +584,7 @@ export const smoothScrollX = (el, x) => {
   // define scroll context
   scrollable = el;
   startX = el.scrollLeft;
-  method = function(val) {
+  method = function (val) {
     this.scrollLeft = val;
   };
 
@@ -718,9 +718,8 @@ export const colorHistogram = ({ histogram, maxValue }) => {
 
 export const getCurrentDate = () => {
   const currentDate = new Date();
-  return `${currentDate.getDate()} ${
-    longMonthNames[currentDate.getMonth()]
-  }, ${currentDate.getFullYear()}`;
+  return `${currentDate.getDate()} ${longMonthNames[currentDate.getMonth()]
+    }, ${currentDate.getFullYear()}`;
 };
 
 export const isCurrentDate = (d) => {
@@ -737,3 +736,12 @@ export const getLastDate = (d) => {
   last.setDate(0);
   return last;
 };
+
+const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+export const dateDiffInDays = (a, b) => {
+  // Discard the time and time-zone information.
+  const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+  const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+  return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+}

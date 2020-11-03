@@ -136,11 +136,11 @@
   align-items: center;
   justify-content: center;
 
-  background: var(--vandal-cl-err-bg-color);
-  border-radius: 100%;
+  /* background: var(--vandal-cl-err-bg-color); */
+  /* border-radius: 100%; */
   width: 90px;
-  height: 90px;
-  margin-top: 10px;
+  /* height: 90px; */
+  margin-top: 60px;
 }
 
 .error__icon {
@@ -162,6 +162,7 @@
   box-shadow: none;
   border: 0;
   border-radius: 3px;
+  color: var(--vandal-input-color);
   cursor: pointer;
   font-size: 13px;
   margin-top: 15px;

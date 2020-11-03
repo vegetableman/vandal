@@ -92,3 +92,60 @@
   margin-top: 120px;
   width: 485px;
 }
+
+.donate__modal {
+  background: #faf1e1;
+  border-radius: 3px;
+  position: relative;
+  margin-top: 70px;
+  width: 380px;
+}
+
+.donate__modal > img {
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  width: 100%;
+}
+
+.donate__button {
+  background: #7b562e;
+  border: 2px solid #d2b13d;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  color: #d2b13d;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  max-width: 100px;
+  margin-bottom: 10px;
+  margin-right: 5px;
+  outline: none;
+  padding: 19px 15px 17px 15px;
+  width: 100%;
+}
+
+.donate__button:hover {
+  background: #844400;
+}
+
+.donate__text {
+  margin-top: -100px;
+  padding: 0 21px;
+  text-align: center;
+}
+
+.donate__modal__close {
+  cursor: pointer;
+  fill: darkorange;
+  height: 18px;
+  position: absolute;
+  right: 10px;
+  stroke: #333;
+  stroke-width: 25px;
+  top: 10px;
+  width: 18px;
+}
+
+.donate__modal__close:hover {
+  fill: red;
+}
