@@ -2,4 +2,71 @@
 ---
 
 body {
+  background-color: #f2f1eb;
+}
+.logo {
+  width: 180px;
+}
+.mascot {
+  height: 110px;
+  width: 90px;
+}
+header > section {
+  width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+#masthead > section {
+  display: flex;
+  justify-content: center;
+  width: 1200px;
+  margin: 0 auto;
+}
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.intro-bubble {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-image: url("/assets/images/intro-bubble.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin-top: 7px;
+  height: 90px;
+  width: 340px;
+}
+.intro-bubble > span {
+  font-family: "Fira Code";
+  font-size: 12px;
+  line-height: 19px;
+  position: relative;
+  padding: 0 15px;
+  top: 12px;
+}
+.download-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #3fa39a;
+  border: 1px solid #f4df1a;
+  cursor: pointer;
+  width: 215px;
+  height: 50px;
+  border-radius: 2px;
+  margin-top: 35px;
+}
+.download-btn > .text {
+  color: #ffffff;
+  font-family: "Fira Code";
+  font-size: 14px;
+}
+.download-btn > .icon {
+  width: 30px;
+  padding-left: 13px;
+}
+.download-btn:hover {
+  background: #389890;
 }
