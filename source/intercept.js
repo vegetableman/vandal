@@ -312,6 +312,7 @@ class NavigationHandler {
       const isCSPHeader = /content-security-policy/i.test(header.name);
       const isFrameHeader = /^x-frame-options/i.test(header.name);
       const isXSSHeader = /^x-xss-protection/i.test(header.name);
+      const isOriginHeader = /^access-control-allow-origin/i.test(header.name);
       if (isCSPHeader) {
         let csp = header.value;
         csp = csp.replace(/frame-ancestors ((.*?);|'none'|'self')/gi, '');
@@ -344,16 +345,19 @@ class NavigationHandler {
       } else if (isXSSHeader) {
         header.value = '0';
       }
+      //  else if (isOriginHeader) {
+      //   header.value = details.initiator || '*';
+      // }
 
       return header;
     });
 
     const headerCount = Object.keys(responseHeaders).length;
     const extraHeaders = {
-      'Access-Control-Allow-Origin': '*',
+      // 'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods':
-        'GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH',
-      'Access-Control-Allow-Credentials': 'false'
+        'GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH'
+      // 'Access-Control-Allow-Credentials': 'false'
     };
 
     let extraIndex = headerCount > 0 ? headerCount : 0;

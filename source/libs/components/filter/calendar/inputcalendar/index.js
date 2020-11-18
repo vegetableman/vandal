@@ -1,17 +1,18 @@
 import React, { useState, useEffect, memo, useRef } from 'react';
+import memoizeOne from 'memoize-one';
+import { scaleLinear } from 'd3-scale';
 import PerfectScrollbar from 'perfect-scrollbar';
 import _ from 'lodash';
 import cx from 'classnames';
 import { Sparklines, SparklinesCurve } from 'react-sparklines';
 import VirtualList from 'react-tiny-virtual-list';
-import tinycolor from 'tinycolor2';
 import { Icon, withDialog } from '../../../common';
 import { monthNames, compareProps } from '../../../../utils';
 import { colors } from '../../../../constants';
 import styles from './inputcalendar.module.css';
 import { useTheme } from '../../../../hooks';
 
-const getStyle = (count, isSelected, isCurrent, theme) => {
+const getStyle = (count, isSelected, isCurrent, color, year, theme) => {
   const isHighlighted = isSelected || isCurrent || count;
   return {
     backgroundColor: isSelected
@@ -19,9 +20,7 @@ const getStyle = (count, isSelected, isCurrent, theme) => {
       : isCurrent
         ? colors.MATCH
         : count
-          ? tinycolor(colors.TS)
-              .darken(Math.min(count, 30))
-              .toString()
+          ? color(count, year)
           : 'inherit',
     textDecoration: isCurrent ? 'underline' : 'none',
     color: isHighlighted
@@ -35,6 +34,7 @@ const getStyle = (count, isSelected, isCurrent, theme) => {
 const ROW_HEIGHT = 55;
 
 const Calendar = ({
+  color,
   years,
   selectedMonth,
   selectedYear,
@@ -124,6 +124,8 @@ const Calendar = ({
                         years[index] === selectedYear,
                       mindex + 1 === currentMonth &&
                         years[index] === currentYear,
+                      color,
+                      years[index],
                       theme
                     )}>
                     <span className={styles.month__label}>{m}</span>
@@ -144,6 +146,12 @@ const WithDialogCalendar = withDialog(Calendar, {
 
 const currentDateInstance = new Date();
 
+const colorFromRange = memoizeOne((min, max) => {
+  return scaleLinear()
+    .domain([min, max])
+    .range(['#d4f8d0', max <= 5 ? '#a6ef9c' : '#5ee64e']);
+});
+
 const InputCalendar = memo((props) => {
   const [isVisible, toggleCalendar] = useState(false);
 
@@ -162,14 +170,25 @@ const InputCalendar = memo((props) => {
     date
   } = props;
 
-  console.log('disableNext:', disableNext);
-
   if (_.isEmpty(_.keys(sparkline))) return null;
 
   let sparklineYears = _.keys(sparkline);
-  const years = _.map(sparklineYears, (y) => {
-    return _.parseInt(y);
+  const result = _.map(sparklineYears, (y) => {
+    return { year: _.parseInt(y), count: _.max(sparkline[y]) };
   });
+
+  const years = _.map(result, 'year');
+  // const color = colorFromRange(
+  //   _.min(_.map(result, 'count')),
+  //   _.max(_.map(result, 'count'))
+  // );
+
+  console.log(
+    'result:',
+    result,
+    _.min(_.map(result, 'count')),
+    _.max(_.map(result, 'count'))
+  );
 
   return (
     <div className={styles.input__calendar}>
@@ -228,6 +247,13 @@ const InputCalendar = memo((props) => {
             onSelect={(...args) => () => {
               onSelect(...args);
               toggleCalendar(false);
+            }}
+            color={(count, year) => {
+              const color = colorFromRange(
+                _.min(sparkline[year]),
+                _.max(sparkline[year])
+              );
+              return color(count);
             }}
             onClose={() => {
               toggleCalendar(false);

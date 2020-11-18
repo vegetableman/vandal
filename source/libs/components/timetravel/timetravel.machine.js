@@ -172,7 +172,7 @@ const memoizedFetchCalendar = memoizeOne(fetchCalendar, (arg1, arg2) => {
   return (
     arg1 === arg2 ||
     _.replace(arg1, 'https://', 'http://') ===
-    _.replace(arg2, 'https://', 'http://')
+      _.replace(arg2, 'https://', 'http://')
   );
 });
 
@@ -244,7 +244,7 @@ const timetravelMachine = Machine(
           const date = _.get(
             ctx.calendar,
             `[${ctx.currentYear}][[${ctx.currentMonth - 1}][${ctx.currentDay -
-            1}]`
+              1}]`
           );
 
           let selectedTS = ctx.selectedTS;
@@ -771,7 +771,7 @@ const timetravelMachine = Machine(
           const date = _.get(
             ctx.calendar,
             `[${ctx.currentYear}][${ctx.currentMonth -
-            1}][${ctx.highlightedDay - 1}]`
+              1}][${ctx.highlightedDay - 1}]`
           );
           const status = _.get(date, 'st', []);
           ctx.cardRef.send({
@@ -839,13 +839,16 @@ const timetravelMachine = Machine(
 
           if (ctx.isOverCapacity) {
             [response, err] = await api(
-              `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${ctx.currentYear
+              `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${
+                ctx.currentYear
               }${_.padStart(ctx.currentMonth, 2, '0')}&groupby=day`
             );
 
             if (err) {
               return reject(err);
             }
+
+            debugger;
 
             calendar = _.reduce(
               response.items,
@@ -881,8 +884,9 @@ const timetravelMachine = Machine(
             calendar = _.reduce(
               _.compact(_.split(response, '\n')),
               (acc, data) => {
-                const ts = +_.nth(data.split(' '), 1);
-                const st = +_.nth(data.split(' '), 4);
+                const ts = _.toNumber(_.nth(data.split(' '), 1));
+                const stData = _.toNumber(_.nth(data.split(' '), 4));
+                const st = !_.isNaN(stData) ? stData : '';
                 const { year, month, day } = getDateTimeFromTS(ts);
                 if (
                   _.indexOf(
@@ -978,7 +982,8 @@ const timetravelMachine = Machine(
           jobs[ctx.currentYear].push(i);
 
           [response, err] = await api(
-            `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${ctx.currentYear
+            `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${
+              ctx.currentYear
             }${_.padStart(i, 2, '0')}&groupby=day`,
             {
               meta: { type: 'captures' }

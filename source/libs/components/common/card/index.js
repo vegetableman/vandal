@@ -152,7 +152,6 @@ const CardContainer = memo((props) => {
     () => {
       props.cardRef.onTransition((state) => {
         if (state.changed) {
-          console.log('card state:', state);
           setCardState({
             ...state.context.card,
             ...{

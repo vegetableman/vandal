@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { scaleLinear } from 'd3-scale';
 import cx from 'classnames';
 import ReactTooltip from 'react-tooltip';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -29,6 +30,12 @@ import Controller from './controller';
 const memoizedDateTimeFromTS = _.memoize(getDateTimeFromTS);
 const memoizedCountVersions = memoizeOne(countVersions);
 
+const colorFromRange = memoizeOne((min, max) => {
+  return scaleLinear()
+    .domain([min, max])
+    .range(['#d4f8d0', max <= 5 ? '#a6ef9c' : '#5ee64e']);
+});
+
 let cardX;
 let cardY;
 const TimeTravel = (props) => {
@@ -38,6 +45,10 @@ const TimeTravel = (props) => {
 
   const capacityRef = useRef(null);
 
+  const memoizedCount = memoizeOne((year, month) => {
+    return _.map(_.get(ctx.calendar, `${year}.${month}`), 'cnt');
+  });
+
   const getColor = (day) => {
     const {
       calendar,
@@ -46,30 +57,30 @@ const TimeTravel = (props) => {
       currentYear,
       highlightedDay
     } = ctx;
-    const count = _.get(
+    const dayCount = _.get(
       calendar,
       `${currentYear}.${currentMonth - 1}.${day - 1}.cnt`
     );
-    if (!count) {
+
+    const cnt = memoizedCount(currentYear, currentMonth - 1);
+    const max = _.max(cnt);
+    const min = _.min(cnt);
+
+    if (!dayCount) {
       return null;
     }
 
     let match = false;
     if (selectedTS) {
-      const {
-        day: selectedDay
-        // month: selectedMonth,
-        // year: selectedYear
-      } = memoizedDateTimeFromTS(selectedTS);
+      const { day: selectedDay } = memoizedDateTimeFromTS(selectedTS);
       match =
         selectedDay === day &&
         selectedMonth === currentMonth &&
         selectedYear === currentYear;
     }
 
-    const bgColor = tinycolor(colors.TS)
-      .darken(Math.min(count, 30))
-      .toString();
+    const color = colorFromRange(min, max);
+    const bgColor = color(dayCount);
 
     return {
       backgroundColor: match ? colors.MATCH : bgColor,
@@ -354,6 +365,7 @@ const TimeTravel = (props) => {
           </div>
         )}
       {!state.matches('sparklineLoaded.calendarError') &&
+        ctx.sparkline &&
         !state.matches('sparklineError.timeout') && (
           <React.Fragment>
             {ctx.isOverCapacity && (

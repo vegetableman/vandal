@@ -39,9 +39,28 @@
 }
 
 .timetravel__graph {
-  width: calc(100% - 400px);
+  width: calc(100% - 390px);
   min-width: 1100px;
 }
+/* 
+color: #d4f8d0
+color: #a6ef9c
+color: #7eec6f
+color: #5ee64e 
+
+rgb(212, 248, 208)
+rgb(183, 244, 176)
+rgb(153, 239, 143) #99ef8f
+rgb(94, 230, 78)
+
+[
+    "#eee"
+  , "#d6e685"
+  , "#8cc665"
+  , "#44a340"
+  , "#1e6823"
+];
+*/
 
 .count {
   border: 1px dotted #aaa;
