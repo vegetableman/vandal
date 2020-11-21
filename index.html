@@ -3,7 +3,9 @@
 <head>
   <meta charset="utf-8">
   <title>Vandal | Navigator for the Internet Archive</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Fenix&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
 
@@ -11,27 +13,89 @@
   <header>
     <section>
       <a id="logo" href="/">
-        <img src="/assets/images/logo-full.svg" alt="Vandal" class="logo">
+        <img src="/assets/images/logo-full-2.svg" alt="Vandal" class="logo">
       </a>
+      <div class="built-info">Built using <img src="/assets/images/wayback.png" class="wayback-logo" />API</div>
     </section>
   </header>
   <div id="masthead">
-    <section>
+    <section class="inline">
       <div class="intro">
         <img src="/assets/images/vandal.svg" alt="Vandal Mascot" class="mascot">
-        <div class="intro-bubble">
+        <div class="bubble intro-bubble">
           <span>
-            Welcome! I am Vandal. I am pleased to see you here. I will be your Time travel guide.
+            Welcome! I am <b style="color:#864D23;">Vandal</b>. I am pleased to see you here. I will be your <b
+              style="color:#864D23;">Time Travel</b> guide.
           </span>
+        </div>
+        <h3 class="lead">
+          A chrome extension that helps you navigate the <b style="color:#864D23">Web Archive</b>.
+        </h3>
+      </div>
+    </section>
+
+    <section class="inline">
+      <div class="download">
+        <div class="download-btn">
+          <div class="text">ADD TO CHROME</div>
+          <img class="icon" src="/assets/images/chrome.svg" alt="Chrome Web Store" />
         </div>
       </div>
     </section>
 
-    <section>
-      <div class="download-btn">
-        <div class="text">ADD TO CHROME</div>
-        <img class="icon" src="/assets/images/chrome.svg" alt="Chrome Web Store" />
+    <section class="inline">
+      <div class="screencast">
+        <video src="/assets/videos/japantimes.mp4" autoplay loop muted></video>
       </div>
+    </section>
+
+    <section class="overlap">
+      <div class="switch">
+        <div class="group">
+          <div class="bubble switch-bubble">
+            <span>
+              Switch between <b style="color:#864D23;">Calendar</b> and <b style="color:#864D23;">Graph</b> View in your
+              journey.
+            </span>
+          </div>
+          <img src="/assets/images/switch.png" class="switch-image" alt="switch between calendar and graph" />
+        </div>
+      </div>
+    </section>
+
+    <section class="inline">
+      <div class="features">
+        <div class="features-u-panel">
+          <div class="column">
+            <img src="/assets/images/controls.png" class="controls-image" />
+            <div class="bubble controls-bubble">
+              <span>
+                Finding needle in a haystack? Quickly switch between <b style="color:#864D23;">Snapshots</b> and
+                <b style="color:#864D23;">Dates</b>.
+              </span>
+            </div>
+          </div>
+
+          <div class="column">
+            <img src="/assets/images/history.png" class="history-image" />
+            <div class="bubble history-bubble">
+              <span>Access your <b style="color:#864D23;">Navigation History</b> for a website.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="features-l-panel">
+          <img src="/assets/images/drawer.png" class="controls-image" />
+          <div class="bubble drawer-bubble">
+            <span><b style="color:#864D23;">Resource Drawer</b> to find timestamp differences of resources on the
+              page.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="highlight">
+
     </section>
   </div>
 </body>

@@ -2,21 +2,40 @@
 ---
 
 body {
-  background-color: #f2f1eb;
+  background-color: #f2f1ea;
 }
 .logo {
-  width: 180px;
+  width: 170px;
 }
 .mascot {
-  height: 110px;
-  width: 90px;
+  height: 100px;
+  width: 80px;
+}
+#logo {
+  text-decoration: none;
+}
+.wayback-logo {
+  position: relative;
+  top: -3px;
+  width: 100px;
+}
+.built-info {
+  font-family: "Fenix";
+  display: flex;
+  align-items: center;
+  color: #333;
+}
+header {
+  padding: 20px;
 }
 header > section {
+  display: flex;
+  justify-content: space-between;
   width: 1200px;
   margin: 0 auto;
   position: relative;
 }
-#masthead > section {
+.inline {
   display: flex;
   justify-content: center;
   width: 1200px;
@@ -27,24 +46,58 @@ header > section {
   flex-direction: column;
   align-items: center;
 }
-.intro-bubble {
+.bubble {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-image: url("/assets/images/intro-bubble.svg");
   background-repeat: no-repeat;
   background-size: cover;
-  margin-top: 7px;
-  height: 90px;
-  width: 340px;
+  transform: scale(0.9);
 }
-.intro-bubble > span {
+.bubble > span {
   font-family: "Fira Code";
-  font-size: 12px;
-  line-height: 19px;
+  font-size: 13px;
+  line-height: 21px;
   position: relative;
   padding: 0 15px;
-  top: 12px;
+}
+.intro-bubble {
+  background-image: url("/assets/images/intro-bubble.svg");
+  margin-top: 3px;
+  height: 93px;
+  width: 381px;
+}
+.intro-bubble > span {
+  top: 10px;
+}
+.switch-bubble {
+  background-image: url("/assets/images/switch-bubble.svg");
+  height: 68px;
+  width: 380px;
+}
+.lead {
+  color: #5a5049;
+  font-style: italic;
+  font-family: "Fenix";
+  margin-top: 10px;
+  font-size: 16px;
+}
+.download {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.usage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.usage > h1 {
+  color: #864d23;
+  font-size: 30px;
+}
+.usage > img {
+  height: 40px;
 }
 .download-btn {
   display: flex;
@@ -53,10 +106,10 @@ header > section {
   background: #3fa39a;
   border: 1px solid #f4df1a;
   cursor: pointer;
-  width: 215px;
+  width: 190px;
   height: 50px;
   border-radius: 2px;
-  margin-top: 35px;
+  margin-top: 20px;
 }
 .download-btn > .text {
   color: #ffffff;
@@ -69,4 +122,84 @@ header > section {
 }
 .download-btn:hover {
   background: #389890;
+}
+.screencast {
+  margin-top: 45px;
+}
+.screencast > video {
+  width: 1100px;
+  border-radius: 3px;
+}
+.overlap {
+  background-color: #eae9e3;
+  margin-top: -120px;
+  width: 100%;
+}
+.switch {
+  min-height: 420px;
+  padding-top: 250px;
+}
+.switch > .group {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.switch-image {
+  width: 700px;
+}
+.controls-image {
+  height: 250px;
+}
+.history-image {
+  height: 240px;
+}
+.controls-bubble {
+  background-image: url("/assets/images/controls-bubble.svg");
+  position: relative;
+  height: 90px;
+  width: 335px;
+  left: -90px;
+  top: 10px;
+}
+.controls-bubble > span {
+  top: 12px;
+}
+.history-bubble {
+  background-image: url("/assets/images/history-bubble.svg");
+  height: 83px;
+  width: 381px;
+  position: relative;
+  right: -270px;
+  top: 15px;
+}
+.history-bubble > span {
+  top: 12px;
+}
+.features {
+  min-height: 420px;
+  padding: 80px 0;
+}
+.features-u-panel {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 90px;
+}
+.column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.drawer-bubble {
+  background-image: url("/assets/images/drawer-bubble.svg");
+  height: 100px;
+  width: 397px;
+  position: relative;
+  right: -320px;
+  top: 15px;
+}
+.drawer-bubble > span {
+  top: 15px;
+}
+.highlight {
 }
