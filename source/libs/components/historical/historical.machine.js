@@ -13,10 +13,7 @@ export const cleanUp = () => {
 
 export const fetchSnapshot = async ({ url, year, archiveURL }) => {
   let [result, archiveErr] = await api(
-    `https://archive.org/wayback/available?url=${url}&timestamp=${year}12`,
-    {
-      cacheResponse: true
-    }
+    `https://archive.org/wayback/available?url=${url}&timestamp=${year}12`
   );
   if (archiveErr) {
     return [{ data: null, err: archiveErr }];
@@ -28,7 +25,7 @@ export const fetchSnapshot = async ({ url, year, archiveURL }) => {
   }
 
   return [
-    await screenshooter.fetchScreenshot(archiveURL),
+    await screenshooter.fetchScreenshot(archiveURL, { retry: true }),
     closestURL ? archiveURL : null
   ];
 };
@@ -197,7 +194,8 @@ const historicalMachine = Machine(
         const timestampURLs = _.map(
           ctx.years,
           (y) =>
-            `https://archive.org/wayback/available?url=${ctx.url
+            `https://archive.org/wayback/available?url=${
+              ctx.url
             }&timestamp=${y}12`
         );
 
@@ -229,7 +227,7 @@ const historicalMachine = Machine(
           }
 
           const [data, err] = await screenshooter.fetchScreenshot(archiveURL, {
-            latest: false //timestampURLCount - 1 === index
+            latest: timestampURLCount - 1 === index
           });
           callback({
             type: 'ADD_SNAPSHOT',
@@ -238,15 +236,15 @@ const historicalMachine = Machine(
         };
 
         try {
-          timestampURLs.reduce(function (prev, curr, i) {
-            return prev.then(function () {
+          timestampURLs.reduce(function(prev, curr, i) {
+            return prev.then(function() {
               if (isSTOPPED) {
                 throw new Error('Service has Stopped');
               }
               return snapshotMapper(curr, i);
             });
           }, Promise.resolve());
-        } catch (ex) { }
+        } catch (ex) {}
       },
       checkHistoricalAvailable: (ctx) => {
         return new Promise(async (resolve, reject) => {

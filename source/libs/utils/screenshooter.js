@@ -26,7 +26,7 @@ export default class Screenshooter {
 
   fetchScreenshot = async (endpoint, config = {}) => {
     try {
-      if (!config.latest) {
+      if (!config.latest && !config.retry) {
         const resFromCache = await caches.match(endpoint);
         if (resFromCache) {
           const blob = await resFromCache.blob();
