@@ -1,8 +1,12 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
-  <title>Vandal | Navigator for the Internet Archive</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="Description" content="Navigator for the Wayback Machine">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vandal | Navigator for the Wayback Machine</title>
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Fenix&display=swap"
     rel="stylesheet">
@@ -13,23 +17,25 @@
   <header>
     <section>
       <a id="logo" href="/">
-        <img src="/assets/images/logo-full-2.svg" alt="Vandal" class="logo">
+        <img src="/assets/images/logo-full.svg" alt="Vandal" class="logo">
       </a>
-      <div class="built-info">Built using <img src="/assets/images/wayback.png" class="wayback-logo" />API</div>
+      <div class="built-info">Built using <img src="/assets/images/wayback.png" alt="wayback machine"
+          class="wayback-logo" />API</div>
     </section>
   </header>
   <div id="masthead">
     <section class="inline">
       <div class="intro">
-        <img src="/assets/images/vandal.svg" alt="Vandal Mascot" class="mascot">
+        <img src="/assets/images/vandal.svg" alt="Vandal Mascot" class="mascot-image">
         <div class="bubble intro-bubble">
           <span>
-            Welcome! I am <b style="color:#864D23;">Vandal</b>. I am pleased to see you here. I will be your <b
-              style="color:#864D23;">Time Travel</b> guide.
+            Welcome! I am <strong style="color:#864D23;">Vandal</strong>. I am pleased to see you here. I will be your
+            <strong style="color:#864D23;">Time Travel</strong> guide.
           </span>
         </div>
         <h3 class="lead">
-          A chrome extension that helps you navigate the <b style="color:#864D23">Web Archive</b>.
+          A chrome extension that helps you navigate the <strong style="color:#864D23; border-bottom: 1px dashed;">Web
+            Archive</strong>.
         </h3>
       </div>
     </section>
@@ -45,7 +51,10 @@
 
     <section class="inline">
       <div class="screencast">
-        <video src="/assets/videos/japantimes.mp4" autoplay loop muted></video>
+        <video autoplay="autoplay" loop="true" muted>
+          <source src="/assets/videos/japantimes.mp4">
+          </source>
+        </video>
       </div>
     </section>
 
@@ -67,7 +76,7 @@
       <div class="features">
         <div class="features-u-panel">
           <div class="column">
-            <img src="/assets/images/controls.png" class="controls-image" />
+            <img src="/assets/images/controls.png" class="controls-image" alt="controls" />
             <div class="bubble controls-bubble">
               <span>
                 Finding needle in a haystack? Quickly switch between <b style="color:#864D23;">Snapshots</b> and
@@ -76,8 +85,8 @@
             </div>
           </div>
 
-          <div class="column">
-            <img src="/assets/images/history.png" class="history-image" />
+          <div class="column history-column">
+            <img src="/assets/images/history.png" class="history-image" alt="history" />
             <div class="bubble history-bubble">
               <span>Access your <b style="color:#864D23;">Navigation History</b> for a website.</span>
             </div>
@@ -85,7 +94,7 @@
         </div>
 
         <div class="features-l-panel">
-          <img src="/assets/images/drawer.png" class="controls-image" />
+          <img src="/assets/images/drawer.png" class="drawer-image" alt="drawer" />
           <div class="bubble drawer-bubble">
             <span><b style="color:#864D23;">Resource Drawer</b> to find timestamp differences of resources on the
               page.</span>
@@ -94,8 +103,50 @@
       </div>
     </section>
 
-    <section class="highlight">
 
+    <section class="historical">
+      <span class="title"><span style="border-bottom: 1px dashed;">Historical View</span> <b
+          style="font-size: 12px;color: #333333;font-family: 'Fira Code';padding-left: 5px;">Beta</b></span>
+      <img src="/assets/images/historical.png" class="historical-image" alt="historical" />
+      <div class="bubble historical-bubble">
+        <span><b style="color:#864D23;">Historical View</b> to see the changes on a website throughout the
+          years.</span>
+      </div>
+    </section>
+
+
+    <section>
+      <div class="action-container">
+        <span class="message">An intuitive and fast navigator for the Web Archive</span>
+        <div class="download">
+          <div class="download-btn">
+            <div class="text">ADD TO CHROME</div>
+            <img class="icon" src="/assets/images/chrome.svg" alt="Chrome Web Store" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <section>
+      <div class="footer">
+        <div class="wrapper">
+          <div class="author">
+            <span>Built by</span>
+            <a href="https://github.com/vegetableman/" target="_blank" rel="noopener noreferrer">
+              <img src="/assets/images/avatar.png" class="avatar-image" alt="avatar" />
+              vegetableman
+            </a>
+            </a>
+          </div>
+          <div class="source">
+            <span>Source:</span>
+            <a href="https://github.com/vegetableman/vandal" target="_blank" rel="noopener noreferrer">
+              <img src="/assets/images/github.png" style="width:17px;" /> github
+            </a>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 </body>

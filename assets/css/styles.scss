@@ -1,15 +1,35 @@
 ---
 ---
 
+* {
+  box-sizing: border-box;
+}
+html {
+  color: #333333;
+  font-size: 16px;
+  line-height: 1.15;
+}
 body {
   background-color: #f2f1ea;
+  margin: 0;
+  min-width: 320px;
 }
 .logo {
   width: 170px;
 }
-.mascot {
+@media only screen and (max-width: 486px) {
+  .logo {
+    width: 120px;
+  }
+}
+.mascot-image {
   height: 100px;
   width: 80px;
+}
+@media only screen and (max-width: 486px) {
+  .mascot-image {
+    width: 65px;
+  }
 }
 #logo {
   text-decoration: none;
@@ -19,11 +39,22 @@ body {
   top: -3px;
   width: 100px;
 }
+@media only screen and (max-width: 486px) {
+  .wayback-logo {
+    width: 72px;
+    height: 20px;
+  }
+}
 .built-info {
   font-family: "Fenix";
   display: flex;
   align-items: center;
   color: #333;
+}
+@media only screen and (max-width: 486px) {
+  .built-info {
+    font-size: 10px;
+  }
 }
 header {
   padding: 20px;
@@ -31,15 +62,17 @@ header {
 header > section {
   display: flex;
   justify-content: space-between;
-  width: 1200px;
+  max-width: 1200px;
   margin: 0 auto;
   position: relative;
+  width: 100%;
 }
 .inline {
   display: flex;
   justify-content: center;
-  width: 1200px;
+  max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
 }
 .intro {
   display: flex;
@@ -61,11 +94,27 @@ header > section {
   position: relative;
   padding: 0 15px;
 }
+@media only screen and (max-width: 486px) {
+  .bubble > span {
+    font-size: 12px;
+    line-height: 18px;
+  }
+}
 .intro-bubble {
   background-image: url("/assets/images/intro-bubble.svg");
   margin-top: 3px;
   height: 93px;
   width: 381px;
+}
+@media only screen and (max-width: 486px) {
+  .intro-bubble {
+    width: 331px;
+    height: 81px;
+    transform: scale(0.9) translate(2%, -10px);
+  }
+  .intro-bubble > span {
+    font-size: 11px;
+  }
 }
 .intro-bubble > span {
   top: 10px;
@@ -77,10 +126,18 @@ header > section {
 }
 .lead {
   color: #5a5049;
-  font-style: italic;
   font-family: "Fenix";
   margin-top: 10px;
-  font-size: 16px;
+  font-size: 18px;
+}
+@media only screen and (max-width: 486px) {
+  .lead {
+    font-size: 15px;
+    width: 80%;
+    line-height: 21px;
+    text-align: center;
+    margin: 0;
+  }
 }
 .download {
   display: flex;
@@ -114,10 +171,21 @@ header > section {
 .download-btn > .text {
   color: #ffffff;
   font-family: "Fira Code";
+  font-weight: 500;
   font-size: 14px;
 }
+@media only screen and (max-width: 486px) {
+  .download-btn {
+    width: 160px;
+    height: 45px;
+    margin-top: 30px;
+  }
+  .download-btn > .text {
+    font-size: 12px;
+  }
+}
 .download-btn > .icon {
-  width: 30px;
+  width: 35px;
   padding-left: 13px;
 }
 .download-btn:hover {
@@ -130,14 +198,24 @@ header > section {
   width: 1100px;
   border-radius: 3px;
 }
+@media only screen and (max-width: 1128px) {
+  .screencast {
+    display: flex;
+    justify-content: center;
+  }
+  .screencast > video {
+    width: 90%;
+  }
+}
 .overlap {
   background-color: #eae9e3;
-  margin-top: -120px;
+  margin-top: -150px;
   width: 100%;
 }
 .switch {
   min-height: 420px;
   padding-top: 250px;
+  padding-bottom: 60px;
 }
 .switch > .group {
   display: flex;
@@ -145,19 +223,51 @@ header > section {
   justify-content: center;
 }
 .switch-image {
-  width: 700px;
+  width: 90%;
+  max-width: 700px;
+}
+@media only screen and (max-width: 1128px) {
+  .switch > .group {
+    align-items: center;
+    justify-content: center;
+    flex-direction: column-reverse;
+  }
+  .switch-bubble {
+    background-image: url("/assets/images/bubble.svg");
+    height: 82px;
+    width: 334px;
+    transform: scale(0.9) translate(2%, -10px);
+    margin-top: 15px;
+  }
+  .switch-bubble > span {
+    top: 10px;
+  }
+}
+@media only screen and (max-width: 486px) {
+  .switch {
+    padding-top: 200px;
+    padding-bottom: 25px;
+  }
+  .switch-bubble {
+    width: 345px;
+    height: 84px;
+    transform: scale(0.7) translate(2%, -10px);
+    margin-top: 3px;
+  }
 }
 .controls-image {
   height: 250px;
 }
 .history-image {
+  width: 100%;
   height: 240px;
+  max-width: 705px;
 }
 .controls-bubble {
   background-image: url("/assets/images/controls-bubble.svg");
   position: relative;
-  height: 90px;
-  width: 335px;
+  height: 86px;
+  width: 321px;
   left: -90px;
   top: 10px;
 }
@@ -190,16 +300,191 @@ header > section {
   flex-direction: column;
   align-items: flex-start;
 }
+.features-l-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+@media only screen and (max-width: 1128px) {
+  .features {
+    padding: 50px 0;
+  }
+  .features-u-panel {
+    flex-direction: column;
+  }
+  .column {
+    align-items: center;
+  }
+  .history-column {
+    margin-top: 70px;
+  }
+  .controls-bubble {
+    left: 0;
+  }
+  .history-bubble {
+    right: 0;
+  }
+  .history-image {
+    width: 90%;
+    height: auto;
+  }
+}
+.drawer-image {
+  max-width: 900px;
+  width: 90%;
+}
 .drawer-bubble {
   background-image: url("/assets/images/drawer-bubble.svg");
   height: 100px;
   width: 397px;
   position: relative;
-  right: -320px;
   top: 15px;
 }
 .drawer-bubble > span {
   top: 15px;
 }
-.highlight {
+@media only screen and (max-width: 486px) {
+  .history-bubble {
+    height: 69px;
+    width: 319px;
+  }
+  .history-bubble > span {
+    top: 12px;
+  }
+  .drawer-bubble {
+    height: 81px;
+    width: 321px;
+  }
+  .drawer-bubble > span {
+    top: 12px;
+  }
+}
+.historical {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background: #fdf6e2;
+  padding: 50px 100px 100px 100px;
+}
+@media only screen and (max-width: 1128px) {
+  .historical {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+.historical > .title {
+  font-family: "Fenix";
+  color: #864d23;
+  font-size: 21px;
+  font-weight: 600;
+  font-weight: bold;
+}
+.historical-image {
+  width: 80%;
+  margin-top: 30px;
+}
+.historical-bubble {
+  background-image: url("/assets/images/historical-bubble.svg");
+  height: 100px;
+  width: 397px;
+  position: relative;
+  top: 15px;
+}
+@media only screen and (max-width: 486px) {
+  .historical-bubble {
+    height: 82px;
+    width: 327px;
+  }
+}
+.historical-bubble > span {
+  top: 15px;
+}
+.action-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: url("/assets/images/pattern.png");
+  background-repeat: repeat-x;
+  background-size: 25px;
+  min-height: 210px;
+  padding-top: 30px;
+}
+.action-container > .message {
+  font-size: 32px;
+  font-family: "Fenix";
+  color: #333;
+}
+.action-container .download {
+  margin-top: 10px;
+}
+@media only screen and (max-width: 700px) {
+  .action-container > .message {
+    width: 80%;
+    text-align: center;
+  }
+}
+@media only screen and (max-width: 486px) {
+  .action-container > .message {
+    font-size: 21px;
+  }
+  .action-container .download {
+    margin-top: 0;
+  }
+  .action-container .download-btn {
+    margin-top: 20px;
+  }
+}
+.footer {
+  display: flex;
+  align-items: flex-end;
+  background-image: url("/assets/images/pattern.png");
+  background-repeat: repeat-x;
+  background-size: 25px;
+  min-height: 90px;
+}
+.footer > .wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  width: 1200px;
+  margin-bottom: 24px;
+}
+@media only screen and (max-width: 1128px) {
+  .footer > .wrapper {
+    padding: 0 8%;
+  }
+}
+.avatar-image {
+  width: 25px;
+  position: relative;
+  top: 7px;
+}
+.author {
+  font-family: "Fenix";
+  font-size: 15px;
+  color: #555;
+  width: 185px;
+}
+.author > a,
+.source > a {
+  color: #864d23;
+  text-decoration: none;
+}
+.source {
+  display: flex;
+  align-items: flex-end;
+  font-family: "Fenix";
+  font-size: 15px;
+  color: #555;
+}
+.source img {
+  margin: 0 2px 0 4px;
+  position: relative;
+  top: 4px;
+}
+@media only screen and (max-width: 370px) {
+  .source img {
+    display: none;
+  }
 }
