@@ -14,6 +14,7 @@ const ImageLoader = ({ theme, ...props }) => (
       width: 40,
       height: 40
     }}
+    title="Fetching Snapshot..."
     {...props}>
     <path
       width="90"

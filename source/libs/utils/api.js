@@ -1,19 +1,26 @@
 import _ from 'lodash';
 
 let promiseMap = {};
+let port;
 
-const port = chrome.runtime.connect({ name: 'vandal' });
-port.onMessage.addListener(function (result) {
-  if (result.message === '__VANDAL__CLIENT__FETCH__RESPONSE') {
-    const p = { ...promiseMap[result.uniqueId] };
-    delete promiseMap[result.uniqueId];
-    const [res, err] = _.nth(_.get(result, 'payload'), 0);
-    if (err) {
-      return p.reject(err);
+const getPort = () => {
+  port = chrome.runtime.connect({ name: 'vandal' });
+  port.onDisconnect.addListener((obj) => {
+    console.log('disconnected port', obj);
+  });
+  port.onMessage.addListener(function(result) {
+    if (result.message === '__VANDAL__CLIENT__FETCH__RESPONSE') {
+      const p = { ...promiseMap[result.uniqueId] };
+      delete promiseMap[result.uniqueId];
+      const [res, err] = _.nth(_.get(result, 'payload'), 0);
+      if (err) {
+        return p.reject(err);
+      }
+      return p.resolve([res, err]);
     }
-    return p.resolve([res, err]);
-  }
-});
+  });
+  return port;
+};
 
 export const api = async (
   endpoint,
@@ -28,7 +35,11 @@ export const api = async (
     body
   } = {}
 ) => {
-  return new Promise(function (resolve, reject) {
+  if (!port) {
+    port = getPort();
+  }
+
+  return new Promise(function(resolve, reject) {
     const uniqueId = _.uniqueId();
     port.postMessage({
       message: '__VANDAL__CLIENT__FETCH',

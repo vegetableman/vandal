@@ -1,27 +1,13 @@
+import { caches as cachesPolyfill } from 'cache-polyfill';
 import { abort } from './api';
-// import { fetch } from '.';
 import { Lambda } from '../utils';
 
+let caches = typeof caches === 'undefined' ? cachesPolyfill : caches;
+
 export default class Screenshooter {
-  constructor() {
-    // console.log('aws:', aws);
-    // this.loadURL();
-    // this.controllers = [];
-  }
-
-  // loadURL = () => {
-  //   this.captureURL = VANDAL_SCREENSHOT_API;
-  // };
-
   abort = (type = 'screenshot') => {
     abort({ meta: { type } });
-    // console.log('this.controllers:', this.controllers);
-    // this.controller && this.controller.abort();
-    // _.forEach(this.controllers, (controller) => {
-    //   controller && controller.abort();
-    // });
     Lambda.abort();
-    // Lambda.clear();
   };
 
   fetchScreenshot = async (endpoint, config = {}) => {
@@ -29,10 +15,14 @@ export default class Screenshooter {
       if (!config.latest && !config.retry) {
         const resFromCache = await caches.match(endpoint);
         if (resFromCache) {
-          const blob = await resFromCache.blob();
-          let urlCreator = window.URL || window.webkitURL;
-          const objectURL = urlCreator.createObjectURL(blob);
-          return [objectURL, null];
+          try {
+            const blob = await resFromCache.blob();
+            let urlCreator = window.URL || window.webkitURL;
+            const objectURL = urlCreator.createObjectURL(blob);
+            return [objectURL, null];
+          } catch (ex) {
+            console.error(ex.message);
+          }
         }
       }
 
@@ -48,8 +38,12 @@ export default class Screenshooter {
         let urlCreator = window.URL || window.webkitURL;
         const objectURL = urlCreator.createObjectURL(blob);
         if (!config.latest) {
-          const responseCache = await caches.open('__VANDAL__');
-          responseCache.put(endpoint, new Response(blob));
+          try {
+            const responseCache = await caches.open('__VANDAL__');
+            responseCache.put(endpoint, new Response(blob));
+          } catch (ex) {
+            console.error(ex.message);
+          }
         }
         return [objectURL, null];
       } else {

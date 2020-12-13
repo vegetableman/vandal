@@ -90,6 +90,9 @@ const TimetravelProvider = ({ children, machine }) => {
         break;
       case '__VANDAL__NAV__REDIRECTMISMATCH':
         break;
+      case '__VANDAL__NAV__REDIRECT':
+        console.log('__VANDAL__NAV__REDIRECTXXX', frameURL);
+        break;
       case '__VANDAL__NAV__COMMIT':
         console.log('__VANDAL__NAV__COMMIT:1', frameURL, request);
         if (_.get(request, 'data.type') === 'redirect') {

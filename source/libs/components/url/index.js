@@ -6,7 +6,12 @@ import URLHistory from './history';
 import URLInfo from './info';
 import urlMachine from './url.machine';
 import { useTimeTravel } from '../../hooks';
-import { compareProps, useEventCallback } from '../../utils';
+import {
+  compareProps,
+  getDateTimeFromTS,
+  toTwelveHourTime,
+  useEventCallback
+} from '../../utils';
 import { Toast, Icon } from '../common';
 import styles from './url.module.css';
 
@@ -15,6 +20,8 @@ const URL = memo((props) => {
   const showURLInfo = state.matches('menus.info.open');
   const showURLHistory = state.matches('menus.history.open');
   const [isNoSnapError, setSnapError] = useState(false);
+  const redirectedDateTime =
+    props.redirectedTS && getDateTimeFromTS(props.redirectedTS);
 
   const onMessage = useEventCallback(
     (request) => {
@@ -121,10 +128,17 @@ const URL = memo((props) => {
       </Toast>
       <Toast
         className={styles.toast__redirect}
-        closeTimeout={2000}
-        show={props.isRedirecting}>
+        closeTimeout={5000}
+        show={redirectedDateTime && props.isRedirecting}>
         <div style={{ textAlign: 'center', width: '100%' }}>
-          Redirecting to different timestamp ...
+          <Icon className={styles.redirect__icon} name="redirect" width={11} />
+          Redirecting to{' '}
+          <u>
+            {toTwelveHourTime(
+              _.toString(_.get(redirectedDateTime, 'ts')).substr(-6)
+            )}
+          </u>{' '}
+          at {_.get(redirectedDateTime, 'humanizedDate')}
         </div>
       </Toast>
     </React.Fragment>

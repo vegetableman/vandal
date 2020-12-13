@@ -178,17 +178,8 @@ const InputCalendar = memo((props) => {
   });
 
   const years = _.map(result, 'year');
-  // const color = colorFromRange(
-  //   _.min(_.map(result, 'count')),
-  //   _.max(_.map(result, 'count'))
-  // );
 
-  console.log(
-    'result:',
-    result,
-    _.min(_.map(result, 'count')),
-    _.max(_.map(result, 'count'))
-  );
+  console.log('date:', date);
 
   return (
     <div className={styles.input__calendar}>

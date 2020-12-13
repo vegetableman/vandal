@@ -31,6 +31,8 @@ const Day = (props) => {
 const Calendar = memo((props) => {
   if (!props.date) return <div className={styles.calendar} />;
 
+  console.log('Calendar:date:', date);
+
   let date = new Date(props.date);
 
   let first = new Date(date);
@@ -106,12 +108,12 @@ const CalendarFilter = memo((props) => {
       : ''
   );
 
-  const handleCalendarChange = (e) => {
-    const { value: dateValue } = e.target;
-    setDate(dateValue);
-    props.onChange(dateValue);
-  };
-  const debouncedCalendarChange = _.debounce(handleCalendarChange, 500);
+  // const handleCalendarChange = (e) => {
+  //   const { value: dateValue } = e.target;
+  //   setDate(dateValue);
+  //   props.onChange(dateValue);
+  // };
+  // const debouncedCalendarChange = _.debounce(handleCalendarChange, 500);
 
   useEffect(
     () => {
@@ -125,14 +127,16 @@ const CalendarFilter = memo((props) => {
   );
 
   const onCalendarSelect = (month, year) => {
-    const date = `${year}-${_.padStart(month, 2, '0')}`;
-    setDate(date);
-    props.onChange(date);
+    const selectedDate = `${year}-${_.padStart(month, 2, '0')}`;
+    setDate(selectedDate);
+    props.onChange(selectedDate);
   };
 
   const onChange = useCallback((e) => {
     e.persist();
-    debouncedCalendarChange(e);
+    const { value: dateValue } = e.target;
+    setDate(dateValue);
+    props.onChange(dateValue);
   });
 
   console.log('calendar:', props);

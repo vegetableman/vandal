@@ -108,7 +108,8 @@ const navigatorMachine = Machine(
 
                     if (
                       (transitionType === 'auto' &&
-                        !_.isEmpty(ctx.currentRecords)) ||
+                        !_.isEmpty(ctx.currentRecords) &&
+                        _.indexOf(ctx.currentRecords, url) > -1) ||
                       ctx.isBack ||
                       ctx.isForward ||
                       ctx.isReload ||
@@ -125,7 +126,7 @@ const navigatorMachine = Machine(
                       currentIndex === _.lastIndexOf(ctx.currentRecords, url)
                     ) {
                       //if reload, do nothing
-                    } else {
+                    } else if (_.last(ctx.currentRecords) !== url) {
                       currentRecords = [
                         ..._.slice(
                           ctx.currentRecords,

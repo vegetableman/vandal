@@ -29,8 +29,12 @@
   height: 100%;
 }
 
-.context__err {
+.session_err__toast {
   left: 41%;
+}
+
+.frame_busted__toast {
+  left: 36%;
 }
 
 .wayback__icon {

@@ -181,6 +181,7 @@ body {
   --vandal-mode-carousel-background-color: #333333d4;
   --vandal-mode-cc-hover-background-color: #dadada;
   --vandal-mode-item-highlight-background-color: #079e072b;
+  --vandal-vertical-list-border-color: none;
 
   --vandal-carousel-icon-color: #ffffff9e;
   --vandal-carousel-icon-hover-color: #ffffff;
@@ -299,6 +300,7 @@ body {
   --vandal-mode-carousel-background-color: #333333d4;
   --vandal-mode-cc-hover-background-color: #505050;
   --vandal-mode-item-highlight-background-color: #f1ae3561;
+  --vandal-vertical-list-border-color: #2d2d2d;
 
   --vandal-carousel-icon-color: #ffffff9e;
   --vandal-carousel-icon-hover-color: #ffffff;

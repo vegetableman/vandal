@@ -81,9 +81,11 @@ const historicalMachine = Machine(
       loadingHistorical: {
         invoke: {
           id: 'fetchArchiveLinks',
-          src: 'fetchArchiveLinks'
+          src: 'fetchArchiveLinks',
+          onDone: 'historicalLoaded'
         }
-      }
+      },
+      historicalLoaded: {}
     },
     on: {
       INIT_HISTORICAL: {
@@ -163,7 +165,8 @@ const historicalMachine = Machine(
             return {
               images: _.map(ctx.snapshots, 'data')
             };
-          })
+          }),
+          'notifySnapshotLoad'
         ]
       },
       SET_SNAPSHOT: {
@@ -236,7 +239,7 @@ const historicalMachine = Machine(
         };
 
         try {
-          timestampURLs.reduce(function(prev, curr, i) {
+          return timestampURLs.reduce(function(prev, curr, i) {
             return prev.then(function() {
               if (isSTOPPED) {
                 throw new Error('Service has Stopped');

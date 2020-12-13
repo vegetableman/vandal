@@ -62,9 +62,9 @@ const App = (props) => {
         break;
       case '__VANDAL__NAV__BUSTED':
         if (ctx.url) {
-          // sendToParentMachine('TOGGLE_BUSTED_ERROR', {
-          //   payload: { value: true }
-          // });
+          sendToParentMachine('TOGGLE_BUSTED_ERROR', {
+            payload: { value: true }
+          });
         }
         break;
       case '__VANDAL__NAV__NOTFOUND':
@@ -80,6 +80,7 @@ const App = (props) => {
         { message: '___VANDAL__CLIENT__CHECKVALID' },
         function(response) {
           if (!_.get(response, 'isValid')) {
+            console.log('TOGGLE_INVALID_CONTEXT:1');
             sendToParentMachine('TOGGLE_INVALID_CONTEXT', {
               payload: { value: true }
             });
@@ -88,6 +89,7 @@ const App = (props) => {
       );
     } catch (ex) {
       if (ex.message && ex.message.indexOf('invalidated') > -1) {
+        console.log('TOGGLE_INVALID_CONTEXT:2');
         sendToParentMachine('TOGGLE_INVALID_CONTEXT', {
           payload: { value: true }
         });
@@ -97,26 +99,24 @@ const App = (props) => {
 
   const checkDonate = async () => {
     const donateState = await appDB.getDonateState();
-    console.log('donateState:', donateState);
+    const setDonateState = (__v) => {
+      appDB.setDonateState({
+        __v,
+        date: new Date().toString()
+      });
+    };
 
     if (!_.get(donateState, 'date')) {
-      appDB.setDonateState({
-        __v: 1,
-        date: new Date().toString()
-      });
+      setDonateState(1);
     } else if (
-      dateDiffInDays(new Date(_.get(donateState, 'date')), new Date()) > 5 &&
-      _.get(donateState, '__v') === 1
+      (dateDiffInDays(new Date(_.get(donateState, 'date')), new Date()) > 5 &&
+        _.get(donateState, '__v') === 1) ||
+      (dateDiffInDays(new Date(_.get(donateState, 'date')), new Date()) > 30 &&
+        _.get(donateState, '__v') === 2) ||
+      (_.get(donateState, '__v') === 2 && new Date().getDate() === 1)
     ) {
       toggleDonateModal(true);
-      appDB.setDonateState({
-        __v: 2,
-        date: new Date().toString()
-      });
-    } else if (
-      dateDiffInDays(new Date(_.get(donateState, 'date')), new Date()) > 30
-    ) {
-      toggleDonateModal(true);
+      setDonateState(2);
     }
   };
 
@@ -127,7 +127,7 @@ const App = (props) => {
       sendToParentMachine('LOADED');
     });
     chrome.runtime.onMessage.addListener(onMessage);
-    document.addEventListener('visibilitychange', checkValidity);
+    // document.addEventListener('visibilitychange', checkValidity);
     document.addEventListener('beforeunload', sendExit);
     checkDonate();
     return () => {
@@ -145,14 +145,14 @@ const App = (props) => {
       />
       <Toast
         err
-        className={styles.context__err}
+        className={styles.session_err__toast}
         show={ctx.isInvalidContext}
         exit={0}>
         <span>Found an Invalid Session. Please reload Vandal.</span>
       </Toast>
       <Toast
         err
-        className={styles.context__err}
+        className={styles.frame_busted__toast}
         show={ctx.isFrameBusted}
         exit={0}>
         <span>

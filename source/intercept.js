@@ -1,6 +1,7 @@
 const validTabs = {};
 let isBrowserActionClicked = false;
 let hasNavigationCompleted = true;
+let isBeforeNavigate = false;
 
 const log = (message, ...args) => {
   console.info(`Vandal: ${message}`, ...args);
@@ -70,7 +71,7 @@ class NavigationHandler {
       return;
     }
 
-    log('Before navigate');
+    log('Before navigate', validTabs, tabId);
 
     if (!validTabs[tabId].parentFrameId) {
       validTabs[tabId].parentFrameId = parentFrameId;
@@ -81,6 +82,8 @@ class NavigationHandler {
     }
 
     hasNavigationCompleted = false;
+
+    isBeforeNavigate = true;
 
     chrome.tabs.sendMessage(tabId, {
       message: '__VANDAL__NAV__BEFORENAVIGATE',
@@ -195,9 +198,21 @@ class NavigationHandler {
 
   historyHandler = (details) => {
     const { tabId, frameId, parentFrameId } = details;
+    // if (!isBeforeNavigate) {
+    //   if (!validTabs[tabId].parentFrameId) {
+    //     validTabs[tabId].parentFrameId = parentFrameId;
+    //   }
+
+    //   if (!validTabs[tabId].frames.includes(frameId)) {
+    //     validTabs[tabId].frames.push(frameId);
+    //   }
+    //   isBeforeNavigate = true;
+    // } else {
     if (!isValidTab(tabId) || !isValidFrame(tabId, frameId, parentFrameId)) {
       return;
     }
+    // }
+
     const { url, transitionQualifiers, transitionType } = details;
 
     // if already commited, then return
@@ -287,12 +302,26 @@ class NavigationHandler {
 
   // https://github.com/segmentio/chrome-sidebar/blob/ae9f07e97bb08927631d1f2eb5fb31e965959bde/examples/github-trending/src/background.js
   headerReceivedHandler = (details) => {
-    log('Header Received', details.url, details);
-    const { tabId, frameId, parentFrameId } = details;
+    log('Header Received', details.url, details.statusCode, details);
+    // const { tabId, frameId, parentFrameId } = details;
 
     // handle youtube video
     if (details.url.indexOf('.googlevideo.com/videoplayback') > -1) {
       return;
+    }
+
+    if (
+      details.statusCode === 302 &&
+      details.type === 'sub_frame' &&
+      Array.isArray(details.responseHeaders) &&
+      details.responseHeaders.some((header) => {
+        return header['name'] === 'x-ts' && header['value'] === '302';
+      })
+    ) {
+      chrome.tabs.sendMessage(details.tabId, {
+        message: '__VANDAL__NAV__REDIRECT',
+        data: { url: details.url }
+      });
     }
 
     // if (
@@ -344,10 +373,9 @@ class NavigationHandler {
         header.value = 'ALLOWALL';
       } else if (isXSSHeader) {
         header.value = '0';
+      } else if (isOriginHeader) {
+        header.value = details.initiator || '*';
       }
-      //  else if (isOriginHeader) {
-      //   header.value = details.initiator || '*';
-      // }
 
       return header;
     });
@@ -373,6 +401,7 @@ class NavigationHandler {
   };
 
   beforeRedirectHandler = (details) => {
+    log('Before Redirect', details.url, details);
     const { initiator, redirectUrl, tabId } = details;
     if (initiator.indexOf('chrome-extension://') === 0) {
       return;
@@ -425,7 +454,7 @@ const eventMap = {
     handler: 'headerReceivedHandler',
     options: {
       urls: requestFilters,
-      types: ['sub_frame', 'xmlhttprequest']
+      types: ['sub_frame'] //'main_frame', ,'xmlhttprequest']
     },
     extras: ['blocking', 'responseHeaders', 'extraHeaders']
   },
@@ -482,7 +511,11 @@ const eventMap = {
   },
   onHistoryStateUpdated: {
     type: 'webNavigation',
-    handler: 'historyHandler'
+    handler: 'historyHandler',
+    options: {
+      urls: requestFilters,
+      types: ['sub_frame']
+    }
   }
 };
 
@@ -569,16 +602,16 @@ function init() {
   });
 
   chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    console.log('onUpdated');
     //remove listeners on reload
-    if (isValidTab(tabId) && changeInfo.favIconUrl) {
-      log('Remove Listeners on onUpdated');
-      validTabs[tabId] = null;
-      delete validTabs[tabId];
-      removeListeners();
-    }
+    // if (isValidTab(tabId) && changeInfo.favIconUrl) {
+    //   log('Remove Listeners on onUpdated');
+    //   validTabs[tabId] = null;
+    //   delete validTabs[tabId];
+    //   removeListeners();
+    // }
   });
 }
-
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   const { message } = request;
   const currTab = sender.tab;
@@ -612,6 +645,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     validTabs[tabId] = null;
     delete validTabs[tabId];
   } else if (message === '___VANDAL__CLIENT__CHECKVALID') {
+    console.log('validTabs:', validTabs, tabId);
+    // If page not navigated yet, then return
+    if (!isBeforeNavigate) return;
     sendResponse({ isValid: Boolean(validTabs[tabId]) });
   }
   return true;

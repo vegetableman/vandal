@@ -13,8 +13,6 @@ async function init() {
   onDomReady();
 }
 
-let _app;
-
 const archiveRegExp = /\/web\/\d+(?:im_)?\/(.*)/;
 
 async function onDomReady() {
@@ -52,20 +50,8 @@ async function onDomReady() {
   container.appendChild(frame);
   container.appendChild(drawer);
 
-  console.log('content:url:', url);
-
-  window.onpopstate = function (event) {
-    var r = confirm("You pressed a Back button! Are you sure?!");
-  }
-
   ReactDOM.render(
-    <App
-      baseURL={baseURL}
-      ref={(_ref) => (_app = _ref)}
-      url={url.href}
-      root={container}
-      browser={frame}
-    />,
+    <App baseURL={baseURL} url={url.href} root={container} browser={frame} />,
     box
   );
   ReactDOM.render(<Drawer frame={frame} />, drawer);
