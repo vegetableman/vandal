@@ -6,6 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="Description" content="Navigator for the Wayback Machine">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon-16x16.png">
   <title>Vandal | Navigator for the Wayback Machine</title>
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Fenix&display=swap"
@@ -51,10 +54,12 @@
 
     <section class="inline">
       <div class="screencast">
-        <video autoplay="autoplay" loop="true" muted>
-          <source src="/assets/videos/japantimes.mp4">
-          </source>
+        <video autoplay="true" loop="true" muted poster="/assets/images/japantimes.png">
+          <source src="/assets/videos/japantimes.mp4" />
         </video>
+        <div class="screencast-message">* Vandal is not affiliated with The Japan Times. It's used for reference
+          purposes
+          only.</div>
       </div>
     </section>
 
@@ -79,7 +84,7 @@
             <img src="/assets/images/controls.png" class="controls-image" alt="controls" />
             <div class="bubble controls-bubble">
               <span>
-                Finding needle in a haystack? Quickly switch between <b style="color:#864D23;">Snapshots</b> and
+                Quickly switch between <b style="color:#864D23;">Snapshots</b> and
                 <b style="color:#864D23;">Dates</b>.
               </span>
             </div>
@@ -142,7 +147,7 @@
           <div class="source">
             <span>Source:</span>
             <a href="https://github.com/vegetableman/vandal" target="_blank" rel="noopener noreferrer">
-              <img src="/assets/images/github.png" style="width:17px;" /> github
+              <img src="/assets/images/github.png" style="width:17px;" alt="github logo" /> github
             </a>
           </div>
         </div>

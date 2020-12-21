@@ -194,6 +194,12 @@ header > section {
 .screencast {
   margin-top: 45px;
 }
+.screencast-message {
+  font-size: 11px;
+  font-family: "Fenix";
+  margin-top: 5px;
+  color: #555;
+}
 .screencast > video {
   width: 1100px;
   border-radius: 3px;
@@ -404,11 +410,10 @@ header > section {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-image: url("/assets/images/pattern.png");
   background-repeat: repeat-x;
   background-size: 25px;
   min-height: 210px;
-  padding-top: 30px;
+  padding-top: 7px;
 }
 .action-container > .message {
   font-size: 32px;
@@ -440,7 +445,7 @@ header > section {
   align-items: flex-end;
   background-image: url("/assets/images/pattern.png");
   background-repeat: repeat-x;
-  background-size: 25px;
+  background-size: 20px;
   min-height: 90px;
 }
 .footer > .wrapper {
@@ -448,7 +453,7 @@ header > section {
   justify-content: space-between;
   margin: 0 auto;
   width: 1200px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 @media only screen and (max-width: 1128px) {
   .footer > .wrapper {
