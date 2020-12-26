@@ -10,7 +10,7 @@ const cardMachine = Machine(
     context: {
       url: null,
       date: null,
-      showCard: false,
+      showCard: null,
       card: null
     },
     on: {
@@ -51,8 +51,12 @@ const cardMachine = Machine(
     states: {
       idle: {},
       loadingSnapshots: {
+        id: 'loadingSnapshots',
         invoke: {
           src: 'fetchSnapshots',
+          after: {
+            10000: 'snapshotsError.timeout'
+          },
           onDone: {
             target: 'processingSnapshot',
             actions: [
@@ -74,12 +78,11 @@ const cardMachine = Machine(
                     ts: snapshots
                   };
                 }
-              }),
-              'notifyNewSnapshot'
+              })
             ]
           },
           onError: {
-            target: 'snapshotError'
+            target: 'snapshotsError.rejected'
           }
         }
       },
@@ -87,7 +90,7 @@ const cardMachine = Machine(
         on: {
           '': [
             {
-              target: 'snapshotLoaded',
+              target: 'snapshotsLoaded',
               actions: sendParent((ctx) => ({
                 type: 'ON_SNAPSHOTS',
                 payload: {
@@ -99,9 +102,23 @@ const cardMachine = Machine(
           ]
         }
       },
-      snapshotComplete: {},
-      snapshotLoaded: {},
-      snapshotError: {}
+      snapshotsLoaded: {},
+      snapshotsError: {
+        initial: 'unknown',
+        states: {
+          unknown: {},
+          rejected: {
+            on: {
+              RETRY: '#loadingSnapshots'
+            }
+          },
+          timeout: {
+            on: {
+              RETRY: '#loadingSnapshots'
+            }
+          }
+        }
+      }
     }
   },
   {
@@ -118,9 +135,13 @@ const cardMachine = Machine(
             }
           );
 
+          console.log('data:', data, 'err:', err);
           if (err) {
             return reject(err);
           }
+
+          _.set(date, `__CACHED__`, true);
+
           return resolve({
             snapshots: _.get(data, 'items'),
             date

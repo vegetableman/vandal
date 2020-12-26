@@ -148,7 +148,9 @@
 }
 
 .timetravel__btn__intro {
-  background-color: var(--vandal-timetravel-btn-intro-background-color) !important;
+  background-color: var(
+    --vandal-timetravel-btn-intro-background-color
+  ) !important;
 }
 
 .timetravel__btn:hover {
@@ -255,7 +257,7 @@
 }
 
 .readonly__icon {
-  fill: var(--vandal-primary-icon-color); 
+  fill: var(--vandal-primary-icon-color);
   height: 15px;
   position: relative;
   right: 25px;
@@ -272,4 +274,8 @@
   transition: none !important;
   padding: 5px 10px 3px 10px !important;
   font-size: 12px !important;
+}
+
+.frame_render_err__toast {
+  left: 43%;
 }

@@ -520,12 +520,14 @@ const timetravelMachine = Machine(
             }
           },
           calendarError: {
+            initial: 'unknown',
             on: {
               RELOAD_CALENDAR_ON_ERROR: {
                 target: '#loadingCalendar'
               }
             },
             states: {
+              unknown: {},
               rejected: {
                 on: {
                   RETRY: '#loadingCalendar'
@@ -557,9 +559,10 @@ const timetravelMachine = Machine(
             }
           },
           calendarLoaded: {
-            invoke: {
-              src: 'loadOtherMonths'
-            },
+            // invoke: {
+            //   src: 'loadOtherMonths',
+            //   onError: 'calendarError'
+            // },
             on: {
               RELOAD_SPARKLINE: {
                 target: '#loadingSparkline'
@@ -672,7 +675,8 @@ const timetravelMachine = Machine(
                 })
               }
             }
-          }
+          },
+          loadOtherMonthsError: {}
         }
       }
     }
@@ -848,8 +852,6 @@ const timetravelMachine = Machine(
               return reject(err);
             }
 
-            debugger;
-
             calendar = _.reduce(
               response.items,
               (acc, item) => {
@@ -949,68 +951,76 @@ const timetravelMachine = Machine(
         });
       },
       loadOtherMonths: (ctx) => async (callback) => {
-        if (!ctx.isOverCapacity) {
-          return;
-        }
-
-        if (!jobs[ctx.currentYear]) {
-          jobs[ctx.currentYear] = [];
-        }
-
-        _.each(_.keys(jobs), (year) => {
-          if (!_.isEmpty(jobs[year]) && jobs[year] !== ctx.currentYear) {
-            abort({ meta: { type: 'captures' } });
-            jobs[year] = [];
-          }
-        });
-
-        let last = 12;
-        if (ctx.currentYear === new Date().getFullYear()) {
-          last = _.get(memoizedDateTimeFromTS(ctx.lastTS), 'month');
-        }
-
-        for (let i = last; i > 0; i--) {
-          let response, err;
-
-          if (
-            _.get(ctx.calendar, `${ctx.currentYear}.${i - 1}`) ||
-            ~_.indexOf(jobs[ctx.currentYear], i)
-          ) {
-            continue;
+        return new Promise(async (resolve, reject) => {
+          if (!ctx.isOverCapacity) {
+            return resolve(null);
           }
 
-          jobs[ctx.currentYear].push(i);
+          if (!jobs[ctx.currentYear]) {
+            jobs[ctx.currentYear] = [];
+          }
 
-          [response, err] = await api(
-            `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${
-              ctx.currentYear
-            }${_.padStart(i, 2, '0')}&groupby=day`,
-            {
-              meta: { type: 'captures' }
+          _.each(_.keys(jobs), (year) => {
+            if (!_.isEmpty(jobs[year]) && jobs[year] !== ctx.currentYear) {
+              abort({ meta: { type: 'captures' } });
+              jobs[year] = [];
             }
-          );
-
-          let calendar = _.reduce(
-            response.items,
-            (acc, item) => {
-              const date = _.nth(item, 0);
-              _.set(
-                acc,
-                `${ctx.currentYear}.${i - 1}.${_.parseInt(date) - 1}.cnt`,
-                _.parseInt(_.nth(item, 2))
-              );
-              return acc;
-            },
-            ctx.calendar || {}
-          );
-
-          callback({
-            type: 'UPDATE_CALENDAR_CB',
-            payload: { calendar, i, year: ctx.currentYear }
           });
 
-          jobs[ctx.currentYear].pop(i);
-        }
+          let last = 12;
+          if (ctx.currentYear === new Date().getFullYear()) {
+            last = _.get(memoizedDateTimeFromTS(ctx.lastTS), 'month');
+          }
+
+          for (let i = last; i > 0; i--) {
+            let response, err;
+
+            if (
+              _.get(ctx.calendar, `${ctx.currentYear}.${i - 1}`) ||
+              ~_.indexOf(jobs[ctx.currentYear], i)
+            ) {
+              continue;
+            }
+
+            jobs[ctx.currentYear].push(i);
+
+            [response, err] = await api(
+              `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${
+                ctx.currentYear
+              }${_.padStart(i, 2, '0')}&groupby=day`,
+              {
+                meta: { type: 'captures' }
+              }
+            );
+
+            if (err) {
+              return reject(err);
+            }
+
+            let calendar = _.reduce(
+              response.items,
+              (acc, item) => {
+                const date = _.nth(item, 0);
+                _.set(
+                  acc,
+                  `${ctx.currentYear}.${i - 1}.${_.parseInt(date) - 1}.cnt`,
+                  _.parseInt(_.nth(item, 2))
+                );
+                return acc;
+              },
+              ctx.calendar || {}
+            );
+
+            callback({
+              type: 'UPDATE_CALENDAR_CB',
+              payload: { calendar, i, year: ctx.currentYear }
+            });
+
+            jobs[ctx.currentYear].pop(i);
+          }
+
+          return resolve(null);
+        });
       }
     },
     guards: {

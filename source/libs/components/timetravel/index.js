@@ -167,6 +167,7 @@ const TimeTravel = (props) => {
     const { offsetLeft, offsetTop } = e.target;
     const status = _.get(date, 'st', []);
     send({ type: 'SET_DATE_HIGHLIGHTED', value: day });
+
     ctx.cardRef.send({
       type: 'SHOW_CARD',
       payload: {

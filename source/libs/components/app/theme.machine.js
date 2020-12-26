@@ -11,11 +11,11 @@ const themeMachine = Machine(
     },
     states: {
       idle: {
-        type: 'atomic',
         invoke: {
           id: 'loadTheme',
           src: 'loadTheme',
           onDone: {
+            target: 'themeLoaded',
             actions: [
               assign({
                 theme: (_ctx, e) => e.data
@@ -23,7 +23,9 @@ const themeMachine = Machine(
               'notifyThemeChanged'
             ]
           }
-        },
+        }
+      },
+      themeLoaded: {
         on: {
           SET_THEME: {
             actions: [
@@ -40,12 +42,12 @@ const themeMachine = Machine(
   },
   {
     actions: {
-      storeTheme: ctx => {
+      storeTheme: (ctx) => {
         themeDB.setTheme(ctx.theme);
       }
     },
     services: {
-      loadTheme: async ctx => {
+      loadTheme: async (ctx) => {
         try {
           const theme = await themeDB.getTheme();
           return theme;

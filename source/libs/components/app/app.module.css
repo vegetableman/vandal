@@ -37,6 +37,10 @@
   left: 36%;
 }
 
+.frame_render_err__toast {
+  left: 43%;
+}
+
 .wayback__icon {
   fill: white;
   position: relative;

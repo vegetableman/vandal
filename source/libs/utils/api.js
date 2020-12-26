@@ -39,7 +39,7 @@ export const api = async (
     port = getPort();
   }
 
-  return new Promise(function(resolve, reject) {
+  return new Promise(function(resolve) {
     const uniqueId = _.uniqueId();
     port.postMessage({
       message: '__VANDAL__CLIENT__FETCH',
@@ -58,7 +58,9 @@ export const api = async (
     });
     promiseMap[uniqueId] = {
       resolve,
-      reject
+      reject: (err) => {
+        resolve([null, err]);
+      }
     };
   });
 };

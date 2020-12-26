@@ -25,6 +25,7 @@ const App = (props) => {
 
   const { showIntro, toggleIntro } = useIntro();
   const [showDonateModal, toggleDonateModal] = useState(false);
+  const [isCommited, toggleCommit] = useState(false);
 
   const [state, sendToParentMachine] = useMachine(
     parentMachine.withConfig(
@@ -52,11 +53,13 @@ const App = (props) => {
     switch (request.message) {
       case '__VANDAL__NAV__BEFORENAVIGATE':
       case '__VANDAL__NAV__HISTORYCHANGE':
+        toggleCommit(false);
         sendToParentMachine({ type: 'SET_URL', payload: { url } });
         browser.setURL(url);
         break;
       case '__VANDAL__NAV__COMMIT':
         console.log('__VANDAL__NAV__COMMIT:', url);
+        toggleCommit(true);
         sendToParentMachine({ type: 'SET_URL', payload: { url } });
         browser.setURL(url);
         break;
@@ -74,28 +77,28 @@ const App = (props) => {
     }
   };
 
-  const checkValidity = () => {
-    try {
-      chrome.runtime.sendMessage(
-        { message: '___VANDAL__CLIENT__CHECKVALID' },
-        function(response) {
-          if (!_.get(response, 'isValid')) {
-            console.log('TOGGLE_INVALID_CONTEXT:1');
-            sendToParentMachine('TOGGLE_INVALID_CONTEXT', {
-              payload: { value: true }
-            });
-          }
-        }
-      );
-    } catch (ex) {
-      if (ex.message && ex.message.indexOf('invalidated') > -1) {
-        console.log('TOGGLE_INVALID_CONTEXT:2');
-        sendToParentMachine('TOGGLE_INVALID_CONTEXT', {
-          payload: { value: true }
-        });
-      }
-    }
-  };
+  // const checkValidity = () => {
+  //   try {
+  //     chrome.runtime.sendMessage(
+  //       { message: '___VANDAL__CLIENT__CHECKVALID' },
+  //       function(response) {
+  //         if (!_.get(response, 'isValid')) {
+  //           console.log('TOGGLE_INVALID_CONTEXT:1');
+  //           sendToParentMachine('TOGGLE_INVALID_CONTEXT', {
+  //             payload: { value: true }
+  //           });
+  //         }
+  //       }
+  //     );
+  //   } catch (ex) {
+  //     if (ex.message && ex.message.indexOf('invalidated') > -1) {
+  //       console.log('TOGGLE_INVALID_CONTEXT:2');
+  //       sendToParentMachine('TOGGLE_INVALID_CONTEXT', {
+  //         payload: { value: true }
+  //       });
+  //     }
+  //   }
+  // };
 
   const checkDonate = async () => {
     const donateState = await appDB.getDonateState();
@@ -156,7 +159,7 @@ const App = (props) => {
         show={ctx.isFrameBusted}
         exit={0}>
         <span>
-          Houston, we have a problem!. Click here to open this URL on
+          Vandal does not support this page. Click here to open this URL on
           <a
             href={`https://web.archive.org/web/*/${props.url}`}
             target="_blank"
@@ -166,6 +169,13 @@ const App = (props) => {
           <Icon name="openURL" width={11} className={styles.wayback__icon} />
         </span>
       </Toast>
+      {/* <Toast
+        err
+        closeTimeout={8000}
+        className={styles.frame_render_err__toast}
+        show={ctx.isPageCached && !isCommited}>
+        <span>Vandal is facing issues rendering this page.</span>
+      </Toast> */}
       <Toast
         className={styles.toast__notfound}
         show={state.matches('checkAvailability')}>

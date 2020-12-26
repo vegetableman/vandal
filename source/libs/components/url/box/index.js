@@ -2,7 +2,7 @@ import React, { useState, useEffect, memo } from 'react';
 import ReactTooltip from 'react-tooltip';
 import cx from 'classnames';
 import ArchiveLoader from './loader';
-import { URLLoader, Icon } from '../../common';
+import { URLLoader, Icon, Toast } from '../../common';
 import {
   getDateTimeFromTS,
   toTwelveHourTime,
@@ -35,6 +35,7 @@ const URLBox = memo((props) => {
   };
 
   const [currentTS, setCurrentTs] = useState(getTS(props));
+  const [isSWRendered, toggleSWRender] = useState(false);
   const dateObj = currentTS ? getDateTimeFromTS(currentTS) : {};
   const [showURLLoader, toggleURLLoader] = useState(false);
   const [showFrameLoader, toggleFrameLoader] = useState(false);
@@ -55,7 +56,6 @@ const URLBox = memo((props) => {
       case '__VANDAL__NAV__BEFORENAVIGATE':
         toggleURLLoader(true);
         const URL = _.get(request.data, 'url');
-        console.log('urlbox:beforenavigate', URL);
         if (isArchiveURL(URL)) {
           toggleFrameLoader(true);
           if (frameLoaderTimeout) {
@@ -67,19 +67,34 @@ const URLBox = memo((props) => {
         }
         break;
       case '__VANDAL__NAV__ERROR':
-        console.log('urlbox:error');
         toggleURLLoader(false);
         break;
       case '__VANDAL__NAV__COMPLETE':
-        console.log('urlbox:complete');
+        toggleSWRender(false);
         toggleURLLoader(false);
         toggleFrameLoader(false);
         break;
     }
   };
 
+  const checkServiceWorker = async () => {
+    if (!navigator.serviceWorker.controller) return;
+    const keys = await window.caches.keys();
+    const isPageCached = await Promise.all(keys).then(async (key) => {
+      const result = await caches.open(key);
+      const requests = await result.keys();
+      return _.some(requests, (request) => {
+        return request.url === props.url;
+      });
+    });
+    if (isPageCached) {
+      toggleSWRender(true);
+    }
+  };
+
   useEffect(() => {
     chrome.runtime.onMessage.addListener(onMessage);
+    checkServiceWorker();
     return () => {
       chrome.runtime.onMessage.removeListener(onMessage);
     };
@@ -89,9 +104,9 @@ const URLBox = memo((props) => {
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <div className={styles.favicon}>
-          {showURLLoader && <URLLoader />}
+          {showURLLoader && !isSWRendered && <URLLoader />}
           {!currentTS &&
-            !showURLLoader && (
+            (!showURLLoader || isSWRendered) && (
               <Icon name="globe" className={styles.url__icon} />
             )}
           {!!currentTS &&
@@ -210,6 +225,13 @@ const URLBox = memo((props) => {
         delayShow={100}
         offset={{ left: -5 }}
       />
+      <Toast
+        err
+        closeTimeout={8000}
+        className={styles.frame_render_err__toast}
+        show={isSWRendered && showURLLoader}>
+        <span>Vandal is experiencing issues rendering this page.</span>
+      </Toast>
     </div>
   );
 }, compareProps(['redirectedTS', 'selectedTS', 'url', 'redirectTSCollection', 'showURLHistory', 'showURLInfo', 'showTimeTravel', 'sparklineLoaded']));

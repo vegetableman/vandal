@@ -29,6 +29,11 @@ const parentMachine = Machine(
           isFrameBusted: (_ctx, e) => _.get(e, 'payload.value')
         })
       },
+      TOGGLE_SW_ERROR: {
+        actions: assign({
+          isPageCached: (_ctx, e) => _.get(e, 'payload.value')
+        })
+      },
       EXIT: {
         actions: 'notifyExit'
       },

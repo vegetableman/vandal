@@ -59,7 +59,7 @@ let urlInitiator;
 class NavigationHandler {
   beforeNavigateHandler = (details) => {
     console.log('beforeNavigateHandler: ', details, details.url);
-    const { tabId, parentFrameId, frameId, url, initiator } = details;
+    const { tabId, parentFrameId, frameId, url } = details;
     if (!isValidTab(tabId) || !isValidFrame(tabId, frameId, parentFrameId)) {
       return;
     }
@@ -487,7 +487,11 @@ const eventMap = {
   },
   onBeforeNavigate: {
     type: 'webNavigation',
-    handler: 'beforeNavigateHandler'
+    handler: 'beforeNavigateHandler',
+    options: {
+      urls: requestFilters,
+      types: ['sub_frame']
+    }
   },
   onCommitted: {
     type: 'webNavigation',

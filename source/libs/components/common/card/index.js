@@ -9,7 +9,7 @@ import { Icon } from '..';
 import styles from './card.module.css';
 import Progress from './progress';
 
-const CardList = memo((props) => {
+const SnapshotList = memo((props) => {
   const scrollContainerRef = useRef(null);
 
   useEffect(
@@ -94,25 +94,34 @@ const Card = memo((props) => {
     redirectTSCollection,
     loadSnaphots,
     abort,
-    isLoadingSnapshots,
+    loadingSnapshots,
+    cancelLoadSnapshots,
     __CACHED__
   } = props;
+
+  useEffect(
+    () => {
+      if (_.isNull(showCard)) return;
+
+      if (showCard) {
+        if (!__CACHED__ && _.isEmpty(ts)) {
+          console.log('card: before load');
+          loadSnaphots(
+            `${year}${_.padStart(month, 2, '0')}${_.padStart(day, 2, '0')}`
+          );
+        } else {
+          abort();
+        }
+      } else {
+        cancelLoadSnapshots();
+      }
+    },
+    [showCard]
+  );
 
   if (!showCard) {
     return null;
   }
-
-  useEffect(
-    () => {
-      abort();
-      if (!__CACHED__ && _.isEmpty(ts)) {
-        loadSnaphots(
-          `${year}${_.padStart(month, 2, '0')}${_.padStart(day, 2, '0')}`
-        );
-      }
-    },
-    [ts]
-  );
 
   return (
     <div
@@ -128,8 +137,8 @@ const Card = memo((props) => {
       })}
       style={{ transform: `translate(${x}px, ${y}px)` }}
       onMouseLeave={onCardLeave}>
-      <CardList
-        loadingSnapshots={isLoadingSnapshots}
+      <SnapshotList
+        loadingSnapshots={loadingSnapshots || (!__CACHED__ && _.isEmpty(ts))}
         snapshots={ts}
         selectedTS={selectedTS}
         redirectedTS={redirectedTS}
@@ -141,21 +150,33 @@ const Card = memo((props) => {
       />
     </div>
   );
-}, compareProps(['day', 'x', 'y', 'ts', 'tsCount', 'year', 'selectedTS', 'redirectedTS', 'redirectTSCollection', '__CACHED__', 'showCard', 'isLoadingSnapshots']));
+}, compareProps(['day', 'x', 'y', 'ts', 'tsCount', 'year', 'selectedTS', 'redirectedTS', 'redirectTSCollection', '__CACHED__', 'showCard', 'loadingSnapshots']));
 
+let cardInterpreter;
 const CardContainer = memo((props) => {
   const [cardState, setCardState] = useState(
     _.get(props, 'cardRef.state.context', {})
   );
+  const loadSnaphots = (date) => {
+    console.log('card: load snapshots: ', date);
+    props.cardRef.send('LOAD_SNAPSHOTS', {
+      payload: {
+        url: props.url,
+        date
+      }
+    });
+  };
+  const debouncedLoadSnapshots = useRef(_.debounce(loadSnaphots, 1000));
 
   useEffect(
     () => {
-      props.cardRef.onTransition((state) => {
+      if (!props.cardRef) return;
+      cardInterpreter = props.cardRef.onTransition((state) => {
         if (state.changed) {
           setCardState({
             ...state.context.card,
             ...{
-              isLoadingSnapshots: state.matches('loadingSnapshots'),
+              loadingSnapshots: state.matches('loadingSnapshots'),
               url: props.url,
               showCard: state.context.showCard,
               onTsClick: props.onTsClick,
@@ -168,22 +189,27 @@ const CardContainer = memo((props) => {
         }
       });
     },
-    [_.get(props, 'cardRef')]
+    [props.cardRef]
   );
+
+  useEffect(() => {
+    cardInterpreter && cardInterpreter.start();
+    return () => {
+      cardInterpreter && cardInterpreter.stop();
+    };
+  }, []);
 
   return (
     <Card
       {...cardState}
+      ts={_.get(cardState, 'ts')}
       selectedTS={props.selectedTS}
       redirectedTS={props.redirectedTS}
       redirectTSCollection={props.redirectTSCollection}
-      loadSnaphots={(date) => {
-        props.cardRef.send('LOAD_SNAPSHOTS', {
-          payload: {
-            url: props.url,
-            date
-          }
-        });
+      loadSnaphots={debouncedLoadSnapshots.current}
+      cancelLoadSnapshots={() => {
+        console.log('card: cancel');
+        debouncedLoadSnapshots.current.cancel();
       }}
       abort={() => {
         props.cardRef.send('CLEANUP');

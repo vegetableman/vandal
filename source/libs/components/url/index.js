@@ -113,7 +113,7 @@ const URL = memo((props) => {
               target="_blank"
               href="https://web.archive.org/save"
               className={styles.save__link}>
-              <span>Navigate to web archive to save it</span>
+              <span>Save it to Archive</span>
               <Icon name="openURL" width={9} className={styles.save__icon} />
             </a>
           </span>
@@ -138,7 +138,7 @@ const URL = memo((props) => {
               _.toString(_.get(redirectedDateTime, 'ts')).substr(-6)
             )}
           </u>{' '}
-          at {_.get(redirectedDateTime, 'humanizedDate')}
+          at {_.get(redirectedDateTime, 'humanizedDate')}.
         </div>
       </Toast>
     </React.Fragment>
