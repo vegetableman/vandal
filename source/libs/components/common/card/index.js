@@ -95,7 +95,9 @@ const Card = memo((props) => {
     loadSnaphots,
     abort,
     loadingSnapshots,
+    snapshotsError,
     cancelLoadSnapshots,
+    retry,
     __CACHED__
   } = props;
 
@@ -137,6 +139,11 @@ const Card = memo((props) => {
       })}
       style={{ transform: `translate(${x}px, ${y}px)` }}
       onMouseLeave={onCardLeave}>
+      {snapshotsError ? (
+        <button className={styles.retry__btn} onClick={retry}>
+          Retry
+        </button>
+      ) : null}
       <SnapshotList
         loadingSnapshots={loadingSnapshots || (!__CACHED__ && _.isEmpty(ts))}
         snapshots={ts}
@@ -177,6 +184,9 @@ const CardContainer = memo((props) => {
             ...state.context.card,
             ...{
               loadingSnapshots: state.matches('loadingSnapshots'),
+              snapshotsError:
+                state.matches('snapshotsError.rejected') ||
+                state.matches('snapshotsError.timeout'),
               url: props.url,
               showCard: state.context.showCard,
               onTsClick: props.onTsClick,
@@ -210,6 +220,9 @@ const CardContainer = memo((props) => {
       cancelLoadSnapshots={() => {
         console.log('card: cancel');
         debouncedLoadSnapshots.current.cancel();
+      }}
+      retry={() => {
+        props.cardRef.send('RETRY');
       }}
       abort={() => {
         props.cardRef.send('CLEANUP');
