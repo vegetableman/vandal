@@ -37,8 +37,9 @@
           </span>
         </div>
         <h3 class="lead">
-          A chrome extension that helps you navigate the <strong style="color:#864D23; border-bottom: 1px dashed;">Web
-            Archive</strong>.
+          A chrome extension that helps you navigate the <a target="_blank" href="http://web.archive.org/"
+            style="color:#864D23; border-bottom: 1px dashed;font-weight: bold; text-decoration: none;">Web
+            Archive</a>.
         </h3>
       </div>
     </section>
@@ -55,7 +56,8 @@
     <section class="inline">
       <div class="screencast">
         <video autoplay="true" loop="true" muted poster="/assets/images/japantimes.png">
-          <source src="/assets/videos/japantimes.mp4" />
+          <source typ="video/mp4" src="/assets/videos/japantimes.mp4" />
+          <source type="video/webm" src="assets/videos/japantimes.webm" />
         </video>
         <div class="screencast-message">* Vandal is not affiliated with The Japan Times. It's used for reference
           purposes
@@ -81,7 +83,8 @@
       <div class="features">
         <div class="features-u-panel">
           <div class="column">
-            <img src="/assets/images/controls.png" class="controls-image" alt="controls" />
+            <div class="control-image-container"><img src="/assets/images/controls.png" class="controls-image"
+                alt="controls" /></div>
             <div class="bubble controls-bubble">
               <span>
                 Quickly switch between <b style="color:#864D23;">Snapshots</b> and
@@ -91,7 +94,9 @@
           </div>
 
           <div class="column history-column">
-            <img src="/assets/images/history.png" class="history-image" alt="history" />
+            <div class="history-image-container"><img src="/assets/images/history.png" class="history-image"
+                alt="history" />
+            </div>
             <div class="bubble history-bubble">
               <span>Access your <b style="color:#864D23;">Navigation History</b> for a website.</span>
             </div>
@@ -99,7 +104,8 @@
         </div>
 
         <div class="features-l-panel">
-          <img src="/assets/images/drawer.png" class="drawer-image" alt="drawer" />
+          <div class="drawer-image-container"><img src="/assets/images/drawer.png" class="drawer-image" alt="drawer" />
+          </div>
           <div class="bubble drawer-bubble">
             <span><b style="color:#864D23;">Resource Drawer</b> to find timestamp differences of resources on the
               page.</span>

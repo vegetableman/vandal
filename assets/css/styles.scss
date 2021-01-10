@@ -192,6 +192,7 @@ header > section {
   background: #389890;
 }
 .screencast {
+  align-items: center;
   margin-top: 45px;
 }
 .screencast-message {
@@ -200,6 +201,11 @@ header > section {
   margin-top: 5px;
   color: #555;
 }
+@media only screen and (max-width: 600px) {
+  .screencast-message {
+    font-size: 0.4rem;
+  }
+}
 .screencast > video {
   width: 1100px;
   border-radius: 3px;
@@ -207,7 +213,9 @@ header > section {
 @media only screen and (max-width: 1128px) {
   .screencast {
     display: flex;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
   }
   .screencast > video {
     width: 90%;
@@ -280,6 +288,32 @@ header > section {
 .controls-bubble > span {
   top: 12px;
 }
+.control-image-container {
+  background: #f8f7f7;
+  border-radius: 3px;
+  border: 1px solid #e8e8e8;
+  text-align: center;
+  padding: 10px 10px 5px 10px;
+}
+.control-image-container:hover,
+.history-image-container:hover,
+.drawer-image-container:hover {
+  background-color: #ffffff;
+}
+.history-image-container {
+  background: #f8f7f7;
+  border-radius: 3px;
+  border: 1px solid #e8e8e8;
+  text-align: center;
+  padding: 8px 10px;
+}
+.drawer-image-container {
+  background: #f8f7f7;
+  border-radius: 3px;
+  border: 1px solid #e8e8e8;
+  text-align: center;
+  padding: 8px 10px;
+}
 .history-bubble {
   background-image: url("/assets/images/history-bubble.svg");
   height: 83px;
@@ -337,7 +371,7 @@ header > section {
 }
 .drawer-image {
   max-width: 900px;
-  width: 90%;
+  width: 100%;
 }
 .drawer-bubble {
   background-image: url("/assets/images/drawer-bubble.svg");
