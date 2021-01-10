@@ -26,7 +26,9 @@
   /* overflow: auto; */
   display: flex !important;
   align-items: baseline;
-  height: 70vh;
+  /* height: 70vh; */
+  max-height: 70vh;
+  overflow-y: scroll;
   width: 100%;
 }
 

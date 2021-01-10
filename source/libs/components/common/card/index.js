@@ -218,7 +218,6 @@ const CardContainer = memo((props) => {
       redirectTSCollection={props.redirectTSCollection}
       loadSnaphots={debouncedLoadSnapshots.current}
       cancelLoadSnapshots={() => {
-        console.log('card: cancel');
         debouncedLoadSnapshots.current.cancel();
       }}
       retry={() => {

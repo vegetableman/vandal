@@ -138,7 +138,7 @@ const URL = memo((props) => {
               _.toString(_.get(redirectedDateTime, 'ts')).substr(-6)
             )}
           </u>{' '}
-          at {_.get(redirectedDateTime, 'humanizedDate')}.
+          at {_.get(redirectedDateTime, 'humanizedDate')}
         </div>
       </Toast>
     </React.Fragment>

@@ -2,7 +2,8 @@ import { caches as cachesPolyfill } from 'cache-polyfill';
 import { abort } from './api';
 import { Lambda } from '../utils';
 
-let caches = typeof caches === 'undefined' ? cachesPolyfill : caches;
+let caches =
+  typeof window.caches === 'undefined' ? cachesPolyfill : window.caches;
 
 export default class Screenshooter {
   abort = (type = 'screenshot') => {
@@ -27,7 +28,8 @@ export default class Screenshooter {
       }
 
       const result = await Lambda.invoke(endpoint);
-      if (result.StatusCode === 200) {
+      const statusCode = _.get(JSON.parse(result.Payload), 'statusCode');
+      if (statusCode === 200) {
         let arrayBufferView = new Uint8Array(
           _.get(
             JSON.parse(_.get(JSON.parse(result.Payload), 'body')),

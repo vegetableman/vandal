@@ -50,7 +50,7 @@ const themeMachine = Machine(
       loadTheme: async (ctx) => {
         try {
           const theme = await themeDB.getTheme();
-          return theme;
+          return theme || ctx.theme;
         } catch (e) {
           console.info('ParentMachine: Failed to load theme');
           return ctx.theme;

@@ -1,5 +1,11 @@
 import { Machine, actions } from 'xstate';
-import { Screenshooter, api, abort } from '../../utils';
+import {
+  Screenshooter,
+  api,
+  abort,
+  getDateTsFromURL,
+  getDateTimeFromTS
+} from '../../utils';
 
 const { assign } = actions;
 const screenshooter = new Screenshooter();
@@ -165,8 +171,8 @@ const historicalMachine = Machine(
             return {
               images: _.map(ctx.snapshots, 'data')
             };
-          }),
-          'notifySnapshotLoad'
+          })
+          // 'notifySnapshotLoad'
         ]
       },
       SET_SNAPSHOT: {
@@ -218,6 +224,27 @@ const historicalMachine = Machine(
             /https?/,
             'https'
           );
+
+          const dateTime = getDateTimeFromTS(
+            _.get(result, 'archived_snapshots.closest.timestamp')
+          );
+          console.log(
+            'dateTime:',
+            dateTime,
+            _.get(dateTime, 'year'),
+            archiveURL,
+            ctx.years[index]
+          );
+
+          if (_.get(dateTime, 'year') > _.parseInt(ctx.years[index]) + 1) {
+            return callback({
+              type: 'ADD_SNAPSHOT',
+              payload: {
+                snapshot: { data: null, err: 'mismatch' },
+                archiveURL
+              }
+            });
+          }
 
           if (!archiveURL) {
             return callback({

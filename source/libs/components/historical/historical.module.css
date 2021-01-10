@@ -166,13 +166,11 @@
 }
 
 .snapshot {
-  position: absolute;
-  /* height: 150px; */
-  /* object-fit: cover; */
-  object-fit: fill;
-  top: 0;
-  /* width: 200px; */
   height: 100%;
+  position: absolute;
+  object-fit: cover;
+  object-position: top;
+  clip: rect(0px, 265px, 152px, 0px);
   width: 100%;
 }
 
@@ -214,6 +212,18 @@
   fill: #e45959;
   width: 25px;
   height: 25px;
+}
+
+.notfound {
+  fill: #e45959;
+  width: 30px;
+  height: 30px;
+}
+
+.notFound__err {
+  font-family: 'VANDAL__SourceSansPro';
+  font-size: 11px;
+  color: var(--vandal-text-color);
 }
 
 .action__container {
@@ -381,8 +391,8 @@
 .modal__enter,
 .modal__appear {
   opacity: 0.01;
-  transform: translate3d(0, 80px, 0) scale(0.9);
-  transition: all 500ms cubic-bezier(0.23, 1, 0.32, 1);
+  transform: translate3d(0, 60px, 0) scale(0.9);
+  transition: all 200ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .modal__enter.modal__enter__active,
@@ -398,7 +408,7 @@
 }
 
 .modal__exit.modal__exit__active {
-  transform: translate3d(0, 80px, 0) scale(0.9);
+  transform: translate3d(0, 60px, 0) scale(0.9);
   opacity: 0.01;
 }
 
@@ -410,6 +420,17 @@
   font-size: 13px;
   padding: 10px 15px 5px 15px;
   position: absolute;
-  right: 65px;
+  right: 35px;
   width: 250px;
+}
+
+.loading_text,
+.no_data_text {
+  align-self: center;
+  justify-content: center;
+
+  color: var(--vandal-text-color);
+  font-size: 17px;
+  font-family: 'VANDAL__SourceSansPro';
+  padding-top: 300px;
 }

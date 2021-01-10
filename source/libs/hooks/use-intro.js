@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { introDB } from '../utils/storage';
 
-const IntroContext = createContext({ show: true, toggleShow: () => { } });
+const IntroContext = createContext({ show: true, toggleShow: () => {} });
 
 const IntroProvider = ({ children }) => {
   const [showIntro, toggleIntro] = useState();
@@ -9,20 +9,24 @@ const IntroProvider = ({ children }) => {
   useEffect(() => {
     const loadTheme = async () => {
       const introTheme = await introDB.getIntro();
-      console.log("introTheme:", introTheme);
-      toggleIntro(_.isUndefined(introTheme) ? true : introTheme)
-    }
+      toggleIntro(_.isUndefined(introTheme) ? true : introTheme);
+    };
     loadTheme();
-  }, [])
+  }, []);
 
-  useEffect(() => {
-    if (!showIntro) {
-      introDB.setIntro(showIntro);
-    }
-  }, [showIntro])
+  useEffect(
+    () => {
+      if (!showIntro) {
+        introDB.setIntro(showIntro);
+      }
+    },
+    [showIntro]
+  );
 
   return (
-    <IntroContext.Provider value={{ showIntro, toggleIntro }}>{children}</IntroContext.Provider>
+    <IntroContext.Provider value={{ showIntro, toggleIntro }}>
+      {children}
+    </IntroContext.Provider>
   );
 };
 

@@ -39,12 +39,38 @@ const options = [
   }
 ];
 
+const Error = ({ err, onRetry }) =>
+  err === 'mismatch' ? (
+    <div className={styles.err_container}>
+      <Icon
+        name="image"
+        className={styles.err}
+        title={err}
+        width={30}
+        height={30}
+      />
+      <div className={styles.notFound__err}>NOT FOUND</div>
+    </div>
+  ) : (
+    <div className={styles.err_container}>
+      <Icon name="error" className={styles.err} title={err} />
+      <button
+        className={styles.retry__btn}
+        onClick={(e) => {
+          e.stopPropagation();
+          onRetry();
+        }}>
+        Retry
+      </button>
+    </div>
+  );
+
 const Historical = (props) => {
   const containerRef = useRef(null);
   const { theme } = useTheme();
   const { state: ttstate } = useTimeTravel();
   const [showInfoModal, toggleInfoModal] = useState(false);
-  const [snapshotCount, setSnapshotCount] = useState(false);
+  // const [snapshotCount, setSnapshotCount] = useState(false);
 
   const [state, send, service] = useMachine(
     historicalMachine.withConfig(
@@ -54,10 +80,10 @@ const Historical = (props) => {
             if (containerRef) {
               containerRef.current.focus();
             }
-          },
-          notifySnapshotLoad(ctx) {
-            setSnapshotCount(_.size(ctx.snapshots));
           }
+          // notifySnapshotLoad(ctx) {
+          //   setSnapshotCount(_.size(ctx.snapshots));
+          // }
         }
       },
       {
@@ -96,20 +122,21 @@ const Historical = (props) => {
         window.open(archiveURL, '_blank');
       } else if (option === 'openInVandal') {
         props.openURL(archiveURL);
+        props.onClose();
       }
     },
     [ctx.archiveURLs]
   );
 
-  const onEntered = () => {
-    // delay the resize
-    setTimeout(() => {
-      send('TOGGLE_RESIZE_VIEW', { payload: { resize: true } });
-    }, 10);
-  };
-  const onExited = () => {
-    send('TOGGLE_RESIZE_VIEW', { payload: { resize: false } });
-  };
+  // const onEntered = () => {
+  //   // delay the resize
+  //   setTimeout(() => {
+  //     send('TOGGLE_RESIZE_VIEW', { payload: { resize: true } });
+  //   }, 10);
+  // };
+  // const onExited = () => {
+  //   send('TOGGLE_RESIZE_VIEW', { payload: { resize: false } });
+  // };
 
   const getCaption = (index) => {
     if (ctx.carouselMode === 'month') {
@@ -138,9 +165,9 @@ const Historical = (props) => {
     const loadInfo = async () => {
       const infoCount = await historicalDB.getInfo();
       if (!infoCount || _.parseInt(infoCount) > 10) {
-        setTimeout(() => {
-          toggleInfoModal(true);
-        }, 250);
+        // setTimeout(() => {
+        toggleInfoModal(true);
+        // }, 250);
       } else {
         historicalDB.setInfo(_.parseInt(infoCount) + 1);
       }
@@ -160,13 +187,22 @@ const Historical = (props) => {
     [_.get(ttstate, 'context.sparkline'), props.url]
   );
 
-  return !!ttstate.matches('loadingSparkline') ? (
+  return !!ttstate.matches('loadingSparkline') ||
+    (!ttstate.matches('sparklineError') && _.isEmpty(ctx.years)) ? (
     <div
       className={styles.modal__container}
       onKeyDown={onKeyDown}
       ref={containerRef}
       tabIndex="0">
-      Loading...
+      <div className={styles.loading_text}>Loading...</div>
+    </div>
+  ) : !!ttstate.matches('sparklineError') || _.isEmpty(ctx.years) ? (
+    <div
+      className={styles.modal__container}
+      onKeyDown={onKeyDown}
+      ref={containerRef}
+      tabIndex="0">
+      <div className={styles.no_data_text}>No data found</div>
     </div>
   ) : (
     <div
@@ -231,33 +267,26 @@ const Historical = (props) => {
                 <div
                   className={styles.body}
                   onClick={() => {
-                    send('TOGGLE_CAROUSEL_OPEN', {
-                      payload: {
-                        index,
-                        mode: 'year',
-                        show: true,
-                        images: _.map(ctx.snapshots, 'data')
-                      }
-                    });
+                    if (!_.get(snapshot, 'err')) {
+                      send('TOGGLE_CAROUSEL_OPEN', {
+                        payload: {
+                          index,
+                          mode: 'year',
+                          show: true,
+                          images: _.map(ctx.snapshots, 'data')
+                        }
+                      });
+                    }
                   }}>
                   {snapshot ? (
                     <React.Fragment>
                       {(_.get(snapshot, 'err') && (
-                        <div className={styles.err_container}>
-                          <Icon
-                            name="error"
-                            className={styles.err}
-                            title={_.get(snapshot, 'err')}
-                          />
-                          <button
-                            className={styles.retry__btn}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onOptionSelect(index, year)('retry');
-                            }}>
-                            Retry
-                          </button>
-                        </div>
+                        <Error
+                          err={_.get(snapshot, 'err')}
+                          onRetry={() => {
+                            onOptionSelect(index, year)('retry');
+                          }}
+                        />
                       )) || (
                         <img
                           className={styles.snapshot}
@@ -407,7 +436,7 @@ const Historical = (props) => {
       ) : null}
       <Progress
         total={_.size(ctx.years)}
-        current={_.size(ctx.snapshots)}
+        current={_.size(ctx.snapshots) + 1}
         show={state.matches('loadingHistorical')}
       />
     </div>
