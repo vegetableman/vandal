@@ -4,7 +4,7 @@ import { api, abort, getDateTimeFromTS, browser } from '../../utils';
 import cardMachine from '../common/card/card.machine';
 const { assign } = actions;
 
-const ROOT_URL = 'https://web.archive.org';
+const ROOT_URL = 'https://chrome-api.archive.org';
 const MAX_COUNT_IN_YEAR = 36000;
 
 const memoizedDateTimeFromTS = memoizeOne(getDateTimeFromTS);
