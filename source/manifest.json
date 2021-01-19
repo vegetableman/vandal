@@ -1,8 +1,8 @@
 {
   "name": "Vandal",
   "version": "0.0.0",
-  "description": "Simplifies the GitHub interface and adds useful features",
-  "homepage_url": "https://github.com/sindresorhus/refined-github",
+  "description": "Navigator for Web Archive",
+  "homepage_url": "https://github.com/vegetableman/vandal",
   "manifest_version": 2,
   "minimum_chrome_version": "58",
   "permissions": [
