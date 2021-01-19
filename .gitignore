@@ -7,3 +7,4 @@ report*json
 _site
 .serverless
 .env
+.vandal.code-workspace
