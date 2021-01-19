@@ -3,12 +3,13 @@ import _ from 'lodash';
 import ShadowDOM from 'react-shadow';
 import { useMachine } from '@xstate/react';
 
-import Frame from '../frame';
 import { Toast, Icon } from '../common';
-import parentMachine from './parent.machine';
 import { browser, dateDiffInDays } from '../../utils';
 import { ThemeProvider } from '../../hooks';
 import { appDB } from '../../utils/storage';
+
+import Frame from '../frame';
+import parentMachine from './parent.machine';
 
 // TODO: put this somewhere else?
 import './normalize.css';
@@ -25,7 +26,6 @@ const App = (props) => {
 
   const { showIntro, toggleIntro } = useIntro();
   const [showDonateModal, toggleDonateModal] = useState(false);
-  const [isCommited, toggleCommit] = useState(false);
 
   const [state, sendToParentMachine] = useMachine(
     parentMachine.withConfig(
@@ -53,13 +53,7 @@ const App = (props) => {
     switch (request.message) {
       case '__VANDAL__NAV__BEFORENAVIGATE':
       case '__VANDAL__NAV__HISTORYCHANGE':
-        toggleCommit(false);
-        sendToParentMachine({ type: 'SET_URL', payload: { url } });
-        browser.setURL(url);
-        break;
       case '__VANDAL__NAV__COMMIT':
-        console.log('__VANDAL__NAV__COMMIT:', url);
-        toggleCommit(true);
         sendToParentMachine({ type: 'SET_URL', payload: { url } });
         browser.setURL(url);
         break;
@@ -71,34 +65,10 @@ const App = (props) => {
         }
         break;
       case '__VANDAL__NAV__NOTFOUND':
-        console.log('not found', url);
         sendToParentMachine('CHECK_AVAILABILITY');
         break;
     }
   };
-
-  // const checkValidity = () => {
-  //   try {
-  //     chrome.runtime.sendMessage(
-  //       { message: '___VANDAL__CLIENT__CHECKVALID' },
-  //       function(response) {
-  //         if (!_.get(response, 'isValid')) {
-  //           console.log('TOGGLE_INVALID_CONTEXT:1');
-  //           sendToParentMachine('TOGGLE_INVALID_CONTEXT', {
-  //             payload: { value: true }
-  //           });
-  //         }
-  //       }
-  //     );
-  //   } catch (ex) {
-  //     if (ex.message && ex.message.indexOf('invalidated') > -1) {
-  //       console.log('TOGGLE_INVALID_CONTEXT:2');
-  //       sendToParentMachine('TOGGLE_INVALID_CONTEXT', {
-  //         payload: { value: true }
-  //       });
-  //     }
-  //   }
-  // };
 
   const checkDonate = async () => {
     const donateState = await appDB.getDonateState();
@@ -130,7 +100,6 @@ const App = (props) => {
       sendToParentMachine('LOADED');
     });
     chrome.runtime.onMessage.addListener(onMessage);
-    // document.addEventListener('visibilitychange', checkValidity);
     document.addEventListener('beforeunload', sendExit);
     checkDonate();
     return () => {
@@ -148,13 +117,6 @@ const App = (props) => {
       />
       <Toast
         err
-        className={styles.session_err__toast}
-        show={ctx.isInvalidContext}
-        exit={0}>
-        <span>Found an Invalid Session. Please reload Vandal.</span>
-      </Toast>
-      <Toast
-        err
         className={styles.frame_busted__toast}
         show={ctx.isFrameBusted}
         exit={0}>
@@ -169,13 +131,6 @@ const App = (props) => {
           <Icon name="openURL" width={11} className={styles.wayback__icon} />
         </span>
       </Toast>
-      {/* <Toast
-        err
-        closeTimeout={8000}
-        className={styles.frame_render_err__toast}
-        show={ctx.isPageCached && !isCommited}>
-        <span>Vandal is facing issues rendering this page.</span>
-      </Toast> */}
       <Toast
         className={styles.toast__notfound}
         show={state.matches('checkAvailability')}>
@@ -285,7 +240,7 @@ const AppContainer = (props) => {
       include={[
         'chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/vandal.css'
       ]}>
-      <div className="vandal__root vandal-root">
+      <div className="vandal__root">
         <ThemeProvider notifyThemeChanged={notifyThemeChanged}>
           <IntroProvider>
             <App {...props} />

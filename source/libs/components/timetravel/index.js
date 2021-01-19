@@ -311,15 +311,10 @@ const TimeTravel = (props) => {
         !state.matches('sparklineLoaded.calendarLoaded') &&
         _.get(state, 'historyValue.current') === 'processingSparkline'
       ) {
-        console.log('LOAD_CALENDAR');
         send({
           type: 'LOAD_CALENDAR',
           payload: { url: props.url, force: _.get(state, 'event.data.force') }
         });
-        console.log(
-          'count: ',
-          _.reduce(_.get(ctx.sparkline, ctx.currentYear), (a, b) => a + b, 0)
-        );
       }
     },
     [state.value]
@@ -348,8 +343,6 @@ const TimeTravel = (props) => {
 
   let { month: selectedMonth, year: selectedYear } =
     memoizedDateTimeFromTS(ctx.selectedTS) || {};
-
-  console.log('timetravel state:', state);
 
   return (
     <div

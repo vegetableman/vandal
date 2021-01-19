@@ -7,7 +7,6 @@ const parentMachine = Machine(
     id: 'parent',
     initial: 'idle',
     context: {
-      isInvalidContext: false,
       isFrameBusted: false,
       notFound: false,
       availableURL: null,
@@ -17,11 +16,6 @@ const parentMachine = Machine(
       SET_URL: {
         actions: assign({
           url: (_ctx, e) => stripArchiveURL(_.get(e, 'payload.url'))
-        })
-      },
-      TOGGLE_INVALID_CONTEXT: {
-        actions: assign({
-          isInvalidContext: (_ctx, e) => _.get(e, 'payload.value')
         })
       },
       TOGGLE_BUSTED_ERROR: {

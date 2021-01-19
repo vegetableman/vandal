@@ -1,4 +1,3 @@
-import 'webext-dynamic-content-scripts';
 import ReactDOM from 'react-dom';
 import React from 'react';
 import domLoaded from 'dom-loaded';
@@ -6,12 +5,6 @@ import domLoaded from 'dom-loaded';
 import { safeElementReady } from './libs/utils';
 import App from './libs/components/app';
 import Drawer from './libs/components/drawer';
-
-async function init() {
-  await safeElementReady('body');
-  await domLoaded;
-  onDomReady();
-}
 
 const archiveRegExp = /\/web\/\d+(?:im_)?\/(.*)/;
 
@@ -55,6 +48,12 @@ async function onDomReady() {
     box
   );
   ReactDOM.render(<Drawer frame={frame} />, drawer);
+}
+
+async function init() {
+  await safeElementReady('body');
+  await domLoaded;
+  onDomReady();
 }
 
 init();

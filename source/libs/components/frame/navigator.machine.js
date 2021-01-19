@@ -35,18 +35,6 @@ const navigatorMachine = Machine(
               UPDATE_HISTORY_ONCOMMIT: {
                 actions: [
                   assign((ctx, e) => {
-                    console.log(
-                      'UPDATE_HISTORY_ONCOMMIT',
-                      _.get(e, 'payload.type'),
-                      'currentIndex:',
-                      ctx.currentIndex,
-                      ctx.previousIndex,
-                      'url:',
-                      _.get(e, 'payload.url'),
-                      'currentRecords:',
-                      ctx.currentRecords
-                    );
-
                     const transitionType = _.get(e, 'payload.type');
                     const url = _.get(e, 'payload.url');
                     if (transitionType === 'redirect') {
@@ -76,17 +64,6 @@ const navigatorMachine = Machine(
                         _.size(ctx.prevRecords) - 1
                       );
                     }
-
-                    console.log(
-                      'UPDATE_HISTORY_ONCOMMIT',
-                      _.get(e, 'payload.url'),
-                      transitionType,
-                      'currentIndex:',
-                      currentIndex,
-                      'prevRecords:',
-                      ctx.currentRecords,
-                      ctx.prevRecords
-                    );
 
                     return {
                       currentURL: _.get(e, 'payload.url'),
@@ -137,16 +114,6 @@ const navigatorMachine = Machine(
                       ];
                       currentIndex = Math.max(_.size(currentRecords) - 1, 0);
                     }
-
-                    console.log(
-                      'UPDATE_HISTORY',
-                      'currentIndex:',
-                      currentIndex,
-                      'url:',
-                      url,
-                      'currentRecords:',
-                      currentRecords
-                    );
 
                     return {
                       isBack: false,
@@ -233,7 +200,6 @@ const navigatorMachine = Machine(
   {
     actions: {
       persistHistory: async (ctx) => {
-        console.log('persistHistory:', ctx.currentURL);
         try {
           const isEnabled = await historyDB.isEnabled();
           if (!isEnabled) return;
@@ -246,9 +212,7 @@ const navigatorMachine = Machine(
     },
     services: {
       loadHistory: async (ctx) => {
-        console.log('loadHistory----', ctx.url);
         const [records, err] = await historyDB.getRecords(ctx.url);
-        console.log('db: ', records);
         return { records: !err ? records : [] };
       }
     }

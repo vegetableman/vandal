@@ -1,6 +1,7 @@
 import React, { useState, useEffect, memo } from 'react';
 import ReactTooltip from 'react-tooltip';
 import cx from 'classnames';
+
 import ArchiveLoader from './loader';
 import { URLLoader, Icon, Toast } from '../../common';
 import {
@@ -9,32 +10,23 @@ import {
   isArchiveURL,
   compareProps
 } from '../../../utils';
+import { useIntro } from '../../../hooks/use-intro';
+import { colors } from '../../../constants';
 import { useTheme } from '../../../hooks';
 
 import styles from './urlbox.module.css';
-import { useIntro } from '../../../hooks/use-intro';
-import { colors } from '../../../constants';
 
 const URLBox = memo((props) => {
   const { showIntro, toggleIntro } = useIntro();
-  const getTS = (props) => {
+  const getTS = () => {
     if (props.redirectedTS) {
       return props.redirectedTS;
-    }
-    // else if (
-    //   _.includes(_.values(props.redirectTSCollection), props.selectedTS)
-    // ) {
-    //   return _.findKey(
-    //     props.redirectTSCollection,
-    //     value => value === props.selectedTS
-    //   );
-    // }
-    else {
+    } else {
       return props.selectedTS;
     }
   };
 
-  const [currentTS, setCurrentTs] = useState(getTS(props));
+  const [currentTS, setCurrentTs] = useState(getTS());
   const [isSWRendered, toggleSWRender] = useState(false);
   const dateObj = currentTS ? getDateTimeFromTS(currentTS) : {};
   const [showURLLoader, toggleURLLoader] = useState(false);
@@ -44,14 +36,13 @@ const URLBox = memo((props) => {
 
   useEffect(
     () => {
-      setCurrentTs(getTS(props));
+      setCurrentTs(getTS());
     },
     [props.redirectedTS, props.selectedTS]
   );
 
   let frameLoaderTimeout;
   const onMessage = async (request) => {
-    console.log('urlbox:', request.message);
     switch (request.message) {
       case '__VANDAL__NAV__BEFORENAVIGATE':
         toggleURLLoader(true);

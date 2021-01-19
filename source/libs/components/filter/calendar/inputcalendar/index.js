@@ -179,8 +179,6 @@ const InputCalendar = memo((props) => {
 
   const years = _.map(result, 'year');
 
-  console.log('date:', date);
-
   return (
     <div className={styles.input__calendar}>
       {!disabled && (

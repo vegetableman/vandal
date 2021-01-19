@@ -90,8 +90,6 @@ const Drawer = (props) => {
   const [state, send] = useMachine(drawerMachine);
   const { context: ctx } = state;
 
-  console.log('drawer:render:', ctx, state.value);
-
   const handleMouseEnter = (source, ts) => (e) => {
     chrome.runtime.sendMessage({
       message: '__VANDAL__CLIENT__HIGHLIGHT__NODE',
@@ -174,8 +172,8 @@ const Drawer = (props) => {
           <div>
             This panel displays{' '}
             <span className={styles.info__highlight}>time difference</span> and{' '}
-            <span className={styles.info__highlight}>timestamps</span> for
-            all the page elements compared to the page. Some elements may vary
+            <span className={styles.info__highlight}>timestamps</span> for all
+            the page elements compared to the page. Some elements may vary
             significantly in capture timestamp from the base URL of the page,
             depending on the web crawling process. To know more, click{' '}
             <a
@@ -229,8 +227,8 @@ const Drawer = (props) => {
                       {ts || err || isValid ? (
                         getIcon(source)
                       ) : (
-                          <URLLoader className={styles.ts__loader} />
-                        )}
+                        <URLLoader className={styles.ts__loader} />
+                      )}
                       <a
                         href={source}
                         target="_blank"
@@ -247,10 +245,10 @@ const Drawer = (props) => {
                             Not Archived
                           </span>
                         ) : (
-                            <span className={styles.timestamp__delta___err}>
-                              Failed to fetch Resource
-                            </span>
-                          ))}
+                          <span className={styles.timestamp__delta___err}>
+                            Failed to fetch Resource
+                          </span>
+                        ))}
                       {!err &&
                         (ts ? (
                           <span
@@ -290,7 +288,6 @@ const DrawerContainer = (props) => {
 
   const messageListener = useEventCallback(
     (request) => {
-      console.log('drawer:', request.message, request.data, visible);
       if (request.message === '__VANDAL__CLIENT__TOGGLEDRAWER') {
         setVisible(!visible);
       } else if (
@@ -321,8 +318,6 @@ const DrawerContainer = (props) => {
   useEffect(() => {
     chrome.runtime.onMessage.addListener(messageListener);
   }, []);
-
-  console.log('drawer:container:', selectedTS, isNavComplete, visible, sources);
 
   return (
     <ShadowDOM

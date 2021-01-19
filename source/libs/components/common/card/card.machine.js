@@ -135,7 +135,6 @@ const cardMachine = Machine(
             }
           );
 
-          console.log('data:', data, 'err:', err);
           if (err) {
             return reject(err);
           }

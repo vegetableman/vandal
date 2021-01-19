@@ -18,19 +18,6 @@
   left: calc(50% - 50px);
 }
 
-.save__link {
-  color: #fff;
-  margin-left: 3px;
-}
-
-.save__icon {
-  fill: #fff;
-  position: relative;
-  margin-left: 9px;
-  top: 3px;
-  right: 5px;
-}
-
 .redirect__icon {
   fill: #fff;
   margin-right: 5px;

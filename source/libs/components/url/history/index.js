@@ -10,7 +10,7 @@ import {
 import { withDialog, Icon } from '../../common';
 
 import styles from './urlhistory.module.css';
-import boxStyle from '../box/urlbox.module.css';
+import boxStyles from '../box/urlbox.module.css';
 
 const formatHistoryByDate = (history) => {
   return _.reduce(
@@ -88,5 +88,5 @@ const URLHistory = ({ dialogRef, history, clearHistory, onSelect }) => {
 };
 
 export default withDialog(URLHistory, {
-  ignoreClickOnClass: `.${boxStyle.historyBtn}`
+  ignoreClickOnClass: `.${boxStyles.historyBtn}`
 });

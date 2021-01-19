@@ -189,7 +189,6 @@ const mousedownHandler = () => {
 };
 
 const messageHandler = async function(request, _, sendResponse) {
-  console.log(request);
   if (!request) return;
   if (request.message === '__VANDAL__CLIENT__FETCH__SOURCES') {
     chrome.runtime.sendMessage({
@@ -197,7 +196,6 @@ const messageHandler = async function(request, _, sendResponse) {
       data: getSources()
     });
   } else if (request.message === '__VANDAL__CLIENT__HIGHLIGHT__NODE') {
-    console.log(request.data.source);
     const node = imageMap[request.data.source];
     if (!node) {
       return;

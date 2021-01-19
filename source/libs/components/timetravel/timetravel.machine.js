@@ -125,9 +125,6 @@ export const findDayFromTs = (
   };
 };
 
-// const memoizedfindPrevDayFromTs = memoizeOne(findDayFromTs);
-// const memoizedfindNextDayFromTs = memoizeOne(findDayFromTs);
-
 export const findCalendarFromTS = (sparkline, year, dir) => {
   const isPrev = dir === 'prev';
   const findTS = (year) => {
@@ -150,16 +147,6 @@ const fetchCalendar = async (url, year) => {
     return [null, null];
   }
 
-  // TODO: remove this old api
-  /*return await api(
-    `https://web.archive.org/__wb/calendarcaptures?url=${encodeURIComponent(
-      url
-    )}&selected_year=${year}`,
-    {
-      enableThrow: true
-    }
-  );*/
-
   return await api(
     `${ROOT_URL}/cdx/search/cdx?url=${url}&from=${`${year}0101`}&to=${`${year}1231`}`,
     {
@@ -175,8 +162,6 @@ const memoizedFetchCalendar = memoizeOne(fetchCalendar, (arg1, arg2) => {
       _.replace(arg2, 'https://', 'http://')
   );
 });
-
-const jobs = {};
 
 const timetravelMachine = Machine(
   {
@@ -211,7 +196,6 @@ const timetravelMachine = Machine(
         actions: assign((_ctx, e) => {
           return {
             url: _.get(e, 'payload.url')
-            // redirectedTS: null
           };
         })
       },
@@ -220,12 +204,7 @@ const timetravelMachine = Machine(
         actions: assign((ctx, e) => {
           return {
             url: _.get(e, 'payload.url', ctx.url),
-            // selectedTS: _.get(e, 'payload.ts', ctx.selectedTS),
             selectedTS: _.get(e, 'payload.ts'),
-            // currentMonth: (_ctx, e) =>
-            //   _.get(memoizedDateTimeFromTS(ctx.lastTS), 'month'),
-            // currentYear: (_ctx, e) =>
-            //   _.get(memoizedDateTimeFromTS(ctx.lastTS), 'year'),
             redirectedTS: null,
             calendar: null
           };
@@ -312,8 +291,6 @@ const timetravelMachine = Machine(
             selectedTS,
             redirectedTS:
               ctx.selectedTS !== ts && ctx.redirectTSCollection[ts] ? ts : null,
-            // redirectedTS:
-            //   !isNavigatedTS && ctx.redirectTSCollection[ts] ? ts : null
             currentMonth: _.get(memoizedDateTimeFromTS(selectedTS), 'month'),
             currentYear: _.get(memoizedDateTimeFromTS(selectedTS), 'year'),
             currentDay: _.get(memoizedDateTimeFromTS(selectedTS), 'day')
@@ -359,11 +336,6 @@ const timetravelMachine = Machine(
       UPDATE_CALENDAR_CB: {
         actions: assign({
           calendar: (_ctx, e) => {
-            console.log(
-              'loadOtherMonths:ix:',
-              _.get(e, 'payload.i'),
-              _.get(e, 'payload.year')
-            );
             return _.get(e, 'payload.calendar');
           }
         })
@@ -559,10 +531,6 @@ const timetravelMachine = Machine(
             }
           },
           calendarLoaded: {
-            // invoke: {
-            //   src: 'loadOtherMonths',
-            //   onError: 'calendarError'
-            // },
             on: {
               RELOAD_SPARKLINE: {
                 target: '#loadingSparkline'
@@ -601,7 +569,6 @@ const timetravelMachine = Machine(
               GOTO__TS_YEAR: {
                 target: 'loadingCalendar',
                 actions: assign({
-                  // selectedTS: null,
                   currentMonth: (_ctx, e) => _.get(e, 'payload.month'),
                   currentYear: (_ctx, e) => _.get(e, 'payload.year')
                 })
@@ -612,8 +579,6 @@ const timetravelMachine = Machine(
                   const ts = e.value;
                   return {
                     selectedTS: ts,
-                    // redirectedTS: null,
-                    // redirectTSCollection: {},
                     currentMonth: _.get(memoizedDateTimeFromTS(ts), 'month'),
                     currentYear: _.get(memoizedDateTimeFromTS(ts), 'year'),
                     currentDay: _.get(memoizedDateTimeFromTS(ts), 'day')
@@ -675,8 +640,7 @@ const timetravelMachine = Machine(
                 })
               }
             }
-          },
-          loadOtherMonthsError: {}
+          }
         }
       }
     }
@@ -948,78 +912,6 @@ const timetravelMachine = Machine(
           calendar.url = ctx.url;
 
           return resolve({ calendar, lastTS, payload: e.payload });
-        });
-      },
-      loadOtherMonths: (ctx) => async (callback) => {
-        return new Promise(async (resolve, reject) => {
-          if (!ctx.isOverCapacity) {
-            return resolve(null);
-          }
-
-          if (!jobs[ctx.currentYear]) {
-            jobs[ctx.currentYear] = [];
-          }
-
-          _.each(_.keys(jobs), (year) => {
-            if (!_.isEmpty(jobs[year]) && jobs[year] !== ctx.currentYear) {
-              abort({ meta: { type: 'captures' } });
-              jobs[year] = [];
-            }
-          });
-
-          let last = 12;
-          if (ctx.currentYear === new Date().getFullYear()) {
-            last = _.get(memoizedDateTimeFromTS(ctx.lastTS), 'month');
-          }
-
-          for (let i = last; i > 0; i--) {
-            let response, err;
-
-            if (
-              _.get(ctx.calendar, `${ctx.currentYear}.${i - 1}`) ||
-              ~_.indexOf(jobs[ctx.currentYear], i)
-            ) {
-              continue;
-            }
-
-            jobs[ctx.currentYear].push(i);
-
-            [response, err] = await api(
-              `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${
-                ctx.currentYear
-              }${_.padStart(i, 2, '0')}&groupby=day`,
-              {
-                meta: { type: 'captures' }
-              }
-            );
-
-            if (err) {
-              return reject(err);
-            }
-
-            let calendar = _.reduce(
-              response.items,
-              (acc, item) => {
-                const date = _.nth(item, 0);
-                _.set(
-                  acc,
-                  `${ctx.currentYear}.${i - 1}.${_.parseInt(date) - 1}.cnt`,
-                  _.parseInt(_.nth(item, 2))
-                );
-                return acc;
-              },
-              ctx.calendar || {}
-            );
-
-            callback({
-              type: 'UPDATE_CALENDAR_CB',
-              payload: { calendar, i, year: ctx.currentYear }
-            });
-
-            jobs[ctx.currentYear].pop(i);
-          }
-
-          return resolve(null);
         });
       }
     },

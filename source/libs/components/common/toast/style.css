@@ -27,14 +27,6 @@
   left: calc(50% - 200px);
 }
 
-.vandal__toast-save {
-  left: calc(50% - 45px);
-}
-
-.vandal__toast-save-error {
-  left: calc(50% - 90px);
-}
-
 .vandal__toast-block-error {
   left: calc(50% - 150px);
 }

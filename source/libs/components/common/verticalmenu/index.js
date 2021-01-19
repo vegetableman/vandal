@@ -58,7 +58,7 @@ const VerticalMenu = memo(
   forwardRef(({ onSelect = () => {}, ...props }, ref) => {
     const [isVisible, toggleMenu] = useState(false);
 
-    const onOptionSelect = (value, hideOnSelect = true) => event => {
+    const onOptionSelect = (value, hideOnSelect = true) => (event) => {
       event.preventDefault();
       event.stopPropagation();
       onSelect(value, event);
@@ -73,8 +73,6 @@ const VerticalMenu = memo(
       }
     }));
 
-    console.log('VerticalMenu:render');
-
     return (
       <div
         className={cx({
@@ -87,7 +85,7 @@ const VerticalMenu = memo(
             [props.iconContainerClass]: !!props.iconContainerClass
           })}
           onClick={() => {
-            toggleMenu(prevState => {
+            toggleMenu((prevState) => {
               return !prevState;
             });
           }}>

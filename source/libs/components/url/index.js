@@ -1,11 +1,5 @@
 import React, { useEffect, useState, memo } from 'react';
 import { useMachine } from '@xstate/react';
-
-import URLBox from './box';
-import URLHistory from './history';
-import URLInfo from './info';
-import urlMachine from './url.machine';
-import { useTimeTravel } from '../../hooks';
 import {
   compareProps,
   getDateTimeFromTS,
@@ -13,6 +7,14 @@ import {
   useEventCallback
 } from '../../utils';
 import { Toast, Icon } from '../common';
+
+import URLBox from './box';
+import URLHistory from './history';
+import URLInfo from './info';
+import { useTimeTravel } from '../../hooks';
+
+import urlMachine from './url.machine';
+
 import styles from './url.module.css';
 
 const URL = memo((props) => {
@@ -50,8 +52,6 @@ const URL = memo((props) => {
     },
     [props.noSparklineFound, props.isSaving]
   );
-
-  console.log('URL:render');
 
   return (
     <React.Fragment>
@@ -150,13 +150,6 @@ const URLContainer = memo((props) => {
     state: ttstate,
     state: { context: ctx }
   } = useTimeTravel();
-
-  console.log(
-    'URLContainer:selectedTS:',
-    ctx.selectedTS,
-    ctx.redirectedTS,
-    props
-  );
 
   return (
     <URL

@@ -1,9 +1,9 @@
-import React, { memo } from 'react';
+import React from 'react';
 import _ from 'lodash';
 import cx from 'classnames';
 import styles from './calendar.module.css';
 
-const Calendar = props => {
+const Calendar = (props) => {
   let { date, getColor, onMouseMove, onMouseLeave, onClick } = props;
   if (!date) return <div className={style.calendar} />;
 

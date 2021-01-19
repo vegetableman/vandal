@@ -9,19 +9,17 @@ import ReactTooltip from 'react-tooltip';
 import cx from 'classnames';
 import { useMachine } from '@xstate/react';
 
-import { VerticalMenu, Switch, Icon, Toast } from '../common';
+import { VerticalMenu, Switch, Icon } from '../common';
+import { browser } from '../../utils';
+import { TimetravelProvider, useTheme } from '../../hooks';
+import { colors } from '../../constants';
 import URL from '../url';
 import TimeTravel from '../timetravel';
 import Historical from '../historical';
 import About from './about';
 
 import frameMachine from './frame.machine';
-import saveMachine from './save.machine';
 import navigatorMachine from './navigator.machine';
-
-import { browser } from '../../utils';
-import { TimetravelProvider, useTheme } from '../../hooks';
-import { colors } from '../../constants';
 
 import styles from './frame.module.css';
 
@@ -43,19 +41,6 @@ const options = [
       </div>
     )
   }
-  // {
-  //   value: 'changeView',
-  //   text: (
-  //     <div className={styles.vertical__wayback__item}>
-  //       <span>Changes</span>
-  //       <Icon
-  //         name="openURL"
-  //         width={11}
-  //         className={styles.vertical__wayback__icon}
-  //       />
-  //     </div>
-  //   )
-  // }
 ];
 
 const Frame = (props) => {
@@ -79,25 +64,7 @@ const Frame = (props) => {
     }
   };
 
-  const [saveState, sendtoSaveMachine] = useMachine(
-    saveMachine.withConfig({
-      actions: {
-        setBrowserURL: (ctx) => {
-          browser.navigate(ctx.savedArchiveURL);
-        },
-        reloadSparkline: () => {
-          send('LOAD_SPARKLINE', { payload: { url: props.url, force: true } });
-        }
-      }
-    })
-  );
-
-  // const onSave = () => {
-  //   sendtoSaveMachine({ type: 'SAVE', payload: { url: props.url } });
-  // };
-  // const debouncedSave = _.debounce(onSave, 250);
-
-  const [navState, sendToNav, navService] = useMachine(
+  const [navState, sendToNav] = useMachine(
     navigatorMachine.withConfig(
       {
         actions: {
@@ -119,7 +86,6 @@ const Frame = (props) => {
   useEffect(
     () => {
       if (props.loaded) {
-        console.log('load_sparkline:', props.url);
         send('LOAD_SPARKLINE', { payload: { url: props.url } });
       }
     },
@@ -130,17 +96,8 @@ const Frame = (props) => {
     const frameURL = _.get(request.data, 'url');
 
     switch (request.message) {
-      /*  case '__VANDAL__NAV__BEFORENAVIGATE':
-        // sendToNav('BEFORE_NAVIGATION', {
-        //   payload: {
-        //     url: frameURL
-        //   }
-        // });
-        break; */
       case '__VANDAL__NAV__COMMIT':
-        // case '__VANDAL__NAV__HISTORYCHANGE':
         const transitionType = _.get(request.data, 'type');
-        console.log('transitionType:', transitionType);
         sendToNav('UPDATE_HISTORY_ONCOMMIT', {
           payload: {
             url: frameURL,
@@ -150,9 +107,7 @@ const Frame = (props) => {
         break;
 
       case '__VANDAL__NAV__BEFORENAVIGATE':
-      // case '__VANDAL__NAV__COMMIT':
       case '__VANDAL__NAV__HISTORYCHANGE':
-        console.log('commit:request:', request);
         sendToNav('UPDATE_HISTORY', {
           payload: {
             url: frameURL,
@@ -227,13 +182,6 @@ const Frame = (props) => {
     [options, theme]
   );
 
-  console.log(
-    'frame state:',
-    navState.context.currentURL,
-    navState.context.currentIndex,
-    navState.context.currentRecords
-  );
-
   const disableBack =
     _.indexOf(navState.context.currentRecords, navState.context.currentURL) <=
     0;
@@ -246,8 +194,6 @@ const Frame = (props) => {
       navState.context.currentURL
     ) ===
       _.size(navState.context.currentRecords) - 1;
-
-  // console.log('frame:render', state);
 
   return (
     <TimetravelProvider machine={state.context.timetravelRef}>
@@ -300,24 +246,11 @@ const Frame = (props) => {
             clearHistory={() => {
               sendToNav('CLEAR_HISTORY');
             }}
-            isSaving={saveState.matches('open.loading')}
             toggleTimeTravel={() => send('TOGGLE_TIMETRAVEL')}
           />
         </div>
         <div className={styles.right}>
           <div className={styles.right__action__container}>
-            {/* <button
-              data-for="vandal-save"
-              data-tip="Save Page to Archive"
-              className={cx({
-                [styles.save__btn]: true,
-                [styles.save__btn__disabled]: saveState.matches('open.loading')
-              })}
-              onClick={() => {
-                window.open('https://web.archive.org/save', '_blank');
-              }}>
-              <Icon name="save" className={styles.save__btn__icon} />
-            </button> */}
             <button
               data-for="vandal-drawer"
               data-tip="Show Timestamps"
@@ -335,18 +268,6 @@ const Frame = (props) => {
               }}>
               <Icon name="resource" className={styles.resource__icon} />
             </button>
-            <ReactTooltip
-              id="vandal-save"
-              className={styles.tooltip}
-              arrowColor={colors.BL}
-              textColor={colors.WHITE}
-              backgroundColor={colors.BL}
-              effect="solid"
-              place="bottom"
-              type="dark"
-              delayShow={1000}
-              offset={{ bottom: 8, left: 0 }}
-            />
             <ReactTooltip
               id="vandal-drawer"
               className={styles.tooltip}
@@ -404,66 +325,6 @@ const Frame = (props) => {
             }}
           />
         )}
-        {/* <Toast
-          className={styles.toast__save}
-          show={saveState.matches('open.loading')}>
-          <div>Saving Page to Archive...</div>
-        </Toast> */}
-        <Toast
-          err
-          className={`${styles.toast__save} ${styles.toast__save___error}`}
-          show={saveState.matches('open.failure.rejection')}>
-          <div>
-            <span>Error saving to Archive. Please try again.</span>
-            <Icon
-              name="close"
-              className={styles.toast__close__icon}
-              onClick={() => {
-                sendtoSaveMachine('CLOSE');
-              }}
-            />
-          </div>
-        </Toast>
-        <Toast
-          err
-          className={`${styles.toast__save} ${styles.toast__save___error}`}
-          show={saveState.matches('open.failure.timeout')}>
-          <div>
-            <span>Error saving to Archive. The request timed out.</span>
-            <Icon
-              name="close"
-              className={styles.toast__close__icon}
-              onClick={() => {
-                sendtoSaveMachine('CLOSE');
-              }}
-            />
-          </div>
-        </Toast>
-        <Toast
-          className={styles.toast__url}
-          show={saveState.matches('open.success')}>
-          <div className={styles.toast__link}>
-            <a
-              href={_.get(saveState, 'context.savedArchiveURL')}
-              target="_blank">
-              {_.get(saveState, 'context.savedArchiveURL')}
-            </a>
-          </div>
-          <div className={styles.toast__actions}>
-            <button
-              className={styles.toast__open__btn}
-              onClick={() => {
-                sendtoSaveMachine('OPEN_URL_IN_VANDAL');
-              }}>
-              open
-            </button>
-            <button
-              className={styles.toast__close__btn}
-              onClick={() => sendtoSaveMachine('CLOSE')}>
-              close
-            </button>
-          </div>
-        </Toast>
         <ReactTooltip
           id="vandal-reload"
           className={styles.tooltip}

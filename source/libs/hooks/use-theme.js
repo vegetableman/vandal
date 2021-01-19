@@ -19,7 +19,7 @@ const ThemeProvider = ({ children, notifyThemeChanged }) => {
   );
 
   useEffect(() => {
-    darkModeMediaQuery.addListener((e) => {
+    darkModeMediaQuery.addEventListener('change', (e) => {
       const darkModeOn = e.matches;
       send('SET_THEME', {
         payload: { theme: darkModeOn ? 'dark' : 'light' }

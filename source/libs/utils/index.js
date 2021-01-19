@@ -1,52 +1,14 @@
 import { useRef, useEffect, useCallback } from 'react';
-import select from 'select-dom';
 import domLoaded from 'dom-loaded';
 import elementReady from 'element-ready';
-import OptionsSync from 'webext-options-sync';
-import ghInjection from 'github-injection';
 import _ from 'lodash';
 
-import manhattanDistanceOfHash from './manhattan-distance';
 export { api, controller, abort } from './api';
-export { default as xhr } from './xhr';
 export { default as fetch } from './fetch';
 export { default as Screenshooter } from './screenshooter';
 export { default as useRefCallback } from './use-ref-callback';
 export { default as compareProps } from './compare-props';
 export { default as Lambda } from './lambda';
-export { default as hamming } from './hamming';
-import scaleLog from './scalelog';
-export { processHistogram } from './histogram';
-
-const options = new OptionsSync().getAll();
-
-class Browser {
-  setBrowser(browser) {
-    this.browser = browser;
-  }
-
-  setBaseURL(url) {
-    this.baseURL = url;
-  }
-
-  setURL(url) {
-    this.url = url;
-  }
-
-  navigate(url) {
-    this.browser.src = `${this.baseURL}?url=${encodeURIComponent(url)}`;
-  }
-
-  reload() {
-    if (this.url) {
-      this.browser.src = `${this.baseURL}?url=${encodeURIComponent(this.url)}`;
-    } else {
-      this.browser.src = this.browser.src;
-    }
-  }
-}
-
-export const browser = new Browser();
 
 export const monthNames = [
   'Jan',
@@ -78,61 +40,31 @@ export const longMonthNames = [
   'December'
 ];
 
-/**
- *`github-injection` happens even when the user navigates in history
- * This causes listeners to run on content that has already been updated.
- * If a feature needs to be disabled when navigating away,
- * use the regular `github-injection`
- */
-export function safeOnAjaxedPages(callback) {
-  ghInjection(() => {
-    if (!select.exists('has-rgh')) {
-      callback();
+class Browser {
+  setBrowser(mbrowser) {
+    this.browser = mbrowser;
+  }
+
+  setBaseURL(url) {
+    this.baseURL = url;
+  }
+
+  setURL(url) {
+    this.url = url;
+  }
+
+  navigate(url) {
+    this.browser.src = `${this.baseURL}?url=${encodeURIComponent(url)}`;
+  }
+
+  reload() {
+    if (this.url) {
+      this.browser.src = `${this.baseURL}?url=${encodeURIComponent(this.url)}`;
     }
-  });
+  }
 }
 
-/**
- * Enable toggling each feature via options.
- * Prevent fn's errors from blocking the remaining tasks.
- * https://github.com/sindresorhus/refined-github/issues/678
- */
-export const enableFeature = async (fn) => {
-  const { disabledFeatures = '', logging = false } = await options;
-  const log = logging ? console.log : () => { };
-
-  const filename = fn.name.replace(/_/g, '-');
-  if (/^$|^anonymous$/.test(filename)) {
-    console.warn('This feature is nameless', fn);
-  } else if (disabledFeatures.includes(filename)) {
-    log('↩️', 'Skipping', filename);
-    return;
-  }
-  try {
-    await fn();
-    log('✅', filename);
-  } catch (err) {
-    console.log('❌', filename);
-    console.error(err);
-  }
-};
-
-export const isFeatureEnabled = async (featureName) => {
-  const { disabledFeatures = '' } = await options;
-  return disabledFeatures.includes(featureName);
-};
-
-// export const getUsername = onetime(() => select('meta[name="user-login"]').getAttribute('content'));
-
-export const groupBy = (iterable, grouper) => {
-  const map = {};
-  for (const item of iterable) {
-    const key = grouper(item);
-    map[key] = map[key] || [];
-    map[key].push(item);
-  }
-  return map;
-};
+export const browser = new Browser();
 
 /**
  * Automatically stops checking for an element to appear once the DOM is ready.
@@ -145,99 +77,6 @@ export const safeElementReady = (selector) => {
 
   // If cancelled, return null like a regular select() would
   return waiting.catch(() => null);
-};
-
-/**
- * Append to an element, but before a element that might not exist.
- * @param  {Element|string} parent  Element (or its selector) to which append the `child`
- * @param  {string}         before  Selector of the element that `child` should be inserted before
- * @param  {Element}        child   Element to append
- * @example
- *
- * <parent>
- *   <yes/>
- *   <oui/>
- *   <nope/>
- * </parent>
- *
- * appendBefore('parent', 'nope', <sì/>);
- *
- * <parent>
- *   <yes/>
- *   <oui/>
- *   <sì/>
- *   <nope/>
- * </parent>
- */
-export const appendBefore = (parent, before, child) => {
-  if (typeof parent === 'string') {
-    parent = select(parent);
-  }
-
-  // Select direct children only
-  before = select(`:scope > ${before}`, parent);
-  if (before) {
-    before.before(child);
-  } else {
-    parent.append(child);
-  }
-};
-
-export const wrap = (target, wrapper) => {
-  target.before(wrapper);
-  wrapper.append(target);
-};
-
-export const wrapAll = (targets, wrapper) => {
-  targets[0].before(wrapper);
-  wrapper.append(...targets);
-};
-
-// Concats arrays but does so like a zipper instead of appending them
-// [[0, 1, 2], [0, 1]] => [0, 0, 1, 1, 2]
-// Like lodash.zip
-export const flatZip = (table, limit = Infinity) => {
-  const maxColumns = Math.max(...table.map((row) => row.length));
-  const zipped = [];
-  for (let col = 0; col < maxColumns; col++) {
-    for (const row of table) {
-      if (row[col]) {
-        zipped.push(row[col]);
-        if (zipped.length === limit) {
-          return zipped;
-        }
-      }
-    }
-  }
-  return zipped;
-};
-
-export const isMac = /Mac/.test(window.navigator.platform);
-
-export const metaKey = isMac ? 'metaKey' : 'ctrlKey';
-
-export const anySelector = (selector) => {
-  const prefix = document.head.style.MozOrient === '' ? 'moz' : 'webkit';
-  return selector.replace(/:any\(/g, `:-${prefix}-any(`);
-};
-
-const getWindow = () => {
-  var win;
-  if (typeof window !== 'undefined') {
-    win = window;
-  } else if (typeof global !== 'undefined') {
-    win = global;
-  } else if (typeof self !== 'undefined') {
-    win = self;
-  } else {
-    win = {};
-  }
-  return win;
-};
-
-export const getLocation = () => {
-  const w = getWindow();
-  if (w && w.location) return w.location.href;
 };
 
 function getPeriod(hour) {
@@ -337,68 +176,6 @@ export const countVersions = (sparkline) => {
   return count;
 };
 
-const requestAnimFrame = (function () {
-  return (
-    window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.oRequestAnimationFrame ||
-    window.msRequestAnimationFrame ||
-    function (/* function */ callback, /* DOMElement */ element) {
-      window.setTimeout(callback, 1000 / 60);
-    }
-  );
-})();
-
-export const clearRequestInterval = function (handle) {
-  window.cancelAnimationFrame
-    ? window.cancelAnimationFrame(handle.value)
-    : window.webkitCancelAnimationFrame
-      ? window.webkitCancelAnimationFrame(handle.value)
-      : window.webkitCancelRequestAnimationFrame
-        ? window.webkitCancelRequestAnimationFrame(
-          handle.value
-        ) /* Support for legacy API */
-        : window.mozCancelRequestAnimationFrame
-          ? window.mozCancelRequestAnimationFrame(handle.value)
-          : window.oCancelRequestAnimationFrame
-            ? window.oCancelRequestAnimationFrame(handle.value)
-            : window.msCancelRequestAnimationFrame
-              ? window.msCancelRequestAnimationFrame(handle.value)
-              : clearInterval(handle);
-};
-
-export const requestInterval = function (fn, delay) {
-  if (
-    !window.requestAnimationFrame &&
-    !window.webkitRequestAnimationFrame &&
-    !(
-      window.mozRequestAnimationFrame && window.mozCancelRequestAnimationFrame
-    ) && // Firefox 5 ships without cancel support
-    !window.oRequestAnimationFrame &&
-    !window.msRequestAnimationFrame
-  )
-    return window.setInterval(fn, delay);
-
-  var start = new Date().getTime(),
-    handle = new Object();
-
-  function loop() {
-    var current = new Date().getTime(),
-      delta = current - start;
-
-    if (delta >= delay) {
-      fn.call();
-      start = new Date().getTime();
-    }
-
-    handle.value = requestAnimFrame(loop);
-  }
-
-  handle.value = requestAnimFrame(loop);
-  return handle;
-};
-
 const splitTimestamp = (timestamp) => {
   if (typeof timestamp == 'number') {
     timestamp = timestamp.toString();
@@ -427,7 +204,7 @@ export const timestamp2datetime = (timestamp) => {
   );
 };
 
-export const dateTimeDiff = function (dtmsec, captureTS) {
+export const dateTimeDiff = function(dtmsec, captureTS) {
   if (!dtmsec || !captureTS) return;
   let diff = Date.parse(dtmsec) - Date.parse(timestamp2datetime(captureTS));
   let prefix = '';
@@ -535,67 +312,14 @@ export const stripIm = (url) => {
   return _.replace(url, 'im_', '');
 };
 
-export const archiveAllLink = (url) => {
-  return `https://web.archive.org/web/*/${url}`;
-};
-
 export const formatDateTimeTS = (dt) => {
   return _.isString(dt)
     ? _.replace(
-      _.replace(dt, dt.slice(-12, -4), toTwelveHourTime(dt.slice(-12, -4))),
-      'GMT',
-      ''
-    )
+        _.replace(dt, dt.slice(-12, -4), toTwelveHourTime(dt.slice(-12, -4))),
+        'GMT',
+        ''
+      )
     : dt;
-};
-
-function ease(k) {
-  return 0.5 * (1 - Math.cos(Math.PI * k));
-}
-
-function step(context) {
-  let time = Date.now();
-  let value;
-  let currentX;
-  let elapsed = (time - context.startTime) / 300;
-
-  // avoid elapsed times higher than one
-  elapsed = elapsed > 1 ? 1 : elapsed;
-
-  // apply easing to elapsed time
-  value = ease(elapsed);
-
-  currentX = context.startX + (context.x - context.startX) * value;
-
-  context.method.call(context.scrollable, currentX);
-
-  // scroll more if we have not reached our destination
-  if (currentX !== context.x) {
-    window.requestAnimationFrame(step.bind(window, context));
-  }
-}
-
-export const smoothScrollX = (el, x) => {
-  let scrollable;
-  let startX;
-  let method;
-  let startTime = Date.now();
-
-  // define scroll context
-  scrollable = el;
-  startX = el.scrollLeft;
-  method = function (val) {
-    this.scrollLeft = val;
-  };
-
-  // scroll looping over a frame
-  step({
-    scrollable: scrollable,
-    method: method,
-    startTime: startTime,
-    startX: startX,
-    x: x
-  });
 };
 
 export const useEventCallback = (fn, dependencies) => {
@@ -619,107 +343,11 @@ export const useEventCallback = (fn, dependencies) => {
   );
 };
 
-export const b64ToArray = (b64Data) => {
-  const byteCharacters = atob(b64Data);
-  const byteNumbers = new Array(byteCharacters.length);
-  for (let i = 0; i < byteCharacters.length; i++) {
-    byteNumbers[i] = byteCharacters.charCodeAt(i);
-  }
-  return new Uint8Array(byteNumbers);
-};
-
-function meanOfHashes(captures = []) {
-  if (captures.length === 0) {
-    return null;
-  }
-
-  const sizeOfChunk = 8;
-
-  const lengthOfHash = captures[0].hash.length * sizeOfChunk;
-
-  const mean = new Array(lengthOfHash).fill(0);
-
-  for (let i = 0; i < captures.length; i++) {
-    let hash = captures[i].hash;
-    for (let j = 0; j < hash.length; j++) {
-      let hashChunkIndex = sizeOfChunk - 1;
-      let hashChunk = hash[j];
-      while (hashChunk !== 0) {
-        const meanIndex = j * sizeOfChunk + hashChunkIndex;
-        mean[meanIndex] += hashChunk & 1;
-        hashChunk >>= 1;
-        hashChunkIndex--;
-      }
-    }
-  }
-
-  const numOfCaptures = captures.length;
-  for (let i = 0; i < mean.length; i++) {
-    mean[i] /= numOfCaptures;
-  }
-
-  return mean;
-}
-
-function maxHashVariation(captures = []) {
-  // const l = captures.length;
-  // const startTime = Date.now();
-
-  const mean = meanOfHashes(captures);
-  // const variation = new Array(lengthOfHash);
-  let maxVariation = 0;
-
-  for (let i = 0; i < captures.length; i++) {
-    let hashVariation = manhattanDistanceOfHash(captures[i].hash, mean);
-    if (maxVariation < hashVariation) {
-      maxVariation = hashVariation;
-    }
-  }
-
-  // const delta = Date.now() - startTime;
-  // console.log(`diff:variation:maxHashVariation [${l}, ${delta}]`); // eslint-disable-line no-console
-
-  return maxVariation;
-}
-
-export const maxDistanceOfDay = (day, previousDay) => {
-  let items = day.items;
-  if (previousDay && previousDay.items.length > 0) {
-    items = items.concat(previousDay.items[previousDay.items.length - 1]);
-  }
-
-  // more accurate way to calculate max day distance: time complexity O(N^2)
-  // return maxPairwiseDistanceBetweenHashes(items);
-
-  // more efficient way to estimate day distance: time complexity O(N)
-  return maxHashVariation(items);
-};
-
-export const heatmapPalette = ['#ffed7a', '#96C161', '#428bca'];
-// export const heatmapPalette = ['#84a9ac', '#3b6978', '#204051'];
-
-const palette = {
-  nothingWasChangedColor: '#ddd',
-  // nothingWasChangedColor: '#cae8d5',
-  heatmapPaletteD3Color: scaleLog()
-    .domain([1.0, 1.5, 2.0])
-    .range(heatmapPalette)
-};
-
-export const colorHistogram = ({ histogram, maxValue }) => {
-  return histogram.map((b) => ({
-    ...b,
-    color:
-      b.begin === 0
-        ? palette.nothingWasChangedColor
-        : palette.heatmapPaletteD3Color(1 + (b.begin + b.end) / (2 * maxValue))
-  }));
-};
-
 export const getCurrentDate = () => {
   const currentDate = new Date();
-  return `${currentDate.getDate()} ${longMonthNames[currentDate.getMonth()]
-    }, ${currentDate.getFullYear()}`;
+  return `${currentDate.getDate()} ${
+    longMonthNames[currentDate.getMonth()]
+  }, ${currentDate.getFullYear()}`;
 };
 
 export const isCurrentDate = (d) => {
@@ -744,4 +372,4 @@ export const dateDiffInDays = (a, b) => {
   const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
   const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
   return Math.floor((utc2 - utc1) / _MS_PER_DAY);
-}
+};

@@ -4,8 +4,8 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const DotEnvPlugin = require('dotenv-webpack');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
-const config = require('./config');
 
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -17,8 +17,7 @@ module.exports = () => ({
     frame: './source/frame',
     iframe: './source/iframe',
     background: './source/background',
-    intercept: './source/intercept',
-    options: './source/options'
+    intercept: './source/intercept'
   },
   output: {
     path: path.join(__dirname, 'distribution'),
@@ -87,10 +86,10 @@ module.exports = () => ({
     new ExtractTextPlugin('vandal.css', {
       allChunks: true
     }),
-    new webpack.DefinePlugin({ ...config }),
     new webpack.ProvidePlugin({
       _: 'lodash'
-    })
+    }),
+    new DotEnvPlugin()
   ],
   optimization: {
     // Without this, function names will be garbled and enableFeature won't work

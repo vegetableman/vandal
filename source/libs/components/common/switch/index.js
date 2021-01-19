@@ -4,9 +4,9 @@ import Switch from 'react-switch';
 const DefaultSwitch = ({ label, defaultValue, onChange, ...others }) => {
   const [checked, setChecked] = useState(defaultValue);
 
-  const toggleChange = checked => {
-    setChecked(checked);
-    onChange(checked);
+  const toggleChange = (mchecked) => {
+    setChecked(mchecked);
+    onChange(mchecked);
   };
 
   return (

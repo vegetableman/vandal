@@ -104,7 +104,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/screenshot-as-a-service/dev/1603248876426-2020-10-21T02:54:36.426Z/screenshot-as-a-service.zip"
+          "S3Key": "serverless/screenshot-as-a-service/dev/1610945349820-2021-01-18T04:49:09.820Z/screenshot-as-a-service.zip"
         },
         "FunctionName": "screenshot-as-a-service-dev-screenshot",
         "Handler": "index.handler",
@@ -130,7 +130,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/screenshot-as-a-service/dev/1603248876426-2020-10-21T02:54:36.426Z/screenshot-as-a-service.zip"
+          "S3Key": "serverless/screenshot-as-a-service/dev/1610945349820-2021-01-18T04:49:09.820Z/screenshot-as-a-service.zip"
         },
         "FunctionName": "screenshot-as-a-service-dev-is-historical-available",
         "Handler": "is-available.handler",
@@ -430,7 +430,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1603248876436": {
+    "ApiGatewayDeployment1610945349831": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {

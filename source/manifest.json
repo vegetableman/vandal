@@ -30,10 +30,6 @@
   "icons": {
     "128": "icon.png"
   },
-  "options_ui": {
-    "chrome_style": true,
-    "page": "options.html"
-  },
   "background": {
     "scripts": [
       "browser-polyfill.min.js",

@@ -3,7 +3,6 @@ import { useMachine } from '@xstate/react';
 import ReactTooltip from 'react-tooltip';
 import _ from 'lodash';
 import cx from 'classnames';
-// import MonthView from './month/month.view';
 import ImageLoader from './loader';
 import CarouselView from './carousel.view';
 import Terms from './terms';
@@ -70,7 +69,6 @@ const Historical = (props) => {
   const { theme } = useTheme();
   const { state: ttstate } = useTimeTravel();
   const [showInfoModal, toggleInfoModal] = useState(false);
-  // const [snapshotCount, setSnapshotCount] = useState(false);
 
   const [state, send, service] = useMachine(
     historicalMachine.withConfig(
@@ -81,9 +79,6 @@ const Historical = (props) => {
               containerRef.current.focus();
             }
           }
-          // notifySnapshotLoad(ctx) {
-          //   setSnapshotCount(_.size(ctx.snapshots));
-          // }
         }
       },
       {
@@ -128,16 +123,6 @@ const Historical = (props) => {
     [ctx.archiveURLs]
   );
 
-  // const onEntered = () => {
-  //   // delay the resize
-  //   setTimeout(() => {
-  //     send('TOGGLE_RESIZE_VIEW', { payload: { resize: true } });
-  //   }, 10);
-  // };
-  // const onExited = () => {
-  //   send('TOGGLE_RESIZE_VIEW', { payload: { resize: false } });
-  // };
-
   const getCaption = (index) => {
     if (ctx.carouselMode === 'month') {
       return { title: ctx.selectedYear, date: longMonthNames[index] };
@@ -165,9 +150,7 @@ const Historical = (props) => {
     const loadInfo = async () => {
       const infoCount = await historicalDB.getInfo();
       if (!infoCount || _.parseInt(infoCount) > 10) {
-        // setTimeout(() => {
         toggleInfoModal(true);
-        // }, 250);
       } else {
         historicalDB.setInfo(_.parseInt(infoCount) + 1);
       }
@@ -332,30 +315,6 @@ const Historical = (props) => {
           })}
           <div style={{ height: 255 }} />
         </div>
-        {/* {ctx.showMonthPanel && (
-          <MonthView
-            url={ctx.url}
-            year={ctx.selectedYear}
-            show={ctx.showMonthPanel}
-            onEntered={onEntered}
-            onExited={onExited}
-            onClose={() => {
-              send('TOGGLE_MONTH_VIEW_CLOSE');
-            }}
-            openMonth={(index, snapshots) => () => {
-              send('TOGGLE_CAROUSEL_OPEN', {
-                payload: {
-                  show: true,
-                  mode: 'month',
-                  index,
-                  images: _.map(snapshots, 'data')
-                }
-              });
-            }}
-            theme={theme}
-            openURL={props.openURL}
-          />
-        )} */}
         {ctx.showCarousel && (
           <CarouselView
             images={ctx.images}

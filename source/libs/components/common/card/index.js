@@ -107,7 +107,6 @@ const Card = memo((props) => {
 
       if (showCard) {
         if (!__CACHED__ && _.isEmpty(ts)) {
-          console.log('card: before load');
           loadSnaphots(
             `${year}${_.padStart(month, 2, '0')}${_.padStart(day, 2, '0')}`
           );
@@ -165,7 +164,6 @@ const CardContainer = memo((props) => {
     _.get(props, 'cardRef.state.context', {})
   );
   const loadSnaphots = (date) => {
-    console.log('card: load snapshots: ', date);
     props.cardRef.send('LOAD_SNAPSHOTS', {
       payload: {
         url: props.url,

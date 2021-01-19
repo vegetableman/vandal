@@ -1,11 +1,5 @@
 import { Machine, actions } from 'xstate';
-import {
-  Screenshooter,
-  api,
-  abort,
-  getDateTsFromURL,
-  getDateTimeFromTS
-} from '../../utils';
+import { Screenshooter, api, abort, getDateTimeFromTS } from '../../utils';
 
 const { assign } = actions;
 const screenshooter = new Screenshooter();
@@ -208,16 +202,12 @@ const historicalMachine = Machine(
             }&timestamp=${y}12`
         );
 
-        console.log('timestampURLs:', timestampURLs);
-
         const timestampURLCount = _.size(timestampURLs);
         const snapshotMapper = async (item, index) => {
           let [result] = await api(item, {
             fetchFromCache: timestampURLCount - 1 !== index,
             meta: { type: 'available' }
           });
-
-          console.log('snapshot result:', result);
 
           let archiveURL = _.replace(
             _.get(result, 'archived_snapshots.closest.url'),
@@ -227,13 +217,6 @@ const historicalMachine = Machine(
 
           const dateTime = getDateTimeFromTS(
             _.get(result, 'archived_snapshots.closest.timestamp')
-          );
-          console.log(
-            'dateTime:',
-            dateTime,
-            _.get(dateTime, 'year'),
-            archiveURL,
-            ctx.years[index]
           );
 
           if (_.get(dateTime, 'year') > _.parseInt(ctx.years[index]) + 1) {
@@ -278,7 +261,9 @@ const historicalMachine = Machine(
       },
       checkHistoricalAvailable: (ctx) => {
         return new Promise(async (resolve, reject) => {
-          const [result, err] = await api(VANDAL_SCREENSHOT_IS_AVAILABLE);
+          const [result, err] = await api(
+            process.env.LAMBDA_SCREENSHOT_IS_AVAILABLE
+          );
           if (err) {
             return reject(err);
           }
