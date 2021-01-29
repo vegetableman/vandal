@@ -1,14 +1,14 @@
-import { Machine, assign } from 'xstate';
-import _ from 'lodash';
-import { drawerDB } from '../../utils/storage';
-import { resourceTSController } from './resource-ts-controller';
+import { Machine, assign } from "xstate";
+import _ from "lodash";
+import { drawerDB } from "../../utils/storage";
+import resourceTSController from "./resource-ts-controller";
 
 const DEFAULT_HEIGHT = 300;
 
 const drawerMachine = Machine(
   {
-    id: 'drawer',
-    initial: 'idle',
+    id: "drawer",
+    initial: "idle",
     context: {
       height: null,
       scrollOnHighlight: true,
@@ -18,37 +18,33 @@ const drawerMachine = Machine(
     states: {
       idle: {
         invoke: {
-          id: 'loadHeight',
-          src: 'loadHeight',
+          id: "loadHeight",
+          src: "loadHeight",
           onDone: {
-            target: 'heightLoaded',
+            target: "heightLoaded",
             actions: [
               assign({
-                height: (ctx, e) => {
-                  return _.get(e, 'data', DEFAULT_HEIGHT);
-                }
+                height: (ctx, e) => _.get(e, "data", DEFAULT_HEIGHT)
               })
             ]
           }
         }
       },
       heightLoaded: {
-        initial: 'unknown',
+        initial: "unknown",
         on: {
           LOAD_TIMESTAMPS: {
-            target: '#loadingTimestamps',
-            actions: assign(() => {
-              return { showLoader: false, timestamps: [] };
-            })
+            target: "#loadingTimestamps",
+            actions: assign(() => ({ showLoader: false, timestamps: [] }))
           }
         },
         states: {
           unknown: {},
           loadingTimestamps: {
-            id: 'loadingTimestamps',
+            id: "loadingTimestamps",
             invoke: {
-              id: 'fetchTimestamps',
-              src: 'fetchTimestamps'
+              id: "fetchTimestamps",
+              src: "fetchTimestamps"
             }
           }
         }
@@ -58,22 +54,22 @@ const drawerMachine = Machine(
       SET_HEIGHT: {
         actions: [
           assign({
-            height: (_ctx, e) => _.get(e, 'payload.value')
+            height: (_ctx, e) => _.get(e, "payload.value")
           }),
-          'storeHeight'
+          "storeHeight"
         ]
       },
       TOGGLE_SCROLL_HIGHLIGHT: {
         actions: [
           assign({
-            scrollOnHighlight: (ctx, e) => _.get(e, 'payload.checked')
+            scrollOnHighlight: (ctx, e) => _.get(e, "payload.checked")
           })
         ]
       },
       ADD_TIMESTAMP: {
         actions: assign((ctx, e) => {
           const { timestamps } = ctx;
-          const { ts, err, index } = _.get(e, 'payload');
+          const { ts, err, index } = _.get(e, "payload");
           timestamps[index] = { ts, err, isValid: !ts && !err };
           return {
             timestamps
@@ -101,17 +97,17 @@ const drawerMachine = Machine(
           const height = await drawerDB.getHeight();
           return height;
         } catch (e) {
-          console.info('DrawerMachine: Failed to load height');
+          console.info("DrawerMachine: Failed to load height");
           return ctx.height;
         }
       },
       fetchTimestamps: (_ctx, e) => async (callback) => {
-        if (_.isEmpty(_.get(e, 'payload.sources'))) return;
+        if (_.isEmpty(_.get(e, "payload.sources"))) return;
         resourceTSController.reset();
         resourceTSController.loadTimestamps(
-          _.get(e, 'payload.sources'),
+          _.get(e, "payload.sources"),
           (ts, err, index) => {
-            callback({ type: 'ADD_TIMESTAMP', payload: { ts, err, index } });
+            callback({ type: "ADD_TIMESTAMP", payload: { ts, err, index } });
           }
         );
       }

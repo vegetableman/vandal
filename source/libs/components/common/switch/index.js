@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
-import Switch from 'react-switch';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import Switch from "react-switch";
 
-const DefaultSwitch = ({ label, defaultValue, onChange, ...others }) => {
+const DefaultSwitch = ({
+  label, defaultValue, onChange, ...others
+}) => {
   const [checked, setChecked] = useState(defaultValue);
 
   const toggleChange = (mchecked) => {
@@ -10,11 +13,21 @@ const DefaultSwitch = ({ label, defaultValue, onChange, ...others }) => {
   };
 
   return (
-    <label>
+    <div>
       <span>{label}</span>
       <Switch {...others} onChange={toggleChange} checked={checked} />
-    </label>
+    </div>
   );
+};
+
+DefaultSwitch.propTypes = {
+  label: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  defaultValue: PropTypes.bool
+};
+
+DefaultSwitch.defaultProps = {
+  defaultValue: false
 };
 
 export default DefaultSwitch;

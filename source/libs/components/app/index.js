@@ -1,27 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import _ from 'lodash';
-import ShadowDOM from 'react-shadow';
-import { useMachine } from '@xstate/react';
+import React, { useCallback, useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
+import ShadowDOM from "react-shadow";
+import { useMachine } from "@xstate/react";
 
-import { Toast, Icon } from '../common';
-import { browser, dateDiffInDays } from '../../utils';
-import { ThemeProvider } from '../../hooks';
-import { appDB } from '../../utils/storage';
+import { Toast, Icon } from "../common";
+import { browser, dateDiffInDays } from "../../utils";
+import { ThemeProvider } from "../../hooks";
+import { appDB } from "../../utils/storage";
 
-import Frame from '../frame';
-import parentMachine from './parent.machine';
+import Frame from "../frame";
+import parentMachine from "./parent.machine";
 
 // TODO: put this somewhere else?
-import './normalize.css';
-import './tooltip.css';
-import './scrollbar.css';
+import "./normalize.css";
+import "./tooltip.css";
+import "./scrollbar.css";
 
-import styles from './app.module.css';
-import { IntroProvider, useIntro } from '../../hooks/use-intro';
+import styles from "./app.module.css";
+import { IntroProvider, useIntro } from "../../hooks/use-intro";
 
 const App = (props) => {
   const sendExit = () => {
-    chrome.runtime.sendMessage({ message: '___VANDAL__CLIENT__EXIT' });
+    chrome.runtime.sendMessage({ message: "___VANDAL__CLIENT__EXIT" });
   };
 
   const { showIntro, toggleIntro } = useIntro();
@@ -48,27 +49,29 @@ const App = (props) => {
   );
   const { context: ctx } = state;
 
-  const onMessage = async (request) => {
-    const url = _.get(request.data, 'url');
+  const onMessage = useCallback(async (request) => {
+    const url = _.get(request.data, "url");
     switch (request.message) {
-      case '__VANDAL__NAV__BEFORENAVIGATE':
-      case '__VANDAL__NAV__HISTORYCHANGE':
-      case '__VANDAL__NAV__COMMIT':
-        sendToParentMachine({ type: 'SET_URL', payload: { url } });
+      case "__VANDAL__NAV__BEFORENAVIGATE":
+      case "__VANDAL__NAV__HISTORYCHANGE":
+      case "__VANDAL__NAV__COMMIT":
+        sendToParentMachine({ type: "SET_URL", payload: { url } });
         browser.setURL(url);
         break;
-      case '__VANDAL__NAV__BUSTED':
+      case "__VANDAL__NAV__BUSTED":
         if (ctx.url) {
-          sendToParentMachine('TOGGLE_BUSTED_ERROR', {
+          sendToParentMachine("TOGGLE_BUSTED_ERROR", {
             payload: { value: true }
           });
         }
         break;
-      case '__VANDAL__NAV__NOTFOUND':
-        sendToParentMachine('CHECK_AVAILABILITY');
+      case "__VANDAL__NAV__NOTFOUND":
+        sendToParentMachine("CHECK_AVAILABILITY");
+        break;
+      default:
         break;
     }
-  };
+  }, [ctx.url, sendToParentMachine]);
 
   const checkDonate = async () => {
     const donateState = await appDB.getDonateState();
@@ -79,14 +82,14 @@ const App = (props) => {
       });
     };
 
-    if (!_.get(donateState, 'date')) {
+    if (!_.get(donateState, "date")) {
       setDonateState(1);
     } else if (
-      (dateDiffInDays(new Date(_.get(donateState, 'date')), new Date()) > 5 &&
-        _.get(donateState, '__v') === 1) ||
-      (dateDiffInDays(new Date(_.get(donateState, 'date')), new Date()) > 30 &&
-        _.get(donateState, '__v') === 2) ||
-      (_.get(donateState, '__v') === 2 && new Date().getDate() === 1)
+      (dateDiffInDays(new Date(_.get(donateState, "date")), new Date()) > 5
+        && _.get(donateState, "__v") === 1)
+      || (dateDiffInDays(new Date(_.get(donateState, "date")), new Date()) > 30
+        && _.get(donateState, "__v") === 2)
+      || (_.get(donateState, "__v") === 2 && new Date().getDate() === 1)
     ) {
       toggleDonateModal(true);
       setDonateState(2);
@@ -96,36 +99,40 @@ const App = (props) => {
   useEffect(() => {
     browser.setBrowser(props.browser);
     browser.setBaseURL(props.baseURL);
-    chrome.runtime.sendMessage({ message: '__VANDAL__CLIENT__LOADED' }, () => {
-      sendToParentMachine('LOADED');
+    chrome.runtime.sendMessage({ message: "__VANDAL__CLIENT__LOADED" }, () => {
+      sendToParentMachine("LOADED");
     });
     chrome.runtime.onMessage.addListener(onMessage);
-    document.addEventListener('beforeunload', sendExit);
+    document.addEventListener("beforeunload", sendExit);
     checkDonate();
     return () => {
-      document.removeEventListener('beforeunload', sendExit);
+      document.removeEventListener("beforeunload", sendExit);
       chrome.runtime.onMessage.removeListener(onMessage);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className={styles.container}>
       <Frame
         loaded={ctx.loaded}
-        onExit={() => sendToParentMachine('EXIT')}
+        onExit={() => sendToParentMachine("EXIT")}
         url={ctx.url}
       />
       <Toast
         err
         className={styles.frame_busted__toast}
         show={ctx.isFrameBusted}
-        exit={0}>
+        exit={0}
+      >
         <span>
           Vandal does not support this page. Click here to open this URL on
           <a
             href={`https://web.archive.org/web/*/${props.url}`}
             target="_blank"
-            className={styles.wayback__link}>
+            rel="noopener noreferrer"
+            className={styles.wayback__link}
+          >
             Wayback Machine
           </a>
           <Icon name="openURL" width={11} className={styles.wayback__icon} />
@@ -133,29 +140,36 @@ const App = (props) => {
       </Toast>
       <Toast
         className={styles.toast__notfound}
-        show={state.matches('checkAvailability')}>
+        show={state.matches("checkAvailability")}
+      >
         <span>
           You have landed on a defunct page!. Checking availability...
         </span>
       </Toast>
       <Toast
         className={styles.toast__notfound}
-        show={state.matches('snapshotFound')}>
+        show={state.matches("snapshotFound")}
+      >
         <div>
-          <span>Found snapshot recorded on {ctx.availableDate}</span>
+          <span>
+            Found snapshot recorded on
+            {ctx.availableDate}
+          </span>
           <button
+            type="button"
             className={styles.toast__open__btn}
             onClick={() => {
               browser.navigate(ctx.availableURL);
-              sendToParentMachine('CLOSE');
-            }}>
+              sendToParentMachine("CLOSE");
+            }}
+          >
             View Snapshot
           </button>
           <Icon
             name="close"
             className={styles.toast__close__icon}
             onClick={() => {
-              sendToParentMachine('CLOSE');
+              sendToParentMachine("CLOSE");
             }}
           />
         </div>
@@ -163,27 +177,33 @@ const App = (props) => {
       <Toast
         err
         className={styles.toast__notfound}
-        show={state.matches('availabilityError')}>
+        show={state.matches("availabilityError")}
+      >
         <div>
           <span>Error finding snapshot. Please try again later.</span>
           <Icon
             name="close"
             className={styles.toast__close__icon}
             onClick={() => {
-              sendToParentMachine('CLOSE');
+              sendToParentMachine("CLOSE");
             }}
           />
         </div>
       </Toast>
       {showIntro && (
+        /* eslint-disable jsx-a11y/click-events-have-key-events */
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
         <div
+          role="dialog"
           className={styles.modal__container}
           onClick={() => {
             toggleIntro(false);
-          }}>
+          }}
+        >
           <img
+            alt="cover"
             className={styles.cover}
-            src={chrome.runtime.getURL('images/cover-art.png')}
+            src={chrome.runtime.getURL("images/cover-art.png")}
           />
         </div>
       )}
@@ -197,29 +217,34 @@ const App = (props) => {
                 toggleDonateModal(false);
               }}
             />
-            <img src={chrome.runtime.getURL('images/donate.png')} />
+            <img alt="donate" src={chrome.runtime.getURL("images/donate.png")} />
             <div className={styles.donate__text}>
               <div>
                 <button
+                  type="button"
                   className={styles.donate__button}
                   onClick={() => {
                     window.open(
-                      'https://archive.org/donate/?ref=vandal',
-                      '_blank'
+                      "https://archive.org/donate/?ref=vandal",
+                      "_blank"
                     );
-                  }}>
+                  }}
+                >
                   DONATE
                 </button>
                 <span
-                  style={{ color: '#555555', fontSize: 14, fontWeight: 700 }}>
+                  style={{ color: "#555555", fontSize: 14, fontWeight: 700 }}
+                >
                   to the Internet Archive
                 </span>
               </div>
-              <p style={{ fontSize: 13, marginTop: 15, color: '#555555' }}>
+              <p style={{ fontSize: 13, marginTop: 15, color: "#555555" }}>
                 A Time Machine is only as good as its Power Source. And Vandal
-                relies on the mighty{' '}
-                <span style={{ color: '#864D23' }}>Internet Archive</span>. To
-                allow it's continued existence, please donate to the Internet
+                relies on the mighty
+                {" "}
+                <span style={{ color: "#864D23" }}>Internet Archive</span>
+                .
+                To allow it&apos;s continued existence, please donate to the Internet
                 Archive.
               </p>
             </div>
@@ -230,16 +255,23 @@ const App = (props) => {
   );
 };
 
+App.propTypes = {
+  url: PropTypes.string.isRequired,
+  baseURL: PropTypes.string.isRequired,
+  browser: PropTypes.node.isRequired
+};
+
 const AppContainer = (props) => {
   const notifyThemeChanged = (ctx) => {
-    props.root.setAttribute('data-theme', ctx.theme);
+    props.root.setAttribute("data-theme", ctx.theme);
   };
 
   return (
     <ShadowDOM
       include={[
-        'chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/vandal.css'
-      ]}>
+        "chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/vandal.css"
+      ]}
+    >
       <div className="vandal__root">
         <ThemeProvider notifyThemeChanged={notifyThemeChanged}>
           <IntroProvider>
@@ -249,6 +281,10 @@ const AppContainer = (props) => {
       </div>
     </ShadowDOM>
   );
+};
+
+AppContainer.propTypes = {
+  root: PropTypes.node.isRequired
 };
 
 export default AppContainer;

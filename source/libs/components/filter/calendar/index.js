@@ -1,14 +1,16 @@
-import _ from 'lodash';
-import React, { useEffect, useState, memo, useCallback } from 'react';
-import CalendarLoader from './loader';
-import cx from 'classnames';
+import _ from "lodash";
+import React, {
+  useEffect, useState, memo, useCallback
+} from "react";
+import cx from "classnames";
+import CalendarLoader from "./loader";
 
-import { Icon } from '../../common';
-import InputCalendar from './inputcalendar';
-import { compareProps } from '../../../utils';
-import { useTimeTravel } from '../../../hooks';
+import { Icon } from "../../common";
+import InputCalendar from "./inputcalendar";
+import { compareProps } from "../../../utils";
+import { useTimeTravel } from "../../../hooks";
 
-import styles from './calendar.module.css';
+import styles from "./calendar.module.css";
 
 const Day = (props) => {
   const style = props.getColor(props.day);
@@ -20,7 +22,8 @@ const Day = (props) => {
       })}
       onMouseMove={props.onMouseMove(props.day)}
       onMouseLeave={props.onMouseLeave}
-      onClick={props.onClick(props.day)}>
+      onClick={props.onClick(props.day)}
+    >
       <div style={style} className={styles.date}>
         {props.day}
       </div>
@@ -31,27 +34,27 @@ const Day = (props) => {
 const Calendar = memo((props) => {
   if (!props.date) return <div className={styles.calendar} />;
 
-  let date = new Date(props.date);
+  const date = new Date(props.date);
 
-  let first = new Date(date);
+  const first = new Date(date);
   first.setHours(0);
   first.setMinutes(0);
   first.setSeconds(0);
   first.setDate(1);
 
-  let last = new Date(date);
+  const last = new Date(date);
   last.setHours(0);
   last.setMinutes(0);
   last.setSeconds(0);
   last.setMonth(last.getMonth() + 1);
   last.setDate(0);
 
-  let weeks = Math.ceil((last.getDate() + first.getDay()) / 7);
+  const weeks = Math.ceil((last.getDate() + first.getDay()) / 7);
   let day = 1 - first.getDay();
-  let rows = [];
+  const rows = [];
 
   for (let w = 0; w < weeks; w++) {
-    let row = [];
+    const row = [];
     for (let d = 0; d < 7; d++) {
       row.push(d + day);
     }
@@ -59,25 +62,25 @@ const Calendar = memo((props) => {
 
     rows.push(
       <div
-        className={`${styles.week} ${w === weeks - 1 ? styles.last__week : ''}`}
-        key={`week-${w}`}>
+        className={`${styles.week} ${w === weeks - 1 ? styles.last__week : ""}`}
+        key={`week-${w}`}
+      >
         {row.map((day) => {
           if (day <= 0) {
             return null;
-          } else if (day > last.getDate()) {
+          } if (day > last.getDate()) {
             return null;
-          } else {
-            return (
-              <Day
-                key={`day-${day}-${props.date}`}
-                day={day}
-                getColor={props.getColor}
-                onMouseMove={props.onMouseMove}
-                onClick={props.onClick}
-                onMouseLeave={props.onMouseLeave}
-              />
-            );
           }
+          return (
+            <Day
+              key={`day-${day}-${props.date}`}
+              day={day}
+              getColor={props.getColor}
+              onMouseMove={props.onMouseMove}
+              onClick={props.onClick}
+              onMouseLeave={props.onMouseLeave}
+            />
+          );
         })}
       </div>
     );
@@ -88,7 +91,7 @@ const Calendar = memo((props) => {
       <div className={styles.month}>{rows}</div>
     </div>
   );
-}, compareProps(['date', 'highlightedDay', 'selectedTS']));
+}, compareProps(["date", "highlightedDay", "selectedTS"]));
 
 Calendar.defaultProps = {
   getColor: () => {},
@@ -102,23 +105,23 @@ const CalendarFilter = memo((props) => {
 
   const [date, setDate] = useState(
     props.currentYear && props.currentMonth
-      ? `${props.currentYear}-${_.padStart(props.currentMonth, 2, '0')}`
-      : ''
+      ? `${props.currentYear}-${_.padStart(props.currentMonth, 2, "0")}`
+      : ""
   );
 
   useEffect(
     () => {
       setDate(
         props.currentYear && props.currentMonth
-          ? `${props.currentYear}-${_.padStart(props.currentMonth, 2, '0')}`
-          : ''
+          ? `${props.currentYear}-${_.padStart(props.currentMonth, 2, "0")}`
+          : ""
       );
     },
     [props.currentMonth, props.currentYear]
   );
 
   const onCalendarSelect = (month, year) => {
-    const selectedDate = `${year}-${_.padStart(month, 2, '0')}`;
+    const selectedDate = `${year}-${_.padStart(month, 2, "0")}`;
     setDate(selectedDate);
     props.onChange(selectedDate);
   };
@@ -133,11 +136,11 @@ const CalendarFilter = memo((props) => {
   return (
     <div className={styles.container}>
       <div className={styles.calendar__container}>
-        {!props.showSparkError &&
-          !_.isEmpty(_.keys(props.sparkline)) &&
-          !props.showErrLoader && (
+        {!props.showSparkError
+          && !_.isEmpty(_.keys(props.sparkline))
+          && !props.showErrLoader && (
             <div className={styles.label}>Select Date :</div>
-          )}
+        )}
         <div className={styles.nav__container}>
           <div className={styles.input__container}>
             <InputCalendar
@@ -148,7 +151,7 @@ const CalendarFilter = memo((props) => {
                 `${currentDateInstance.getFullYear()}-${_.padStart(
                   currentDateInstance.getMonth() + 1,
                   2,
-                  '0'
+                  "0"
                 )}` === date
               }
               currentMonth={props.currentMonth}
@@ -168,7 +171,8 @@ const CalendarFilter = memo((props) => {
               className={cx({
                 [styles.error]: true,
                 [styles.calendar__error]: props.showCalendarError
-              })}>
+              })}
+            >
               <Icon
                 name="networkErr"
                 width={35}
@@ -176,12 +180,14 @@ const CalendarFilter = memo((props) => {
                 className={styles.error__icon}
               />
             </div>
-            {(props.showSparkError &&
-              props.showSparkLoader && (
+            {(props.showSparkError
+              && props.showSparkLoader && (
                 <div className={styles.error__msg}>Retrying...</div>
-              )) || (
+            )) || (
               <div className={styles.error__msg}>
-                ERR: {props.error || 'Request Failed'}
+                ERR:
+                {" "}
+                {props.error || "Request Failed"}
               </div>
             )}
             <button className={styles.retry__btn} onClick={props.retry}>
@@ -190,11 +196,11 @@ const CalendarFilter = memo((props) => {
           </div>
         )}
       </div>
-      {props.showCalendarLoader &&
-        !props.showSparkError &&
-        !props.showCalendarError && (
+      {props.showCalendarLoader
+        && !props.showSparkError
+        && !props.showCalendarError && (
           <CalendarLoader className={styles.loader} />
-        )}
+      )}
       {props.calendarLoaded && (
         <Calendar
           date={date}
@@ -208,7 +214,7 @@ const CalendarFilter = memo((props) => {
       )}
     </div>
   );
-}, compareProps(['selectedTS', 'selectedYear', 'selectedMonth', 'currentMonth', 'currentYear', 'currentDay', 'showError', 'showCalendarLoader', 'showSparkError', 'showSparkLoader', 'showCalendarError', 'sparkline', 'calendar', 'highlightedDay', 'calendarLoaded']));
+}, compareProps(["selectedTS", "selectedYear", "selectedMonth", "currentMonth", "currentYear", "currentDay", "showError", "showCalendarLoader", "showSparkError", "showSparkLoader", "showCalendarError", "sparkline", "calendar", "highlightedDay", "calendarLoaded"]));
 
 const CalendarFilterContainer = memo((props) => {
   const { state } = useTimeTravel();
@@ -225,14 +231,14 @@ const CalendarFilterContainer = memo((props) => {
       highlightedDay={ctx.highlightedDay}
       sparkline={ctx.sparkline}
       error={ctx.error}
-      calendarLoaded={state.matches('sparklineLoaded.calendarLoaded')}
-      showCalendarLoader={state.matches('sparklineLoaded.loadingCalendar')}
-      showSparkLoader={state.matches('loadingSparkline')}
+      calendarLoaded={state.matches("sparklineLoaded.calendarLoaded")}
+      showCalendarLoader={state.matches("sparklineLoaded.loadingCalendar")}
+      showSparkLoader={state.matches("loadingSparkline")}
       showSparkError={
-        _.get(state, 'event.type') === 'RELOAD_SPARKLINE_ON_ERROR' ||
-        state.matches('sparklineError')
+        _.get(state, "event.type") === "RELOAD_SPARKLINE_ON_ERROR"
+        || state.matches("sparklineError")
       }
-      showCalendarError={state.matches('sparklineLoaded.calendarError')}
+      showCalendarError={state.matches("sparklineLoaded.calendarError")}
       calendar={ctx.calendar}
       {...props}
     />

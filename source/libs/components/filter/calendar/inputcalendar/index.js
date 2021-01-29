@@ -1,33 +1,39 @@
-import React, { useState, useEffect, memo, useRef } from 'react';
-import memoizeOne from 'memoize-one';
-import { scaleLinear } from 'd3-scale';
-import PerfectScrollbar from 'perfect-scrollbar';
-import _ from 'lodash';
-import cx from 'classnames';
-import { Sparklines, SparklinesCurve } from 'react-sparklines';
-import VirtualList from 'react-tiny-virtual-list';
-import { Icon, withDialog } from '../../../common';
-import { monthNames, compareProps } from '../../../../utils';
-import { colors } from '../../../../constants';
-import styles from './inputcalendar.module.css';
-import { useTheme } from '../../../../hooks';
+/* eslint-disable jsx-a11y/no-autofocus */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+
+import React, {
+  useState, useEffect, memo, useRef
+} from "react";
+import memoizeOne from "memoize-one";
+import { scaleLinear } from "d3-scale";
+import PerfectScrollbar from "perfect-scrollbar";
+import _ from "lodash";
+import cx from "classnames";
+import { Sparklines, SparklinesCurve } from "react-sparklines";
+import VirtualList from "react-tiny-virtual-list";
+import { Icon, withDialog } from "../../../common";
+import { monthNames, compareProps } from "../../../../utils";
+import { colors } from "../../../../constants";
+import styles from "./inputcalendar.module.css";
+import { useTheme } from "../../../../hooks";
 
 const getStyle = (count, isSelected, isCurrent, color, year, theme) => {
   const isHighlighted = isSelected || isCurrent || count;
   return {
     backgroundColor: isSelected
-      ? colors[_.toUpper(theme)]['MATCH']
+      ? colors[_.toUpper(theme)].MATCH
       : isCurrent
         ? colors.MATCH
         : count
           ? color(count, year)
-          : 'inherit',
-    textDecoration: isCurrent ? 'underline' : 'none',
+          : "inherit",
+    textDecoration: isCurrent ? "underline" : "none",
     color: isHighlighted
       ? colors.BL_33
-      : theme === 'dark'
+      : theme === "dark"
         ? colors.GY_DD
-        : 'inherit'
+        : "inherit"
   };
 };
 
@@ -47,7 +53,7 @@ const Calendar = ({
   isDialogClosed
 }) => {
   let maxcount = 0;
-  for (let year in sparkline) {
+  for (const year in sparkline) {
     if (sparkline[year] == undefined) {
       continue;
     }
@@ -63,7 +69,7 @@ const Calendar = ({
         onClose();
       }
     },
-    [isDialogClosed]
+    [isDialogClosed, onClose]
   );
 
   useEffect(() => {
@@ -90,10 +96,13 @@ const Calendar = ({
               [styles.calendar__year]: true
             })}
             key={index}
-            style={style}>
+            style={style}
+          >
             <div
+              aria-roledescription="year"
               className={styles.calendar__year___left}
-              onClick={onSelect(selectedMonth, years[index])}>
+              onClick={onSelect(selectedMonth, years[index])}
+            >
               <div className={styles.label}>{years[index]}</div>
               <div>
                 <Sparklines
@@ -101,37 +110,37 @@ const Calendar = ({
                   margin={0}
                   min={0}
                   width={30}
-                  height={10}>
+                  height={10}
+                >
                   <SparklinesCurve
                     style={{
-                      stroke: colors[_.toUpper(theme)]['CURVE'],
-                      fill: colors[_.toUpper(theme)]['CURVE']
+                      stroke: colors[_.toUpper(theme)].CURVE,
+                      fill: colors[_.toUpper(theme)].CURVE
                     }}
                   />
                 </Sparklines>
               </div>
             </div>
             <div className={styles.months}>
-              {_.map(monthNames, (m, mindex) => {
-                return (
-                  <div
-                    className={styles.month}
-                    key={mindex}
-                    onClick={onSelect(mindex + 1, years[index])}
-                    style={getStyle(
-                      _.nth(sparkline[years[index]], mindex),
-                      mindex + 1 === selectedMonth &&
-                        years[index] === selectedYear,
-                      mindex + 1 === currentMonth &&
-                        years[index] === currentYear,
-                      color,
-                      years[index],
-                      theme
-                    )}>
-                    <span className={styles.month__label}>{m}</span>
-                  </div>
-                );
-              })}
+              {_.map(monthNames, (m, mindex) => (
+                <div
+                  className={styles.month}
+                  key={mindex}
+                  onClick={onSelect(mindex + 1, years[index])}
+                  style={getStyle(
+                    _.nth(sparkline[years[index]], mindex),
+                    mindex + 1 === selectedMonth
+                        && years[index] === selectedYear,
+                    mindex + 1 === currentMonth
+                        && years[index] === currentYear,
+                    color,
+                    years[index],
+                    theme
+                  )}
+                >
+                  <span className={styles.month__label}>{m}</span>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -146,11 +155,9 @@ const WithDialogCalendar = withDialog(Calendar, {
 
 const currentDateInstance = new Date();
 
-const colorFromRange = memoizeOne((min, max) => {
-  return scaleLinear()
-    .domain([min, max])
-    .range(['#d4f8d0', max <= 5 ? '#a6ef9c' : '#5ee64e']);
-});
+const colorFromRange = memoizeOne((min, max) => scaleLinear()
+  .domain([min, max])
+  .range(["#d4f8d0", max <= 5 ? "#a6ef9c" : "#5ee64e"]));
 
 const InputCalendar = memo((props) => {
   const [isVisible, toggleCalendar] = useState(false);
@@ -172,12 +179,10 @@ const InputCalendar = memo((props) => {
 
   if (_.isEmpty(_.keys(sparkline))) return null;
 
-  let sparklineYears = _.keys(sparkline);
-  const result = _.map(sparklineYears, (y) => {
-    return { year: _.parseInt(y), count: _.max(sparkline[y]) };
-  });
+  const sparklineYears = _.keys(sparkline);
+  const result = _.map(sparklineYears, (y) => ({ year: _.parseInt(y), count: _.max(sparkline[y]) }));
 
-  const years = _.map(result, 'year');
+  const years = _.map(result, "year");
 
   return (
     <div className={styles.input__calendar}>
@@ -188,11 +193,7 @@ const InputCalendar = memo((props) => {
             [styles.filter__icon]: true,
             [styles.filter__icon___active]: isVisible
           })}
-          onClick={() =>
-            toggleCalendar((isVisible) => {
-              return !isVisible;
-            })
-          }
+          onClick={() => toggleCalendar((isVisible) => !isVisible)}
         />
       )}
       <div className={styles.nav}>
@@ -252,6 +253,6 @@ const InputCalendar = memo((props) => {
       )}
     </div>
   );
-}, compareProps(['sparkline', 'currentMonth', 'selectedMonth', 'selectedYear', 'currentYear', 'disabled', 'date', 'disableNext']));
+}, compareProps(["sparkline", "currentMonth", "selectedMonth", "selectedYear", "currentYear", "disabled", "date", "disableNext"]));
 
 export default InputCalendar;

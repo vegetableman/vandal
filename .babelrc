@@ -1,13 +1,6 @@
 {
-  "presets": ["env", "react", "stage-3"],
+  "presets": ["@babel/preset-env", "@babel/preset-react"],
   "plugins": [
-    "transform-class-properties",
-    [
-      "transform-runtime",
-      {
-        "regenerator": true
-      }
-    ],
-    "react-hot-loader/babel"
+    "@babel/plugin-proposal-class-properties"
   ]
 }

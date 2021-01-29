@@ -1,5 +1,7 @@
-import { Machine, actions } from 'xstate';
-import { Screenshooter, api, abort, getDateTimeFromTS } from '../../utils';
+import { Machine, actions } from "xstate";
+import {
+  Screenshooter, api, abort, getDateTimeFromTS
+} from "../../utils";
 
 const { assign } = actions;
 const screenshooter = new Screenshooter();
@@ -7,33 +9,35 @@ const screenshooter = new Screenshooter();
 let isSTOPPED = false;
 export const cleanUp = () => {
   isSTOPPED = true;
-  abort({ meta: { type: 'available' } });
+  abort({ meta: { type: "available" } });
   screenshooter.abort();
 };
 
 export const fetchSnapshot = async ({ url, year, archiveURL }) => {
-  let [result, archiveErr] = await api(
+  let snapshotURL = archiveURL;
+
+  const [result, archiveErr] = await api(
     `https://archive.org/wayback/available?url=${url}&timestamp=${year}12`
   );
   if (archiveErr) {
     return [{ data: null, err: archiveErr }];
   }
 
-  const closestURL = _.get(result, 'archived_snapshots.closest.url');
+  const closestURL = _.get(result, "archived_snapshots.closest.url");
   if (closestURL) {
-    archiveURL = _.replace(closestURL, /https?/, 'https');
+    snapshotURL = _.replace(closestURL, /https?/, "https");
   }
 
   return [
-    await screenshooter.fetchScreenshot(archiveURL, { retry: true }),
-    closestURL ? archiveURL : null
+    await screenshooter.fetchScreenshot(snapshotURL, { retry: true }),
+    closestURL ? snapshotURL : null
   ];
 };
 
 const historicalMachine = Machine(
   {
-    id: 'historical',
-    initial: 'unknown',
+    id: "historical",
+    initial: "unknown",
     context: {
       url: null,
       years: null,
@@ -51,14 +55,14 @@ const historicalMachine = Machine(
     states: {
       unknown: {},
       initHistorical: {
-        id: 'initHistorical',
+        id: "initHistorical",
         invoke: {
-          src: 'checkHistoricalAvailable',
+          src: "checkHistoricalAvailable",
           onDone: {
-            target: 'processingHistorical',
+            target: "processingHistorical",
             actions: [
               assign({
-                isHistoricalEnabled: (_ctx, e) => _.get(e, 'data.isAvailable')
+                isHistoricalEnabled: (_ctx, e) => _.get(e, "data.isAvailable")
               })
             ]
           }
@@ -66,13 +70,13 @@ const historicalMachine = Machine(
       },
       processingHistorical: {
         on: {
-          '': [
+          "": [
             {
-              target: 'loadingHistorical',
-              cond: 'isHistoricalAvailable'
+              target: "loadingHistorical",
+              cond: "isHistoricalAvailable"
             },
             {
-              target: 'historicalUnAvailable'
+              target: "historicalUnAvailable"
             }
           ]
         }
@@ -80,73 +84,61 @@ const historicalMachine = Machine(
       historicalUnAvailable: {},
       loadingHistorical: {
         invoke: {
-          id: 'fetchArchiveLinks',
-          src: 'fetchArchiveLinks',
-          onDone: 'historicalLoaded'
+          id: "fetchArchiveLinks",
+          src: "fetchArchiveLinks",
+          onDone: "historicalLoaded"
         }
       },
       historicalLoaded: {}
     },
     on: {
       INIT_HISTORICAL: {
-        target: 'initHistorical',
-        actions: assign((_ctx, e) => {
-          return {
-            years: _.get(e, 'payload.years'),
-            url: _.get(e, 'payload.url'),
-            snapshots: [],
-            archiveURLs: []
-          };
-        })
+        target: "initHistorical",
+        actions: assign((_ctx, e) => ({
+          years: _.get(e, "payload.years"),
+          url: _.get(e, "payload.url"),
+          snapshots: [],
+          archiveURLs: []
+        }))
       },
       TOGGLE_CAROUSEL_OPEN: {
-        actions: assign((_ctx, e) => {
-          return {
-            showCarousel: _.get(e, 'payload.show'),
-            carouselMode: _.get(e, 'payload.mode'),
-            selectedIndex: _.get(e, 'payload.index', 0),
-            images: _.get(e, 'payload.images', [])
-          };
-        })
+        actions: assign((_ctx, e) => ({
+          showCarousel: _.get(e, "payload.show"),
+          carouselMode: _.get(e, "payload.mode"),
+          selectedIndex: _.get(e, "payload.index", 0),
+          images: _.get(e, "payload.images", [])
+        }))
       },
       TOGGLE_CAROUSEL_CLOSE: {
         actions: [
-          assign((_ctx, e) => {
-            return {
-              showCarousel: false,
-              carouselMode: null,
-              selectedIndex: 0,
-              images: []
-            };
-          }),
-          'notifyCarouselClose'
+          assign(() => ({
+            showCarousel: false,
+            carouselMode: null,
+            selectedIndex: 0,
+            images: []
+          })),
+          "notifyCarouselClose"
         ]
       },
       TOGGLE_MONTH_VIEW_OPEN: {
-        actions: assign((_ctx, e) => {
-          return {
-            showMonthPanel: _.get(e, 'payload.show'),
-            selectedYear: _.get(e, 'payload.year', null)
-          };
-        })
+        actions: assign((_ctx, e) => ({
+          showMonthPanel: _.get(e, "payload.show"),
+          selectedYear: _.get(e, "payload.year", null)
+        }))
       },
       TOGGLE_MONTH_VIEW_CLOSE: {
         actions: [
-          assign((_ctx, e) => {
-            return {
-              showMonthPanel: false,
-              selectedYear: null
-            };
-          }),
-          'notifyCarouselClose'
+          assign(() => ({
+            showMonthPanel: false,
+            selectedYear: null
+          })),
+          "notifyCarouselClose"
         ]
       },
       TOGGLE_RESIZE_VIEW: {
-        actions: assign((_ctx, e) => {
-          return {
-            isViewResized: _.get(e, 'payload.resize')
-          };
-        })
+        actions: assign((_ctx, e) => ({
+          isViewResized: _.get(e, "payload.resize")
+        }))
       },
       CLOSE_TERM_MODAL: {
         actions: assign({
@@ -155,23 +147,18 @@ const historicalMachine = Machine(
       },
       ADD_SNAPSHOT: {
         actions: [
-          assign((ctx, e) => {
-            return {
-              archiveURLs: [...ctx.archiveURLs, _.get(e, 'payload.archiveURL')],
-              snapshots: [...ctx.snapshots, _.get(e, 'payload.snapshot')]
-            };
-          }),
-          assign((ctx) => {
-            return {
-              images: _.map(ctx.snapshots, 'data')
-            };
-          })
-          // 'notifySnapshotLoad'
+          assign((ctx, e) => ({
+            archiveURLs: [...ctx.archiveURLs, _.get(e, "payload.archiveURL")],
+            snapshots: [...ctx.snapshots, _.get(e, "payload.snapshot")]
+          })),
+          assign((ctx) => ({
+            images: _.map(ctx.snapshots, "data")
+          }))
         ]
       },
       SET_SNAPSHOT: {
         actions: assign((ctx, e) => {
-          ctx.snapshots[_.get(e, 'payload.index')] = _.get(e, 'payload.value');
+          ctx.snapshots[_.get(e, "payload.index")] = _.get(e, "payload.value");
           return {
             snapshots: [...ctx.snapshots]
           };
@@ -179,9 +166,9 @@ const historicalMachine = Machine(
       },
       SET_ARCHIVE_URL: {
         actions: assign((ctx, e) => {
-          ctx.archiveURLs[_.get(e, 'payload.index')] = _.get(
+          ctx.archiveURLs[_.get(e, "payload.index")] = _.get(
             e,
-            'payload.value'
+            "payload.value"
           );
           return {
             archiveURLs: [...ctx.archiveURLs]
@@ -196,34 +183,33 @@ const historicalMachine = Machine(
         isSTOPPED = false;
         const timestampURLs = _.map(
           ctx.years,
-          (y) =>
-            `https://archive.org/wayback/available?url=${
-              ctx.url
-            }&timestamp=${y}12`
+          (y) => `https://archive.org/wayback/available?url=${
+            ctx.url
+          }&timestamp=${y}12`
         );
 
         const timestampURLCount = _.size(timestampURLs);
         const snapshotMapper = async (item, index) => {
-          let [result] = await api(item, {
+          const [result] = await api(item, {
             fetchFromCache: timestampURLCount - 1 !== index,
-            meta: { type: 'available' }
+            meta: { type: "available" }
           });
 
-          let archiveURL = _.replace(
-            _.get(result, 'archived_snapshots.closest.url'),
+          const archiveURL = _.replace(
+            _.get(result, "archived_snapshots.closest.url"),
             /https?/,
-            'https'
+            "https"
           );
 
           const dateTime = getDateTimeFromTS(
-            _.get(result, 'archived_snapshots.closest.timestamp')
+            _.get(result, "archived_snapshots.closest.timestamp")
           );
 
-          if (_.get(dateTime, 'year') > _.parseInt(ctx.years[index]) + 1) {
+          if (_.get(dateTime, "year") > _.parseInt(ctx.years[index]) + 1) {
             return callback({
-              type: 'ADD_SNAPSHOT',
+              type: "ADD_SNAPSHOT",
               payload: {
-                snapshot: { data: null, err: 'mismatch' },
+                snapshot: { data: null, err: "mismatch" },
                 archiveURL
               }
             });
@@ -231,9 +217,9 @@ const historicalMachine = Machine(
 
           if (!archiveURL) {
             return callback({
-              type: 'ADD_SNAPSHOT',
+              type: "ADD_SNAPSHOT",
               payload: {
-                snapshot: { data: null, err: 'Archive URL not found' },
+                snapshot: { data: null, err: "Archive URL not found" },
                 archiveURL
               }
             });
@@ -243,40 +229,41 @@ const historicalMachine = Machine(
             latest: timestampURLCount - 1 === index
           });
           callback({
-            type: 'ADD_SNAPSHOT',
+            type: "ADD_SNAPSHOT",
             payload: { snapshot: { data, err }, archiveURL }
           });
+
+          return null;
         };
 
         try {
-          return timestampURLs.reduce(function(prev, curr, i) {
-            return prev.then(function() {
-              if (isSTOPPED) {
-                throw new Error('Service has Stopped');
-              }
-              return snapshotMapper(curr, i);
-            });
-          }, Promise.resolve());
-        } catch (ex) {}
+          return timestampURLs.reduce((prev, curr, i) => prev.then(() => {
+            if (isSTOPPED) {
+              throw new Error("Service has Stopped");
+            }
+            return snapshotMapper(curr, i);
+          }), Promise.resolve());
+        } catch (ex) {
+          console.log("Snapshot service failed:", ex.message);
+        }
+
+        return null;
       },
-      checkHistoricalAvailable: (ctx) => {
-        return new Promise(async (resolve, reject) => {
-          const [result, err] = await api(
-            process.env.LAMBDA_SCREENSHOT_IS_AVAILABLE
-          );
-          if (err) {
-            return reject(err);
-          }
-          return resolve({
-            isAvailable: _.get(result, 'isAvailable')
-          });
+      // eslint-disable-next-line no-async-promise-executor
+      checkHistoricalAvailable: () => new Promise(async (resolve, reject) => {
+        const [result, err] = await api(
+          process.env.LAMBDA_SCREENSHOT_IS_AVAILABLE
+        );
+        if (err) {
+          return reject(err);
+        }
+        return resolve({
+          isAvailable: _.get(result, "isAvailable")
         });
-      }
+      })
     },
     guards: {
-      isHistoricalAvailable: (ctx, e) => {
-        return ctx.isHistoricalEnabled;
-      }
+      isHistoricalAvailable: (ctx) => ctx.isHistoricalEnabled
     }
   }
 );

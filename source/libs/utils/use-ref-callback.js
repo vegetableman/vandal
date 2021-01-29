@@ -1,8 +1,8 @@
-import React, { useCallback, useRef } from 'react';
+import { useCallback, useRef } from "react";
 
 export default function useRefCallback() {
   const ref = useRef(null);
-  const setRef = useCallback(node => {
+  const setRef = useCallback((node) => {
     if (ref.current) {
       // Make sure to cleanup any events/references added to the last instance
     }

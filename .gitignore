@@ -3,7 +3,6 @@ test
 .build/
 distribution
 report*json
-.vscode
 _site
 .serverless
 .env

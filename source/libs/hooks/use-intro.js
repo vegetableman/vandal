@@ -1,5 +1,8 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { introDB } from '../utils/storage';
+import React, {
+  createContext, useContext, useEffect, useState
+} from "react";
+import PropTypes from "prop-types";
+import { introDB } from "../utils/storage";
 
 const IntroContext = createContext({ show: true, toggleShow: () => {} });
 
@@ -28,6 +31,10 @@ const IntroProvider = ({ children }) => {
       {children}
     </IntroContext.Provider>
   );
+};
+
+IntroProvider.propTypes = {
+  children: PropTypes.element.isRequired
 };
 
 const useIntro = () => {

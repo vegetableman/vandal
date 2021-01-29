@@ -4,32 +4,33 @@ import React, {
   useRef,
   useMemo,
   useState
-} from 'react';
-import ReactTooltip from 'react-tooltip';
-import cx from 'classnames';
-import { useMachine } from '@xstate/react';
+} from "react";
+import PropTypes from "prop-types";
+import ReactTooltip from "react-tooltip";
+import cx from "classnames";
+import { useMachine } from "@xstate/react";
 
-import { VerticalMenu, Switch, Icon } from '../common';
-import { browser } from '../../utils';
-import { TimetravelProvider, useTheme } from '../../hooks';
-import { colors } from '../../constants';
-import URL from '../url';
-import TimeTravel from '../timetravel';
-import Historical from '../historical';
-import About from './about';
+import { VerticalMenu, Switch, Icon } from "../common";
+import { browser } from "../../utils";
+import { TimetravelProvider, useTheme } from "../../hooks";
+import { colors } from "../../constants";
+import URL from "../url";
+import TimeTravel from "../timetravel";
+import Historical from "../historical";
+import About from "./about";
 
-import frameMachine from './frame.machine';
-import navigatorMachine from './navigator.machine';
+import frameMachine from "./frame.machine";
+import navigatorMachine from "./navigator.machine";
 
-import styles from './frame.module.css';
+import styles from "./frame.module.css";
 
 const options = [
   {
-    value: 'histView',
-    text: 'Historical View'
+    value: "histView",
+    text: "Historical View"
   },
   {
-    value: 'wayback',
+    value: "wayback",
     text: (
       <div className={styles.vertical__wayback__item}>
         <span>Wayback Machine</span>
@@ -44,22 +45,21 @@ const options = [
 ];
 
 const Frame = (props) => {
-  const { frameu, tempUrl, history, ...others } = props;
   const [state, send, frameService] = useMachine(frameMachine);
   const { theme, setTheme } = useTheme();
   const [showAbout, toggleAbout] = useState(false);
   const verticalMenuRef = useRef(null);
 
   const onOptionSelect = (option) => {
-    if (option === 'wayback') {
-      window.open(`https://web.archive.org/web/*/${props.url}`, '_blank');
-    } else if (option === 'exit') {
+    if (option === "wayback") {
+      window.open(`https://web.archive.org/web/*/${props.url}`, "_blank");
+    } else if (option === "exit") {
       props.onExit();
-    } else if (option === 'diffView') {
-      send('TOGGLE_DIFF_MODE');
-    } else if (option === 'histView') {
-      send('TOGGLE_HISTORICAL_MODE');
-    } else if (option === 'about') {
+    } else if (option === "diffView") {
+      send("TOGGLE_DIFF_MODE");
+    } else if (option === "histView") {
+      send("TOGGLE_HISTORICAL_MODE");
+    } else if (option === "about") {
       toggleAbout(true);
     }
   };
@@ -86,114 +86,112 @@ const Frame = (props) => {
   useEffect(
     () => {
       if (props.loaded) {
-        send('LOAD_SPARKLINE', { payload: { url: props.url } });
+        send("LOAD_SPARKLINE", { payload: { url: props.url } });
       }
     },
-    [props.loaded]
+    [props.loaded, props.url, send]
   );
 
-  const onMessage = (request) => {
-    const frameURL = _.get(request.data, 'url');
+  const onMessage = useCallback((request) => {
+    const frameURL = _.get(request.data, "url");
 
     switch (request.message) {
-      case '__VANDAL__NAV__COMMIT':
-        const transitionType = _.get(request.data, 'type');
-        sendToNav('UPDATE_HISTORY_ONCOMMIT', {
+      case "__VANDAL__NAV__COMMIT":
+        sendToNav("UPDATE_HISTORY_ONCOMMIT", {
           payload: {
             url: frameURL,
-            type: transitionType
+            type: _.get(request.data, "type")
           }
         });
         break;
 
-      case '__VANDAL__NAV__BEFORENAVIGATE':
-      case '__VANDAL__NAV__HISTORYCHANGE':
-        sendToNav('UPDATE_HISTORY', {
+      case "__VANDAL__NAV__BEFORENAVIGATE":
+      case "__VANDAL__NAV__HISTORYCHANGE":
+        sendToNav("UPDATE_HISTORY", {
           payload: {
             url: frameURL,
-            type: _.get(request.data, 'type')
+            type: _.get(request.data, "type")
           }
         });
         break;
 
-      case '__VANDAL__FRAME__MOUSEDOWN':
-        if (frameService.state.matches('idle.timetravel.open')) {
-          send('TOGGLE_TIMETRAVEL');
+      case "__VANDAL__FRAME__MOUSEDOWN":
+        if (frameService.state.matches("idle.timetravel.open")) {
+          send("TOGGLE_TIMETRAVEL");
         }
         if (verticalMenuRef.current) {
           verticalMenuRef.current.hideMenu();
         }
         break;
+
+      default:
+        break;
     }
-  };
+  }, [frameService.state, send, sendToNav]);
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener(onMessage);
-  }, []);
+  }, [onMessage]);
 
   const allRecords = useMemo(
-    () => _.get(navState, 'context.allRecords'),
-    [_.join(_.get(navState, 'context.allRecords', []), ',')],
-    [_.get(navState, 'context.allRecords')]
+    () => _.get(navState, "context.allRecords"),
+    [navState],
+    [_.get(navState, "context.allRecords")]
   );
 
   const selectTabIndex = useCallback((idx) => {
     send({
-      type: 'SET_SELECTED_TABINDEX',
+      type: "SET_SELECTED_TABINDEX",
       payload: { value: idx }
     });
-  });
+  }, []);
 
   const menuItems = useMemo(
-    () => {
-      return [
-        ...options,
-        {
-          value: 'switchTheme',
-          text: (
-            <div>
-              <Switch
-                width={30}
-                height={15}
-                label="Dark Mode"
-                defaultValue={theme === 'dark'}
-                checkedIcon={false}
-                uncheckedIcon={false}
-                onColor="#f7780b"
-                className={styles.theme__switch}
-                onChange={(checked) => {
-                  setTheme(checked ? 'dark' : 'light');
-                }}
-              />
-            </div>
-          ),
-          hideOnSelect: false
-        },
-        {
-          value: 'about',
-          text: 'About'
-        },
-        {
-          value: 'exit',
-          text: 'Exit'
-        }
-      ];
-    },
-    [options, theme]
+    () => [
+      ...options,
+      {
+        value: "switchTheme",
+        text: (
+          <div>
+            <Switch
+              width={30}
+              height={15}
+              label="Dark Mode"
+              defaultValue={theme === "dark"}
+              checkedIcon={false}
+              uncheckedIcon={false}
+              onColor="#f7780b"
+              className={styles.theme__switch}
+              onChange={(checked) => {
+                setTheme(checked ? "dark" : "light");
+              }}
+            />
+          </div>
+        ),
+        hideOnSelect: false
+      },
+      {
+        value: "about",
+        text: "About"
+      },
+      {
+        value: "exit",
+        text: "Exit"
+      }
+    ],
+    [setTheme, theme]
   );
 
-  const disableBack =
-    _.indexOf(navState.context.currentRecords, navState.context.currentURL) <=
-    0;
+  const disableBack = _.indexOf(navState.context.currentRecords, navState.context.currentURL)
+    <= 0;
 
-  const disableForward =
-    _.indexOf(navState.context.currentRecords, navState.context.currentURL) ===
-      -1 ||
-    _.lastIndexOf(
+  const disableForward = _.indexOf(navState.context.currentRecords, navState.context.currentURL)
+      === -1
+    || _.lastIndexOf(
       navState.context.currentRecords,
       navState.context.currentURL
-    ) ===
-      _.size(navState.context.currentRecords) - 1;
+    )
+      === _.size(navState.context.currentRecords) - 1;
 
   return (
     <TimetravelProvider machine={state.context.timetravelRef}>
@@ -201,38 +199,45 @@ const Frame = (props) => {
         <div className={styles.left}>
           <div className={styles.logo__container}>
             <img
+              alt="logo"
               className={styles.logo}
-              src={chrome.runtime.getURL('images/icon.png')}
+              src={chrome.runtime.getURL("images/icon.png")}
             />
           </div>
           <div className={styles.navigation}>
             <button
+              type="button"
               data-for="vandal-back"
               data-tip="Go back"
               className={styles.backward__nav__btn}
               disabled={disableBack && !navState.context.isForward}
-              onClick={() => sendToNav('GO_BACK')}>
+              onClick={() => sendToNav("GO_BACK")}
+            >
               <Icon name="leftNav" className={styles.backward__nav__icon} />
             </button>
             <button
+              type="button"
               className={styles.forward__nav__btn}
               data-for="vandal-forward"
               data-tip="Go forward"
               disabled={disableForward && !navState.context.isBack}
-              onClick={() => sendToNav('GO_FORWARD')}>
+              onClick={() => sendToNav("GO_FORWARD")}
+            >
               <Icon name="rightNav" className={styles.forward__nav__icon} />
             </button>
           </div>
           <button
+            type="button"
             className={styles.reload__btn}
             data-for="vandal-reload"
-            data-tip="Reload">
+            data-tip="Reload"
+          >
             <Icon
               name="reload"
               width={25}
               height={20}
               onClick={() => {
-                sendToNav('RELOAD');
+                sendToNav("RELOAD");
               }}
               className={styles.reload__icon}
             />
@@ -241,31 +246,33 @@ const Frame = (props) => {
         <div className={styles.mid}>
           <URL
             history={allRecords}
-            showTimeTravel={state.matches('idle.timetravel.open')}
+            showTimeTravel={state.matches("idle.timetravel.open")}
             url={props.url}
             clearHistory={() => {
-              sendToNav('CLEAR_HISTORY');
+              sendToNav("CLEAR_HISTORY");
             }}
-            toggleTimeTravel={() => send('TOGGLE_TIMETRAVEL')}
+            toggleTimeTravel={() => send("TOGGLE_TIMETRAVEL")}
           />
         </div>
         <div className={styles.right}>
           <div className={styles.right__action__container}>
             <button
+              type="button"
               data-for="vandal-drawer"
               data-tip="Show Timestamps"
               className={cx({
                 [styles.resource__btn]: true,
                 [styles.resource__btn__active]: state.matches(
-                  'idle.resourcedrawer.open'
+                  "idle.resourcedrawer.open"
                 )
               })}
               onClick={() => {
-                send('TOGGLE_RESOURCEL_DRAWER');
+                send("TOGGLE_RESOURCEL_DRAWER");
                 chrome.runtime.sendMessage({
-                  message: '__VANDAL__CLIENT__TOGGLEDRAWER'
+                  message: "__VANDAL__CLIENT__TOGGLEDRAWER"
                 });
-              }}>
+              }}
+            >
               <Icon name="resource" className={styles.resource__icon} />
             </button>
             <ReactTooltip
@@ -295,8 +302,9 @@ const Frame = (props) => {
             <div
               className={styles.donate__btn}
               data-for="vandal-donate"
-              data-tip="Donate to Archive">
-              <a href="https://archive.org/donate/?ref=vandal" target="_blank">
+              data-tip="Donate to Archive"
+            >
+              <a href="https://archive.org/donate/?ref=vandal" target="_blank" rel="noopener noreferrer">
                 <Icon
                   name="heart"
                   className={styles.donate__icon}
@@ -307,18 +315,18 @@ const Frame = (props) => {
             </div>
           </div>
         </div>
-        {state.matches('idle.timetravel.open') && (
+        {state.matches("idle.timetravel.open") && (
           <TimeTravel
-            {...others}
+            {...props}
             selectTabIndex={selectTabIndex}
-            selectedTabIndex={_.get(state, 'context.selectedTabIndex')}
+            selectedTabIndex={_.get(state, "context.selectedTabIndex")}
           />
         )}
-        {state.matches('idle.historical.open') && (
+        {state.matches("idle.historical.open") && (
           <Historical
             url={props.url}
             onClose={() => {
-              send('TOGGLE_HISTORICAL_MODE');
+              send("TOGGLE_HISTORICAL_MODE");
             }}
             openURL={(url) => {
               browser.navigate(url);
@@ -381,6 +389,16 @@ const Frame = (props) => {
       </div>
     </TimetravelProvider>
   );
+};
+
+Frame.propTypes = {
+  url: PropTypes.string.isRequired,
+  onExit: PropTypes.func.isRequired,
+  loaded: PropTypes.bool
+};
+
+Frame.defaultProps = {
+  loaded: false
 };
 
 export default Frame;

@@ -1,23 +1,25 @@
-import _ from 'lodash';
+import _ from "lodash";
 
-let promiseMap = {};
+const promiseMap = {};
 let port;
 
 const getPort = () => {
-  port = chrome.runtime.connect({ name: 'vandal' });
+  port = chrome.runtime.connect({ name: "vandal" });
   port.onDisconnect.addListener((obj) => {
-    console.log('disconnected port', obj);
+    // eslint-disable-next-line no-console
+    console.log("disconnected port", obj);
   });
-  port.onMessage.addListener(function(result) {
-    if (result.message === '__VANDAL__CLIENT__FETCH__RESPONSE') {
+  port.onMessage.addListener((result) => {
+    if (result.message === "__VANDAL__CLIENT__FETCH__RESPONSE") {
       const p = { ...promiseMap[result.uniqueId] };
       delete promiseMap[result.uniqueId];
-      const [res, err] = _.nth(_.get(result, 'payload'), 0);
+      const [res, err] = _.nth(_.get(result, "payload"), 0);
       if (err) {
         return p.reject(err);
       }
       return p.resolve([res, err]);
     }
+    return null;
   });
   return port;
 };
@@ -29,7 +31,7 @@ export const api = async (
     fetchResHeader,
     cacheResponse,
     headers = {},
-    method = 'GET',
+    method = "GET",
     enableThrow = false,
     meta,
     body
@@ -39,10 +41,10 @@ export const api = async (
     port = getPort();
   }
 
-  return new Promise(function(resolve) {
+  return new Promise(((resolve) => {
     const uniqueId = _.uniqueId();
     port.postMessage({
-      message: '__VANDAL__CLIENT__FETCH',
+      message: "__VANDAL__CLIENT__FETCH",
       data: {
         endpoint,
         fetchResHeader,
@@ -62,12 +64,12 @@ export const api = async (
         resolve([null, err]);
       }
     };
-  });
+  }));
 };
 
 export const abort = (payload = {}) => {
   port.postMessage({
-    message: '__VANDAL__CLIENT__FETCH__ABORT',
+    message: "__VANDAL__CLIENT__FETCH__ABORT",
     data: { ...payload }
   });
 };

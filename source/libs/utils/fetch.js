@@ -1,26 +1,26 @@
-const getResponse = async (res, meta) => {
-  const contentType = _.get(res, 'headers').get('content-type');
+const getResponse = async (res) => {
+  const contentType = _.get(res, "headers").get("content-type");
   if (
-    _.endsWith(_.get(res, 'url'), '.png') ||
-    (contentType && ~contentType.indexOf('image'))
+    _.endsWith(_.get(res, "url"), ".png")
+    || (contentType && contentType.indexOf("image") > -1)
   ) {
     const responseBlob = await res.blob();
     return URL.createObjectURL(responseBlob);
-  } else if (contentType && ~contentType.indexOf('text/')) {
-    return await res.text();
-  } else {
-    try {
-      return await res.json();
-    } catch (ex) {
-      throw new Error('Response JSON parse failure');
-    }
+  } if (contentType && contentType.indexOf("text/") > -1) {
+    const result = await res.text();
+    return result;
+  }
+  try {
+    return await res.json();
+  } catch (ex) {
+    throw new Error("Response JSON parse failure");
   }
 };
 
 const fetchRequest = async ({
   endpoint,
   controller,
-  method = 'GET',
+  method = "GET",
   meta,
   body,
   headers = {},
@@ -31,15 +31,15 @@ const fetchRequest = async ({
 }) => {
   let request;
   if (controller) {
-    const signal = controller.signal;
+    const { signal } = controller;
     request = new Request(endpoint, { signal, headers });
   } else {
     request = new Request(endpoint, { headers });
   }
 
-  if (fetchFromCache) {
+  if (fetchFromCache && typeof caches !== "undefined") {
     const resFromCache = await caches.match(request);
-    if (_.get(resFromCache, 'status') === 200) {
+    if (_.get(resFromCache, "status") === 200) {
       return [await getResponse(resFromCache, meta), null];
     }
   }
@@ -47,23 +47,22 @@ const fetchRequest = async ({
   try {
     const resFromFetch = await fetch(request.clone(), { method, body });
     if (fetchResHeader) {
-      console.log('fetchResHeader', resFromFetch.headers.get(fetchResHeader));
       const responseHeader = resFromFetch.headers.get(fetchResHeader);
       return [responseHeader, null];
     }
     if (
-      (fetchFromCache || cacheResponse) &&
-      _.get(resFromFetch, 'status') === 200
+      (fetchFromCache || cacheResponse)
+      && _.get(resFromFetch, "status") === 200
     ) {
-      const responseCache = await caches.open('__VANDAL__');
+      const responseCache = await caches.open("__VANDAL__");
       responseCache.put(request, resFromFetch.clone());
     }
 
-    if (_.get(resFromFetch, 'status') === 200) {
+    if (_.get(resFromFetch, "status") === 200) {
       return [await getResponse(resFromFetch, meta), null];
     }
 
-    throw new Error(resFromFetch.statusText || 'Request failed');
+    throw new Error(resFromFetch.statusText || "Request failed");
   } catch (err) {
     if (enableThrow) {
       throw new Error(err.message);

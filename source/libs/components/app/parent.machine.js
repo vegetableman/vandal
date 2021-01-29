@@ -1,11 +1,11 @@
-import { Machine, assign } from 'xstate';
-import _ from 'lodash';
-import { api, getDateTsFromURL, stripArchiveURL } from '../../utils';
+import { Machine, assign } from "xstate";
+import _ from "lodash";
+import { api, getDateTsFromURL, stripArchiveURL } from "../../utils";
 
 const parentMachine = Machine(
   {
-    id: 'parent',
-    initial: 'idle',
+    id: "parent",
+    initial: "idle",
     context: {
       isFrameBusted: false,
       notFound: false,
@@ -15,24 +15,24 @@ const parentMachine = Machine(
     on: {
       SET_URL: {
         actions: assign({
-          url: (_ctx, e) => stripArchiveURL(_.get(e, 'payload.url'))
+          url: (_ctx, e) => stripArchiveURL(_.get(e, "payload.url"))
         })
       },
       TOGGLE_BUSTED_ERROR: {
         actions: assign({
-          isFrameBusted: (_ctx, e) => _.get(e, 'payload.value')
+          isFrameBusted: (_ctx, e) => _.get(e, "payload.value")
         })
       },
       TOGGLE_SW_ERROR: {
         actions: assign({
-          isPageCached: (_ctx, e) => _.get(e, 'payload.value')
+          isPageCached: (_ctx, e) => _.get(e, "payload.value")
         })
       },
       EXIT: {
-        actions: 'notifyExit'
+        actions: "notifyExit"
       },
-      CHECK_AVAILABILITY: 'checkAvailability',
-      CLOSE: 'idle'
+      CHECK_AVAILABILITY: "checkAvailability",
+      CLOSE: "idle"
     },
     states: {
       idle: {
@@ -42,36 +42,34 @@ const parentMachine = Machine(
               assign({
                 loaded: true
               }),
-              'updateVandalURL'
+              "updateVandalURL"
             ]
           }
         }
       },
       checkAvailability: {
         invoke: {
-          src: 'checkAvailability',
+          src: "checkAvailability",
           onDone: {
-            target: 'processingAvailability',
+            target: "processingAvailability",
             actions: assign({
               notFound: true,
-              availableURL: (_ctx, e) =>
-                _.replace(_.get(e, 'data.url'), /^http\:\/\//, 'https://'),
-              availableDate: (_ctx, e) =>
-                _.get(getDateTsFromURL(_.get(e, 'data.url')), 'date')
+              availableURL: (_ctx, e) => _.replace(_.get(e, "data.url"), /^http:\/\//, "https://"),
+              availableDate: (_ctx, e) => _.get(getDateTsFromURL(_.get(e, "data.url")), "date")
             })
           },
-          onError: 'availabilityError'
+          onError: "availabilityError"
         }
       },
       processingAvailability: {
         on: {
-          '': [
+          "": [
             {
-              target: 'snapshotFound',
-              cond: 'isSnapshotAvailable'
+              target: "snapshotFound",
+              cond: "isSnapshotAvailable"
             },
             {
-              target: 'snapshotNotFound'
+              target: "snapshotNotFound"
             }
           ]
         }
@@ -83,26 +81,23 @@ const parentMachine = Machine(
   },
   {
     services: {
-      checkAvailability: (ctx, e) => {
-        return new Promise(async (resolve, reject) => {
-          let [result, err] = await api(
-            `https://chrome-api.archive.org/wayback/available?url=${ctx.url}`
-          );
+      // eslint-disable-next-line no-async-promise-executor
+      checkAvailability: (ctx) => new Promise(async (resolve, reject) => {
+        const [result, err] = await api(
+          `https://chrome-api.archive.org/wayback/available?url=${ctx.url}`
+        );
 
-          if (err) {
-            return reject(err);
-          }
+        if (err) {
+          return reject(err);
+        }
 
-          return resolve({
-            url: _.get(result, 'archived_snapshots.closest.url')
-          });
+        return resolve({
+          url: _.get(result, "archived_snapshots.closest.url")
         });
-      }
+      })
     },
     guards: {
-      isSnapshotAvailable: (ctx) => {
-        return !!ctx.availableURL;
-      }
+      isSnapshotAvailable: (ctx) => !!ctx.availableURL
     }
   }
 );

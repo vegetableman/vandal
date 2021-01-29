@@ -1,13 +1,13 @@
-import React from 'react';
-import { Carousel, Icon } from '../common';
-import styles from './historical.module.css';
+import React from "react";
+import { Carousel, Icon } from "../common";
+import styles from "./historical.module.css";
 
 export default class CarouselView extends React.Component {
   state = {
     caption: this.props.getCaption(this.props.selectedIndex)
   };
 
-  handleKeydown = e => {
+  handleKeydown = (e) => {
     if (e.keyCode === 27) {
       e.preventDefault();
       e.stopPropagation();
@@ -19,7 +19,7 @@ export default class CarouselView extends React.Component {
     }
   };
 
-  handleChange = index => {
+  handleChange = (index) => {
     this.setState({
       caption: this.props.getCaption(index)
     });
@@ -32,18 +32,19 @@ export default class CarouselView extends React.Component {
       <div
         className={styles.carousel}
         onKeyDown={this.handleKeydown}
-        ref={_ref => (this.carouselContainerRef = _ref)}
-        tabIndex="0">
+        ref={(_ref) => (this.carouselContainerRef = _ref)}
+        tabIndex="0"
+      >
         <div className={styles.caption}>
           <span className={styles.caption__title}>
-            {_.get(caption, 'title')}
+            {_.get(caption, "title")}
           </span>
-          <span className="date">{_.get(caption, 'date')}</span>
+          <span className="date">{_.get(caption, "date")}</span>
         </div>
         <div className={styles.slider__container}>
           <Carousel
             images={images}
-            ref={_ref => (this.carouselRef = _ref)}
+            ref={(_ref) => (this.carouselRef = _ref)}
             selectedIndex={selectedIndex}
             getCaption={this.props.getCaption}
             onChange={this.handleChange}

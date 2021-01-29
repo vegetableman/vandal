@@ -1,45 +1,30 @@
-import _ from 'lodash';
+/* eslint-disable no-console */
+import _ from "lodash";
 
-const historyPrefix = '__VANDAL__HIST__STORAGE';
+// unlimitedStorage is set to avoid any storage errors
+
+// TODO: consider removing this, since runtime.lastError is merely a warning
+const promisifiedGet = (key) => new Promise((resolve, reject) => {
+  chrome.storage.local.get([key], (value) => {
+    if (chrome.runtime.lastError) {
+      return reject(chrome.runtime.lastError);
+    }
+    return resolve(value[key]);
+  });
+});
+
+const historyPrefix = "__VANDAL__HIST__STORAGE";
 export const historyDB = {
-  addRecord(suffix, value) {
-    if (!value) return;
-    const key = `${historyPrefix}__${suffix}`;
-    chrome.storage.local.get([key], (svalue) => {
-      let collection = [value];
-      const match = _.includes(svalue[key], value);
-      if (match) return;
-      if (_.isArray(svalue[key])) {
-        collection = [...svalue[key], ...collection];
-      }
-      chrome.storage.local.set({ [key]: collection }, function() {
-        // Notify that we saved.
-        console.log('Settings saved');
-      });
-    });
-  },
-
   setRecords(suffix, collection) {
     if (!collection || _.isEmpty(collection)) return;
     const key = `${historyPrefix}__${suffix}`;
-    chrome.storage.local.set({ [key]: collection }, function() {
+    chrome.storage.local.set({ [key]: collection }, () => {
       // Notify that we saved.
-      console.log('Settings saved');
+      console.log("Settings saved");
     });
   },
 
   async getRecords(suffix) {
-    const promisifiedGet = (key) => {
-      return new Promise((resolve, reject) => {
-        chrome.storage.local.get([key], (value) => {
-          if (chrome.runtime.lastError) {
-            return reject(chrome.runtime.lastError);
-          }
-          return resolve(value[key]);
-        });
-      });
-    };
-
     try {
       const res = await promisifiedGet(`${historyPrefix}__${suffix}`);
       return [res, null];
@@ -49,16 +34,14 @@ export const historyDB = {
   },
 
   async clearRecords(suffix) {
-    const promisifiedClear = (key) => {
-      return new Promise((resolve, reject) => {
-        chrome.storage.local.remove(key, function() {
-          if (chrome.runtime.lastError) {
-            return reject(chrome.runtime.lastError);
-          }
-          return resolve();
-        });
+    const promisifiedClear = (key) => new Promise((resolve, reject) => {
+      chrome.storage.local.remove(key, () => {
+        if (chrome.runtime.lastError) {
+          return reject(chrome.runtime.lastError);
+        }
+        return resolve();
       });
-    };
+    });
 
     try {
       const res = await promisifiedClear(`${historyPrefix}__${suffix}`);
@@ -66,105 +49,86 @@ export const historyDB = {
     } catch (err) {
       return [null, err];
     }
-  },
-
-  isEnabled() {
-    return new Promise((resolve) => {
-      const key = '__VANDAL__HIST__LOGGING__ENABLED';
-      chrome.storage.local.get(key, (value) => {
-        return _.isUndefined(value[key]) ? resolve(true) : resolve(value[key]);
-      });
-    });
   }
 };
 
-const drawerKey = '__VANDAL__DRAWER__STORAGE';
+const drawerKey = "__VANDAL__DRAWER__STORAGE";
 
 export const drawerDB = {
   setHeight(value) {
     chrome.storage.local.set({ [drawerKey]: value }, () => {
       // Notify that we saved.
-      console.log('Settings saved');
+      console.log("Settings saved");
     });
   },
 
   getHeight() {
     return new Promise((resolve) => {
-      chrome.storage.local.get([drawerKey], (value) => {
-        return resolve(value[drawerKey]);
-      });
+      chrome.storage.local.get([drawerKey], (value) => resolve(value[drawerKey]));
     });
   }
 };
 
-const themeKey = '__VANDAL__THEME__STORAGE';
+const themeKey = "__VANDAL__THEME__STORAGE";
 export const themeDB = {
   setTheme(value) {
     chrome.storage.local.set({ [themeKey]: value }, () => {
       // Notify that we saved.
-      console.info('ThemeDB: Settings saved');
+      console.info("ThemeDB: Settings saved");
     });
   },
 
   getTheme() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(themeKey, (value) => {
-        return resolve(value[themeKey]);
-      });
+      chrome.storage.local.get(themeKey, (value) => resolve(value[themeKey]));
     });
   }
 };
 
-const introKey = '__VANDAL__INTRO__STORAGE';
+const introKey = "__VANDAL__INTRO__STORAGE";
 export const introDB = {
   setIntro(value) {
     chrome.storage.local.set({ [introKey]: value }, () => {
       // Notify that we saved.
-      console.info('IntroDB: Settings saved');
+      console.info("IntroDB: Settings saved");
     });
   },
 
   getIntro() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(introKey, (value) => {
-        return resolve(value[introKey]);
-      });
+      chrome.storage.local.get(introKey, (value) => resolve(value[introKey]));
     });
   }
 };
 
-const historicalKey = '__VANDAL__HIST_INFO__STORAGE';
+const historicalKey = "__VANDAL__HIST_INFO__STORAGE";
 export const historicalDB = {
   setInfo(value) {
     chrome.storage.local.set({ [historicalKey]: value }, () => {
       // Notify that we saved.
-      console.info('HistoricalDB: Settings saved');
+      console.info("HistoricalDB: Settings saved");
     });
   },
 
   getInfo() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(historicalKey, (value) => {
-        return resolve(value[historicalKey]);
-      });
+      chrome.storage.local.get(historicalKey, (value) => resolve(value[historicalKey]));
     });
   }
 };
 
-const appKey = '__VANDAL__APP__STORAGE';
+const appKey = "__VANDAL__APP__STORAGE";
 export const appDB = {
   setDonateState(value) {
-    chrome.storage.local.set({ [appKey + '__DONATE']: value }, () => {
+    chrome.storage.local.set({ [`${appKey}__DONATE`]: value }, () => {
       // Notify that we saved.
-      console.info('donateDB: Settings saved');
+      console.info("donateDB: Settings saved");
     });
   },
 
   getDonateState() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(appKey + '__DONATE', (value) => {
-        return resolve(value[appKey + '__DONATE']);
-      });
+      chrome.storage.local.get(`${appKey}__DONATE`, (value) => resolve(value[`${appKey}__DONATE`]));
     });
   }
 };

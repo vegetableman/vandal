@@ -2,13 +2,13 @@ class Overlay {
   constructor() {
     const doc = window.document;
     this.win = window;
-    this.container = doc.createElement('div');
-    this.node = doc.createElement('div');
-    this.tip = doc.createElement('div');
+    this.container = doc.createElement("div");
+    this.node = doc.createElement("div");
+    this.tip = doc.createElement("div");
     this.container.appendChild(this.node);
     this.container.appendChild(this.tip);
     doc.body.appendChild(this.container);
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.appendChild(
       document.createTextNode(`
     @font-face {
@@ -57,19 +57,19 @@ class Overlay {
     }
     const box = node.getBoundingClientRect();
     Object.assign(this.container.style, {
-      left: box.left + 'px',
-      top: box.top + 'px',
-      width: box.width + 'px',
-      height: box.height + 'px'
+      left: `${box.left}px`,
+      top: `${box.top}px`,
+      width: `${box.width}px`,
+      height: `${box.height}px`
     });
     if (!ts) {
       Object.assign(this.tip.style, {
-        display: 'none'
+        display: "none"
       });
     } else {
       Object.assign(this.tip.style, {
-        left: box.left + 'px',
-        top: box.top + box.height + 'px'
+        left: `${box.left}px`,
+        top: `${box.top + box.height}px`
       });
       this.tip.innerText = ts;
     }
@@ -83,11 +83,11 @@ class Overlay {
 }
 
 function findElementsByTagName(currWindow, tag) {
-  let els = currWindow.document.getElementsByTagName(tag);
+  const els = currWindow.document.getElementsByTagName(tag);
   let elsArray = Array.prototype.slice.call(els);
   for (let i = 0; i < currWindow.frames.length; i++) {
     try {
-      let frameElsArray = findElementsByTagName(
+      const frameElsArray = findElementsByTagName(
         currWindow.frames[i].window,
         tag
       );
@@ -99,103 +99,93 @@ function findElementsByTagName(currWindow, tag) {
   return elsArray;
 }
 
-let imageMap = {},
-  overlay;
+let imageMap = {};
+let overlay;
 
-let ARCHIVE_STATIC_PATH = 'https://web.archive.org/_static/';
-let ARCHIVE_DONATE_PATH = 'https://archive.org/includes/donate.php';
+const ARCHIVE_STATIC_PATH = "https://web.archive.org/_static/";
+const ARCHIVE_DONATE_PATH = "https://archive.org/includes/donate.php";
 
 function getSources() {
   imageMap = {};
   overlay = null;
   // images
-  let prefix = window.location.origin + '/static/';
-  let srcList = [];
-  let imgs = findElementsByTagName(window, 'img');
+  const prefix = `${window.location.origin}/static/`;
+  const srcList = [];
+  const imgs = findElementsByTagName(window, "img");
   for (let i = 0, len = imgs.length; i < len; i++) {
     // exclude WBM /static/images, leaked images and embedded data URIs
-    if (
-      !imgs[i].src ||
-      imgs[i].src.startsWith(prefix) ||
-      !imgs[i].src.startsWith(window.location.origin) ||
-      imgs[i].src.startsWith('data:') ||
-      imgs[i].src.startsWith(ARCHIVE_STATIC_PATH)
-    ) {
-      continue;
+    const isImageInvalid = !imgs[i].src
+      || imgs[i].src.startsWith(prefix)
+      || !imgs[i].src.startsWith(window.location.origin)
+      || imgs[i].src.startsWith("data:")
+      || imgs[i].src.startsWith(ARCHIVE_STATIC_PATH);
+
+    if (!isImageInvalid) {
+      if (!imageMap[imgs[i].src]) {
+        imageMap[imgs[i].src] = imgs[i];
+      }
+      srcList.push(imgs[i].src);
     }
-    if (!imageMap[imgs[i].src]) {
-      imageMap[imgs[i].src] = imgs[i];
-    }
-    srcList.push(imgs[i].src);
   }
 
   // frames
-  let frames = findElementsByTagName(window, 'frame');
+  const frames = findElementsByTagName(window, "frame");
   for (let i = 0, len = frames.length; i < len; i++) {
-    if (!frames[i].src) {
-      continue;
+    if (frames[i].src) {
+      srcList.push(frames[i].src);
     }
-    srcList.push(frames[i].src);
   }
 
-  let iframes = findElementsByTagName(window, 'iframe');
+  const iframes = findElementsByTagName(window, "iframe");
   for (let i = 0, len = iframes.length; i < len; i++) {
-    if (
-      !iframes[i].src ||
-      (iframes[i].id && iframes[i].id === 'playback') ||
-      iframes[i].src.startsWith(ARCHIVE_DONATE_PATH)
-    ) {
-      continue;
+    const isPlayback = (iframes[i].id && iframes[i].id === "playback");
+    if (iframes[i].src && !iframes[i].src.startsWith(ARCHIVE_DONATE_PATH) && !isPlayback) {
+      srcList.push(iframes[i].src);
     }
-    srcList.push(iframes[i].src);
   }
 
-  let scripts = findElementsByTagName(window, 'script');
+  const scripts = findElementsByTagName(window, "script");
   for (let i = 0, len = scripts.length; i < len; i++) {
-    if (
-      !scripts[i].src ||
-      scripts[i].src.startsWith(prefix) ||
-      !scripts[i].src.startsWith(window.location.origin) ||
-      scripts[i].src.startsWith(ARCHIVE_STATIC_PATH)
-    ) {
-      continue;
+    const isSrcInvalid = !scripts[i].src
+    || scripts[i].src.startsWith(prefix)
+    || !scripts[i].src.startsWith(window.location.origin)
+    || scripts[i].src.startsWith(ARCHIVE_STATIC_PATH);
+
+    if (!isSrcInvalid) {
+      srcList.push(scripts[i].src);
     }
-    srcList.push(scripts[i].src);
   }
 
   // link.href (CSS, RSS, etc)
-  let links = findElementsByTagName(window, 'link');
+  const links = findElementsByTagName(window, "link");
   for (let i = 0, len = links.length; i < len; i++) {
-    if (
-      !links[i].href ||
-      links[i].href.startsWith(prefix) ||
-      !links[i].href.startsWith(window.location.origin) ||
-      links[i].href.startsWith(ARCHIVE_STATIC_PATH)
-    ) {
-      continue;
-    }
-    if (links[i].rel && links[i].rel == 'stylesheet') {
-      srcList.push(links[i].href);
+    const isLinkInvalid = !links[i].href
+    || links[i].href.startsWith(prefix)
+    || !links[i].href.startsWith(window.location.origin)
+    || links[i].href.startsWith(ARCHIVE_STATIC_PATH);
+
+    if (!isLinkInvalid) {
+      if (links[i].rel && links[i].rel === "stylesheet") {
+        srcList.push(links[i].href);
+      }
     }
   }
   // deduplicate
-  return srcList.filter(function(el, i, arr) {
-    return arr.indexOf(el) === i;
-  });
+  return srcList.filter((el, i, arr) => arr.indexOf(el) === i);
 }
 
 const mousedownHandler = () => {
-  chrome.runtime.sendMessage({ message: '__VANDAL__FRAME__MOUSEDOWN' });
+  chrome.runtime.sendMessage({ message: "__VANDAL__FRAME__MOUSEDOWN" });
 };
 
-const messageHandler = async function(request, _, sendResponse) {
+const messageHandler = async (request) => {
   if (!request) return;
-  if (request.message === '__VANDAL__CLIENT__FETCH__SOURCES') {
+  if (request.message === "__VANDAL__CLIENT__FETCH__SOURCES") {
     chrome.runtime.sendMessage({
-      message: '__VANDAL__FRAME__SOURCES',
+      message: "__VANDAL__FRAME__SOURCES",
       data: getSources()
     });
-  } else if (request.message === '__VANDAL__CLIENT__HIGHLIGHT__NODE') {
+  } else if (request.message === "__VANDAL__CLIENT__HIGHLIGHT__NODE") {
     const node = imageMap[request.data.source];
     if (!node) {
       return;
@@ -204,7 +194,7 @@ const messageHandler = async function(request, _, sendResponse) {
       overlay = new Overlay();
     }
     overlay.highlight(node, request.data.ts, request.data.scrollOnHighlight);
-  } else if (request.message === '__VANDAL__CLIENT__REMOVE__HIGHLIGHT') {
+  } else if (request.message === "__VANDAL__CLIENT__REMOVE__HIGHLIGHT") {
     if (overlay) {
       overlay.remove();
       overlay = null;
@@ -213,14 +203,14 @@ const messageHandler = async function(request, _, sendResponse) {
 };
 
 function onDomReady() {
-  window.removeEventListener('mousedown', mousedownHandler);
-  window.addEventListener('mousedown', mousedownHandler);
+  window.removeEventListener("mousedown", mousedownHandler);
+  window.addEventListener("mousedown", mousedownHandler);
   chrome.runtime.onMessage.removeListener(messageHandler);
   chrome.runtime.onMessage.addListener(messageHandler);
 }
 
-const link = document.createElement('meta');
-link.setAttribute('charset', 'utf-8');
+const link = document.createElement("meta");
+link.setAttribute("charset", "utf-8");
 document.head.appendChild(link);
 
 onDomReady();

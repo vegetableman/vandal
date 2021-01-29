@@ -1,17 +1,19 @@
-import React, { useState, forwardRef, useImperativeHandle, memo } from 'react';
-import _ from 'lodash';
-import cx from 'classnames';
-import withDialog from '../withdialog';
-import Icon from '../icon';
+import React, {
+  useState, forwardRef, useImperativeHandle, memo
+} from "react";
+import _ from "lodash";
+import cx from "classnames";
+import withDialog from "../withdialog";
+import Icon from "../icon";
 
-import styles from './verticalmenu.module.css';
-import { compareProps } from '../../../utils';
+import styles from "./verticalmenu.module.css";
+import { compareProps } from "../../../utils";
 
 class List extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (
-      nextProps.isDialogClosed &&
-      nextProps.isDialogClosed !== this.props.isDialogClosed
+      nextProps.isDialogClosed
+      && nextProps.isDialogClosed !== this.props.isDialogClosed
     ) {
       nextProps.onClose();
     }
@@ -25,26 +27,27 @@ class List extends React.Component {
           [styles.list]: true,
           [this.props.listClass]: !!this.props.listClass
         })}
-        ref={dialogRef}>
-        {_.map(options, (option, index) => {
-          return option.title ? (
-            <li
-              className={cx({
-                [styles.listItem]: true,
-                [this.props.listItemClass]: !!this.props.listItemClass
-              })}
-              key={index}>
-              {option.text}
-            </li>
-          ) : (
-            <li
-              className={styles.listItem}
-              key={index}
-              onMouseDown={handleOption(option.value, option.hideOnSelect)}>
-              {option.text}
-            </li>
-          );
-        })}
+        ref={dialogRef}
+      >
+        {_.map(options, (option, index) => (option.title ? (
+          <li
+            className={cx({
+              [styles.listItem]: true,
+              [this.props.listItemClass]: !!this.props.listItemClass
+            })}
+            key={index}
+          >
+            {option.text}
+          </li>
+        ) : (
+          <li
+            className={styles.listItem}
+            key={index}
+            onMouseDown={handleOption(option.value, option.hideOnSelect)}
+          >
+            {option.text}
+          </li>
+        )))}
       </ul>
     );
   }
@@ -78,17 +81,17 @@ const VerticalMenu = memo(
         className={cx({
           [styles.menu]: true,
           [props.className]: !!props.className
-        })}>
+        })}
+      >
         <div
           className={cx({
             [styles.iconContainer]: true,
             [props.iconContainerClass]: !!props.iconContainerClass
           })}
           onClick={() => {
-            toggleMenu((prevState) => {
-              return !prevState;
-            });
-          }}>
+            toggleMenu((prevState) => !prevState);
+          }}
+        >
           <Icon
             name="verticalMenu"
             className={cx({
@@ -111,7 +114,7 @@ const VerticalMenu = memo(
       </div>
     );
   }),
-  compareProps(['options'])
+  compareProps(["options"])
 );
 
 export default VerticalMenu;

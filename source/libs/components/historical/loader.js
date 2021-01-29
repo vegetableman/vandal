@@ -1,21 +1,21 @@
-import ContentLoader from 'react-content-loader';
-import React from 'react';
+import ContentLoader from "react-content-loader";
+import React from "react";
+import PropTypes from "prop-types";
 
 const ImageLoader = ({ theme, ...props }) => (
   <ContentLoader
     height={90}
     width={90}
     speed={1}
-    primaryColor="#cccccc"
-    secondaryColor="#ecebeb"
-    primaryColor={theme === 'dark' ? '#ffffff' : '#777777'}
-    secondaryColor={theme === 'dark' ? '#bbbbbb' : '#555555'}
+    primaryColor={theme === "dark" ? "#ffffff" : "#777777"}
+    secondaryColor={theme === "dark" ? "#bbbbbb" : "#555555"}
     style={{
       width: 40,
       height: 40
     }}
     title="Fetching Snapshot..."
-    {...props}>
+    {...props}
+  >
     <path
       width="90"
       height="90"
@@ -25,5 +25,9 @@ const ImageLoader = ({ theme, ...props }) => (
     <circle fill="#000000" cx="48.54" cy="40.608" r="4.896" />
   </ContentLoader>
 );
+
+ImageLoader.propTypes = {
+  theme: PropTypes.string.isRequired
+};
 
 export default ImageLoader;

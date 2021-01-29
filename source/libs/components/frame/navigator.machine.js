@@ -200,11 +200,7 @@ const navigatorMachine = Machine(
   {
     actions: {
       persistHistory: async (ctx) => {
-        try {
-          const isEnabled = await historyDB.isEnabled();
-          if (!isEnabled) return;
-          historyDB.setRecords(ctx.url, ctx.allRecords);
-        } catch (e) {}
+        historyDB.setRecords(ctx.url, ctx.allRecords);
       },
       clearHistory: async (ctx) => {
         await historyDB.clearRecords(ctx.url);

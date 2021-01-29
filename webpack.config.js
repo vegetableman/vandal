@@ -2,7 +2,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const DotEnvPlugin = require('dotenv-webpack');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
@@ -77,9 +76,6 @@ module.exports = () => ({
       {
         from: 'node_modules/webextension-polyfill/dist/browser-polyfill.min.js'
       },
-      {
-        from: 'source/libs/components/app/sw.js'
-      },
       { from: '*', context: 'source/libs/assets/fonts', to: 'fonts' },
       { from: '*', context: 'source/libs/assets/images', to: 'images' }
     ]),
@@ -93,20 +89,6 @@ module.exports = () => ({
   ],
   optimization: {
     // Without this, function names will be garbled and enableFeature won't work
-    concatenateModules: true,
-
-    // Automatically enabled on prod; keeps it somewhat readable for AMO reviewers
-    minimizer: [
-      new UglifyJsPlugin({
-        uglifyOptions: {
-          mangle: false,
-          compress: false,
-          output: {
-            beautify: true,
-            indent_level: 2 // eslint-disable-line camelcase
-          }
-        }
-      })
-    ]
+    concatenateModules: true
   }
 });

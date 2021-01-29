@@ -1,3 +1,7 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-restricted-syntax */
+/* eslint-disable no-console */
+
 const validTabs = {};
 let isBrowserActionClicked = false;
 let hasNavigationCompleted = true;
@@ -7,18 +11,14 @@ const log = (message, ...args) => {
   console.info(`Vandal: ${message}`, ...args);
 };
 
-const isValidTab = (tabId, url) => {
-  return !!validTabs[tabId];
-};
+const isValidTab = (tabId) => !!validTabs[tabId];
 
-const hasValidTabs = () => {
-  return Object.keys(validTabs).length;
-};
+const hasValidTabs = () => Object.keys(validTabs).length;
 
 const getWindowCount = () => {
   const windowIds = [];
-  if (!validTabs) return;
-  for (let [__, details] of Object.entries(validTabs)) {
+  if (!validTabs) return null;
+  for (const [__, details] of Object.entries(validTabs)) {
     if (!windowIds.includes(details.windowId)) {
       windowIds.push(details.windowId);
     }
@@ -26,50 +26,49 @@ const getWindowCount = () => {
   return windowIds.length;
 };
 
-const isValidFrame = (tabId, frameId, parentFrameId) => {
-  return (
-    validTabs[tabId] &&
-    frameId > 0 &&
-    !validTabs[tabId].frames.includes(parentFrameId) &&
-    (!validTabs[tabId].parentFrameId ||
-      validTabs[tabId].parentFrameId === parentFrameId ||
-      validTabs[tabId].frames.includes(frameId))
-  );
-};
+const isValidFrame = (tabId, frameId, parentFrameId) => (
+  validTabs[tabId]
+    && frameId > 0
+    && !validTabs[tabId].frames.includes(parentFrameId)
+    && (!validTabs[tabId].parentFrameId
+      || validTabs[tabId].parentFrameId === parentFrameId
+      || validTabs[tabId].frames.includes(frameId))
+);
 
-const getTransitionType = (transitionQualifiers = [], transitionType, url) => {
-  if (transitionQualifiers.indexOf('server_redirect') > -1) {
-    return 'redirect';
-  } else if (
-    transitionQualifiers.indexOf('forward_back') > -1 ||
-    transitionType === 'auto_subframe'
+const getTransitionType = (transitionQualifiers = [], transitionType) => {
+  if (transitionQualifiers.indexOf("server_redirect") > -1) {
+    return "redirect";
+  } if (
+    transitionQualifiers.indexOf("forward_back") > -1
+    || transitionType === "auto_subframe"
   ) {
-    return 'auto';
-  } else if (transitionType === 'manual_subframe') {
-    return 'manual';
+    return "auto";
+  } if (transitionType === "manual_subframe") {
+    return "manual";
   }
   return null;
 };
 
 let isManualTransition = false;
 let commitURL;
-let urlInitiator;
 
 class NavigationHandler {
   beforeNavigateHandler = (details) => {
-    const { tabId, parentFrameId, frameId, url } = details;
+    const {
+      tabId, parentFrameId, frameId, url
+    } = details;
     if (!isValidTab(tabId) || !isValidFrame(tabId, frameId, parentFrameId)) {
       return;
     }
 
-    if (details.url === 'about:blank') {
+    if (details.url === "about:blank") {
       chrome.tabs.sendMessage(tabId, {
-        message: '__VANDAL__NAV__BUSTED'
+        message: "__VANDAL__NAV__BUSTED"
       });
       return;
     }
 
-    log('Before navigate', validTabs, tabId);
+    log("Before navigate", validTabs, tabId);
 
     if (!validTabs[tabId].parentFrameId) {
       validTabs[tabId].parentFrameId = parentFrameId;
@@ -84,7 +83,7 @@ class NavigationHandler {
     isBeforeNavigate = true;
 
     chrome.tabs.sendMessage(tabId, {
-      message: '__VANDAL__NAV__BEFORENAVIGATE',
+      message: "__VANDAL__NAV__BEFORENAVIGATE",
       data: { url }
     });
   };
@@ -101,26 +100,26 @@ class NavigationHandler {
 
     // Manual_subframe / auto_subframe detect navigation for back/forward
     if (
-      url.indexOf('chrome-extension://') === 0 &&
-      transitionType === 'manual_subframe'
+      url.indexOf("chrome-extension://") === 0
+      && transitionType === "manual_subframe"
     ) {
       isManualTransition = true;
     }
 
     if (
-      url.indexOf('chrome-extension://') === 0 ||
-      !isValidTab(tabId) ||
-      !isValidFrame(tabId, frameId, parentFrameId) ||
-      url === 'about:blank'
+      url.indexOf("chrome-extension://") === 0
+      || !isValidTab(tabId)
+      || !isValidFrame(tabId, frameId, parentFrameId)
+      || url === "about:blank"
     ) {
       return;
     }
 
-    if (transitionType === 'manual_subframe') {
+    if (transitionType === "manual_subframe") {
       isManualTransition = true;
     }
 
-    log('Commit');
+    log("Commit");
 
     const transitionTypeQualifier = getTransitionType(
       transitionQualifiers,
@@ -131,17 +130,15 @@ class NavigationHandler {
     commitURL = url;
 
     chrome.tabs.sendMessage(tabId, {
-      message: '__VANDAL__NAV__COMMIT',
+      message: "__VANDAL__NAV__COMMIT",
       data: {
         url,
         type:
-          isManualTransition && transitionTypeQualifier !== 'redirect'
-            ? 'manual'
+          isManualTransition && transitionTypeQualifier !== "redirect"
+            ? "manual"
             : transitionTypeQualifier
       }
     });
-
-    urlInitiator = null;
 
     if (isManualTransition) {
       isManualTransition = false;
@@ -154,11 +151,11 @@ class NavigationHandler {
       return;
     }
 
-    log('Dom Loaded');
+    log("Dom Loaded");
 
     browser.tabs.executeScript(tabId, {
-      file: 'frame.js',
-      frameId: frameId,
+      file: "frame.js",
+      frameId,
       matchAboutBlank: true
     });
   };
@@ -171,10 +168,10 @@ class NavigationHandler {
     }
 
     commitURL = null;
-    log('Completed');
+    log("Completed");
     hasNavigationCompleted = true;
     chrome.tabs.sendMessage(tabId, {
-      message: '__VANDAL__NAV__COMPLETE',
+      message: "__VANDAL__NAV__COMPLETE",
       data: { url }
     });
   };
@@ -188,12 +185,12 @@ class NavigationHandler {
     const { url, transitionQualifiers, transitionType } = details;
 
     // if already commited, then return
-    if (commitURL === url.replace(/if_|&feature=youtu.be/g, '')) {
+    if (commitURL === url.replace(/if_|&feature=youtu.be/g, "")) {
       return;
     }
 
     chrome.tabs.sendMessage(tabId, {
-      message: '__VANDAL__NAV__HISTORYCHANGE',
+      message: "__VANDAL__NAV__HISTORYCHANGE",
       data: {
         url,
         type: getTransitionType(transitionQualifiers, transitionType, url)
@@ -209,7 +206,7 @@ class NavigationHandler {
     }
     hasNavigationCompleted = true;
     chrome.tabs.sendMessage(tabId, {
-      message: '__VANDAL__NAV__ERROR',
+      message: "__VANDAL__NAV__ERROR",
       data: {
         error: details.error,
         url
@@ -228,14 +225,14 @@ class NavigationHandler {
     //   return;
     // }
 
-    let requestHeaders = details.requestHeaders.map(function(header) {
+    const requestHeaders = details.requestHeaders.map((header) => {
       const isEncodingHeader = /accept-encoding/i.test(header.name);
       if (isEncodingHeader) {
-        header.value = 'Identity';
-      } else if (header.name === 'Sec-Fetch-Mode') {
-        header.value = 'no-cors';
-      } else if (header.name === 'Sec-Fetch-Site') {
-        header.value = 'same-origin';
+        header.value = "Identity";
+      } else if (header.name === "Sec-Fetch-Mode") {
+        header.value = "no-cors";
+      } else if (header.name === "Sec-Fetch-Site") {
+        header.value = "same-origin";
       }
       return header;
     });
@@ -244,23 +241,21 @@ class NavigationHandler {
 
   // https://github.com/segmentio/chrome-sidebar/blob/ae9f07e97bb08927631d1f2eb5fb31e965959bde/examples/github-trending/src/background.js
   headerReceivedHandler = (details) => {
-    log('Header Received', details.url, details.statusCode, details);
+    log("Header Received", details.url, details.statusCode, details);
 
     // handle youtube video
-    if (details.url.indexOf('.googlevideo.com/videoplayback') > -1) {
-      return;
+    if (details.url.indexOf(".googlevideo.com/videoplayback") > -1) {
+      return null;
     }
 
     if (
-      details.statusCode === 302 &&
-      details.type === 'sub_frame' &&
-      Array.isArray(details.responseHeaders) &&
-      details.responseHeaders.some((header) => {
-        return header['name'] === 'x-ts' && header['value'] === '302';
-      })
+      details.statusCode === 302
+      && details.type === "sub_frame"
+      && Array.isArray(details.responseHeaders)
+      && details.responseHeaders.some((header) => header.name === "x-ts" && header.value === "302")
     ) {
       chrome.tabs.sendMessage(details.tabId, {
-        message: '__VANDAL__NAV__REDIRECT',
+        message: "__VANDAL__NAV__REDIRECT",
         data: { url: details.url }
       });
     }
@@ -277,44 +272,44 @@ class NavigationHandler {
     //   return;
     // }
 
-    let responseHeaders = details.responseHeaders.map((header) => {
+    const responseHeaders = details.responseHeaders.map((header) => {
       const isCSPHeader = /content-security-policy/i.test(header.name);
       const isFrameHeader = /^x-frame-options/i.test(header.name);
       const isXSSHeader = /^x-xss-protection/i.test(header.name);
       const isOriginHeader = /^access-control-allow-origin/i.test(header.name);
       if (isCSPHeader) {
         let csp = header.value;
-        csp = csp.replace(/frame-ancestors ((.*?);|'none'|'self')/gi, '');
-        if (csp.indexOf('web.archive.org') === -1) {
+        csp = csp.replace(/frame-ancestors ((.*?);|'none'|'self')/gi, "");
+        if (csp.indexOf("web.archive.org") === -1) {
           csp = csp.replace(
             /default-src (.*?);/gi,
-            'default-src $1 web.archive.org;'
+            "default-src $1 web.archive.org;"
           );
           csp = csp.replace(
             /connect-src (.*?);/gi,
-            'connect-src $1 https://web.archive.org;'
+            "connect-src $1 https://web.archive.org;"
           );
           csp = csp.replace(
             /script-src (.*?);/gi,
-            'script-src $1 https://web.archive.org;'
+            "script-src $1 https://web.archive.org;"
           );
           csp = csp.replace(
             /style-src (.*?);/gi,
-            'style-src $1 https://web.archive.org;'
+            "style-src $1 https://web.archive.org;"
           );
           csp = csp.replace(
             /frame-src (.*?);/gi,
-            'frame-src $1 https://web.archive.org;'
+            "frame-src $1 https://web.archive.org;"
           );
-          csp = csp.replace(/frame-ancestors (.*?)$/gi, 'frame-ancestors *');
+          csp = csp.replace(/frame-ancestors (.*?)$/gi, "frame-ancestors *");
         }
         header.value = csp;
       } else if (isFrameHeader) {
-        header.value = 'ALLOWALL';
+        header.value = "ALLOWALL";
       } else if (isXSSHeader) {
-        header.value = '0';
+        header.value = "0";
       } else if (isOriginHeader) {
-        header.value = details.initiator || '*';
+        header.value = details.initiator || "*";
       }
 
       return header;
@@ -323,27 +318,29 @@ class NavigationHandler {
     const headerCount = Object.keys(responseHeaders).length;
     const extraHeaders = {
       // 'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods':
-        'GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH'
+      "Access-Control-Allow-Methods":
+        "GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH"
       // 'Access-Control-Allow-Credentials': 'false'
     };
 
     let extraIndex = headerCount > 0 ? headerCount : 0;
-    for (let i in extraHeaders) {
-      responseHeaders[extraIndex] = {
-        name: i,
-        value: extraHeaders[i]
-      };
-      extraIndex++;
+    for (const i in extraHeaders) {
+      if (Object.prototype.hasOwnProperty.call(extraHeaders, i)) {
+        responseHeaders[extraIndex] = {
+          name: i,
+          value: extraHeaders[i]
+        };
+        extraIndex++;
+      }
     }
 
     return { responseHeaders };
   };
 
   beforeRedirectHandler = (details) => {
-    log('Before Redirect', details.url, details);
+    log("Before Redirect", details.url, details);
     const { initiator, redirectUrl, tabId } = details;
-    if (initiator.indexOf('chrome-extension://') === 0) {
+    if (initiator.indexOf("chrome-extension://") === 0) {
       return;
     }
     try {
@@ -351,114 +348,114 @@ class NavigationHandler {
       const initiatorHost = new URL(initiator).host;
       if (redirectHost !== initiatorHost) {
         chrome.tabs.sendMessage(tabId, {
-          message: '__VANDAL__NAV__REDIRECTMISMATCH',
+          message: "__VANDAL__NAV__REDIRECTMISMATCH",
           data: { redirectHost, initiatorHost }
         });
       }
-    } catch (ex) {}
+    } catch (ex) {
+      console.error("Error parsing url");
+    }
   };
 
   onRequestCompletedHandler = (details) => {
-    log('Request Completed', details.url, details);
+    log("Request Completed", details.url, details);
     if (
-      isValidTab(details.tabId) &&
-      isValidFrame(details.tabId, details.frameId) &&
-      details.statusCode >= 400 &&
-      details.url.indexOf('web.archive.org/web') < 0
+      isValidTab(details.tabId)
+      && isValidFrame(details.tabId, details.frameId)
+      && details.statusCode >= 400
+      && details.url.indexOf("web.archive.org/web") < 0
     ) {
       chrome.tabs.sendMessage(details.tabId, {
-        message: '__VANDAL__NAV__NOTFOUND',
+        message: "__VANDAL__NAV__NOTFOUND",
         data: { url: details.url }
       });
     }
   };
 }
 
-let handlers = [];
-
-const requestFilters = ['http://*/*', 'https://*/*'];
+const requestFilters = ["http://*/*", "https://*/*"];
 
 const eventMap = {
   onHeadersReceived: {
-    type: 'webRequest',
-    handler: 'headerReceivedHandler',
+    type: "webRequest",
+    handler: "headerReceivedHandler",
     options: {
       urls: requestFilters,
-      types: ['sub_frame']
+      types: ["sub_frame"]
     },
-    extras: ['blocking', 'responseHeaders', 'extraHeaders']
+    extras: ["blocking", "responseHeaders", "extraHeaders"]
   },
   onBeforeRedirect: {
-    type: 'webRequest',
-    handler: 'beforeRedirectHandler',
+    type: "webRequest",
+    handler: "beforeRedirectHandler",
     options: {
       urls: requestFilters,
-      types: ['sub_frame']
+      types: ["sub_frame"]
     },
-    extras: ['responseHeaders']
+    extras: ["responseHeaders"]
   },
   onBeforeSendHeaders: {
-    type: 'webRequest',
-    handler: 'beforeSendHandler',
+    type: "webRequest",
+    handler: "beforeSendHandler",
     options: {
       urls: requestFilters,
-      types: ['sub_frame', 'xmlhttprequest']
+      types: ["sub_frame", "xmlhttprequest"]
     },
-    extras: ['blocking', 'requestHeaders', 'extraHeaders']
+    extras: ["blocking", "requestHeaders", "extraHeaders"]
   },
   onRequestCompleted: {
-    name: 'onCompleted',
-    type: 'webRequest',
-    handler: 'onRequestCompletedHandler',
+    name: "onCompleted",
+    type: "webRequest",
+    handler: "onRequestCompletedHandler",
     options: {
       urls: requestFilters,
-      types: ['sub_frame']
+      types: ["sub_frame"]
     }
   },
   onBeforeNavigate: {
-    type: 'webNavigation',
-    handler: 'beforeNavigateHandler',
+    type: "webNavigation",
+    handler: "beforeNavigateHandler",
     options: {
       urls: requestFilters,
-      types: ['sub_frame']
+      types: ["sub_frame"]
     }
   },
   onCommitted: {
-    type: 'webNavigation',
-    handler: 'commitHandler'
+    type: "webNavigation",
+    handler: "commitHandler"
   },
   onDOMContentLoaded: {
-    type: 'webNavigation',
-    handler: 'domLoadHandler'
+    type: "webNavigation",
+    handler: "domLoadHandler"
   },
   onCompleted: {
-    type: 'webNavigation',
-    handler: 'completedHandler'
+    type: "webNavigation",
+    handler: "completedHandler"
   },
   onErrorOccurred: {
-    type: 'webRequest',
-    handler: 'errorHandler',
+    type: "webRequest",
+    handler: "errorHandler",
     options: {
       urls: requestFilters,
-      types: ['sub_frame']
+      types: ["sub_frame"]
     }
   },
   onHistoryStateUpdated: {
-    type: 'webNavigation',
-    handler: 'historyHandler',
+    type: "webNavigation",
+    handler: "historyHandler",
     options: {
       urls: requestFilters,
-      types: ['sub_frame']
+      types: ["sub_frame"]
     }
   }
 };
 
-let navigationHandler, currentWindowId;
+let navigationHandler;
 
 function removeListeners() {
   if (!navigationHandler) return;
-  log('Remove Listeners');
-  for (let [event, value] of Object.entries(eventMap)) {
+  log("Remove Listeners");
+  for (const [event, value] of Object.entries(eventMap)) {
     chrome[value.type][value.name || event].removeListener(
       navigationHandler[value.handler]
     );
@@ -469,9 +466,9 @@ function removeListeners() {
 function addListeners() {
   if (navigationHandler) return;
   navigationHandler = new NavigationHandler();
-  log('Add Listeners');
-  for (let [event, value] of Object.entries(eventMap)) {
-    if (value.type !== 'webRequest') {
+  log("Add Listeners");
+  for (const [event, value] of Object.entries(eventMap)) {
+    if (value.type !== "webRequest") {
       if (
         !chrome.webNavigation[value.name || event].hasListener(
           navigationHandler[value.handler]
@@ -481,42 +478,40 @@ function addListeners() {
           navigationHandler[value.handler]
         );
       }
-    } else {
-      if (
-        !chrome.webRequest[value.name || event].hasListener(
-          navigationHandler[value.handler]
-        )
-      ) {
-        chrome.webRequest[value.name || event].addListener(
-          navigationHandler[value.handler],
-          value.options,
-          value.extras
-        );
-      }
+    } else if (
+      !chrome.webRequest[value.name || event].hasListener(
+        navigationHandler[value.handler]
+      )
+    ) {
+      chrome.webRequest[value.name || event].addListener(
+        navigationHandler[value.handler],
+        value.options,
+        value.extras
+      );
     }
   }
 }
 
 function init() {
-  chrome.tabs.onActivated.addListener(function(activeInfo) {
-    log('Tab activated');
+  chrome.tabs.onActivated.addListener((activeInfo) => {
+    log("Tab activated");
     const { tabId } = activeInfo;
     if (
-      hasValidTabs() &&
-      !isValidTab(tabId) &&
-      getWindowCount() === 1 &&
-      hasNavigationCompleted
+      hasValidTabs()
+      && !isValidTab(tabId)
+      && getWindowCount() === 1
+      && hasNavigationCompleted
     ) {
-      log('Tab activated: invalid');
+      log("Tab activated: invalid");
       removeListeners();
     } else if (isValidTab(tabId)) {
-      log('Tab activated: valid', tabId);
+      log("Tab activated: valid", tabId);
       addListeners();
     }
   });
 
-  chrome.tabs.onRemoved.addListener(function(tabId) {
-    log('Tabs removed: ', tabId);
+  chrome.tabs.onRemoved.addListener((tabId) => {
+    log("Tabs removed: ", tabId);
     if (!isValidTab(tabId)) return;
     if (isValidTab(tabId)) {
       validTabs[tabId] = null;
@@ -528,7 +523,7 @@ function init() {
       },
       (tabs) => {
         if (!isValidTab(tabs[0].id)) {
-          log('onRemoved handler');
+          log("onRemoved handler");
           removeListeners();
         }
       }
@@ -536,11 +531,11 @@ function init() {
   });
 }
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { message } = request;
   const currTab = sender.tab;
   const tabId = currTab.id;
-  if (message === '__VANDAL__CLIENT__LOADED') {
+  if (message === "__VANDAL__CLIENT__LOADED") {
     const matchTab = validTabs[tabId];
     const { host } = new URL(currTab.url);
     if (matchTab && matchTab.host === host) {
@@ -548,7 +543,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
       matchTab.parentFrameId = null;
       removeListeners();
       addListeners();
-      sendResponse({ message: '___VANDAL__BG__SETUPDONE' });
+      sendResponse({ message: "___VANDAL__BG__SETUPDONE" });
       return true;
     }
     validTabs[tabId] = {
@@ -559,22 +554,22 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     };
     removeListeners();
     addListeners();
-    sendResponse({ message: '___VANDAL__BG__SETUPDONE' });
-  } else if (message === '___VANDAL__CLIENT__EXIT') {
+    sendResponse({ message: "___VANDAL__BG__SETUPDONE" });
+  } else if (message === "___VANDAL__CLIENT__EXIT") {
     if (getWindowCount() === 1) {
       removeListeners();
     }
     validTabs[tabId] = null;
     delete validTabs[tabId];
-  } else if (message === '___VANDAL__CLIENT__CHECKVALID') {
+  } else if (message === "___VANDAL__CLIENT__CHECKVALID") {
     // If page not navigated yet, then return
-    if (!isBeforeNavigate) return;
+    if (!isBeforeNavigate) return null;
     sendResponse({ isValid: Boolean(validTabs[tabId]) });
   }
   return true;
 });
 
-chrome.browserAction.onClicked.addListener(function() {
+chrome.browserAction.onClicked.addListener(() => {
   chrome.tabs.query(
     {
       active: true

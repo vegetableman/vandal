@@ -1,22 +1,23 @@
-import React from 'react';
-import _ from 'lodash';
+import React from "react";
+import _ from "lodash";
 
 export default function withDialog(Component, { ignoreClickOnClass } = {}) {
   const componentName = Component.displayName || Component.name;
 
   class DialogComponent extends React.Component {
-    state = {
-      isDialogClosed: false
-    };
+    constructor(props) {
+      super(props);
+      this.state = { isDialogClosed: false };
+    }
 
     componentDidMount() {
-      document.addEventListener('click', this.handleClickOutside, true);
-      document.addEventListener('keydown', this.onEscape);
+      document.addEventListener("click", this.handleClickOutside, true);
+      document.addEventListener("keydown", this.onEscape);
     }
 
     componentWillUnmount() {
-      document.removeEventListener('click', this.handleClickOutside, true);
-      document.removeEventListener('keydown', this.onEscape);
+      document.removeEventListener("click", this.handleClickOutside, true);
+      document.removeEventListener("keydown", this.onEscape);
     }
 
     onEscape = ({ keyCode }) => {
@@ -25,11 +26,11 @@ export default function withDialog(Component, { ignoreClickOnClass } = {}) {
       }
     };
 
-    handleClickOutside = e => {
+    handleClickOutside = (e) => {
       const path = _.toArray(e.composedPath());
       if (
-        ignoreClickOnClass &&
-        path.some(node => _.isElement(node) && node.matches(ignoreClickOnClass))
+        ignoreClickOnClass
+        && path.some((node) => _.isElement(node) && node.matches(ignoreClickOnClass))
       ) {
         return;
       }
@@ -46,7 +47,9 @@ export default function withDialog(Component, { ignoreClickOnClass } = {}) {
         <Component
           {...this.props}
           isDialogClosed={this.state.isDialogClosed}
-          dialogRef={el => (this.dialogNode = el)}
+          dialogRef={(el) => {
+            this.dialogNode = el;
+          }}
         />
       );
     }

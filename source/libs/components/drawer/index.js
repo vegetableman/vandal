@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import cx from 'classnames';
-import clickDrag from 'react-clickdrag';
-import ShadowDOM from 'react-shadow';
-import { useMachine } from '@xstate/react';
+import React, { useEffect, useState, useCallback } from "react";
+import cx from "classnames";
+import clickDrag from "react-clickdrag";
+import ShadowDOM from "react-shadow";
+import { useMachine } from "@xstate/react";
 
 import {
   dateTimeDiff,
@@ -11,11 +11,11 @@ import {
   useEventCallback,
   isArchiveURL,
   getDateTsFromURL
-} from '../../utils';
-import { URLLoader, Icon } from '../common';
-import drawerMachine from './drawer.machine';
-import styles from './drawer.module.css';
-import { resourceTSController } from './resource-ts-controller';
+} from "../../utils";
+import { URLLoader, Icon } from "../common";
+import drawerMachine from "./drawer.machine";
+import styles from "./drawer.module.css";
+import resourceTSController from "./resource-ts-controller";
 
 const DrawerHeader = ({
   dataDrag,
@@ -28,7 +28,7 @@ const DrawerHeader = ({
     () => {
       dataDrag.isMoving && onDrag(dataDrag.moveDeltaY);
     },
-    [dataDrag.moveDeltaY]
+    [dataDrag.isMoving, dataDrag.moveDeltaY, onDrag]
   );
 
   return (
@@ -45,7 +45,8 @@ const DrawerHeader = ({
           />
           <label
             className={styles.scroll__label}
-            htmlFor="vandal-scroll-highlight">
+            htmlFor="vandal-scroll-highlight"
+          >
             Scroll On Highlight
           </label>
         </div>
@@ -59,11 +60,11 @@ const DrawerHeaderDraggable = clickDrag(DrawerHeader, {
   touch: false,
   onDragStart: (__, props) => {
     props.onDragStart && props.onDragStart();
-    props.frame.style.pointerEvents = 'none';
+    props.frame.style.pointerEvents = "none";
   },
   onDragStop: (__, props) => {
     props.onDragStop && props.onDragStop();
-    props.frame.style.pointerEvents = 'auto';
+    props.frame.style.pointerEvents = "auto";
   }
 });
 
@@ -72,18 +73,18 @@ let startHeight;
 const getIcon = (url) => {
   if (url.match(/\.(jpeg|jpg|gif|png|svg)$/)) {
     return <Icon name="image" className={styles.image__icon} />;
-  } else if (_.endsWith(url, 'js')) {
+  } if (_.endsWith(url, "js")) {
     return (
       <span
-        className={`${styles.resource__icon} ${styles.resource__icon___js}`}>
+        className={`${styles.resource__icon} ${styles.resource__icon___js}`}
+      >
         JS
       </span>
     );
-  } else if (_.endsWith(url, 'css')) {
+  } if (_.endsWith(url, "css")) {
     return <span className={styles.resource__icon}>CSS</span>;
-  } else {
-    return <Icon name="document" className={styles.doc__icon} />;
   }
+  return <Icon name="document" className={styles.doc__icon} />;
 };
 
 const Drawer = (props) => {
@@ -92,43 +93,41 @@ const Drawer = (props) => {
 
   const handleMouseEnter = (source, ts) => (e) => {
     chrome.runtime.sendMessage({
-      message: '__VANDAL__CLIENT__HIGHLIGHT__NODE',
+      message: "__VANDAL__CLIENT__HIGHLIGHT__NODE",
       data: { source, ts, scrollOnHighlight: ctx.scrollOnHighlight }
     });
   };
   useEffect(
     () => {
-      send('LOAD_TIMESTAMPS', {
+      send("LOAD_TIMESTAMPS", {
         payload: {
           sources: props.sources
         }
       });
     },
-    [props.sources]
+    [props.sources, send]
   );
 
-  useEffect(() => {
-    return () => {
-      chrome.runtime.sendMessage({
-        message: '__VANDAL__CLIENT__REMOVE__HIGHLIGHT'
-      });
-      resourceTSController.abort();
-    };
+  useEffect(() => () => {
+    chrome.runtime.sendMessage({
+      message: "__VANDAL__CLIENT__REMOVE__HIGHLIGHT"
+    });
+    resourceTSController.abort();
   }, []);
 
   useEffect(
     () => {
       if (props.isNavComplete && props.selectedTS) {
         chrome.runtime.sendMessage({
-          message: '__VANDAL__CLIENT__FETCH__SOURCES'
+          message: "__VANDAL__CLIENT__FETCH__SOURCES"
         });
       }
     },
-    [props.isNavComplete]
+    [props.isNavComplete, props.selectedTS]
   );
 
   const onDrag = useCallback((delta) => {
-    send('SET_HEIGHT', {
+    send("SET_HEIGHT", {
       payload: { value: Math.min(Math.max(startHeight - delta, 100), 500) }
     });
   });
@@ -142,25 +141,24 @@ const Drawer = (props) => {
 
   const onDragStop = useCallback(
     () => {
-      send('SET_HEIGHT', {
+      send("SET_HEIGHT", {
         payload: { value: ctx.height }
       });
     },
-    [ctx.height]
+    [ctx.height, send]
   );
 
   return (
     <div
       className={styles.drawer}
       style={{ height: `${ctx.height}px` }}
-      ref={props.dialogRef}>
+      ref={props.dialogRef}
+    >
       <DrawerHeaderDraggable
         frame={props.frame}
-        onScrollHighlight={(e) =>
-          send('TOGGLE_SCROLL_HIGHLIGHT', {
-            payload: { checked: e.target.checked }
-          })
-        }
+        onScrollHighlight={(e) => send("TOGGLE_SCROLL_HIGHLIGHT", {
+          payload: { checked: e.target.checked }
+        })}
         scrollOnHighlight={ctx.scrollOnHighlight}
         onClose={props.onClose}
         onDrag={onDrag}
@@ -170,16 +168,25 @@ const Drawer = (props) => {
       <div className={styles.body}>
         <div className={styles.info}>
           <div>
-            This panel displays{' '}
-            <span className={styles.info__highlight}>time difference</span> and{' '}
-            <span className={styles.info__highlight}>timestamps</span> for all
+            This panel displays
+            {" "}
+            <span className={styles.info__highlight}>time difference</span>
+            {" "}
+and
+            {" "}
+            <span className={styles.info__highlight}>timestamps</span>
+            {" "}
+for all
             the page elements compared to the page. Some elements may vary
             significantly in capture timestamp from the base URL of the page,
-            depending on the web crawling process. To know more, click{' '}
+            depending on the web crawling process. To know more, click
+            {" "}
             <a
               target="_blank"
+              rel="noopener noreferrer"
               className={styles.info__link}
-              href="https://blog.archive.org/2017/10/05/wayback-machine-playback-now-with-timestamps/">
+              href="https://blog.archive.org/2017/10/05/wayback-machine-playback-now-with-timestamps/"
+            >
               here
             </a>
             .
@@ -192,37 +199,38 @@ const Drawer = (props) => {
             timestamps.
           </div>
         )}
-        {!props.isNavComplete &&
-          props.selectedTS && (
+        {!props.isNavComplete
+          && props.selectedTS && (
             <div className={styles.timestamps___loading}>
               Waiting for the page to finish loading ...
             </div>
-          )}
-        {props.isNavComplete &&
-          props.selectedTS &&
-          _.isEmpty(props.sources) && (
+        )}
+        {props.isNavComplete
+          && props.selectedTS
+          && _.isEmpty(props.sources) && (
             <div className={styles.timestamps___loading}>
               Fetching page elements ...
             </div>
-          )}
-        {!_.isEmpty(props.sources) &&
-          props.selectedTS && (
+        )}
+        {!_.isEmpty(props.sources)
+          && props.selectedTS && (
             <ul className={styles.list}>
               {_.map(props.sources, (source, index) => {
-                const ts = _.get(ctx.timestamps[index], 'ts');
-                const err = _.get(ctx.timestamps[index], 'err');
-                const isValid = _.get(ctx.timestamps[index], 'isValid');
+                const ts = _.get(ctx.timestamps[index], "ts");
+                const err = _.get(ctx.timestamps[index], "err");
+                const isValid = _.get(ctx.timestamps[index], "isValid");
                 const dt = dateTimeDiff(ts, props.selectedTS);
                 return (
                   <li
                     key={index}
                     className={styles.item}
-                    onMouseEnter={handleMouseEnter(source, _.get(dt, 'text'))}
+                    onMouseEnter={handleMouseEnter(source, _.get(dt, "text"))}
                     onMouseLeave={() => {
                       chrome.runtime.sendMessage({
-                        message: '__VANDAL__CLIENT__REMOVE__HIGHLIGHT'
+                        message: "__VANDAL__CLIENT__REMOVE__HIGHLIGHT"
                       });
-                    }}>
+                    }}
+                  >
                     <div className={styles.item__left}>
                       {ts || err || isValid ? (
                         getIcon(source)
@@ -231,16 +239,18 @@ const Drawer = (props) => {
                       )}
                       <a
                         href={source}
+                        rel="noopener noreferrer"
                         target="_blank"
                         title={source}
-                        className={styles.item__link}>
+                        className={styles.item__link}
+                      >
                         {stripArchiveURL(source)}
                       </a>
                     </div>
                     <div className={styles.item__timestamp}>
-                      {err &&
-                        !ts &&
-                        (_.get(err, 'status') === 404 ? (
+                      {err
+                        && !ts
+                        && (_.get(err, "status") === 404 ? (
                           <span className={styles.timestamp__delta___notfound}>
                             Not Archived
                           </span>
@@ -249,17 +259,18 @@ const Drawer = (props) => {
                             Failed to fetch Resource
                           </span>
                         ))}
-                      {!err &&
-                        (ts ? (
+                      {!err
+                        && (ts ? (
                           <span
                             className={cx({
                               [styles.timestamp__delta]: true,
                               [styles.timestamp__delta___plus]:
-                                _.get(dt, 'delta') >= 0,
+                                _.get(dt, "delta") >= 0,
                               [styles.timestamp__delta___minus]:
-                                _.get(dt, 'delta') < 0
-                            })}>
-                            {_.get(dt, 'text')}
+                                _.get(dt, "delta") < 0
+                            })}
+                          >
+                            {_.get(dt, "text")}
                           </span>
                         ) : isValid ? (
                           <span className={styles.timestamp__delta___notfound}>
@@ -274,7 +285,7 @@ const Drawer = (props) => {
                 );
               })}
             </ul>
-          )}
+        )}
       </div>
     </div>
   );
@@ -288,26 +299,26 @@ const DrawerContainer = (props) => {
 
   const messageListener = useEventCallback(
     (request) => {
-      if (request.message === '__VANDAL__CLIENT__TOGGLEDRAWER') {
+      if (request.message === "__VANDAL__CLIENT__TOGGLEDRAWER") {
         setVisible(!visible);
       } else if (
-        request.message === '__VANDAL__NAV__BEFORENAVIGATE' ||
-        request.message === '__VANDAL__NAV__HISTORYCHANGE'
+        request.message === "__VANDAL__NAV__BEFORENAVIGATE"
+        || request.message === "__VANDAL__NAV__HISTORYCHANGE"
       ) {
-        const frameURL = _.get(request.data, 'url');
+        const frameURL = _.get(request.data, "url");
         if (isArchiveURL(frameURL)) {
-          setSelectedTS(_.parseInt(_.get(getDateTsFromURL(frameURL), 'ts')));
+          setSelectedTS(_.parseInt(_.get(getDateTsFromURL(frameURL), "ts")));
         } else {
           setSelectedTS(null);
         }
         setSources([]);
         setNavComplete(false);
-      } else if (request.message === '__VANDAL__NAV__COMPLETE') {
+      } else if (request.message === "__VANDAL__NAV__COMPLETE") {
         setSources([]);
         setNavComplete(true);
-      } else if (request.message === '__VANDAL__FRAME__SOURCES') {
+      } else if (request.message === "__VANDAL__FRAME__SOURCES") {
         setSources(request.data);
-      } else if (request.message === '__VANDAL__CLIENT__NOSPARKLINEFOUND') {
+      } else if (request.message === "__VANDAL__CLIENT__NOSPARKLINEFOUND") {
         setNavComplete(true);
         setSelectedTS(null);
       }
@@ -317,13 +328,14 @@ const DrawerContainer = (props) => {
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener(messageListener);
-  }, []);
+  }, [messageListener]);
 
   return (
     <ShadowDOM
       include={[
-        'chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/vandal.css'
-      ]}>
+        "chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/vandal.css"
+      ]}
+    >
       <div>
         {visible && (
           <Drawer

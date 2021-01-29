@@ -1,9 +1,6 @@
-import _ from 'lodash';
+import _ from "lodash";
 
-const compareProps = values => (prevProps, newProps) => {
-  return !_.some(values, value => {
-    return prevProps[value] !== newProps[value];
-  });
-};
+// eslint-disable-next-line max-len
+const compareProps = (values) => (prevProps, newProps) => !_.some(values, (value) => prevProps[value] !== newProps[value]);
 
 export default compareProps;

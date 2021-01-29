@@ -1,40 +1,45 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { scaleLinear } from 'd3-scale';
-import cx from 'classnames';
-import ReactTooltip from 'react-tooltip';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import tinycolor from 'tinycolor2';
-import memoizeOne from 'memoize-one';
+import React, {
+  useEffect, useState, useCallback, useRef
+} from "react";
+import PropTypes from "prop-types";
+import { scaleLinear } from "d3-scale";
+import cx from "classnames";
+import ReactTooltip from "react-tooltip";
+import {
+  Tab, Tabs, TabList, TabPanel
+} from "react-tabs";
+import tinycolor from "tinycolor2";
+import memoizeOne from "memoize-one";
 
-import { Card, withDialog, Icon, Spinner } from '../common';
+import {
+  Card, withDialog, Icon, Spinner
+} from "../common";
 import {
   getDateTimeFromTS,
   countVersions,
   monthNames,
   useEventCallback
-} from '../../utils';
-import CalendarFilter from '../filter/calendar';
-import GraphFilter from '../filter/graph';
+} from "../../utils";
+import CalendarFilter from "../filter/calendar";
+import GraphFilter from "../filter/graph";
 
-import './tooltip.css';
-import styles from './timetravel.module.css';
-import boxStyle from '../url/box/urlbox.module.css';
-import cardStyle from '../common/card/card.module.css';
-import calendarStyle from '../filter/calendar/calendar.module.css';
-import graphCalendarStyle from '../filter/graph/calendar.module.css';
+import "./tooltip.css";
+import styles from "./timetravel.module.css";
+import boxStyle from "../url/box/urlbox.module.css";
+import cardStyle from "../common/card/card.module.css";
+import calendarStyle from "../filter/calendar/calendar.module.css";
+import graphCalendarStyle from "../filter/graph/calendar.module.css";
 
-import { useTimeTravel, useTheme } from '../../hooks';
-import { colors } from '../../constants';
-import Controller from './controller';
+import { useTimeTravel, useTheme } from "../../hooks";
+import { colors } from "../../constants";
+import Controller from "./controller";
 
 const memoizedDateTimeFromTS = _.memoize(getDateTimeFromTS);
 const memoizedCountVersions = memoizeOne(countVersions);
 
-const colorFromRange = memoizeOne((min, max) => {
-  return scaleLinear()
-    .domain([min, max])
-    .range(['#d4f8d0', max <= 5 ? '#a6ef9c' : '#5ee64e']);
-});
+const colorFromRange = memoizeOne((min, max) => scaleLinear()
+  .domain([min, max])
+  .range(["#d4f8d0", max <= 5 ? "#a6ef9c" : "#5ee64e"]));
 
 let cardX;
 let cardY;
@@ -45,9 +50,7 @@ const TimeTravel = (props) => {
 
   const capacityRef = useRef(null);
 
-  const memoizedCount = memoizeOne((year, month) => {
-    return _.map(_.get(ctx.calendar, `${year}.${month}`), 'cnt');
-  });
+  const memoizedCount = memoizeOne((year, month) => _.map(_.get(ctx.calendar, `${year}.${month}`), "cnt"));
 
   const getColor = (day) => {
     const {
@@ -72,11 +75,14 @@ const TimeTravel = (props) => {
 
     let match = false;
     if (selectedTS) {
-      const { day: selectedDay } = memoizedDateTimeFromTS(selectedTS);
-      match =
-        selectedDay === day &&
-        selectedMonth === currentMonth &&
-        selectedYear === currentYear;
+      const {
+        day: selectedDay,
+        year: selectedYear,
+        month: selectedMonth
+      } = memoizedDateTimeFromTS(selectedTS);
+      match = selectedDay === day
+        && selectedMonth === currentMonth
+        && selectedYear === currentYear;
     }
 
     const color = colorFromRange(min, max);
@@ -86,35 +92,33 @@ const TimeTravel = (props) => {
       backgroundColor: match ? colors.MATCH : bgColor,
       borderColor: !match
         ? tinycolor(bgColor)
-            .darken(10)
-            .toString()
+          .darken(10)
+          .toString()
         : colors.BR_MATCH,
-      borderWidth: theme === 'light' ? 1 : 0,
-      borderStyle: theme === 'light' ? 'solid' : 'none',
+      borderWidth: theme === "light" ? 1 : 0,
+      borderStyle: theme === "light" ? "solid" : "none",
       opacity: highlightedDay && highlightedDay !== day ? 0.5 : 1,
       textDecoration:
         (highlightedDay && highlightedDay === day) || match
-          ? 'underline'
-          : 'none',
-      color: match ? colors.BL_33 : 'inherit'
+          ? "underline"
+          : "none",
+      color: match ? colors.BL_33 : "inherit"
     };
   };
 
   const onCalendarChange = (date) => {
-    const dateArr = _.split(date, '-');
+    const dateArr = _.split(date, "-");
     const year = _.parseInt(_.nth(dateArr, 0));
     const month = _.parseInt(_.nth(dateArr, 1));
-    send('GOTO__MONTHYEAR', { payload: { year, month } });
+    send("GOTO__MONTHYEAR", { payload: { year, month } });
   };
 
-  const onYearChange = (year) => () => {
-    return send('GOTO__TS_YEAR', {
-      payload: {
-        month: ctx.currentMonth,
-        year
-      }
-    });
-  };
+  const onYearChange = (year) => () => send("GOTO__TS_YEAR", {
+    payload: {
+      month: ctx.currentMonth,
+      year
+    }
+  });
 
   const onDateMove = useCallback((day) => (e) => {
     if (ctx.highlightedDay) return;
@@ -122,60 +126,56 @@ const TimeTravel = (props) => {
       ctx.calendar,
       `[${ctx.currentYear}][${ctx.currentMonth - 1}][${day - 1}]`
     );
-    if (!_.get(date, 'cnt')) {
+    if (!_.get(date, "cnt")) {
       return;
     }
 
     const { offsetLeft, offsetTop } = e.target;
-    const x = (cardX = e.nativeEvent.offsetX);
-    const y = (cardY = e.nativeEvent.offsetY);
-    const status = _.get(date, 'st', []);
+    const x = e.nativeEvent.offsetX;
+    cardX = x;
+    const y = e.nativeEvent.offsetY;
+    cardY = y;
+    const status = _.get(date, "st", []);
 
     ctx.cardRef.send({
-      type: 'SHOW_CARD',
+      type: "SHOW_CARD",
       payload: {
         x: offsetLeft + x,
         y: offsetTop + y + 10,
-        ts: _.map(_.get(date, 'ts'), (value, i) => {
-          return { value, status: status[i] };
-        }),
-        tsCount: _.get(date, 'cnt'),
+        ts: _.map(_.get(date, "ts"), (value, i) => ({ value, status: status[i] })),
+        tsCount: _.get(date, "cnt"),
         day,
         monthName: monthNames[Math.max(ctx.currentMonth - 1, 0)],
         month: ctx.currentMonth,
         year: ctx.currentYear,
-        __CACHED__: _.get(date, '__CACHED__')
+        __CACHED__: _.get(date, "__CACHED__")
       }
     });
   });
 
-  const onMonthChange = (selectedMonth) => () => {
-    return send('GOTO__MONTHYEAR', {
-      payload: { year: ctx.selectedYear, month: selectedMonth }
-    });
-  };
+  const onMonthChange = (selectedMonth) => () => send("GOTO__MONTHYEAR", {
+    payload: { year: ctx.selectedYear, month: selectedMonth }
+  });
 
   const onDateClick = (day) => (e) => {
     const date = _.get(
       ctx.calendar,
       `${ctx.currentYear}.${ctx.currentMonth - 1}.${day - 1}`
     );
-    if (!_.get(date, 'cnt')) {
+    if (!_.get(date, "cnt")) {
       return;
     }
 
     const { offsetLeft, offsetTop } = e.target;
-    const status = _.get(date, 'st', []);
-    send({ type: 'SET_DATE_HIGHLIGHTED', value: day });
+    const status = _.get(date, "st", []);
+    send({ type: "SET_DATE_HIGHLIGHTED", value: day });
 
     ctx.cardRef.send({
-      type: 'SHOW_CARD',
+      type: "SHOW_CARD",
       payload: {
         x: offsetLeft + cardX,
         y: offsetTop + cardY + 10,
-        ts: _.map(_.get(date, 'ts'), (value, i) => {
-          return { value, status: status[i] };
-        }),
+        ts: _.map(_.get(date, "ts"), (value, i) => ({ value, status: status[i] })),
         day,
         monthName: monthNames[Math.max(ctx.currentMonth - 1, 0)],
         month: ctx.currentMonth,
@@ -186,7 +186,7 @@ const TimeTravel = (props) => {
 
   const onDateLeave = useCallback(() => {
     if (ctx.highlightedDay) return;
-    ctx.cardRef.send('HIDE_CARD');
+    ctx.cardRef.send("HIDE_CARD");
   });
 
   const [isManualReload, setManualReload] = useState(false);
@@ -194,26 +194,26 @@ const TimeTravel = (props) => {
   const onReload = () => {
     setManualReload(true);
     if (!ctx.sparkline) {
-      send('RELOAD_SPARKLINE');
+      send("RELOAD_SPARKLINE");
       return;
     }
-    send({ type: 'RELOAD_CALENDAR', payload: { force: true } });
+    send({ type: "RELOAD_CALENDAR", payload: { force: true } });
   };
 
   const onRetry = () => {
-    if (!ctx.sparkline || state.matches('sparklineError')) {
-      send('RELOAD_SPARKLINE_ON_ERROR');
+    if (!ctx.sparkline || state.matches("sparklineError")) {
+      send("RELOAD_SPARKLINE_ON_ERROR");
       return;
     }
-    send({ type: 'RELOAD_CALENDAR_ON_ERROR', payload: { force: true } });
+    send({ type: "RELOAD_CALENDAR_ON_ERROR", payload: { force: true } });
   };
 
   useEffect(() => {
     if (
-      isManualReload &&
-      (state.matches('sparklineLoaded.calendarLoaded') ||
-        state.matches('sparklineLoaded.noCalendarFound') ||
-        state.matches('sparklineLoaded.calendarError'))
+      isManualReload
+      && (state.matches("sparklineLoaded.calendarLoaded")
+        || state.matches("sparklineLoaded.noCalendarFound")
+        || state.matches("sparklineLoaded.calendarError"))
     ) {
       setTimeout(() => {
         setManualReload(false);
@@ -225,14 +225,14 @@ const TimeTravel = (props) => {
     () => {
       const { currentMonth, currentYear } = ctx;
       if (currentMonth === 12) {
-        send('GOTO__MONTHYEAR', {
+        send("GOTO__MONTHYEAR", {
           payload: {
             year: Math.min(new Date().getFullYear(), currentYear + 1),
             month: 1
           }
         });
       } else {
-        send('GOTO__MONTHYEAR', {
+        send("GOTO__MONTHYEAR", {
           payload: {
             year: currentYear,
             month: currentMonth + 1
@@ -247,14 +247,14 @@ const TimeTravel = (props) => {
     () => {
       const { currentMonth, currentYear } = ctx;
       if (currentMonth === 1) {
-        send('GOTO__MONTHYEAR', {
+        send("GOTO__MONTHYEAR", {
           payload: {
             year: Math.max(1996, currentYear - 1),
             month: 12
           }
         });
       } else {
-        send('GOTO__MONTHYEAR', {
+        send("GOTO__MONTHYEAR", {
           payload: {
             year: currentYear,
             month: currentMonth - 1
@@ -268,63 +268,59 @@ const TimeTravel = (props) => {
   const versionCount = memoizedCountVersions(ctx.sparkline);
 
   const onEscape = useEventCallback((e) => {
-    if (e.keyCode === 27 && _.get(ctx, 'cardRef.state.context.showCard')) {
-      ctx.cardRef.send('HIDE_CARD');
-      send({ type: 'SET_DATE_HIGHLIGHTED', value: null });
+    if (e.keyCode === 27 && _.get(ctx, "cardRef.state.context.showCard")) {
+      ctx.cardRef.send("HIDE_CARD");
+      send({ type: "SET_DATE_HIGHLIGHTED", value: null });
     }
   }, []);
 
   const onClickOutside = useCallback((e) => {
-    if (!_.get(ctx, 'cardRef.state.context.showCard')) return;
+    if (!_.get(ctx, "cardRef.state.context.showCard")) return;
     const path = _.toArray(e.composedPath());
     if (
-      _.some(path, (node) => {
-        return (
-          _.isElement(node) &&
-          node.matches &&
-          (node.matches(`.${_.get(cardStyle, 'card')}`) ||
-            node.matches(`.${_.get(calendarStyle, 'day')}`) ||
-            node.matches(`.${_.get(graphCalendarStyle, 'day')}`))
-        );
-      })
+      _.some(path, (node) => (
+        _.isElement(node)
+          && node.matches
+          && (node.matches(`.${_.get(cardStyle, "card")}`)
+            || node.matches(`.${_.get(calendarStyle, "day")}`)
+            || node.matches(`.${_.get(graphCalendarStyle, "day")}`))
+      ))
     ) {
       return;
     }
-    ctx.cardRef.send('HIDE_CARD');
-    send({ type: 'SET_DATE_HIGHLIGHTED', value: null });
+    ctx.cardRef.send("HIDE_CARD");
+    send({ type: "SET_DATE_HIGHLIGHTED", value: null });
   });
 
   useEffect(() => {
-    document.addEventListener('click', onClickOutside, true);
-    document.addEventListener('keydown', onEscape);
+    document.addEventListener("click", onClickOutside, true);
+    document.addEventListener("keydown", onEscape);
 
     return () => {
-      document.removeEventListener('click', onClickOutside, true);
-      document.removeEventListener('keydown', onEscape);
+      document.removeEventListener("click", onClickOutside, true);
+      document.removeEventListener("keydown", onEscape);
     };
-  }, []);
+  }, [onClickOutside, onEscape]);
 
   useEffect(
     () => {
       if (
-        state.matches('sparklineLoaded') &&
-        !state.matches('sparklineLoaded.calendarLoaded') &&
-        _.get(state, 'historyValue.current') === 'processingSparkline'
+        state.matches("sparklineLoaded")
+        && !state.matches("sparklineLoaded.calendarLoaded")
+        && _.get(state, "historyValue.current") === "processingSparkline"
       ) {
         send({
-          type: 'LOAD_CALENDAR',
-          payload: { url: props.url, force: _.get(state, 'event.data.force') }
+          type: "LOAD_CALENDAR",
+          payload: { url: props.url, force: _.get(state, "event.data.force") }
         });
       }
     },
-    [state.value]
+    [props.url, send, state, state.value]
   );
 
-  useEffect(() => {
-    return () => {
-      send('CLEANUP');
-    };
-  }, []);
+  useEffect(() => () => {
+    send("CLEANUP");
+  }, [send]);
 
   useEffect(
     () => {
@@ -333,37 +329,37 @@ const TimeTravel = (props) => {
           ReactTooltip.show(capacityRef.current);
           setTimeout(() => {
             ReactTooltip.hide(capacityRef.current);
-            send('HIDE_LIMIT_TOOLTIP');
+            send("HIDE_LIMIT_TOOLTIP");
           }, 5000);
         }
       }
     },
-    [ctx.isOverCapacity]
+    [ctx.isOverCapacity, ctx.showLimitTooltip, send]
   );
 
-  let { month: selectedMonth, year: selectedYear } =
-    memoizedDateTimeFromTS(ctx.selectedTS) || {};
+  const { month: selectedMonth, year: selectedYear } = memoizedDateTimeFromTS(ctx.selectedTS) || {};
 
   return (
     <div
       className={cx({
         [styles.timetravel]: true,
-        [styles.timetravel__graph]: props.selectedTabIndex == 1
+        [styles.timetravel__graph]: props.selectedTabIndex === 1
       })}
-      ref={props.dialogRef}>
-      {state.matches('loadingSparkline') &&
-        _.get(state, 'event.type') !== 'RELOAD_SPARKLINE_ON_ERROR' && (
+      ref={props.dialogRef}
+    >
+      {state.matches("loadingSparkline")
+        && _.get(state, "event.type") !== "RELOAD_SPARKLINE_ON_ERROR" && (
           <div className={styles.loader}>
             <Spinner />
             <span className={styles.loader__text}>Bending Time...</span>
           </div>
-        )}
-      {!state.matches('sparklineLoaded.calendarError') &&
-        ctx.sparkline &&
-        !state.matches('sparklineError.timeout') && (
-          <React.Fragment>
+      )}
+      {!state.matches("sparklineLoaded.calendarError")
+        && ctx.sparkline
+        && !state.matches("sparklineError.timeout") && (
+        <>
             {ctx.isOverCapacity && (
-              <React.Fragment>
+              <>
                 <Icon
                   ref={capacityRef}
                   data-for="vandal-capacity"
@@ -383,10 +379,10 @@ const TimeTravel = (props) => {
                   place="left"
                   type={theme}
                   backgroundColor={
-                    theme === 'dark' ? colors.GY_6E : colors.WHITE
+                    theme === "dark" ? colors.GY_6E : colors.WHITE
                   }
-                  borderColor={theme === 'dark' ? colors.GY_6E : colors.WHITE}
-                  arrowColor={theme === 'dark' ? colors.GY_6E : colors.GY_CC}
+                  borderColor={theme === "dark" ? colors.GY_6E : colors.WHITE}
+                  arrowColor={theme === "dark" ? colors.GY_6E : colors.GY_CC}
                   delayHide={100}
                   delayShow={100}
                   getContent={() => (
@@ -397,74 +393,79 @@ const TimeTravel = (props) => {
                     </span>
                   )}
                 />
-              </React.Fragment>
+              </>
             )}
-            <div
-              className={styles.count}
-              data-for="vandal-timetravel-count"
-              data-tip={versionCount}>
-              {versionCount}
-            </div>
-            <ReactTooltip
-              border
-              className={styles.tooltip}
-              id="vandal-timetravel-count"
-              effect="solid"
-              place="left"
-              type={theme}
-              backgroundColor={theme === 'dark' ? colors.GY_6E : colors.WHITE}
-              borderColor={theme === 'dark' ? colors.GY_6E : colors.WHITE}
-              arrowColor={theme === 'dark' ? colors.GY_6E : colors.GY_CC}
-              delayHide={100}
-              delayShow={100}
-              getContent={(count) => (
+          <div
+            className={styles.count}
+            data-for="vandal-timetravel-count"
+            data-tip={versionCount}
+          >
+            {versionCount}
+          </div>
+          <ReactTooltip
+            border
+            className={styles.tooltip}
+            id="vandal-timetravel-count"
+            effect="solid"
+            place="left"
+            type={theme}
+            backgroundColor={theme === "dark" ? colors.GY_6E : colors.WHITE}
+            borderColor={theme === "dark" ? colors.GY_6E : colors.WHITE}
+            arrowColor={theme === "dark" ? colors.GY_6E : colors.GY_CC}
+            delayHide={100}
+            delayShow={100}
+            getContent={(count) => (
+              <span>
+                <span>This URL was saved </span>
+                <b>{count}</b>
                 <span>
-                  <span>This URL was saved </span>
-                  <b>{count}</b>
-                  <span>
-                    {_.parseInt(count) > 1 || _.parseInt(count) === 0
-                      ? ' times'
-                      : ' time on '}
-                  </span>
-                  {_.parseInt(count) === 1 && (
-                    <div>
-                      <b>
-                        {_.get(
-                          memoizedDateTimeFromTS(ctx.lastTS),
-                          'humanizedDate'
-                        )}
-                      </b>
-                    </div>
-                  )}
-                  {_.parseInt(count) > 1 && ctx.firstTS && ctx.lastTS ? (
-                    <div>
-                      {' '}
-                      between{' '}
-                      <b>
-                        {_.get(
-                          memoizedDateTimeFromTS(ctx.firstTS),
-                          'humanizedDate'
-                        )}
-                      </b>{' '}
-                      and{' '}
-                      <b>
-                        {_.get(
-                          memoizedDateTimeFromTS(ctx.lastTS),
-                          'humanizedDate'
-                        )}
-                      </b>
-                    </div>
-                  ) : null}
+                  {_.parseInt(count) > 1 || _.parseInt(count) === 0
+                    ? " times"
+                    : " time on "}
                 </span>
-              )}
-            />
-          </React.Fragment>
-        )}
+                {_.parseInt(count) === 1 && (
+                <div>
+                  <b>
+                    {_.get(
+                      memoizedDateTimeFromTS(ctx.lastTS),
+                      "humanizedDate"
+                    )}
+                  </b>
+                </div>
+                )}
+                {_.parseInt(count) > 1 && ctx.firstTS && ctx.lastTS ? (
+                  <div>
+                    {" "}
+                      between
+                    {" "}
+                    <b>
+                      {_.get(
+                        memoizedDateTimeFromTS(ctx.firstTS),
+                        "humanizedDate"
+                      )}
+                    </b>
+                    {" "}
+                      and
+                    {" "}
+                    <b>
+                      {_.get(
+                        memoizedDateTimeFromTS(ctx.lastTS),
+                        "humanizedDate"
+                      )}
+                    </b>
+                  </div>
+                ) : null}
+              </span>
+            )}
+          />
+        </>
+      )}
       <Tabs
         defaultIndex={props.selectedTabIndex}
         className={styles.tabs}
         selectedTabClassName={styles.tab___active}
-        onSelect={props.selectTabIndex}>
+        onSelect={props.selectTabIndex}
+      >
         <TabList className={styles.tab__list}>
           <Tab className={`${styles.tab} ${styles.tab___calendar}`}>
             Calendar
@@ -504,19 +505,19 @@ const TimeTravel = (props) => {
         redirectedTS={ctx.redirectedTS}
         redirectTSCollection={ctx.redirectTSCollection}
         onCardLeave={() => {
-          send({ type: 'SET_DATE_HIGHLIGHTED', value: null });
+          send({ type: "SET_DATE_HIGHLIGHTED", value: null });
         }}
         onTsClick={(ts) => () => {
-          send({ type: 'NAVIGATETO__TS', value: ts });
+          send({ type: "NAVIGATETO__TS", value: ts });
         }}
       />
-      {((!!(ctx.firstTS || ctx.lastTS || !ctx.sparkline) &&
-        !state.matches('sparklineError') &&
-        !state.matches('loadingSparkline') &&
-        !state.matches('sparklineLoaded.unknown') &&
-        !state.matches('sparklineLoaded.calendarError') &&
-        !state.matches('sparklineLoaded.loadingCalendar')) ||
-        isManualReload) && (
+      {((!!(ctx.firstTS || ctx.lastTS || !ctx.sparkline)
+        && !state.matches("sparklineError")
+        && !state.matches("loadingSparkline")
+        && !state.matches("sparklineLoaded.unknown")
+        && !state.matches("sparklineLoaded.calendarError")
+        && !state.matches("sparklineLoaded.loadingCalendar"))
+        || isManualReload) && (
         <div>
           <Icon
             data-for="vandal-reload"
@@ -543,11 +544,11 @@ const TimeTravel = (props) => {
           />
         </div>
       )}
-      {!!ctx.selectedTS &&
-        !!versionCount &&
-        state.matches('sparklineLoaded.calendarLoaded') &&
-        (selectedMonth !== ctx.currentMonth ||
-          selectedYear !== ctx.currentYear) && (
+      {!!ctx.selectedTS
+        && !!versionCount
+        && state.matches("sparklineLoaded.calendarLoaded")
+        && (selectedMonth !== ctx.currentMonth
+          || selectedYear !== ctx.currentYear) && (
           <div>
             <Icon
               data-for="vandal-selection-ts"
@@ -556,7 +557,7 @@ const TimeTravel = (props) => {
               className={styles.selection__icon}
               width={27.2}
               onClick={() => {
-                send('GOTO__CURRENT_SEL_TS', { value: ctx.selectedTS });
+                send("GOTO__CURRENT_SEL_TS", { value: ctx.selectedTS });
               }}
             />
             <ReactTooltip
@@ -571,10 +572,17 @@ const TimeTravel = (props) => {
               delayShow={1000}
             />
           </div>
-        )}
+      )}
       <Controller />
     </div>
   );
+};
+
+TimeTravel.propTypes = {
+  url: PropTypes.string.isRequired,
+  selectedTabIndex: PropTypes.number.isRequired,
+  selectTabIndex: PropTypes.func.isRequired,
+  dialogRef: PropTypes.node.isRequired
 };
 
 export default withDialog(TimeTravel, {

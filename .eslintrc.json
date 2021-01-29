@@ -1,8 +1,26 @@
 {
-  "extends": "airbnb",
-  "plugins": ["react", "jsx-a11y", "import", "react-hooks"],
+  "parser": "@babel/eslint-parser",
+  "extends": ["airbnb", "plugin:prettier/recommended"],
+  "plugins": ["react", "jsx-a11y", "import", "react-hooks", "@babel"],
   "rules": {
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    "react/jsx-props-no-spreading": "off",
+    "react/destructuring-assignment": "off",
+    "react/forbid-prop-types":"off",
+    "comma-dangle":"off",
+    "quotes": ["error", "double"],
+    "class-methods-use-this":"off",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "no-plusplus":"off",
+    "prettier/prettier": "error"
+  },
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "_": "writable",
+    "chrome": "writable",
+    "browser": "writable"
   }
 }

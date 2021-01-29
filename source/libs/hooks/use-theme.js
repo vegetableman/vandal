@@ -1,51 +1,58 @@
-import React, { createContext, useContext, useEffect } from 'react';
-import themeMachine from '../components/app/theme.machine';
-import { useMachine } from '@xstate/react';
+import React, { createContext, useContext, useEffect } from "react";
+import PropTypes from "prop-types";
+import { useMachine } from "@xstate/react";
+import themeMachine from "../components/app/theme.machine";
 
-const defaultValue = { theme: 'light', setTheme: () => {} };
+const defaultValue = { theme: "light", setTheme: () => {} };
 const ThemeContext = createContext(defaultValue);
 
+const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
 const ThemeProvider = ({ children, notifyThemeChanged }) => {
-  const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
   const [state, send] = useMachine(
     themeMachine.withConfig(
       {
         actions: { notifyThemeChanged }
       },
       {
-        theme: darkModeMediaQuery.matches ? 'dark' : 'light'
+        theme: darkModeMediaQuery.matches ? "dark" : "light"
       }
     )
   );
 
   useEffect(() => {
-    darkModeMediaQuery.addEventListener('change', (e) => {
+    darkModeMediaQuery.addEventListener("change", (e) => {
       const darkModeOn = e.matches;
-      send('SET_THEME', {
-        payload: { theme: darkModeOn ? 'dark' : 'light' }
+      send("SET_THEME", {
+        payload: { theme: darkModeOn ? "dark" : "light" }
       });
     });
-  }, []);
+  }, [send]);
 
   const value = {
-    theme: _.get(state, 'context.theme'),
+    theme: _.get(state, "context.theme"),
     setTheme: (theme) => {
-      send('SET_THEME', {
+      send("SET_THEME", {
         payload: { theme }
       });
     }
   };
   return (
     <ThemeContext.Provider value={value}>
-      {state.matches('themeLoaded') ? children : null}
+      {state.matches("themeLoaded") ? children : null}
     </ThemeContext.Provider>
   );
+};
+
+ThemeProvider.propTypes = {
+  children: PropTypes.element.isRequired,
+  notifyThemeChanged: PropTypes.func.isRequired
 };
 
 const useTheme = () => {
   const context = useContext(ThemeContext);
   if (context === defaultValue) {
-    throw new Error('useTheme must be used within ThemeProvider');
+    throw new Error("useTheme must be used within ThemeProvider");
   }
   return context;
 };

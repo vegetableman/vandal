@@ -1,9 +1,12 @@
-import React from 'react';
-import Slider from 'react-slick';
-import cx from 'classnames';
-import Icon from '../icon';
-import styles from './carousel.module.css';
-import './style.css';
+/* eslint-disable react/forbid-prop-types */
+
+import React from "react";
+import PropTypes from "prop-types";
+import Slider from "react-slick";
+import cx from "classnames";
+import Icon from "../icon";
+import styles from "./carousel.module.css";
+import "./style.css";
 
 const NextArrow = ({ className, style, onClick }) => (
   <Icon
@@ -17,6 +20,12 @@ const NextArrow = ({ className, style, onClick }) => (
   />
 );
 
+NextArrow.propTypes = {
+  className: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  style: PropTypes.object.isRequired
+};
+
 const PrevArrow = ({ className, style, onClick }) => (
   <Icon
     name="arrowLeft"
@@ -28,6 +37,13 @@ const PrevArrow = ({ className, style, onClick }) => (
     })}
   />
 );
+
+PrevArrow.propTypes = {
+  className: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired,
+  style: PropTypes.object.isRequired
+};
+
 
 const settings = {
   dots: false,
@@ -57,16 +73,29 @@ class Carousel extends React.Component {
         afterChange={(index) => {
           this.props.onChange(index);
         }}
-        ref={(_ref) => (this.sliderRef = _ref)}
-        initialSlide={selectedIndex}>
+        ref={(_ref) => {
+          this.sliderRef = _ref;
+        }}
+        initialSlide={selectedIndex}
+      >
         {_.map(images, (src, index) => (
           <div key={index} className={styles.slide}>
-            {src ? <img src={src} /> : null}
+            {src ? <img alt="snapshot" src={src} /> : null}
           </div>
         ))}
       </Slider>
     );
   }
 }
+
+Carousel.propTypes = {
+  images: PropTypes.array.isRequired,
+  onChange: PropTypes.func.isRequired,
+  selectedIndex: PropTypes.number
+};
+
+Carousel.defaultProps = {
+  selectedIndex: 0
+};
 
 export default Carousel;

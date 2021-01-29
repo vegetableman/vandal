@@ -1,5 +1,6 @@
-import React, { memo } from 'react';
-import PropTypes from 'prop-types';
+/* eslint-disable react/prop-types */
+
+import React, { memo } from "react";
 
 const icons = {
   heart: ({ ...props }) => (
@@ -59,7 +60,8 @@ const icons = {
     <svg
       viewBox="11 10.5 69.5 71"
       enableBackground="new 0 0 100 100"
-      {...props}>
+      {...props}
+    >
       <title>{props.title}</title>
       <path d="M36.642,71.512c-2.696,1.681-4.902,0.457-4.902-2.72V31.208c0-3.177,2.206-4.401,4.902-2.72l29.597,18.456  c2.696,1.681,2.696,4.432,0,6.113L36.642,71.512z" />
     </svg>
@@ -461,12 +463,8 @@ const Icon = memo(
   React.forwardRef((props, ref) => {
     const { name, ...others } = props;
     return icons[name](others, ref);
+  // eslint-disable-next-line max-len
   }, (prevProps, newProps) => prevProps.name === newProps.name && prevProps.width === newProps.width && prevProps.className === newProps.className)
 );
-
-Icon.propTypes = {
-  name: PropTypes.string.isRequired,
-  size: PropTypes.number
-};
 
 export default Icon;
