@@ -2,13 +2,9 @@ const { fetch } = require("./libs/utils");
 
 const requests = {};
 
-browser.browserAction.onClicked.addListener(() => {
-  browser.tabs.executeScript({
-    file: "browser-polyfill.min.js",
-    matchAboutBlank: true
-  });
-  browser.tabs.insertCSS({ file: "content.css" });
-  browser.tabs.executeScript({ file: "content.js" });
+chrome.browserAction.onClicked.addListener(() => {
+  chrome.tabs.insertCSS({ file: "content.css" });
+  chrome.tabs.executeScript({ file: "content.js" });
 });
 
 chrome.runtime.onConnect.addListener((port) => {
@@ -31,8 +27,8 @@ chrome.runtime.onConnect.addListener((port) => {
     } else if (event.message === "__VANDAL__CLIENT__FETCH__ABORT") {
       _.forEach(requests, (request, id) => {
         if (
-          _.get(event, "data.meta.type") === _.get(request, "meta.type")
-          && request.controller
+          _.get(event, "data.meta.type") === _.get(request, "meta.type") &&
+          request.controller
         ) {
           if (request) {
             request.controller.abort();

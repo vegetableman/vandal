@@ -24,3 +24,16 @@
   position: relative;
   top: 3px;
 }
+
+.save__link {
+  color: #fff;
+  margin-left: 5px;
+  text-decoration: underline;
+}
+
+.save__icon {
+  fill: #fff;
+  margin-left: 6px;
+  position: relative;
+  top: 3px;
+}

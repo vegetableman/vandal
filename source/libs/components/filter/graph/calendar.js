@@ -1,5 +1,5 @@
 import React from "react";
-import _ from "lodash";
+import PropTypes from "prop-types";
 import cx from "classnames";
 import styles from "./calendar.module.css";
 
@@ -7,7 +7,7 @@ const Calendar = (props) => {
   const {
     date, getColor, onMouseMove, onMouseLeave, onClick
   } = props;
-  if (!date) return <div className={style.calendar} />;
+  if (!date) return <div className={styles.calendar} />;
 
   const dateInstance = new Date(date);
 
@@ -30,6 +30,8 @@ const Calendar = (props) => {
     const dayStyle = getColor(d);
     days.push(
       <div
+        role="button"
+        tabIndex={0}
         className={cx({
           [styles.day]: true,
           [styles.day___active]: Boolean(dayStyle)
@@ -51,6 +53,18 @@ const Calendar = (props) => {
       <div className={styles.calendarMonth}>{days}</div>
     </div>
   );
+};
+
+Calendar.propTypes = {
+  date: PropTypes.string,
+  getColor: PropTypes.func.isRequired,
+  onMouseLeave: PropTypes.func.isRequired,
+  onMouseMove: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired
+};
+
+Calendar.defaultProps = {
+  date: null
 };
 
 export default Calendar;

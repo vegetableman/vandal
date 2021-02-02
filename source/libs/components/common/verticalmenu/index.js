@@ -1,6 +1,9 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+
 import React, {
   useState, forwardRef, useImperativeHandle, memo
 } from "react";
+import PropTypes from "prop-types";
 import _ from "lodash";
 import cx from "classnames";
 import withDialog from "../withdialog";
@@ -10,12 +13,9 @@ import styles from "./verticalmenu.module.css";
 import { compareProps } from "../../../utils";
 
 class List extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.isDialogClosed
-      && nextProps.isDialogClosed !== this.props.isDialogClosed
-    ) {
-      nextProps.onClose();
+  componentDidUpdate(prevProps) {
+    if (this.props.isDialogClosed && prevProps.isDialogClosed !== this.props.isDialogClosed) {
+      this.props.onClose();
     }
   }
 
@@ -53,12 +53,28 @@ class List extends React.Component {
   }
 }
 
+List.propTypes = {
+  dialogRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
+  onClose: PropTypes.func.isRequired,
+  listClass: PropTypes.string.isRequired,
+  listItemClass: PropTypes.string.isRequired,
+  handleOption: PropTypes.func.isRequired,
+  options: PropTypes.array.isRequired,
+  isDialogClosed: PropTypes.bool
+};
+
+List.defaultProps = {
+  isDialogClosed: true
+};
+
 const WithDialogList = withDialog(List, {
   ignoreClickOnClass: `.${styles.menu}`
 });
 
 const VerticalMenu = memo(
-  forwardRef(({ onSelect = () => {}, ...props }, ref) => {
+  forwardRef(({
+    onSelect = () => {}, className, iconClass, iconContainerClass, ...props
+  }, ref) => {
     const [isVisible, toggleMenu] = useState(false);
 
     const onOptionSelect = (value, hideOnSelect = true) => (event) => {
@@ -80,13 +96,15 @@ const VerticalMenu = memo(
       <div
         className={cx({
           [styles.menu]: true,
-          [props.className]: !!props.className
+          [className]: !!className
         })}
       >
         <div
+          role="menu"
+          tabIndex={0}
           className={cx({
             [styles.iconContainer]: true,
-            [props.iconContainerClass]: !!props.iconContainerClass
+            [iconContainerClass]: !!iconContainerClass
           })}
           onClick={() => {
             toggleMenu((prevState) => !prevState);
@@ -96,7 +114,7 @@ const VerticalMenu = memo(
             name="verticalMenu"
             className={cx({
               [styles.icon]: true,
-              [props.iconClass]: !!props.iconClass
+              [iconClass]: !!iconClass
             })}
           />
         </div>
@@ -116,5 +134,19 @@ const VerticalMenu = memo(
   }),
   compareProps(["options"])
 );
+
+VerticalMenu.propTypes = {
+  className: PropTypes.string.isRequired,
+  iconContainerClass: PropTypes.string.isRequired,
+  iconClass: PropTypes.string.isRequired,
+  listClass: PropTypes.string.isRequired,
+  listItemClass: PropTypes.string.isRequired,
+  options: PropTypes.array.isRequired,
+  onSelect: PropTypes.func
+};
+
+VerticalMenu.defaultProps = {
+  onSelect: () => {}
+};
 
 export default VerticalMenu;

@@ -21,9 +21,15 @@ const NextArrow = ({ className, style, onClick }) => (
 );
 
 NextArrow.propTypes = {
-  className: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
-  style: PropTypes.object.isRequired
+  style: PropTypes.object,
+  className: PropTypes.string,
+  onClick: PropTypes.func
+};
+
+NextArrow.defaultProps = {
+  style: null,
+  onClick: () => {},
+  className: null
 };
 
 const PrevArrow = ({ className, style, onClick }) => (
@@ -39,11 +45,16 @@ const PrevArrow = ({ className, style, onClick }) => (
 );
 
 PrevArrow.propTypes = {
-  className: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired,
-  style: PropTypes.object.isRequired
+  style: PropTypes.object,
+  className: PropTypes.string,
+  onClick: PropTypes.func
 };
 
+PrevArrow.defaultProps = {
+  style: null,
+  onClick: () => {},
+  className: null
+};
 
 const settings = {
   dots: false,

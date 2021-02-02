@@ -85,20 +85,18 @@ const cardMachine = Machine(
         }
       },
       processingSnapshot: {
-        on: {
-          "": [
-            {
-              target: "snapshotsLoaded",
-              actions: sendParent((ctx) => ({
-                type: "ON_SNAPSHOTS",
-                payload: {
-                  snapshots: _.get(ctx, "card.ts"),
-                  date: _.get(ctx, "date")
-                }
-              }))
-            }
-          ]
-        }
+        always: [
+          {
+            target: "snapshotsLoaded",
+            actions: sendParent((ctx) => ({
+              type: "ON_SNAPSHOTS",
+              payload: {
+                snapshots: _.get(ctx, "card.ts"),
+                date: _.get(ctx, "date")
+              }
+            }))
+          }
+        ]
       },
       snapshotsLoaded: {},
       snapshotsError: {
@@ -121,7 +119,6 @@ const cardMachine = Machine(
   },
   {
     services: {
-      // eslint-disable-next-line no-async-promise-executor
       fetchSnapshots: (ctx, e) => new Promise(async (resolve, reject) => {
         const date = _.get(e, "payload.date", ctx.date);
         const [data, err] = await api(

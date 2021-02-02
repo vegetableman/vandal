@@ -249,7 +249,6 @@ const historicalMachine = Machine(
 
         return null;
       },
-      // eslint-disable-next-line no-async-promise-executor
       checkHistoricalAvailable: () => new Promise(async (resolve, reject) => {
         const [result, err] = await api(
           process.env.LAMBDA_SCREENSHOT_IS_AVAILABLE

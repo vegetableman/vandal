@@ -52,7 +52,7 @@ const Toast = memo(
 Toast.propTypes = {
   children: PropTypes.element.isRequired,
   className: PropTypes.string.isRequired,
-  show: PropTypes.bool.isRequired,
+  show: PropTypes.bool,
   err: PropTypes.bool,
   exit: PropTypes.number,
   closeTimeout: PropTypes.number
@@ -61,6 +61,7 @@ Toast.propTypes = {
 Toast.defaultProps = {
   err: false,
   exit: 1000,
+  show: false,
   closeTimeout: 0
 };
 

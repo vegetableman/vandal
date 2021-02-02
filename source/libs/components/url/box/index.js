@@ -1,29 +1,29 @@
-import React, { useState, useEffect, memo } from 'react';
-import ReactTooltip from 'react-tooltip';
-import cx from 'classnames';
+import React, { useState, useEffect, memo } from "react";
+import PropTypes from "prop-types";
+import ReactTooltip from "react-tooltip";
+import cx from "classnames";
 
-import ArchiveLoader from './loader';
-import { URLLoader, Icon, Toast } from '../../common';
+import ArchiveLoader from "./loader";
+import { URLLoader, Icon, Toast } from "../../common";
 import {
   getDateTimeFromTS,
   toTwelveHourTime,
   isArchiveURL,
   compareProps
-} from '../../../utils';
-import { useIntro } from '../../../hooks/use-intro';
-import { colors } from '../../../constants';
-import { useTheme } from '../../../hooks';
+} from "../../../utils";
+import { useIntro } from "../../../hooks/use-intro";
+import { colors } from "../../../constants";
+import { useTheme } from "../../../hooks";
 
-import styles from './urlbox.module.css';
+import styles from "./urlbox.module.css";
 
 const URLBox = memo((props) => {
   const { showIntro, toggleIntro } = useIntro();
   const getTS = () => {
     if (props.redirectedTS) {
       return props.redirectedTS;
-    } else {
-      return props.selectedTS;
     }
+    return props.selectedTS;
   };
 
   const [currentTS, setCurrentTs] = useState(getTS());
@@ -44,10 +44,9 @@ const URLBox = memo((props) => {
   let frameLoaderTimeout;
   const onMessage = async (request) => {
     switch (request.message) {
-      case '__VANDAL__NAV__BEFORENAVIGATE':
+      case "__VANDAL__NAV__BEFORENAVIGATE":
         toggleURLLoader(true);
-        const URL = _.get(request.data, 'url');
-        if (isArchiveURL(URL)) {
+        if (isArchiveURL(_.get(request.data, "url"))) {
           toggleFrameLoader(true);
           if (frameLoaderTimeout) {
             clearTimeout(frameLoaderTimeout);
@@ -57,13 +56,15 @@ const URLBox = memo((props) => {
           }, 2500);
         }
         break;
-      case '__VANDAL__NAV__ERROR':
+      case "__VANDAL__NAV__ERROR":
         toggleURLLoader(false);
         break;
-      case '__VANDAL__NAV__COMPLETE':
+      case "__VANDAL__NAV__COMPLETE":
         toggleSWRender(false);
         toggleURLLoader(false);
         toggleFrameLoader(false);
+        break;
+      default:
         break;
     }
   };
@@ -74,9 +75,7 @@ const URLBox = memo((props) => {
     const isPageCached = await Promise.all(keys).then(async (key) => {
       const result = await caches.open(key);
       const requests = await result.keys();
-      return _.some(requests, (request) => {
-        return request.url === props.url;
-      });
+      return _.some(requests, (request) => request.url === props.url);
     });
     if (isPageCached) {
       toggleSWRender(true);
@@ -99,11 +98,11 @@ const URLBox = memo((props) => {
           {!currentTS &&
             (!showURLLoader || isSWRendered) && (
               <Icon name="globe" className={styles.url__icon} />
-            )}
+          )}
           {!!currentTS &&
             !showURLLoader && (
               <Icon name="archive" className={styles.archive__icon} />
-            )}
+          )}
         </div>
         <input
           type="text"
@@ -114,14 +113,15 @@ const URLBox = memo((props) => {
             toggleReadOnly(true);
           }}
           onMouseOut={(e) => {
-            if (e.relatedTarget && e.relatedTarget.hasAttribute('data-for')) {
+            if (e.relatedTarget && e.relatedTarget.hasAttribute("data-for")) {
               return;
             }
             toggleReadOnly(false);
           }}
+          onBlur={() => undefined}
         />
         <Icon
-          style={{ visibility: showReadOnly ? 'visible' : 'hidden' }}
+          style={{ visibility: showReadOnly ? "visible" : "hidden" }}
           data-for="vandal-readonly"
           data-tip="URL is non-editable"
           name="readOnly"
@@ -131,21 +131,25 @@ const URLBox = memo((props) => {
           }}
         />
         <button
+          type="button"
           className={cx(styles.history__btn, {
             [styles.history__btn___active]: props.showURLHistory
           })}
-          onClick={props.toggleURLHistory}>
+          onClick={props.toggleURLHistory}
+        >
           <Icon name="bottomCaret" className={styles.caret} />
         </button>
       </div>
       {!!currentTS && (
-        <div
+        <button
+          type="button"
           className={cx({
             [styles.date]: true,
             [styles.date__loader]: showFrameLoader,
             [styles.date__info]: props.showURLInfo && !showFrameLoader
           })}
-          onClick={props.toggleURLInfo}>
+          onClick={props.toggleURLInfo}
+        >
           {showFrameLoader && (
             <ArchiveLoader title="Loading..." theme={theme} />
           )}
@@ -154,18 +158,20 @@ const URLBox = memo((props) => {
               name="info"
               className={cx({
                 [styles.info__icon]: true,
-                [styles.info__icon___dark]: theme === 'dark'
+                [styles.info__icon___dark]: theme === "dark"
               })}
             />
           )}
           <div className={styles.date__text}>
-            <span style={{ marginRight: '3px' }}>{dateObj.humanizedDate}</span>{' '}
+            <span style={{ marginRight: "3px" }}>{dateObj.humanizedDate}</span>
+            {" "}
             <span>{toTwelveHourTime(dateObj.ts)}</span>
           </div>
-        </div>
+        </button>
       )}
       <div className={styles.timetravel__container}>
-        <div
+        <button
+          type="button"
           className={cx({
             [styles.timetravel__btn]: true,
             [styles.timetravel__btn___selected]: props.showTimeTravel,
@@ -175,7 +181,8 @@ const URLBox = memo((props) => {
           onClick={() => {
             toggleIntro(false);
             props.toggleTimeTravel();
-          }}>
+          }}
+        >
           <Icon
             className={cx({
               [styles.timetravel__icon]: true,
@@ -185,11 +192,13 @@ const URLBox = memo((props) => {
             width={22}
           />
           {showIntro && (
-            <div
+            <button
+              type="button"
               className={styles.intro}
               onClick={() => {
                 toggleIntro(false);
-              }}>
+              }}
+            >
               <Icon
                 name="introArrow"
                 width={92}
@@ -197,9 +206,9 @@ const URLBox = memo((props) => {
                 className={styles.intro_arrow__icon}
               />
               <span className={styles.intro__text}>Get started!</span>
-            </div>
+            </button>
           )}
-        </div>
+        </button>
       </div>
       <ReactTooltip
         border
@@ -220,11 +229,34 @@ const URLBox = memo((props) => {
         err
         closeTimeout={8000}
         className={styles.frame_render_err__toast}
-        show={isSWRendered && showURLLoader}>
+        show={isSWRendered && showURLLoader}
+      >
         <span>Vandal is experiencing issues rendering this page.</span>
       </Toast>
     </div>
   );
-}, compareProps(['redirectedTS', 'selectedTS', 'url', 'redirectTSCollection', 'showURLHistory', 'showURLInfo', 'showTimeTravel', 'sparklineLoaded']));
+}, compareProps(["redirectedTS", "selectedTS", "url", "redirectTSCollection", "showURLHistory", "showURLInfo", "showTimeTravel", "sparklineLoaded"]));
+
+URLBox.propTypes = {
+  toggleURLInfo: PropTypes.func.isRequired,
+  toggleURLHistory: PropTypes.func.isRequired,
+  toggleTimeTravel: PropTypes.func.isRequired,
+  url: PropTypes.string.isRequired,
+  redirectedTS: PropTypes.string,
+  selectedTS: PropTypes.string,
+  showURLHistory: PropTypes.bool,
+  showTimeTravel: PropTypes.bool,
+  sparklineLoaded: PropTypes.bool,
+  showURLInfo: PropTypes.bool
+};
+
+URLBox.defaultProps = {
+  redirectedTS: null,
+  selectedTS: null,
+  showURLHistory: false,
+  showTimeTravel: false,
+  sparklineLoaded: false,
+  showURLInfo: false
+};
 
 export default URLBox;

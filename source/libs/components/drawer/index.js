@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import PropTypes from "prop-types";
 import cx from "classnames";
 import clickDrag from "react-clickdrag";
 import ShadowDOM from "react-shadow";
@@ -26,7 +27,9 @@ const DrawerHeader = ({
 }) => {
   useEffect(
     () => {
-      dataDrag.isMoving && onDrag(dataDrag.moveDeltaY);
+      if (dataDrag.isMoving) {
+        onDrag(dataDrag.moveDeltaY);
+      }
     },
     [dataDrag.isMoving, dataDrag.moveDeltaY, onDrag]
   );
@@ -36,17 +39,17 @@ const DrawerHeader = ({
       <div className={styles.title__bar__left}>
         <Icon name="timestamp" className={styles.timestamp__icon} />
         <div className={styles.scroll__container}>
-          <input
-            type="checkbox"
-            id="vandal-scroll-highlight"
-            checked={scrollOnHighlight}
-            className={styles.scroll__checkbox}
-            onChange={onScrollHighlight}
-          />
           <label
             className={styles.scroll__label}
             htmlFor="vandal-scroll-highlight"
           >
+            <input
+              type="checkbox"
+              id="vandal-scroll-highlight"
+              checked={scrollOnHighlight}
+              className={styles.scroll__checkbox}
+              onChange={onScrollHighlight}
+            />
             Scroll On Highlight
           </label>
         </div>
@@ -56,14 +59,36 @@ const DrawerHeader = ({
   );
 };
 
+DrawerHeader.propTypes = {
+  onDrag: PropTypes.func.isRequired,
+  onScrollHighlight: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  dataDrag: PropTypes.shape({
+    isMoving: PropTypes.bool,
+    moveDeltaY: PropTypes.number
+  }),
+  scrollOnHighlight: PropTypes.bool
+};
+
+DrawerHeader.defaultProps = {
+  dataDrag: { isMoving: false, moveDeltaY: null },
+  scrollOnHighlight: false
+};
+
 const DrawerHeaderDraggable = clickDrag(DrawerHeader, {
   touch: false,
   onDragStart: (__, props) => {
-    props.onDragStart && props.onDragStart();
+    if (props.onDragStart) {
+      props.onDragStart();
+    }
+    // eslint-disable-next-line no-param-reassign
     props.frame.style.pointerEvents = "none";
   },
   onDragStop: (__, props) => {
-    props.onDragStop && props.onDragStop();
+    if (props.onDragStop) {
+      props.onDragStop();
+    }
+    // eslint-disable-next-line no-param-reassign
     props.frame.style.pointerEvents = "auto";
   }
 });
@@ -91,7 +116,7 @@ const Drawer = (props) => {
   const [state, send] = useMachine(drawerMachine);
   const { context: ctx } = state;
 
-  const handleMouseEnter = (source, ts) => (e) => {
+  const handleMouseEnter = (source, ts) => () => {
     chrome.runtime.sendMessage({
       message: "__VANDAL__CLIENT__HIGHLIGHT__NODE",
       data: { source, ts, scrollOnHighlight: ctx.scrollOnHighlight }
@@ -148,6 +173,12 @@ const Drawer = (props) => {
     [ctx.height, send]
   );
 
+  const getDelta = (isValid) => (isValid ? (
+    <span className={styles.timestamp__delta___notfound}>
+      Not Archived
+    </span>
+  ) : null);
+
   return (
     <div
       className={styles.drawer}
@@ -172,11 +203,11 @@ const Drawer = (props) => {
             {" "}
             <span className={styles.info__highlight}>time difference</span>
             {" "}
-and
+            and
             {" "}
             <span className={styles.info__highlight}>timestamps</span>
             {" "}
-for all
+            for all
             the page elements compared to the page. Some elements may vary
             significantly in capture timestamp from the base URL of the page,
             depending on the web crawling process. To know more, click
@@ -199,21 +230,21 @@ for all
             timestamps.
           </div>
         )}
-        {!props.isNavComplete
-          && props.selectedTS && (
+        {!props.isNavComplete &&
+          props.selectedTS && (
             <div className={styles.timestamps___loading}>
               Waiting for the page to finish loading ...
             </div>
         )}
-        {props.isNavComplete
-          && props.selectedTS
-          && _.isEmpty(props.sources) && (
+        {props.isNavComplete &&
+          props.selectedTS &&
+          _.isEmpty(props.sources) && (
             <div className={styles.timestamps___loading}>
               Fetching page elements ...
             </div>
         )}
-        {!_.isEmpty(props.sources)
-          && props.selectedTS && (
+        {!_.isEmpty(props.sources) &&
+          props.selectedTS && (
             <ul className={styles.list}>
               {_.map(props.sources, (source, index) => {
                 const ts = _.get(ctx.timestamps[index], "ts");
@@ -248,9 +279,9 @@ for all
                       </a>
                     </div>
                     <div className={styles.item__timestamp}>
-                      {err
-                        && !ts
-                        && (_.get(err, "status") === 404 ? (
+                      {err &&
+                        !ts &&
+                        (_.get(err, "status") === 404 ? (
                           <span className={styles.timestamp__delta___notfound}>
                             Not Archived
                           </span>
@@ -259,8 +290,8 @@ for all
                             Failed to fetch Resource
                           </span>
                         ))}
-                      {!err
-                        && (ts ? (
+                      {!err &&
+                        (ts ? (
                           <span
                             className={cx({
                               [styles.timestamp__delta]: true,
@@ -272,11 +303,7 @@ for all
                           >
                             {_.get(dt, "text")}
                           </span>
-                        ) : isValid ? (
-                          <span className={styles.timestamp__delta___notfound}>
-                            Not Archived
-                          </span>
-                        ) : null)}
+                        ) : getDelta(isValid))}
                       <div className={styles.timestamp__value}>
                         {!err && ts && formatDateTimeTS(ts)}
                       </div>
@@ -291,6 +318,21 @@ for all
   );
 };
 
+Drawer.propTypes = {
+  dialogRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
+  onClose: PropTypes.func.isRequired,
+  frame: PropTypes.any.isRequired,
+  sources: PropTypes.array,
+  isNavComplete: PropTypes.bool,
+  selectedTS: PropTypes.number
+};
+
+Drawer.defaultProps = {
+  sources: [],
+  isNavComplete: false,
+  selectedTS: null
+};
+
 const DrawerContainer = (props) => {
   const [visible, setVisible] = useState(false);
   const [isNavComplete, setNavComplete] = useState(false);
@@ -302,8 +344,8 @@ const DrawerContainer = (props) => {
       if (request.message === "__VANDAL__CLIENT__TOGGLEDRAWER") {
         setVisible(!visible);
       } else if (
-        request.message === "__VANDAL__NAV__BEFORENAVIGATE"
-        || request.message === "__VANDAL__NAV__HISTORYCHANGE"
+        request.message === "__VANDAL__NAV__BEFORENAVIGATE" ||
+        request.message === "__VANDAL__NAV__HISTORYCHANGE"
       ) {
         const frameURL = _.get(request.data, "url");
         if (isArchiveURL(frameURL)) {
@@ -349,6 +391,10 @@ const DrawerContainer = (props) => {
       </div>
     </ShadowDOM>
   );
+};
+
+DrawerContainer.propTypes = {
+  frame: PropTypes.any.isRequired
 };
 
 export default DrawerContainer;

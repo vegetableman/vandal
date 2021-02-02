@@ -29,8 +29,8 @@ export default function withDialog(Component, { ignoreClickOnClass } = {}) {
     handleClickOutside = (e) => {
       const path = _.toArray(e.composedPath());
       if (
-        ignoreClickOnClass
-        && path.some((node) => _.isElement(node) && node.matches(ignoreClickOnClass))
+        ignoreClickOnClass &&
+        path.some((node) => _.isElement(node) && node.matches(ignoreClickOnClass))
       ) {
         return;
       }

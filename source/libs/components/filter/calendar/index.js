@@ -2,6 +2,7 @@ import _ from "lodash";
 import React, {
   useEffect, useState, memo, useCallback
 } from "react";
+import PropTypes from "prop-types";
 import cx from "classnames";
 import CalendarLoader from "./loader";
 
@@ -16,6 +17,8 @@ const Day = (props) => {
   const style = props.getColor(props.day);
   return (
     <div
+      role="button"
+      tabIndex={0}
       className={cx({
         [styles.day]: true,
         [styles.day___active]: Boolean(style)
@@ -29,6 +32,14 @@ const Day = (props) => {
       </div>
     </div>
   );
+};
+
+Day.propTypes = {
+  onMouseLeave: PropTypes.func.isRequired,
+  onMouseMove: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
+  getColor: PropTypes.func.isRequired,
+  day: PropTypes.number.isRequired
 };
 
 const Calendar = memo((props) => {
@@ -50,15 +61,15 @@ const Calendar = memo((props) => {
   last.setDate(0);
 
   const weeks = Math.ceil((last.getDate() + first.getDay()) / 7);
-  let day = 1 - first.getDay();
+  let firstDay = 1 - first.getDay();
   const rows = [];
 
   for (let w = 0; w < weeks; w++) {
     const row = [];
     for (let d = 0; d < 7; d++) {
-      row.push(d + day);
+      row.push(d + firstDay);
     }
-    day += 7;
+    firstDay += 7;
 
     rows.push(
       <div
@@ -93,28 +104,29 @@ const Calendar = memo((props) => {
   );
 }, compareProps(["date", "highlightedDay", "selectedTS"]));
 
-Calendar.defaultProps = {
-  getColor: () => {},
-  onClick: () => {},
-  onMouseLeave: () => {},
-  onMouseMove: () => {}
+Calendar.propTypes = {
+  onMouseLeave: PropTypes.func.isRequired,
+  onMouseMove: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
+  getColor: PropTypes.func.isRequired,
+  date: PropTypes.string.isRequired
 };
 
 const CalendarFilter = memo((props) => {
   const currentDateInstance = new Date();
 
   const [date, setDate] = useState(
-    props.currentYear && props.currentMonth
-      ? `${props.currentYear}-${_.padStart(props.currentMonth, 2, "0")}`
-      : ""
+    props.currentYear && props.currentMonth ?
+      `${props.currentYear}-${_.padStart(props.currentMonth, 2, "0")}` :
+      ""
   );
 
   useEffect(
     () => {
       setDate(
-        props.currentYear && props.currentMonth
-          ? `${props.currentYear}-${_.padStart(props.currentMonth, 2, "0")}`
-          : ""
+        props.currentYear && props.currentMonth ?
+          `${props.currentYear}-${_.padStart(props.currentMonth, 2, "0")}` :
+          ""
       );
     },
     [props.currentMonth, props.currentYear]
@@ -136,9 +148,9 @@ const CalendarFilter = memo((props) => {
   return (
     <div className={styles.container}>
       <div className={styles.calendar__container}>
-        {!props.showSparkError
-          && !_.isEmpty(_.keys(props.sparkline))
-          && !props.showErrLoader && (
+        {!props.showSparkError &&
+          !_.isEmpty(_.keys(props.sparkline)) &&
+          !props.showErrLoader && (
             <div className={styles.label}>Select Date :</div>
         )}
         <div className={styles.nav__container}>
@@ -180,8 +192,8 @@ const CalendarFilter = memo((props) => {
                 className={styles.error__icon}
               />
             </div>
-            {(props.showSparkError
-              && props.showSparkLoader && (
+            {(props.showSparkError &&
+              props.showSparkLoader && (
                 <div className={styles.error__msg}>Retrying...</div>
             )) || (
               <div className={styles.error__msg}>
@@ -190,15 +202,15 @@ const CalendarFilter = memo((props) => {
                 {props.error || "Request Failed"}
               </div>
             )}
-            <button className={styles.retry__btn} onClick={props.retry}>
+            <button type="button" className={styles.retry__btn} onClick={props.retry}>
               Retry
             </button>
           </div>
         )}
       </div>
-      {props.showCalendarLoader
-        && !props.showSparkError
-        && !props.showCalendarError && (
+      {props.showCalendarLoader &&
+        !props.showSparkError &&
+        !props.showCalendarError && (
           <CalendarLoader className={styles.loader} />
       )}
       {props.calendarLoaded && (
@@ -235,8 +247,8 @@ const CalendarFilterContainer = memo((props) => {
       showCalendarLoader={state.matches("sparklineLoaded.loadingCalendar")}
       showSparkLoader={state.matches("loadingSparkline")}
       showSparkError={
-        _.get(state, "event.type") === "RELOAD_SPARKLINE_ON_ERROR"
-        || state.matches("sparklineError")
+        _.get(state, "event.type") === "RELOAD_SPARKLINE_ON_ERROR" ||
+        state.matches("sparklineError")
       }
       showCalendarError={state.matches("sparklineLoaded.calendarError")}
       calendar={ctx.calendar}
@@ -245,14 +257,45 @@ const CalendarFilterContainer = memo((props) => {
   );
 });
 
+CalendarFilter.propTypes = {
+  getColor: PropTypes.func.isRequired,
+  onMouseMove: PropTypes.func.isRequired,
+  onMouseLeave: PropTypes.func.isRequired,
+  goToNext: PropTypes.func.isRequired,
+  goToPrevious: PropTypes.func.isRequired,
+  sparkline: PropTypes.object.isRequired,
+  onClick: PropTypes.func.isRequired,
+  retry: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
+  showCalendarLoader: PropTypes.bool,
+  showSparkError: PropTypes.bool,
+  showCalendarError: PropTypes.bool,
+  calendarLoaded: PropTypes.bool,
+  showSparkLoader: PropTypes.bool,
+  currentMonth: PropTypes.number,
+  currentYear: PropTypes.number,
+  selectedTS: PropTypes.number,
+  selectedMonth: PropTypes.number,
+  selectedYear: PropTypes.number,
+  highlightedDay: PropTypes.number,
+  showErrLoader: PropTypes.bool,
+  error: PropTypes.bool
+};
+
 CalendarFilter.defaultProps = {
-  getColor: () => {},
-  goToPrevious: () => {},
-  goToNext: () => {},
-  onClick: () => {},
-  onChange: () => {},
-  onMouseMove: () => {},
-  onMouseLeave: () => {}
+  showCalendarLoader: false,
+  showSparkError: false,
+  showCalendarError: false,
+  calendarLoaded: false,
+  showSparkLoader: false,
+  currentMonth: null,
+  currentYear: null,
+  selectedTS: null,
+  selectedMonth: null,
+  selectedYear: null,
+  highlightedDay: null,
+  showErrLoader: false,
+  error: false
 };
 
 export default CalendarFilterContainer;

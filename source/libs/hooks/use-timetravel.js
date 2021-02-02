@@ -2,7 +2,6 @@ import React, {
   useState, useEffect, createContext, useContext, useCallback, useRef
 } from "react";
 import PropTypes from "prop-types";
-import { Machine } from "xstate";
 
 import {
   getDateTsFromURL,
@@ -85,9 +84,9 @@ const TimetravelProvider = ({ children, machine }) => {
           );
 
           if (
-            redirectedTS !== linkTS.current
-            && strippedOffURL === ctx.url
-            && _.indexOf(_.keys(ctx.redirectTSCollection), redirectedTS) < 0
+            redirectedTS !== linkTS.current &&
+            strippedOffURL === ctx.url &&
+            _.indexOf(_.keys(ctx.redirectTSCollection), redirectedTS) < 0
           ) {
             timetravelMachine.send({
               type: "SET_REDIRECT_INFO",
@@ -120,7 +119,7 @@ const TimetravelProvider = ({ children, machine }) => {
 
 TimetravelProvider.propTypes = {
   children: PropTypes.element.isRequired,
-  machine: PropTypes.instanceOf(Machine).isRequired
+  machine: PropTypes.any.isRequired
 };
 
 function useTimeTravel() {

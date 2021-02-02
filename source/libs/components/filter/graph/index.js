@@ -1,4 +1,5 @@
 import React, { memo } from "react";
+import PropTypes from "prop-types";
 import cx from "classnames";
 import _ from "lodash";
 import {
@@ -8,35 +9,46 @@ import {
   dataToPoints
 } from "react-sparklines";
 
-import GraphLoader from "./loader.js";
+import GraphLoader from "./loader";
 import Calendar from "./calendar";
 import { monthNames, compareProps, getLastDate } from "../../../utils";
 import { Icon } from "../../common";
-import { useTheme, useTimeTravel } from "../../../hooks/index.js";
+import { useTheme, useTimeTravel } from "../../../hooks";
 
 import styles from "./graph.module.css";
 
 const captureGraphScale = (years, maxcount) => {
   const scaled = [];
-  for (const year in years) {
-    if (!years[year]) {
-      continue;
+  // for (const year in years) {
+  //   if (!years[year]) {
+  //     continue;
+  //   }
+  //   scaled[year] = years[year].map(Math.log1p);
+  // }
+  _.each(years, (year) => {
+    if (years[year]) {
+      scaled[year] = years[year].map(Math.log1p);
     }
-    scaled[year] = years[year].map(Math.log1p);
-  }
+  });
   return [scaled, Math.log1p(maxcount)];
 };
 
 const captureGraphScaleIsRequired = (years) => {
   let max = 0;
   let min = 1000;
-  for (const year in years) {
-    if (years[year] == undefined) {
-      continue;
+  // for (const year in years) {
+  //   if (years[year] == undefined) {
+  //     continue;
+  //   }
+  //   max = Math.max(max, Math.max.apply(null, years[year]));
+  //   min = Math.min(min, Math.min.apply(null, years[year].filter(Boolean)));
+  // }
+  _.each(years, (year) => {
+    if (years[year]) {
+      max = Math.max(max, Math.max.apply(null, years[year]));
+      min = Math.min(min, Math.min.apply(null, years[year].filter(Boolean)));
     }
-    max = Math.max(max, Math.max.apply(null, years[year]));
-    min = Math.min(min, Math.min.apply(null, years[year].filter(Boolean)));
-  }
+  });
   return Math.log1p(max) - Math.log1p(min) > 3;
 };
 
@@ -48,7 +60,12 @@ const Bars = memo(({ theme, ...rest }) => (
       fill: theme === "dark" ? "#5B85AC" : "#708090"
     }}
   />
-), (prevProps, newProps) => prevProps.width === newProps.width && prevProps.height === newProps.height && prevProps.margin === newProps.margin);
+), (prevProps, newProps) => prevProps.width === newProps.width &&
+prevProps.height === newProps.height && prevProps.margin === newProps.margin);
+
+Bars.propTypes = {
+  theme: PropTypes.string.isRequired
+};
 
 const Curve = memo(({ theme, ...rest }) => (
   <SparklinesCurve
@@ -58,13 +75,20 @@ const Curve = memo(({ theme, ...rest }) => (
       fill: theme === "dark" ? "#5B85AC" : "#708090"
     }}
   />
-), (prevProps, newProps) => prevProps.width === newProps.width && prevProps.height === newProps.height && prevProps.margin === newProps.margin);
+), (prevProps, newProps) => prevProps.width === newProps.width &&
+prevProps.height === newProps.height && prevProps.margin === newProps.margin);
 
-const Spark = memo((props) => <Sparklines {...props} />, (prevProps, newProps) => prevProps.width === newProps.width && prevProps.height === newProps.height && prevProps.margin === newProps.margin && prevProps.min === newProps.min && prevProps.max === newProps.max);
+Curve.propTypes = {
+  theme: PropTypes.string.isRequired
+};
+
+const Spark = memo((props) => <Sparklines {...props} />,
+  (prevProps, newProps) => prevProps.width === newProps.width &&
+prevProps.height === newProps.height && prevProps.margin === newProps.margin &&
+prevProps.min === newProps.min && prevProps.max === newProps.max);
 
 const GraphFilter = memo((props) => {
-  let {
-    sparkline,
+  const {
     months,
     currentMonth,
     currentYear,
@@ -76,6 +100,8 @@ const GraphFilter = memo((props) => {
     showSparkLoader,
     isOverCapacity
   } = props;
+
+  let { sparkline } = props;
 
   const { theme } = useTheme();
 
@@ -95,8 +121,8 @@ const GraphFilter = memo((props) => {
             className={styles.error__icon}
           />
         </div>
-        {(props.showSparkError
-          && showSparkLoader && (
+        {(props.showSparkError &&
+          showSparkLoader && (
             <div className={styles.error__msg}>Retrying...</div>
         )) || (
           <div className={styles.error__msg}>
@@ -105,7 +131,7 @@ const GraphFilter = memo((props) => {
             {props.error || "Request Failed"}
           </div>
         )}
-        <button className={styles.retry__btn} onClick={props.retry}>
+        <button type="button" className={styles.retry__btn} onClick={props.retry}>
           Retry
         </button>
       </div>
@@ -118,17 +144,22 @@ const GraphFilter = memo((props) => {
   }
 
   let maxcount = 0;
-  for (const year in sparkline) {
-    if (sparkline[year] == undefined) {
-      continue;
+  // for (const year in sparkline) {
+  //   if (sparkline[year] == undefined) {
+  //     continue;
+  //   }
+  //   maxcount = Math.max(maxcount, Math.max.apply(null, sparkline[year]));
+  // }
+  _.each(_.keys(sparkline), (year) => {
+    if (sparkline[year]) {
+      maxcount = Math.max(maxcount, Math.max.apply(null, sparkline[year]));
     }
-    maxcount = Math.max(maxcount, Math.max.apply(null, sparkline[year]));
-  }
+  });
 
   if (captureGraphScaleIsRequired(sparkline)) {
     const scaled = captureGraphScale(sparkline, maxcount);
-    sparkline = scaled[0];
-    maxcount = scaled[1];
+    sparkline = _.nth(scaled, 0);
+    maxcount = _.nth(scaled, 1);
   }
 
   const years = _.map(Object.keys(sparkline), (y) => _.parseInt(y));
@@ -138,6 +169,8 @@ const GraphFilter = memo((props) => {
       <div className={styles.year__container}>
         {_.map(years, (y) => (
           <div
+            role="button"
+            tabIndex={0}
             className={cx({
               [styles.year]: true,
               [styles.year___selected]: theme !== "dark" && currentYear === y,
@@ -147,7 +180,7 @@ const GraphFilter = memo((props) => {
             key={`year-${y}`}
             onClick={onYearChange(y)}
           >
-            <label className={styles.year__value}>{y}</label>
+            <span className={styles.year__value}>{y}</span>
             <Spark
               data={sparkline[y]}
               margin={0}
@@ -174,11 +207,11 @@ const GraphFilter = memo((props) => {
           ))}
         </div>
       )}
-      {!showCalendarLoader
-        && currentYear && (
+      {!showCalendarLoader &&
+        currentYear && (
           <div className={styles.month__container}>
-            {!_.isEmpty(months)
-              && _.map(months, (m, index) => {
+            {!_.isEmpty(months) &&
+              _.map(months, (m, index) => {
                 const lastDate = getLastDate(
                   `${index + 1}/1/${currentYear}`
                 ).getDate();
@@ -200,6 +233,8 @@ const GraphFilter = memo((props) => {
 
                 return (
                   <div
+                    role="button"
+                    tabIndex={0}
                     className={cx({
                       [styles.month]: true,
                       [styles.month___selected]:
@@ -235,9 +270,11 @@ const GraphFilter = memo((props) => {
                   </div>
                 );
               })}
-            {_.isEmpty(months)
-              && _.map(monthNames, (m, index) => (
+            {_.isEmpty(months) &&
+              _.map(monthNames, (m, index) => (
                 <div
+                  role="button"
+                  tabIndex={0}
                   className={cx({
                     [styles.month]: true,
                     [styles.month___selected]: index === currentMonth - 1
@@ -250,8 +287,8 @@ const GraphFilter = memo((props) => {
               ))}
           </div>
       )}
-      {!showCalendarLoader
-        && date && (
+      {!showCalendarLoader &&
+        date && (
           <Calendar
             date={date}
             getColor={props.getColor}
@@ -262,7 +299,8 @@ const GraphFilter = memo((props) => {
       )}
     </div>
   );
-}, compareProps(["selectedYear", "selectedMonth", "currentYear", "currentMonth", "currentDay", "showError", "showCalendarLoader", "showSparkError", "showSparkLoader", "showCalendarError", "sparkline", "months", "highlightedDay", "calendarLoaded", "mountCount", "isOverCapacity"]));
+}, compareProps(["selectedYear", "selectedMonth", "currentYear", "currentMonth", "currentDay",
+  "showError", "showCalendarLoader", "showSparkError", "showSparkLoader", "showCalendarError", "sparkline", "months", "highlightedDay", "calendarLoaded", "mountCount", "isOverCapacity"]));
 
 const GraphFilterContainer = (props) => {
   const { state } = useTimeTravel();
@@ -286,12 +324,44 @@ const GraphFilterContainer = (props) => {
       showCalendarLoader={state.matches("sparklineLoaded.loadingCalendar")}
       showSparkLoader={state.matches("loadingSparkline")}
       showSparkError={
-        _.get(state, "event.type") === "RELOAD_SPARKLINE_ON_ERROR"
-        || state.matches("sparklineError")
+        _.get(state, "event.type") === "RELOAD_SPARKLINE_ON_ERROR" ||
+        state.matches("sparklineError")
       }
       showCalendarError={state.matches("sparklineLoaded.calendarError")}
     />
   );
+};
+
+GraphFilter.propTypes = {
+  getColor: PropTypes.func.isRequired,
+  onMouseMove: PropTypes.func.isRequired,
+  onMouseLeave: PropTypes.func.isRequired,
+  sparkline: PropTypes.object.isRequired,
+  onYearChange: PropTypes.func.isRequired,
+  onMonthChange: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
+  retry: PropTypes.func.isRequired,
+  showCalendarLoader: PropTypes.bool,
+  showSparkError: PropTypes.bool,
+  showCalendarError: PropTypes.bool,
+  showSparkLoader: PropTypes.bool,
+  currentMonth: PropTypes.number,
+  currentYear: PropTypes.number,
+  error: PropTypes.bool,
+  isOverCapacity: PropTypes.bool,
+  months: PropTypes.array
+};
+
+GraphFilter.defaultProps = {
+  showCalendarLoader: false,
+  showSparkError: false,
+  showCalendarError: false,
+  showSparkLoader: false,
+  currentMonth: null,
+  currentYear: null,
+  error: false,
+  isOverCapacity: false,
+  months: []
 };
 
 export default GraphFilterContainer;

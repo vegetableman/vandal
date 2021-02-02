@@ -1,19 +1,43 @@
 {
   "parser": "@babel/eslint-parser",
-  "extends": ["airbnb", "plugin:prettier/recommended"],
-  "plugins": ["react", "jsx-a11y", "import", "react-hooks", "@babel"],
+  "extends": [
+    "airbnb"
+  ],
+  "plugins": [
+    "react",
+    "jsx-a11y",
+    "import",
+    "react-hooks",
+    "@babel"
+  ],
   "rules": {
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/exhaustive-deps": "off",
     "react/jsx-props-no-spreading": "off",
     "react/destructuring-assignment": "off",
-    "react/forbid-prop-types":"off",
-    "comma-dangle":"off",
-    "quotes": ["error", "double"],
-    "class-methods-use-this":"off",
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "no-plusplus":"off",
-    "prettier/prettier": "error"
+    "react/forbid-prop-types": "off",
+    "comma-dangle": "off",
+    "quotes": [
+      "error",
+      "double"
+    ],
+    "class-methods-use-this": "off",
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [
+          ".js",
+          ".jsx"
+        ]
+      }
+    ],
+    "no-plusplus": "off",
+    "no-async-promise-executor": "off",
+    "operator-linebreak": [
+      "error",
+      "after"
+    ],
+    "jsx-a11y/click-events-have-key-events": "off"
   },
   "env": {
     "browser": true

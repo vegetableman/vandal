@@ -463,8 +463,8 @@ const Icon = memo(
   React.forwardRef((props, ref) => {
     const { name, ...others } = props;
     return icons[name](others, ref);
-  // eslint-disable-next-line max-len
-  }, (prevProps, newProps) => prevProps.name === newProps.name && prevProps.width === newProps.width && prevProps.className === newProps.className)
+  }, (prevProps, newProps) => prevProps.name === newProps.name &&
+  prevProps.width === newProps.width && prevProps.className === newProps.className)
 );
 
 export default Icon;

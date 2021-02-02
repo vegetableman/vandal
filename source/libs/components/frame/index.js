@@ -182,16 +182,16 @@ const Frame = (props) => {
     [setTheme, theme]
   );
 
-  const disableBack = _.indexOf(navState.context.currentRecords, navState.context.currentURL)
-    <= 0;
+  const disableBack = _.indexOf(navState.context.currentRecords, navState.context.currentURL) <=
+    0;
 
-  const disableForward = _.indexOf(navState.context.currentRecords, navState.context.currentURL)
-      === -1
-    || _.lastIndexOf(
+  const disableForward = _.indexOf(navState.context.currentRecords, navState.context.currentURL) ===
+      -1 ||
+    _.lastIndexOf(
       navState.context.currentRecords,
       navState.context.currentURL
-    )
-      === _.size(navState.context.currentRecords) - 1;
+    ) ===
+      _.size(navState.context.currentRecords) - 1;
 
   return (
     <TimetravelProvider machine={state.context.timetravelRef}>

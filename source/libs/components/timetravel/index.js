@@ -80,9 +80,9 @@ const TimeTravel = (props) => {
         year: selectedYear,
         month: selectedMonth
       } = memoizedDateTimeFromTS(selectedTS);
-      match = selectedDay === day
-        && selectedMonth === currentMonth
-        && selectedYear === currentYear;
+      match = selectedDay === day &&
+        selectedMonth === currentMonth &&
+        selectedYear === currentYear;
     }
 
     const color = colorFromRange(min, max);
@@ -90,18 +90,18 @@ const TimeTravel = (props) => {
 
     return {
       backgroundColor: match ? colors.MATCH : bgColor,
-      borderColor: !match
-        ? tinycolor(bgColor)
+      borderColor: !match ?
+        tinycolor(bgColor)
           .darken(10)
-          .toString()
-        : colors.BR_MATCH,
+          .toString() :
+        colors.BR_MATCH,
       borderWidth: theme === "light" ? 1 : 0,
       borderStyle: theme === "light" ? "solid" : "none",
       opacity: highlightedDay && highlightedDay !== day ? 0.5 : 1,
       textDecoration:
-        (highlightedDay && highlightedDay === day) || match
-          ? "underline"
-          : "none",
+        (highlightedDay && highlightedDay === day) || match ?
+          "underline" :
+          "none",
       color: match ? colors.BL_33 : "inherit"
     };
   };
@@ -210,10 +210,10 @@ const TimeTravel = (props) => {
 
   useEffect(() => {
     if (
-      isManualReload
-      && (state.matches("sparklineLoaded.calendarLoaded")
-        || state.matches("sparklineLoaded.noCalendarFound")
-        || state.matches("sparklineLoaded.calendarError"))
+      isManualReload &&
+      (state.matches("sparklineLoaded.calendarLoaded") ||
+        state.matches("sparklineLoaded.noCalendarFound") ||
+        state.matches("sparklineLoaded.calendarError"))
     ) {
       setTimeout(() => {
         setManualReload(false);
@@ -279,11 +279,11 @@ const TimeTravel = (props) => {
     const path = _.toArray(e.composedPath());
     if (
       _.some(path, (node) => (
-        _.isElement(node)
-          && node.matches
-          && (node.matches(`.${_.get(cardStyle, "card")}`)
-            || node.matches(`.${_.get(calendarStyle, "day")}`)
-            || node.matches(`.${_.get(graphCalendarStyle, "day")}`))
+        _.isElement(node) &&
+          node.matches &&
+          (node.matches(`.${_.get(cardStyle, "card")}`) ||
+            node.matches(`.${_.get(calendarStyle, "day")}`) ||
+            node.matches(`.${_.get(graphCalendarStyle, "day")}`))
       ))
     ) {
       return;
@@ -305,9 +305,11 @@ const TimeTravel = (props) => {
   useEffect(
     () => {
       if (
-        state.matches("sparklineLoaded")
-        && !state.matches("sparklineLoaded.calendarLoaded")
-        && _.get(state, "historyValue.current") === "processingSparkline"
+        state.matches("sparklineLoaded") &&
+        !state.matches("sparklineLoaded.calendarLoaded")
+        // TODO remove
+        // &&
+        // _.get(state, "historyValue.current") === "processingSparkline"
       ) {
         send({
           type: "LOAD_CALENDAR",
@@ -347,16 +349,16 @@ const TimeTravel = (props) => {
       })}
       ref={props.dialogRef}
     >
-      {state.matches("loadingSparkline")
-        && _.get(state, "event.type") !== "RELOAD_SPARKLINE_ON_ERROR" && (
+      {state.matches("loadingSparkline") &&
+        _.get(state, "event.type") !== "RELOAD_SPARKLINE_ON_ERROR" && (
           <div className={styles.loader}>
             <Spinner />
             <span className={styles.loader__text}>Bending Time...</span>
           </div>
       )}
-      {!state.matches("sparklineLoaded.calendarError")
-        && ctx.sparkline
-        && !state.matches("sparklineError.timeout") && (
+      {!state.matches("sparklineLoaded.calendarError") &&
+        ctx.sparkline &&
+        !state.matches("sparklineError.timeout") && (
         <>
             {ctx.isOverCapacity && (
               <>
@@ -419,9 +421,9 @@ const TimeTravel = (props) => {
                 <span>This URL was saved </span>
                 <b>{count}</b>
                 <span>
-                  {_.parseInt(count) > 1 || _.parseInt(count) === 0
-                    ? " times"
-                    : " time on "}
+                  {_.parseInt(count) > 1 || _.parseInt(count) === 0 ?
+                    " times" :
+                    " time on "}
                 </span>
                 {_.parseInt(count) === 1 && (
                 <div>
@@ -436,7 +438,7 @@ const TimeTravel = (props) => {
                 {_.parseInt(count) > 1 && ctx.firstTS && ctx.lastTS ? (
                   <div>
                     {" "}
-                      between
+                    between
                     {" "}
                     <b>
                       {_.get(
@@ -445,7 +447,7 @@ const TimeTravel = (props) => {
                       )}
                     </b>
                     {" "}
-                      and
+                    and
                     {" "}
                     <b>
                       {_.get(
@@ -511,13 +513,13 @@ const TimeTravel = (props) => {
           send({ type: "NAVIGATETO__TS", value: ts });
         }}
       />
-      {((!!(ctx.firstTS || ctx.lastTS || !ctx.sparkline)
-        && !state.matches("sparklineError")
-        && !state.matches("loadingSparkline")
-        && !state.matches("sparklineLoaded.unknown")
-        && !state.matches("sparklineLoaded.calendarError")
-        && !state.matches("sparklineLoaded.loadingCalendar"))
-        || isManualReload) && (
+      {((!!(ctx.firstTS || ctx.lastTS || !ctx.sparkline) &&
+        !state.matches("sparklineError") &&
+        !state.matches("loadingSparkline") &&
+        !state.matches("sparklineLoaded.unknown") &&
+        !state.matches("sparklineLoaded.calendarError") &&
+        !state.matches("sparklineLoaded.loadingCalendar")) ||
+        isManualReload) && (
         <div>
           <Icon
             data-for="vandal-reload"
@@ -544,11 +546,11 @@ const TimeTravel = (props) => {
           />
         </div>
       )}
-      {!!ctx.selectedTS
-        && !!versionCount
-        && state.matches("sparklineLoaded.calendarLoaded")
-        && (selectedMonth !== ctx.currentMonth
-          || selectedYear !== ctx.currentYear) && (
+      {!!ctx.selectedTS &&
+        !!versionCount &&
+        state.matches("sparklineLoaded.calendarLoaded") &&
+        (selectedMonth !== ctx.currentMonth ||
+          selectedYear !== ctx.currentYear) && (
           <div>
             <Icon
               data-for="vandal-selection-ts"
@@ -579,10 +581,10 @@ const TimeTravel = (props) => {
 };
 
 TimeTravel.propTypes = {
+  dialogRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   url: PropTypes.string.isRequired,
   selectedTabIndex: PropTypes.number.isRequired,
-  selectTabIndex: PropTypes.func.isRequired,
-  dialogRef: PropTypes.node.isRequired
+  selectTabIndex: PropTypes.func.isRequired
 };
 
 export default withDialog(TimeTravel, {

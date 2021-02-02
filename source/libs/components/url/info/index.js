@@ -1,24 +1,27 @@
-import React, { memo } from 'react';
-import cx from 'classnames';
-import _ from 'lodash';
+import React, { memo } from "react";
+import PropTypes from "prop-types";
+import cx from "classnames";
+import _ from "lodash";
 import {
   getDateTimeFromTS,
   toTwelveHourTime,
   compareProps
-} from '../../../utils';
-import { withDialog, Icon } from '../../common';
+} from "../../../utils";
+import { withDialog, Icon } from "../../common";
 
-import styles from './urlinfo.module.css';
-import boxStyle from '../box/urlbox.module.css';
+import styles from "./urlinfo.module.css";
+import boxStyle from "../box/urlbox.module.css";
 
 const URLInfo = memo(
-  ({ dialogRef, url, redirectTSCollection, redirectedTS, selectedTS }) => {
-    const archiveURL = selectedTS
-      ? `https://web.archive.org/web/${selectedTS}/${url}`
-      : null;
-    const renderedURL = redirectedTS
-      ? `https://web.archive.org/web/${redirectedTS}/${url}`
-      : null;
+  ({
+    dialogRef, url, redirectTSCollection, redirectedTS, selectedTS
+  }) => {
+    const archiveURL = selectedTS ?
+      `https://web.archive.org/web/${selectedTS}/${url}` :
+      null;
+    const renderedURL = redirectedTS ?
+      `https://web.archive.org/web/${redirectedTS}/${url}` :
+      null;
     let infoDateObj;
     let redirectTSList = [];
 
@@ -35,7 +38,7 @@ const URLInfo = memo(
           {archiveURL && (
             <li className={styles.item}>
               <div className={styles.label}>Archive URL :</div>
-              <a className={styles.link} href={archiveURL} target="_blank">
+              <a rel="noreferrer" className={styles.link} href={archiveURL} target="_blank">
                 {archiveURL}
               </a>
             </li>
@@ -46,10 +49,11 @@ const URLInfo = memo(
                 className={cx({
                   [styles.label]: true,
                   [styles.label__rendered]: true
-                })}>
+                })}
+              >
                 Rendered URL :
               </div>
-              <a className={styles.link} href={renderedURL} target="_blank">
+              <a rel="noreferrer" className={styles.link} href={renderedURL} target="_blank">
                 {renderedURL}
               </a>
             </li>
@@ -89,19 +93,37 @@ const URLInfo = memo(
           </div>
         )}
         <div className={styles.note}>
-          Note: The time{' '}
-          <span className={styles.date}>{`${_.get(
-            infoDateObj,
-            'humanizedDate'
-          )} ${toTwelveHourTime(_.get(infoDateObj, 'ts'))}`}</span>{' '}
+          Note: The time
+          {" "}
+          <span className={styles.date}>
+            {`${_.get(
+              infoDateObj,
+              "humanizedDate"
+            )} ${toTwelveHourTime(_.get(infoDateObj, "ts"))}`}
+          </span>
+          {" "}
           reflects the time on which Wayback Machine archived the page and not
           the actual page update time by the website owner.
         </div>
       </div>
     );
   },
-  compareProps(['redirectedTS', 'selectedTS', 'redirectTSCollection', 'url'])
+  compareProps(["redirectedTS", "selectedTS", "redirectTSCollection", "url"])
 );
+
+URLInfo.propTypes = {
+  dialogRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
+  url: PropTypes.string.isRequired,
+  redirectTSCollection: PropTypes.array,
+  redirectedTS: PropTypes.string,
+  selectedTS: PropTypes.string,
+};
+
+URLInfo.defaultProps = {
+  redirectTSCollection: [],
+  redirectedTS: null,
+  selectedTS: null
+};
 
 export default withDialog(URLInfo, {
   ignoreClickOnClass: `.${boxStyle.date}`

@@ -126,12 +126,16 @@
 .timetravel__btn {
   display: flex;
   justify-content: center;
+  align-items: center;
   flex: 0 0 35px;
 
+  background: none;
+  border: 0;
   border-left: 1px solid var(--vandal-border-separator-color);
   cursor: pointer;
   position: relative;
   height: 100%;
+  outline: none;
 }
 
 @keyframes blinking {

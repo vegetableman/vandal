@@ -1,8 +1,8 @@
 const getResponse = async (res) => {
   const contentType = _.get(res, "headers").get("content-type");
   if (
-    _.endsWith(_.get(res, "url"), ".png")
-    || (contentType && contentType.indexOf("image") > -1)
+    _.endsWith(_.get(res, "url"), ".png") ||
+    (contentType && contentType.indexOf("image") > -1)
   ) {
     const responseBlob = await res.blob();
     return URL.createObjectURL(responseBlob);
@@ -51,8 +51,8 @@ const fetchRequest = async ({
       return [responseHeader, null];
     }
     if (
-      (fetchFromCache || cacheResponse)
-      && _.get(resFromFetch, "status") === 200
+      (fetchFromCache || cacheResponse) &&
+      _.get(resFromFetch, "status") === 200
     ) {
       const responseCache = await caches.open("__VANDAL__");
       responseCache.put(request, resFromFetch.clone());

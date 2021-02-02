@@ -27,20 +27,20 @@ const getWindowCount = () => {
 };
 
 const isValidFrame = (tabId, frameId, parentFrameId) => (
-  validTabs[tabId]
-    && frameId > 0
-    && !validTabs[tabId].frames.includes(parentFrameId)
-    && (!validTabs[tabId].parentFrameId
-      || validTabs[tabId].parentFrameId === parentFrameId
-      || validTabs[tabId].frames.includes(frameId))
+  validTabs[tabId] &&
+    frameId > 0 &&
+    !validTabs[tabId].frames.includes(parentFrameId) &&
+    (!validTabs[tabId].parentFrameId ||
+      validTabs[tabId].parentFrameId === parentFrameId ||
+      validTabs[tabId].frames.includes(frameId))
 );
 
 const getTransitionType = (transitionQualifiers = [], transitionType) => {
   if (transitionQualifiers.indexOf("server_redirect") > -1) {
     return "redirect";
   } if (
-    transitionQualifiers.indexOf("forward_back") > -1
-    || transitionType === "auto_subframe"
+    transitionQualifiers.indexOf("forward_back") > -1 ||
+    transitionType === "auto_subframe"
   ) {
     return "auto";
   } if (transitionType === "manual_subframe") {
@@ -100,17 +100,17 @@ class NavigationHandler {
 
     // Manual_subframe / auto_subframe detect navigation for back/forward
     if (
-      url.indexOf("chrome-extension://") === 0
-      && transitionType === "manual_subframe"
+      url.indexOf("chrome-extension://") === 0 &&
+      transitionType === "manual_subframe"
     ) {
       isManualTransition = true;
     }
 
     if (
-      url.indexOf("chrome-extension://") === 0
-      || !isValidTab(tabId)
-      || !isValidFrame(tabId, frameId, parentFrameId)
-      || url === "about:blank"
+      url.indexOf("chrome-extension://") === 0 ||
+      !isValidTab(tabId) ||
+      !isValidFrame(tabId, frameId, parentFrameId) ||
+      url === "about:blank"
     ) {
       return;
     }
@@ -134,9 +134,9 @@ class NavigationHandler {
       data: {
         url,
         type:
-          isManualTransition && transitionTypeQualifier !== "redirect"
-            ? "manual"
-            : transitionTypeQualifier
+          isManualTransition && transitionTypeQualifier !== "redirect" ?
+            "manual" :
+            transitionTypeQualifier
       }
     });
 
@@ -153,7 +153,7 @@ class NavigationHandler {
 
     log("Dom Loaded");
 
-    browser.tabs.executeScript(tabId, {
+    chrome.tabs.executeScript(tabId, {
       file: "frame.js",
       frameId,
       matchAboutBlank: true
@@ -249,10 +249,10 @@ class NavigationHandler {
     }
 
     if (
-      details.statusCode === 302
-      && details.type === "sub_frame"
-      && Array.isArray(details.responseHeaders)
-      && details.responseHeaders.some((header) => header.name === "x-ts" && header.value === "302")
+      details.statusCode === 302 &&
+      details.type === "sub_frame" &&
+      Array.isArray(details.responseHeaders) &&
+      details.responseHeaders.some((header) => header.name === "x-ts" && header.value === "302")
     ) {
       chrome.tabs.sendMessage(details.tabId, {
         message: "__VANDAL__NAV__REDIRECT",
@@ -360,10 +360,10 @@ class NavigationHandler {
   onRequestCompletedHandler = (details) => {
     log("Request Completed", details.url, details);
     if (
-      isValidTab(details.tabId)
-      && isValidFrame(details.tabId, details.frameId)
-      && details.statusCode >= 400
-      && details.url.indexOf("web.archive.org/web") < 0
+      isValidTab(details.tabId) &&
+      isValidFrame(details.tabId, details.frameId) &&
+      details.statusCode >= 400 &&
+      details.url.indexOf("web.archive.org/web") < 0
     ) {
       chrome.tabs.sendMessage(details.tabId, {
         message: "__VANDAL__NAV__NOTFOUND",
@@ -497,10 +497,10 @@ function init() {
     log("Tab activated");
     const { tabId } = activeInfo;
     if (
-      hasValidTabs()
-      && !isValidTab(tabId)
-      && getWindowCount() === 1
-      && hasNavigationCompleted
+      hasValidTabs() &&
+      !isValidTab(tabId) &&
+      getWindowCount() === 1 &&
+      hasNavigationCompleted
     ) {
       log("Tab activated: invalid");
       removeListeners();

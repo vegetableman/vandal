@@ -1,26 +1,25 @@
-import React, { memo, useState, useEffect } from 'react';
-import ReactTooltip from 'react-tooltip';
-import memoizeOne from 'memoize-one';
-import { Icon } from '../common';
+import React, { memo, useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import ReactTooltip from "react-tooltip";
+import memoizeOne from "memoize-one";
+import { Icon } from "../common";
 import {
   getTSFromCurrentMonth,
   getTSFromCurrentYear,
   findCalendarFromTS,
   findDayFromTs
-} from './timetravel.machine';
+} from "./timetravel.machine";
 
-import { useTimeTravel } from '../../hooks';
-import { countVersions, compareProps } from '../../utils';
-import styles from './controller.module.css';
-import { colors } from '../../constants';
+import { useTimeTravel } from "../../hooks";
+import { countVersions, compareProps } from "../../utils";
+import styles from "./controller.module.css";
+import { colors } from "../../constants";
 
 const memoizedCountVersions = memoizeOne(countVersions);
 
 const Controller = memo((props) => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
-  const isTSSelected = (ts) => {
-    return ts === props.selectedTS;
-  };
+  const isTSSelected = (ts) => ts === props.selectedTS;
 
   const setOnline = () => {
     setIsOffline(false);
@@ -30,11 +29,11 @@ const Controller = memo((props) => {
   };
 
   useEffect(() => {
-    window.addEventListener('online', setOnline);
-    window.addEventListener('offline', setOffline);
+    window.addEventListener("online", setOnline);
+    window.addEventListener("offline", setOffline);
     return () => {
-      window.removeEventListener('online', setOnline);
-      window.removeEventListener('offline', setOffline);
+      window.removeEventListener("online", setOnline);
+      window.removeEventListener("offline", setOffline);
     };
   }, []);
 
@@ -56,7 +55,7 @@ const Controller = memo((props) => {
         dir
       );
 
-      return props.send('GOTO__TS_YEAR', {
+      return props.send("GOTO__TS_YEAR", {
         payload: {
           month: month + 1,
           year,
@@ -64,16 +63,16 @@ const Controller = memo((props) => {
         }
       });
     }
-    return props.send('NAVIGATETO__TS', { value: ts });
+    return props.send("NAVIGATETO__TS", { value: ts });
   };
 
-  const debouncedPrev = _.debounce(() => goToTS('prev'), 250);
-  const debouncedNext = _.debounce(() => goToTS('next'), 250);
+  const debouncedPrev = _.debounce(() => goToTS("prev"), 250);
+  const debouncedNext = _.debounce(() => goToTS("next"), 250);
 
   const isTSVisible = () => {
     const { months, currentMonth, currentDay } = props;
     const date = _.get(months, `[${currentMonth - 1}][${currentDay - 1}]`);
-    return _.some(_.get(date, 'ts'), (ts) => isTSSelected(ts));
+    return _.some(_.get(date, "ts"), (ts) => isTSSelected(ts));
   };
 
   const onDateNavigation = (dir) => {
@@ -86,7 +85,7 @@ const Controller = memo((props) => {
     );
     if (result) {
       const { ts, day, month } = result;
-      return props.send('GOTO__TS_DATE', {
+      return props.send("GOTO__TS_DATE", {
         payload: {
           ts,
           day,
@@ -101,7 +100,7 @@ const Controller = memo((props) => {
       dir
     );
 
-    return props.send('GOTO__TS_YEAR', {
+    return props.send("GOTO__TS_YEAR", {
       payload: {
         month: month + 1,
         year,
@@ -117,6 +116,7 @@ const Controller = memo((props) => {
       )}
       <div className={styles.controls}>
         <button
+          type="button"
           className={styles.control}
           disabled={
             !props.versionCount ||
@@ -126,7 +126,8 @@ const Controller = memo((props) => {
             props.calendarError ||
             props.loadingCalendar
           }
-          onClick={() => props.send('GOTO__FIRST_TS')}>
+          onClick={() => props.send("GOTO__FIRST_TS")}
+        >
           <Icon
             data-for="vandal-first-ts"
             data-tip="First Snapshot"
@@ -147,9 +148,10 @@ const Controller = memo((props) => {
           />
         </button>
         <button
+          type="button"
           className={styles.control}
           onClick={() => {
-            onDateNavigation('prev');
+            onDateNavigation("prev");
           }}
           disabled={
             !props.versionCount ||
@@ -160,7 +162,8 @@ const Controller = memo((props) => {
             props.sparklineError ||
             props.isOverCapacity ||
             props.calendarError
-          }>
+          }
+        >
           <Icon
             data-for="vandal-backward-ts"
             data-tip="Previous Date Snapshot"
@@ -181,6 +184,7 @@ const Controller = memo((props) => {
           />
         </button>
         <button
+          type="button"
           className={styles.control}
           disabled={
             !props.versionCount ||
@@ -191,7 +195,8 @@ const Controller = memo((props) => {
             props.sparklineError ||
             props.calendarError
           }
-          onClick={debouncedPrev}>
+          onClick={debouncedPrev}
+        >
           <Icon
             name="prevTS"
             data-for="vandal-prev-ts"
@@ -212,6 +217,7 @@ const Controller = memo((props) => {
           />
         </button>
         <button
+          type="button"
           className={styles.control}
           disabled={
             !props.versionCount ||
@@ -222,7 +228,8 @@ const Controller = memo((props) => {
             props.sparklineError ||
             props.calendarError
           }
-          onClick={debouncedNext}>
+          onClick={debouncedNext}
+        >
           <Icon
             data-for="vandal-next-ts"
             data-tip="Next Snapshot"
@@ -243,6 +250,7 @@ const Controller = memo((props) => {
           />
         </button>
         <button
+          type="button"
           className={styles.control}
           disabled={
             !props.versionCount ||
@@ -256,8 +264,9 @@ const Controller = memo((props) => {
             props.loadingCalendar
           }
           onClick={() => {
-            onDateNavigation('next');
-          }}>
+            onDateNavigation("next");
+          }}
+        >
           <Icon
             data-for="vandal-forward-ts"
             data-tip="Next Date Snapshot"
@@ -278,6 +287,7 @@ const Controller = memo((props) => {
           />
         </button>
         <button
+          type="button"
           className={styles.control}
           disabled={
             !props.versionCount ||
@@ -287,7 +297,8 @@ const Controller = memo((props) => {
             props.calendarError ||
             props.loadingCalendar
           }
-          onClick={() => props.send('GOTO__LAST_TS')}>
+          onClick={() => props.send("GOTO__LAST_TS")}
+        >
           <Icon
             name="lastTS"
             data-for="vandal-last-ts"
@@ -310,7 +321,40 @@ const Controller = memo((props) => {
       </div>
     </div>
   );
-}, compareProps(['sparkline', 'isOverCapacity', 'versionCount', 'firstTS', 'lastTS', 'selectedTS', 'months', 'currentDay', 'currentMonth', 'currentYear', 'loadingCalendar', 'sparklineError', 'calendarError']));
+}, compareProps(["sparkline", "isOverCapacity", "versionCount", "firstTS", "lastTS", "selectedTS", "months", "currentDay", "currentMonth", "currentYear", "loadingCalendar", "sparklineError", "calendarError"]));
+
+Controller.propTypes = {
+  send: PropTypes.func.isRequired,
+  sparklineError: PropTypes.bool,
+  calendarError: PropTypes.bool,
+  loadingCalendar: PropTypes.bool,
+  isOverCapacity: PropTypes.bool,
+  versionCount: PropTypes.number,
+  selectedTS: PropTypes.number,
+  lastTS: PropTypes.number,
+  firstTS: PropTypes.number,
+  months: PropTypes.array,
+  currentMonth: PropTypes.number,
+  currentDay: PropTypes.number,
+  sparkline: PropTypes.object,
+  currentYear: PropTypes.number
+};
+
+Controller.defaultProps = {
+  sparklineError: false,
+  calendarError: false,
+  loadingCalendar: false,
+  isOverCapacity: false,
+  versionCount: null,
+  selectedTS: null,
+  lastTS: null,
+  firstTS: null,
+  months: null,
+  currentMonth: null,
+  currentDay: null,
+  sparkline: null,
+  currentYear: null
+};
 
 const ControllerContainer = () => {
   const { state, send } = useTimeTravel();
@@ -321,9 +365,9 @@ const ControllerContainer = () => {
       {...ctx}
       send={send}
       versionCount={versionCount}
-      loadingCalendar={state.matches('loadingCalendar')}
-      sparklineError={state.matches('sparklineError')}
-      calendarError={state.matches('sparklineLoaded.calendarError')}
+      loadingCalendar={state.matches("loadingCalendar")}
+      sparklineError={state.matches("sparklineError")}
+      calendarError={state.matches("sparklineLoaded.calendarError")}
       months={_.get(ctx.calendar, ctx.currentYear)}
     />
   );

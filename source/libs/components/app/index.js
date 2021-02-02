@@ -38,8 +38,8 @@ const App = (props) => {
           notifyExit: () => {
             sendExit();
             window.location.reload();
-          }
-        }
+          },
+        },
       },
       {
         url: props.url,
@@ -49,47 +49,50 @@ const App = (props) => {
   );
   const { context: ctx } = state;
 
-  const onMessage = useCallback(async (request) => {
-    const url = _.get(request.data, "url");
-    switch (request.message) {
-      case "__VANDAL__NAV__BEFORENAVIGATE":
-      case "__VANDAL__NAV__HISTORYCHANGE":
-      case "__VANDAL__NAV__COMMIT":
-        sendToParentMachine({ type: "SET_URL", payload: { url } });
-        browser.setURL(url);
-        break;
-      case "__VANDAL__NAV__BUSTED":
-        if (ctx.url) {
-          sendToParentMachine("TOGGLE_BUSTED_ERROR", {
-            payload: { value: true }
-          });
-        }
-        break;
-      case "__VANDAL__NAV__NOTFOUND":
-        sendToParentMachine("CHECK_AVAILABILITY");
-        break;
-      default:
-        break;
-    }
-  }, [ctx.url, sendToParentMachine]);
+  const onMessage = useCallback(
+    async (request) => {
+      const url = _.get(request.data, "url");
+      switch (request.message) {
+        case "__VANDAL__NAV__BEFORENAVIGATE":
+        case "__VANDAL__NAV__HISTORYCHANGE":
+        case "__VANDAL__NAV__COMMIT":
+          sendToParentMachine({ type: "SET_URL", payload: { url } });
+          browser.setURL(url);
+          break;
+        case "__VANDAL__NAV__BUSTED":
+          if (ctx.url) {
+            sendToParentMachine("TOGGLE_BUSTED_ERROR", {
+              payload: { value: true },
+            });
+          }
+          break;
+        case "__VANDAL__NAV__NOTFOUND":
+          sendToParentMachine("CHECK_AVAILABILITY");
+          break;
+        default:
+          break;
+      }
+    },
+    [ctx.url, sendToParentMachine]
+  );
 
   const checkDonate = async () => {
     const donateState = await appDB.getDonateState();
     const setDonateState = (__v) => {
       appDB.setDonateState({
         __v,
-        date: new Date().toString()
+        date: new Date().toString(),
       });
     };
 
     if (!_.get(donateState, "date")) {
       setDonateState(1);
     } else if (
-      (dateDiffInDays(new Date(_.get(donateState, "date")), new Date()) > 5
-        && _.get(donateState, "__v") === 1)
-      || (dateDiffInDays(new Date(_.get(donateState, "date")), new Date()) > 30
-        && _.get(donateState, "__v") === 2)
-      || (_.get(donateState, "__v") === 2 && new Date().getDate() === 1)
+      (dateDiffInDays(new Date(_.get(donateState, "date")), new Date()) > 5 &&
+      _.get(donateState, "__v") === 1) ||
+      (dateDiffInDays(new Date(_.get(donateState, "date")), new Date()) > 30 &&
+        _.get(donateState, "__v") === 2) ||
+      (_.get(donateState, "__v") === 2 && new Date().getDate() === 1)
     ) {
       toggleDonateModal(true);
       setDonateState(2);
@@ -109,7 +112,7 @@ const App = (props) => {
       document.removeEventListener("beforeunload", sendExit);
       chrome.runtime.onMessage.removeListener(onMessage);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -191,7 +194,6 @@ const App = (props) => {
         </div>
       </Toast>
       {showIntro && (
-        /* eslint-disable jsx-a11y/click-events-have-key-events */
         // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
         <div
           role="dialog"
@@ -217,7 +219,10 @@ const App = (props) => {
                 toggleDonateModal(false);
               }}
             />
-            <img alt="donate" src={chrome.runtime.getURL("images/donate.png")} />
+            <img
+              alt="donate"
+              src={chrome.runtime.getURL("images/donate.png")}
+            />
             <div className={styles.donate__text}>
               <div>
                 <button
@@ -239,13 +244,15 @@ const App = (props) => {
                 </span>
               </div>
               <p style={{ fontSize: 13, marginTop: 15, color: "#555555" }}>
-                A Time Machine is only as good as its Power Source. And Vandal
-                relies on the mighty
+                <span>
+                  A Time Machine is only as good as its Power Source. And Vandal
+                  relies on the mighty
+                </span>
                 {" "}
                 <span style={{ color: "#864D23" }}>Internet Archive</span>
-                .
-                To allow it&apos;s continued existence, please donate to the Internet
-                Archive.
+                . To
+                allow it&apos;s continued existence, please donate to the
+                Internet Archive.
               </p>
             </div>
           </div>
@@ -258,7 +265,7 @@ const App = (props) => {
 App.propTypes = {
   url: PropTypes.string.isRequired,
   baseURL: PropTypes.string.isRequired,
-  browser: PropTypes.node.isRequired
+  browser: PropTypes.any.isRequired,
 };
 
 const AppContainer = (props) => {
@@ -269,7 +276,7 @@ const AppContainer = (props) => {
   return (
     <ShadowDOM
       include={[
-        "chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/vandal.css"
+        "chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/vandal.css",
       ]}
     >
       <div className="vandal__root">
@@ -284,7 +291,7 @@ const AppContainer = (props) => {
 };
 
 AppContainer.propTypes = {
-  root: PropTypes.node.isRequired
+  root: PropTypes.any.isRequired,
 };
 
 export default AppContainer;

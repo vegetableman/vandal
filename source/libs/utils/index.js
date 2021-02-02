@@ -86,14 +86,13 @@ export const isArchiveURL = (url) => {
   return url && ua.host === "web.archive.org" && ua.pathname !== "/";
 };
 
-
 const stripRegExp = new RegExp(
   /https?:\/\/web\.archive\.org\/web\/\d+.*_?\/*/
 );
 
-export const stripArchiveURL = (url) => (url && isArchiveURL(url) && stripRegExp.test(url)
-  ? _.nth(_.split(url, /web\/\d+(?:.*?)_?\//), 1)
-  : url);
+export const stripArchiveURL = (url) => (url && isArchiveURL(url) && stripRegExp.test(url) ?
+  _.nth(_.split(url, /web\/\d+(?:.*?)_?\//), 1) :
+  url);
 
 function getPeriod(hour) {
   if (parseInt(hour, 10) >= 12) {
@@ -138,13 +137,13 @@ export const toTwelveHourTime = (time, mformat) => {
     .replace("A", getPeriod(hour).toUpperCase());
 };
 
-export const formatDateTimeTS = (dt) => (_.isString(dt)
-  ? _.replace(
+export const formatDateTimeTS = (dt) => (_.isString(dt) ?
+  _.replace(
     _.replace(dt, dt.slice(-12, -4), toTwelveHourTime(dt.slice(-12, -4))),
     "GMT",
     ""
-  )
-  : dt);
+  ) :
+  dt);
 
 const tsRegexp = new RegExp(/(\d+)i?m?_?/);
 const tsDRegexp = new RegExp(/(\d+)/);

@@ -62,17 +62,15 @@ const parentMachine = Machine(
         }
       },
       processingAvailability: {
-        on: {
-          "": [
-            {
-              target: "snapshotFound",
-              cond: "isSnapshotAvailable"
-            },
-            {
-              target: "snapshotNotFound"
-            }
-          ]
-        }
+        always: [
+          {
+            target: "snapshotFound",
+            cond: "isSnapshotAvailable"
+          },
+          {
+            target: "snapshotNotFound"
+          }
+        ]
       },
       snapshotFound: {},
       snapshotNotFound: {},
@@ -81,7 +79,6 @@ const parentMachine = Machine(
   },
   {
     services: {
-      // eslint-disable-next-line no-async-promise-executor
       checkAvailability: (ctx) => new Promise(async (resolve, reject) => {
         const [result, err] = await api(
           `https://chrome-api.archive.org/wayback/available?url=${ctx.url}`

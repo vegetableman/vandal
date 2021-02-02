@@ -1,10 +1,10 @@
 /* eslint-disable jsx-a11y/no-autofocus */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 
 import React, {
   useState, useEffect, memo, useRef
 } from "react";
+import PropTypes from "prop-types";
 import memoizeOne from "memoize-one";
 import { scaleLinear } from "d3-scale";
 import PerfectScrollbar from "perfect-scrollbar";
@@ -20,20 +20,31 @@ import { useTheme } from "../../../../hooks";
 
 const getStyle = (count, isSelected, isCurrent, color, year, theme) => {
   const isHighlighted = isSelected || isCurrent || count;
+  const getBackgroundColor = () => {
+    if (isSelected) {
+      return colors[_.toUpper(theme)].MATCH;
+    }
+    if (isCurrent) {
+      return colors.MATCH;
+    }
+    if (count) {
+      return color(count, year);
+    }
+    return "inherit";
+  };
+  const getColor = () => {
+    if (isHighlighted) {
+      return colors.BL_33;
+    }
+    if (theme === "dark") {
+      return colors.GY_DD;
+    }
+    return "inherit";
+  };
   return {
-    backgroundColor: isSelected
-      ? colors[_.toUpper(theme)].MATCH
-      : isCurrent
-        ? colors.MATCH
-        : count
-          ? color(count, year)
-          : "inherit",
+    backgroundColor: getBackgroundColor(),
     textDecoration: isCurrent ? "underline" : "none",
-    color: isHighlighted
-      ? colors.BL_33
-      : theme === "dark"
-        ? colors.GY_DD
-        : "inherit"
+    color: getColor()
   };
 };
 
@@ -52,14 +63,6 @@ const Calendar = ({
   onClose,
   isDialogClosed
 }) => {
-  let maxcount = 0;
-  for (const year in sparkline) {
-    if (sparkline[year] == undefined) {
-      continue;
-    }
-    maxcount = Math.max(maxcount, Math.max.apply(null, sparkline[year]));
-  }
-
   const { theme } = useTheme();
   const scrollContainerRef = useRef(null);
 
@@ -74,12 +77,13 @@ const Calendar = ({
 
   useEffect(() => {
     if (scrollContainerRef.current) {
+      // eslint-disable-next-line no-new
       new PerfectScrollbar(scrollContainerRef.current.rootNode);
     }
   }, []);
 
   const yearCount = _.size(years);
-  const rowHeight = yearCount == 1 ? ROW_HEIGHT + 3 : ROW_HEIGHT;
+  const rowHeight = yearCount === 1 ? ROW_HEIGHT + 3 : ROW_HEIGHT;
   return (
     <div ref={dialogRef}>
       <VirtualList
@@ -129,10 +133,10 @@ const Calendar = ({
                   onClick={onSelect(mindex + 1, years[index])}
                   style={getStyle(
                     _.nth(sparkline[years[index]], mindex),
-                    mindex + 1 === selectedMonth
-                        && years[index] === selectedYear,
-                    mindex + 1 === currentMonth
-                        && years[index] === currentYear,
+                    mindex + 1 === selectedMonth &&
+                        years[index] === selectedYear,
+                    mindex + 1 === currentMonth &&
+                        years[index] === currentYear,
                     color,
                     years[index],
                     theme
@@ -147,6 +151,26 @@ const Calendar = ({
       />
     </div>
   );
+};
+
+Calendar.propTypes = {
+  dialogRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
+  color: PropTypes.func.isRequired,
+  years: PropTypes.array.isRequired,
+  currentMonth: PropTypes.number.isRequired,
+  currentYear: PropTypes.number.isRequired,
+  sparkline: PropTypes.object.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  isDialogClosed: PropTypes.bool,
+  selectedMonth: PropTypes.number,
+  selectedYear: PropTypes.number
+};
+
+Calendar.defaultProps = {
+  isDialogClosed: true,
+  selectedMonth: null,
+  selectedYear: null
 };
 
 const WithDialogCalendar = withDialog(Calendar, {
@@ -180,7 +204,9 @@ const InputCalendar = memo((props) => {
   if (_.isEmpty(_.keys(sparkline))) return null;
 
   const sparklineYears = _.keys(sparkline);
-  const result = _.map(sparklineYears, (y) => ({ year: _.parseInt(y), count: _.max(sparkline[y]) }));
+  const result = _.map(sparklineYears, (y) => (
+    { year: _.parseInt(y), count: _.max(sparkline[y]) }
+  ));
 
   const years = _.map(result, "year");
 
@@ -193,7 +219,7 @@ const InputCalendar = memo((props) => {
             [styles.filter__icon]: true,
             [styles.filter__icon___active]: isVisible
           })}
-          onClick={() => toggleCalendar((isVisible) => !isVisible)}
+          onClick={() => toggleCalendar((misVisible) => !misVisible)}
         />
       )}
       <div className={styles.nav}>
@@ -254,5 +280,25 @@ const InputCalendar = memo((props) => {
     </div>
   );
 }, compareProps(["sparkline", "currentMonth", "selectedMonth", "selectedYear", "currentYear", "disabled", "date", "disableNext"]));
+
+InputCalendar.propTypes = {
+  sparkline: PropTypes.object.isRequired,
+  goToPrevious: PropTypes.func.isRequired,
+  goToNext: PropTypes.func.isRequired,
+  disableNext: PropTypes.bool.isRequired,
+  currentMonth: PropTypes.number.isRequired,
+  currentYear: PropTypes.number.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
+  disabled: PropTypes.bool.isRequired,
+  date: PropTypes.string.isRequired,
+  selectedMonth: PropTypes.number,
+  selectedYear: PropTypes.number
+};
+
+InputCalendar.defaultProps = {
+  selectedMonth: null,
+  selectedYear: null
+};
 
 export default InputCalendar;

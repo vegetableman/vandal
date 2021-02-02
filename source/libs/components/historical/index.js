@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
@@ -65,7 +64,7 @@ const Error = ({ err, onRetry }) => (err === "mismatch" ? (
         onRetry();
       }}
     >
-        Retry
+      Retry
     </button>
   </div>
 ));
@@ -232,26 +231,26 @@ const Historical = (props) => {
           </div>
           <div style={{ padding: "0 10px 10px 10px" }}>
             <h2 style={{ fontSize: "14px" }}>
-                Historical View is no longer operational!
+              Historical View is no longer operational!
             </h2>
             <p style={{ fontSize: "14px" }}>
               <i>
-              &quot;No! I am out of Power! Wish I hadn&apos;t destroyed this planet
-                  and disrupted the gravitational balance in the solar
-                  system.... Well, time for lunch !&quot;
+                &quot;No! I am out of Power! Wish I hadn&apos;t destroyed this planet
+                and disrupted the gravitational balance in the solar
+                system.... Well, time for lunch !&quot;
               </i>
               {" "}
-                - Vandal
+              - Vandal
             </p>
             <span style={{ fontSize: "14px" }}>
-                To know more, click
+              To know more, click
               {" "}
               <a
                 rel="noopener noreferrer"
                 target="_blank"
                 href="https://github.com/vegetableman/vandal/issues/1"
               >
-                  here
+                here
               </a>
             </span>
           </div>
@@ -319,7 +318,7 @@ const Historical = (props) => {
                           dateObj.time
                         )}`}
                       >
-                          i
+                        i
                       </div>
                       )}
                       <ReactTooltip

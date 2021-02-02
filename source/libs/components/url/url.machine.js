@@ -1,29 +1,27 @@
-import { Machine } from 'xstate';
+import { Machine } from "xstate";
 
 const urlMachine = Machine({
-  id: 'url',
-  initial: 'unknown',
+  id: "url",
+  initial: "unknown",
   states: {
     unknown: {
-      on: {
-        '': [{ target: 'menus' }]
-      }
+      always: [{ target: "menus" }]
     },
     menus: {
-      type: 'parallel',
+      type: "parallel",
       states: {
         history: {
-          initial: 'close',
+          initial: "close",
           states: {
-            open: { on: { TOGGLE_HISTORY: 'close' } },
-            close: { on: { TOGGLE_HISTORY: 'open' } }
+            open: { on: { TOGGLE_HISTORY: "close" } },
+            close: { on: { TOGGLE_HISTORY: "open" } }
           }
         },
         info: {
-          initial: 'close',
+          initial: "close",
           states: {
-            open: { on: { TOGGLE_INFO: 'close' } },
-            close: { on: { TOGGLE_INFO: 'open' } }
+            open: { on: { TOGGLE_INFO: "close" } },
+            close: { on: { TOGGLE_INFO: "open" } }
           }
         }
       }

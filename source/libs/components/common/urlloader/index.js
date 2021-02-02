@@ -10,7 +10,11 @@ const URLLoader = ({ className }) => (
 );
 
 URLLoader.propTypes = {
-  className: PropTypes.string.isRequired
+  className: PropTypes.string
+};
+
+URLLoader.defaultProps = {
+  className: null
 };
 
 export default URLLoader;
