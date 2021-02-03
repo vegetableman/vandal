@@ -1,18 +1,16 @@
 .container {
   display: flex;
   flex-direction: column;
-
+  width: 100%;
+  max-width: none;
+  height: 60px;
   color: #333;
-  contain: size style;
-  font-family: 'VANDAL__SourceSansPro';
-  font-size: 16px;
-  font: normal 16px 'VANDAL__SourceSansPro';
   font-weight: normal;
+  font-size: 16px;
+  font-family: "VANDAL__SourceSansPro", Arial, Helvetica, sans-serif;
   line-height: normal;
   letter-spacing: 0;
-  height: 60px;
-  max-width: none;
-  width: 100%;
+  contain: size style;
   -webkit-font-smoothing: initial;
   text-rendering: auto;
 }
@@ -32,10 +30,10 @@
 }
 
 .wayback__icon {
-  fill: white;
   position: relative;
   top: 3px;
   left: 4px;
+  fill: white;
 }
 
 .wayback__link {
@@ -48,78 +46,77 @@
 }
 
 .toast__close__icon {
-  cursor: pointer;
   position: relative;
+  top: -1px;
+  right: -6px;
+  width: 10px;
+  cursor: pointer;
   fill: #fff;
   stroke: #fff;
   stroke-width: 44px;
-  right: -6px;
-  top: -1px;
-  width: 10px;
 }
 
 .toast__open__btn {
+  margin-left: 5px;
+  padding: 10px;
+  color: #fff;
   background: #ffffff24;
   border: 0;
   border-radius: 3px;
-  color: #ffffff;
   cursor: pointer;
-  margin-left: 5px;
-  padding: 10px;
 }
 
 .toast__open__btn:hover {
-  background: #ffffff33;
+  background: #fff3;
 }
 
 .modal__container {
+  position: fixed;
+  top: 60px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-
-  position: fixed;
-  top: 60px;
   width: 100%;
   height: 100%;
   background-color: var(--vandal-overlay-background-color);
 }
 
 .cover {
-  box-shadow: rgb(0 0 0 / 39%) 0px 1px 5px;
-  border-radius: 3px;
-  margin-top: 120px;
   width: 485px;
+  margin-top: 120px;
+  border-radius: 3px;
+  box-shadow: rgb(0 0 0 / 39%) 0 1px 5px;
 }
 
 .donate__modal {
+  position: relative;
+  width: 380px;
+  margin-top: 70px;
   background: #faf1e1;
   border-radius: 3px;
-  position: relative;
-  margin-top: 70px;
-  width: 380px;
 }
 
 .donate__modal > img {
+  width: 100%;
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
-  width: 100%;
 }
 
 .donate__button {
+  width: 100%;
+  max-width: 100px;
+  margin-right: 5px;
+  margin-bottom: 10px;
+  padding: 19px 15px 17px 15px;
+  color: #d2b13d;
+  font-weight: bold;
+  font-size: 14px;
   background: #7b562e;
   border: 2px solid #d2b13d;
-  border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
-  color: #d2b13d;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  max-width: 100px;
-  margin-bottom: 10px;
-  margin-right: 5px;
+  border-bottom-left-radius: 3px;
   outline: none;
-  padding: 19px 15px 17px 15px;
-  width: 100%;
+  cursor: pointer;
 }
 
 .donate__button:hover {
@@ -133,15 +130,15 @@
 }
 
 .donate__modal__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 18px;
+  height: 18px;
   cursor: pointer;
   fill: darkorange;
-  height: 18px;
-  position: absolute;
-  right: 10px;
   stroke: #333;
   stroke-width: 25px;
-  top: 10px;
-  width: 18px;
 }
 
 .donate__modal__close:hover {

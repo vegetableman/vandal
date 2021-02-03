@@ -32,7 +32,7 @@ class List extends React.Component {
         {_.map(options, (option, index) => (option.title ? (
           <li
             className={cx({
-              [styles.listItem]: true,
+              [styles.list__item]: true,
               [this.props.listItemClass]: !!this.props.listItemClass
             })}
             key={index}
@@ -41,7 +41,7 @@ class List extends React.Component {
           </li>
         ) : (
           <li
-            className={styles.listItem}
+            className={styles.list__item}
             key={index}
             onMouseDown={handleOption(option.value, option.hideOnSelect)}
           >
@@ -57,14 +57,15 @@ List.propTypes = {
   dialogRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   onClose: PropTypes.func.isRequired,
   listClass: PropTypes.string.isRequired,
-  listItemClass: PropTypes.string.isRequired,
   handleOption: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired,
+  listItemClass: PropTypes.string,
   isDialogClosed: PropTypes.bool
 };
 
 List.defaultProps = {
-  isDialogClosed: true
+  isDialogClosed: true,
+  listItemClass: null
 };
 
 const WithDialogList = withDialog(List, {
@@ -103,7 +104,7 @@ const VerticalMenu = memo(
           role="menu"
           tabIndex={0}
           className={cx({
-            [styles.iconContainer]: true,
+            [styles.icon__container]: true,
             [iconContainerClass]: !!iconContainerClass
           })}
           onClick={() => {
@@ -137,16 +138,18 @@ const VerticalMenu = memo(
 
 VerticalMenu.propTypes = {
   className: PropTypes.string.isRequired,
-  iconContainerClass: PropTypes.string.isRequired,
   iconClass: PropTypes.string.isRequired,
   listClass: PropTypes.string.isRequired,
-  listItemClass: PropTypes.string.isRequired,
   options: PropTypes.array.isRequired,
+  iconContainerClass: PropTypes.string,
+  listItemClass: PropTypes.string,
   onSelect: PropTypes.func
 };
 
 VerticalMenu.defaultProps = {
-  onSelect: () => {}
+  onSelect: () => {},
+  iconContainerClass: null,
+  listItemClass: null
 };
 
 export default VerticalMenu;

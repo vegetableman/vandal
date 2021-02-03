@@ -50,7 +50,7 @@ const Calendar = (props) => {
 
   return (
     <div className={styles.calendar}>
-      <div className={styles.calendarMonth}>{days}</div>
+      <div className={styles.calendar__month}>{days}</div>
     </div>
   );
 };

@@ -1,11 +1,10 @@
 .container {
   display: flex;
-
+  width: 100%;
+  height: 30px;
   background: var(--vandal-input-background-color);
   border: 1px solid var(--vandal-primary-border-color);
   border-radius: 3px;
-  height: 30px;
-  width: 100%;
 }
 
 .wrapper {
@@ -15,57 +14,59 @@
 }
 
 .favicon {
-  flex: 0 0 30px;
   display: flex;
+  flex: 0 0 30px;
   align-items: center;
   justify-content: center;
 }
 
 .url__icon {
+  position: relative;
+  top: 1px;
   width: 18px;
   height: 18px;
   fill: var(--vandal-primary-icon-color);
-  position: relative;
-  top: 1px;
 }
 
 .input {
   flex: 1;
-
+  padding: 8px 0 5px 2px;
+  color: var(--vandal-input-color);
+  font-size: 14px;
   background: none;
   border: 0;
-  color: var(--vandal-input-color);
-  cursor: auto;
-  font-size: 14px;
   outline: none;
-  padding: 8px 0 5px 2px;
+  cursor: auto;
 }
 
 .timetravel__container {
   display: flex;
+  flex: 0 0 35px;
   align-items: center;
   justify-content: flex-end;
-  flex: 0 0 35px;
   user-select: none;
 }
 
 .date {
-  align-items: center;
+  position: relative;
   display: flex;
-  justify-content: flex-end;
   flex: 0 0 192px;
-
-  border-left: 1px solid var(--vandal-date-border-color);
-  background: var(--vandal-date-background-color);
-  cursor: pointer;
+  align-items: center;
+  justify-content: flex-end;
   max-width: 200px;
   padding: 0 10px;
+  color: var(--vandal-input-color);
+  font-size: 13.5px;
+  background: var(--vandal-date-background-color);
+  border-left: 1px solid var(--vandal-date-border-color);
+  cursor: pointer;
 }
 
 @keyframes blink {
   from {
     background-color: var(--vandal-secondary-background-color);
   }
+
   to {
     background-color: var(--vandal-blink-background-color);
   }
@@ -76,38 +77,44 @@
 }
 
 .info__icon {
-  --vandal-primary-icon-color: #000000;
-  fill: var(--vandal-primary-icon-color);
-  stroke: var(--vandal-primary-icon-color);
+  --vandal-primary-icon-color: #000;
+
   position: relative;
   top: 1px;
-  width: 15px;
   left: -8px;
+  width: 15px;
+  fill: var(--vandal-primary-icon-color);
+  stroke: var(--vandal-primary-icon-color);
 }
 
 .info__icon circle {
-  --vandal-primary-icon-color: #000000;
+  --vandal-primary-icon-color: #000;
+
   stroke: var(--vandal-primary-icon-color);
 }
 
 .info__icon path {
-  --vandal-primary-icon-color: #000000;
+  --vandal-primary-icon-color: #000;
+
   fill: var(--vandal-primary-icon-color);
 }
 
 .info__icon___dark {
-  --vandal-primary-icon-color: #ffffff;
+  --vandal-primary-icon-color: #fff;
+
   fill: var(--vandal-primary-icon-color);
   stroke: var(--vandal-primary-icon-color);
 }
 
 .info__icon___dark circle {
-  --vandal-primary-icon-color: #ffffff;
+  --vandal-primary-icon-color: #fff;
+
   stroke: var(--vandal-primary-icon-color);
 }
 
 .info__icon___dark path {
-  --vandal-primary-icon-color: #ffffff;
+  --vandal-primary-icon-color: #fff;
+
   fill: var(--vandal-primary-icon-color);
 }
 
@@ -117,31 +124,25 @@
   user-select: none;
 }
 
-.date {
-  font-size: 13.5px;
-  color: var(--vandal-input-color);
-  position: relative;
-}
-
 .timetravel__btn {
+  position: relative;
   display: flex;
-  justify-content: center;
-  align-items: center;
   flex: 0 0 35px;
-
+  align-items: center;
+  justify-content: center;
+  height: 100%;
   background: none;
   border: 0;
   border-left: 1px solid var(--vandal-border-separator-color);
-  cursor: pointer;
-  position: relative;
-  height: 100%;
   outline: none;
+  cursor: pointer;
 }
 
 @keyframes blinking {
   0% {
     background-color: transparent;
   }
+
   100% {
     background: var(--vandal-secondary-background-color);
   }
@@ -152,9 +153,10 @@
 }
 
 .timetravel__btn__intro {
-  background-color: var(
-    --vandal-timetravel-btn-intro-background-color
-  ) !important;
+  background-color:
+    var(
+      --vandal-timetravel-btn-intro-background-color
+    ) !important;
 }
 
 .timetravel__btn:hover {
@@ -169,17 +171,13 @@
   fill: var(--vandal-primary-icon-color);
 }
 
-.timetravel__btn:hover .timetravel__icon,
-.timetravel__btn___selected .timetravel__icon {
+.timetravel__btn___selected .timetravel__icon,
+.timetravel__btn:hover .timetravel__icon {
   fill: var(--vandal-primary-icon-active-color);
 }
 
 .timetravel__icon__intro {
   fill: var(--vandal-timetravel-btn-intro-fill-color) !important;
-}
-
-.vandal-url__wayback:hover {
-  background: var(--vandal-secondary-background-color);
 }
 
 .archive__icon {
@@ -188,39 +186,35 @@
   fill: var(--vandal-primary-icon-color);
 }
 
-.vandal-url-loader {
-  display: flex;
-}
-
 .history__btn {
-  background: none;
-  border: 0;
-  cursor: pointer;
   height: 100%;
   margin: 0;
   padding: 0;
+  background: none;
+  border: 0;
   outline: none;
+  cursor: pointer;
 }
 
 .history__btn___active {
-  border-left: 1px solid var(--vandal-date-border-color);
   background: var(--vandal-date-background-color);
-}
-
-.history__btn:hover .caret,
-.history__btn___active .caret {
-  fill: var(--vandal-primary-icon-active-color);
-  stroke: var(--vandal-primary-icon-active-color);
+  border-left: 1px solid var(--vandal-date-border-color);
 }
 
 .caret {
+  width: 28px;
+  height: 28px;
   background: none;
+  transform: rotate(90deg);
   fill: var(--vandal-primary-icon-color);
   stroke: var(--vandal-primary-icon-color);
   stroke-width: 3px;
-  width: 28px;
-  height: 28px;
-  transform: rotate(90deg);
+}
+
+.history__btn___active .caret,
+.history__btn:hover .caret {
+  fill: var(--vandal-primary-icon-active-color);
+  stroke: var(--vandal-primary-icon-active-color);
 }
 
 .history__btn:hover .caret {
@@ -233,51 +227,46 @@
 }
 
 .intro {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-
-  position: absolute;
-  z-index: 1;
-  right: 0;
-  top: 30px;
   width: 106px;
 }
 
 .intro_arrow__icon {
-  stroke: var(--vandal-overlay-arrow-color);
   position: relative;
   left: 9px;
+  stroke: var(--vandal-overlay-arrow-color);
 }
 
 .intro__text {
-  color: var(--vandal-overlay-text-color);
-  font-family: VANDAL__SourceSansPro;
-  font-size: 14px;
   position: relative;
-  left: -25px;
   bottom: -5px;
+  left: -25px;
+  color: var(--vandal-overlay-text-color);
   font-weight: 800;
+  font-size: 14px;
+  font-family: "VANDAL__SourceSansPro", Arial, Helvetica, sans-serif;
   font-style: italic;
 }
 
 .readonly__icon {
-  fill: var(--vandal-primary-icon-color);
-  height: 15px;
   position: relative;
-  right: 25px;
   top: 6px;
+  right: 25px;
   width: 15px;
-}
-
-.readonly__icon--hide {
-  visibility: hidden;
+  height: 15px;
+  fill: var(--vandal-primary-icon-color);
 }
 
 .tooltip {
-  border-radius: 2px !important;
-  transition: none !important;
   padding: 5px 10px 3px 10px !important;
   font-size: 12px !important;
+  border-radius: 2px !important;
+  transition: none !important;
 }
 
 .frame_render_err__toast {

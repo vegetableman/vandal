@@ -368,7 +368,7 @@ const TimeTravel = (props) => {
                   data-tip="true"
                   name="infoWarn"
                   width={17}
-                  className={styles.infoWarn__icon}
+                  className={styles.info_warn__icon}
                 />
                 <ReactTooltip
                   border

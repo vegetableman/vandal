@@ -1,38 +1,32 @@
 .drawer {
   display: flex;
   flex-direction: column;
-
+  font-weight: normal;
+  font-size: 16px;
+  font-family: "VANDAL__SourceSansPro", Arial, Helvetica, sans-serif;
+  line-height: normal;
   background: var(--vandal-primary-background-color);
   contain: strict;
-  font-family: 'VANDAL__SourceSansPro';
-  font-weight: normal;
-  line-height: normal;
-  font-size: 16px;
-  font: normal 16px 'VANDAL__SourceSansPro';
   -webkit-font-smoothing: initial;
 }
 
 .title__bar {
   display: flex;
+  flex: 0 0 35px;
   align-items: center;
-
+  font-size: 14px;
   background: var(--vandal-drawer-background-color);
   border-top: 1px solid var(--vandal-primary-border-color);
   border-bottom: 1px solid var(--vandal-primary-border-color);
   cursor: ns-resize;
-
-  font-size: 14px;
-  flex: 0 0 35px;
 }
 
 .list {
   display: flex;
   flex-direction: column;
-
   margin: 0;
-  padding: 0;
-  font-size: 14px;
   padding: 0 0 5px 0;
+  font-size: 14px;
 }
 
 .item {
@@ -50,20 +44,19 @@
 }
 
 .timestamp__icon {
-  fill: var(--vandal-primary-icon-active-color);
-  height: 25px;
-  padding: 0 5px;
-  width: 25px;
   position: relative;
   top: 0.5px;
+  width: 25px;
+  height: 25px;
+  padding: 0 5px;
+  fill: var(--vandal-primary-icon-active-color);
 }
 
 .close__icon {
-  cursor: pointer;
+  width: 20px;
   height: 20px;
   padding: 5px 10px 0 0;
-  width: 20px;
-
+  cursor: pointer;
   fill: var(--vandal-drawer-icon-color);
   stroke: var(--vandal-drawer-icon-color);
 }
@@ -76,18 +69,17 @@
 
 .item__left {
   display: flex;
-  align-items: flex-start;
   flex: 1;
+  align-items: flex-start;
   max-width: calc(100% - 500px);
 }
 
 .image__icon {
-  flex: 0 0 20px;
-
-  height: 22px;
-  width: 20px;
   position: relative;
   top: 1.1px;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 22px;
   fill: var(--vandal-drawer-icon-color);
   stroke: var(--vandal-drawer-icon-color);
 }
@@ -97,16 +89,15 @@
 }
 
 .resource__icon {
-  flex: 0 0 20px;
-
-  text-transform: uppercase;
-  font-weight: bold;
-  font-size: 12px;
   position: relative;
   top: 2px;
+  flex: 0 0 20px;
+  color: var(--vandal-drawer-icon-color);
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
   fill: var(--vandal-drawer-icon-color);
   stroke: var(--vandal-drawer-icon-color);
-  color: var(--vandal-drawer-icon-color);
 }
 
 .resource__icon___js {
@@ -115,24 +106,24 @@
 
 .doc__icon {
   flex: 0 0 20px;
-  height: 22px;
   width: 20px;
+  height: 22px;
   fill: var(--vandal-drawer-icon-color);
   stroke: var(--vandal-drawer-icon-color);
 }
 
 .js__icon {
+  width: 20px;
   height: 22px;
   padding: 0 5px 0 0;
-  width: 20px;
 }
 
 .item__link {
-  color: var(--vandal-input-color);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   margin-left: 5px;
+  overflow: hidden;
+  color: var(--vandal-input-color);
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .item__link:hover {
@@ -140,14 +131,14 @@
 }
 
 .item__timestamp {
-  flex: 0 0 500px;
   display: flex;
+  flex: 0 0 500px;
   justify-content: space-between;
 }
 
 .timestamp__delta {
-  color: #333333;
   padding: 0 5px;
+  color: #333;
 }
 
 .timestamp__delta___plus {
@@ -163,34 +154,34 @@
 }
 
 .scroll__checkbox {
-  margin-right: 7px;
   position: relative;
   top: 1px;
+  margin-right: 7px;
 }
 
 .timestamps___empty,
 .timestamps___loading {
+  padding: 0 12px;
   color: var(--vandal-text-color);
   font-size: 14px;
-  padding: 0 12px;
 }
 
 .ts__loader > div {
-  margin: 3px 4px 2px 3px;
-  height: 9px;
   width: 9px;
+  height: 9px;
+  margin: 3px 4px 2px 3px;
 }
 
 .timestamp__delta___err {
-  color: #333333;
-  background: #ff9f9f;
   padding: 0 5px;
+  color: #333;
+  background: #ff9f9f;
 }
 
 .timestamp__delta___notfound {
-  color: #333333;
-  background: #e6e6e6;
   padding: 0 5px;
+  color: #333;
+  background: #e6e6e6;
 }
 
 .timestamp__value {
@@ -199,9 +190,9 @@
 }
 
 .info {
-  font-size: 13px;
   padding: 10px 12px 7px 12px;
   color: var(--vandal-drawer-text-color);
+  font-size: 13px;
 }
 
 .info__link,
@@ -217,6 +208,7 @@
   0% {
     -webkit-transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(360deg);
   }
@@ -226,6 +218,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }

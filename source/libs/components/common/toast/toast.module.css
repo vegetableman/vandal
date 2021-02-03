@@ -1,43 +1,43 @@
 .root {
-  height: 37px;
   position: fixed;
   top: 70px;
   z-index: 2;
+  height: 37px;
 }
 
 .wrapper {
   display: flex;
   align-items: center;
+  min-width: 140px;
+  height: 100%;
+  padding: 0 15px;
+  color: #fff;
+  font-size: 13.05px;
   background-color: #088bf5;
   border-radius: 2px;
-  color: #ffffff;
-  font-size: 13.05px;
-  height: 100%;
-  min-width: 140px;
-  padding: 0 15px;
 }
 
 .err {
+  color: #fff;
   background-color: #d93900;
-  color: #ffffff;
 }
 
 .fade__enter,
 .fade__appear {
-  opacity: 0.01;
   transform: translate3d(0, -10px, 0);
+  opacity: 0.01;
   transition: all 0.15s ease-out;
 }
 
 .fade__enter.fade__enter__active,
 .fade__appear.fade__appear__active {
-  opacity: 1;
   transform: translate3d(0, 0, 0);
+  opacity: 1;
 }
 
 .fade__exit {
-  opacity: 1;
   transform: translate3d(0, 0, 0);
+  opacity: 1;
   transition: all 0.15s ease-in;
 }
 

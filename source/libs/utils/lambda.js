@@ -9,7 +9,7 @@ const lambda = new AWS.Lambda({ region: process.env.LAMBDA_REGION });
 
 let requests = [];
 
-module.exports = {
+export default {
   abort() {
     _.each(requests, (r) => {
       const a = r.abort.bind(r);

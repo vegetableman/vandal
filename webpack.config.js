@@ -72,9 +72,6 @@ module.exports = () => ({
         context: "source",
         ignore: ["*.js", "*.woff", "*.woff2", "*.ttf", "*.eot"]
       },
-      {
-        from: "node_modules/webextension-polyfill/dist/browser-polyfill.min.js"
-      },
       { from: "*", context: "source/libs/assets/fonts", to: "fonts" },
       { from: "*", context: "source/libs/assets/images", to: "images" }
     ]),

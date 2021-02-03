@@ -238,18 +238,18 @@ const App = (props) => {
                   DONATE
                 </button>
                 <span
-                  style={{ color: "#555555", fontSize: 14, fontWeight: 700 }}
+                  style={{ color: "#555", fontSize: 14, fontWeight: 700 }}
                 >
                   to the Internet Archive
                 </span>
               </div>
-              <p style={{ fontSize: 13, marginTop: 15, color: "#555555" }}>
+              <p style={{ fontSize: 13, marginTop: 15, color: "#555" }}>
                 <span>
                   A Time Machine is only as good as its Power Source. And Vandal
                   relies on the mighty
                 </span>
                 {" "}
-                <span style={{ color: "#864D23" }}>Internet Archive</span>
+                <span style={{ color: "#864d23" }}>Internet Archive</span>
                 . To
                 allow it&apos;s continued existence, please donate to the
                 Internet Archive.

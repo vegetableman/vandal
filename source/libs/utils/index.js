@@ -192,11 +192,11 @@ export const getDateTimeFromTS = (ts) => {
 
 export const countVersions = (sparkline) => {
   if (_.isEmpty(sparkline)) return 0;
-  let count = 0;
-  Object.keys(sparkline, (n) => {
+  return _.reduce(_.keys(sparkline), (count, n) => {
+    // eslint-disable-next-line no-param-reassign
     count += _.reduce(sparkline[n], (t, e) => t + e);
-  });
-  return count;
+    return count;
+  }, 0);
 };
 
 export const getLastDate = (d) => {

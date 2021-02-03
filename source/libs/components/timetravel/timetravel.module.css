@@ -1,36 +1,33 @@
 .timetravel {
+  position: absolute;
+  top: 44.5px;
+  right: 200px;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-
-  background: var(--vandal-primary-background-color);
-  border-left: 1px solid var(--vandal-menu-border-color);
-  border-bottom: 1px solid var(--vandal-menu-border-color);
-  border-right: 1px solid var(--vandal-menu-border-color);
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
-
-  height: 335px;
-  position: absolute;
-  right: 200px;
-  top: 44.5px;
-  user-select: none;
   width: 260px;
-  z-index: 1;
+  height: 335px;
+  background: var(--vandal-primary-background-color);
+  border-right: 1px solid var(--vandal-menu-border-color);
+  border-bottom: 1px solid var(--vandal-menu-border-color);
+  border-left: 1px solid var(--vandal-menu-border-color);
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  user-select: none;
 }
 
 .loader {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-
-  background: var(--vandal-primary-background-color);
-  height: 100%;
-  left: 0;
   position: absolute;
   top: 0;
-  width: 100%;
+  left: 0;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--vandal-primary-background-color);
 }
 
 .loader__text {
@@ -42,92 +39,73 @@
   width: calc(100% - 390px);
   min-width: 1100px;
 }
-/* 
-color: #d4f8d0
-color: #a6ef9c
-color: #7eec6f
-color: #5ee64e 
-
-rgb(212, 248, 208)
-rgb(183, 244, 176)
-rgb(153, 239, 143) #99ef8f
-rgb(94, 230, 78)
-
-[
-    "#eee"
-  , "#d6e685"
-  , "#8cc665"
-  , "#44a340"
-  , "#1e6823"
-];
-*/
 
 .count {
-  border: 1px dotted #aaa;
-  background-color: var(--vandal-total-bg-color);
-  border-radius: 3px;
-  color: var(--vandal-total-count);
-  cursor: pointer;
-  font-size: 11.5px;
-  font-family: VANDAL__Inconsolata;
-  font-weight: bold;
-  letter-spacing: 0.5px;
-  max-width: 50px;
-  overflow: hidden;
-  padding: 5px 5px 5px 5px;
   position: absolute;
-  text-overflow: ellipsis;
   top: 17px;
   right: 11px;
+  max-width: 50px;
+  padding: 5px 5px 5px 5px;
+  overflow: hidden;
+  color: var(--vandal-total-count);
+  font-weight: bold;
+  font-size: 11.5px;
+  font-family: "VANDAL__Inconsolata", "Courier New", Courier, monospace;
+  letter-spacing: 0.5px;
+  text-overflow: ellipsis;
+  background-color: var(--vandal-total-bg-color);
+  border: 1px dotted #aaa;
+  border-radius: 3px;
+  cursor: pointer;
 }
 
 .tabs {
   display: flex;
-  flex-direction: column;
   flex: 1;
+  flex-direction: column;
 }
 
 .tab__list {
   display: flex;
+  flex: 0 0 60px;
   align-items: center;
   justify-content: flex-end;
-  flex: 0 0 60px;
-
-  list-style: none;
   margin: 0;
   padding: 10px 72px 12px 0;
+  list-style: none;
 }
 
 .tab {
-  background: var(--vandal-timetravel-tab-inactive-background-color);
-  color: var(--vandal-timetravel-tab-inactive-color);
-  cursor: pointer;
-  font-size: 12px;
-  font-family: Helvetica;
   padding: 7px 8px 8px 8px;
+  color: var(--vandal-timetravel-tab-inactive-color);
+  font-size: 12px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: var(--vandal-timetravel-tab-inactive-background-color);
+  cursor: pointer;
 }
 
 .tab___active {
+  color: #fff !important;
   background: var(--vandal-timetravel-tab-active-background-color) !important;
-  color: #ffffff !important;
 }
 
 .tab___calendar {
+  border-right: 0;
   border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
-  border-right: 0;
+  border-bottom-left-radius: 3px;
 }
 
 .tab___graph {
+  border-left: 0;
   border-top-left-radius: 0;
-  border-bottom-left-radius: 0;
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
-  border-left: 0;
+  border-bottom-left-radius: 0;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .react-tabs__tab-panel--selected {
   flex: 1;
 }
@@ -138,10 +116,10 @@ rgb(94, 230, 78)
 }
 
 .reload__icon {
-  cursor: pointer;
   position: absolute;
-  bottom: 35px;
   right: 9px;
+  bottom: 35px;
+  cursor: pointer;
   fill: var(--vandal-primary-icon-color);
   stroke: var(--vandal-primary-icon-color);
   stroke-width: 3px;
@@ -157,11 +135,11 @@ rgb(94, 230, 78)
 }
 
 .selection__icon {
+  position: absolute;
+  right: 28px;
+  bottom: 26px;
   cursor: pointer;
   fill: var(--vandal-primary-icon-color);
-  position: absolute;
-  bottom: 26px;
-  right: 28px;
 }
 
 .selection__icon:hover {
@@ -172,19 +150,20 @@ rgb(94, 230, 78)
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
 }
 
 .tooltip {
-  border: 1px solid var(--vandal-primary-border-color) !important;
-  color: var(--vandal-text-color);
-  opacity: 1 !important;
-  padding: 5px 10px !important;
-  pointer-events: auto !important;
-  transition: none !important;
   max-width: 250px;
+  padding: 5px 10px !important;
+  color: var(--vandal-text-color);
+  border: 1px solid var(--vandal-primary-border-color) !important;
+  opacity: 1 !important;
+  transition: none !important;
+  pointer-events: auto !important;
 }
 
 .capacity_tooltip {
@@ -200,26 +179,26 @@ rgb(94, 230, 78)
   opacity: 1 !important;
 }
 
-.tooltip:before {
+.tooltip::before {
   right: -6px !important;
   z-index: 1;
 }
 
-.tooltip:after {
-  border-left-width: 6px !important;
+.tooltip::after {
   right: -7px !important;
+  border-left-width: 6px !important;
 }
 
 .reload_tooltip,
 .selection_tooltip {
-  border-radius: 2px !important;
   padding: 6px 9px 3px 9px !important;
+  border-radius: 2px !important;
   transition: none !important;
 }
 
-.infoWarn__icon {
-  fill: #ff18e3;
+.info_warn__icon {
   position: absolute;
   top: 20px;
   right: 200px;
+  fill: #ff18e3;
 }

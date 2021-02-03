@@ -1,10 +1,36 @@
 {
-  "extends": "stylelint-config-standard",
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-order",
+    "stylelint-config-rational-order"
+  ],
   "rules": {
     "color-no-invalid-hex": true,
     "selector-type-no-unknown": true,
     "max-empty-lines": 2,
     "no-descending-specificity": true,
-    "no-duplicate-selectors": true
-  }
+    "no-duplicate-selectors": true,
+    "string-quotes": "double",
+    "font-family-no-missing-generic-family-keyword": [
+      true,
+      {
+        "ignoreFontFamilies": [
+          "slick"
+        ]
+      }
+    ],
+    "selector-class-pattern": "^([a-z][a-z0-9]*)(__?_?[a-z0-9]+)*$",
+    "value-keyword-case": [
+      "lower",
+      {
+        "ignoreKeywords": [
+          "showReadOnly"
+        ]
+      }
+    ]
+  },
+  "plugins": [
+    "stylelint-order",
+    "stylelint-config-rational-order/plugin"
+  ]
 }

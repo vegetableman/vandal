@@ -288,14 +288,14 @@ const Frame = (props) => {
               offset={{ bottom: 8, left: 0 }}
             />
           </div>
-          <div className={styles.vertical__menu__container}>
+          <div className={styles.vertical_menu__container}>
             <VerticalMenu
               ref={verticalMenuRef}
-              className={styles.vertical__menu}
-              iconContainerClass={styles.vertical__menu__icon__container}
-              iconClass={styles.vertical__menu__icon}
-              listClass={styles.vertical__menu__list}
-              listItemClass={styles.vertical__menu__list__item}
+              className={styles.vertical_menu}
+              iconContainerClass={styles.vertical_menu__icon__container}
+              iconClass={styles.vertical_menu__icon}
+              listClass={styles.vertical_menu__list}
+              listItemClass={styles.vertical_menu__list__item}
               options={menuItems}
               onSelect={onOptionSelect}
             />

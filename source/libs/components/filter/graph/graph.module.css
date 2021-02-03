@@ -5,21 +5,20 @@
 }
 
 .year__container {
+  display: flex;
   justify-content: flex-end;
   max-height: 75px;
-  display: flex;
 }
 
 .year {
-  align-items: baseline;
   display: flex;
   flex: 0 0 48px;
   flex-direction: column;
+  align-items: baseline;
   justify-content: space-between;
-
-  border-right: 1px dotted var(--vandal-primary-border-color);
   box-sizing: content-box;
   color: #555;
+  border-right: 1px dotted var(--vandal-primary-border-color);
   cursor: pointer;
 }
 
@@ -42,31 +41,29 @@
 }
 
 .year__value {
+  padding: 0 0 0 10px;
   color: var(--vandal-text-color);
   font-size: 12px;
-  padding: 0 0 0 10px;
 }
 
 .month__container {
+  position: relative;
   display: flex;
   flex: 0 0 55px;
   justify-content: flex-end;
-
   border-top: 1px solid var(--vandal-timetravel-graph-border-color);
   border-bottom: 1px solid var(--vandal-timetravel-graph-border-color);
-  position: relative;
 }
 
 .month {
+  position: relative;
   display: flex;
-  justify-content: flex-end;
-  flex-direction: column;
   flex: 0 0 80px;
-
+  flex-direction: column;
+  justify-content: flex-end;
+  font-size: 11px;
   border-right: 1px dotted var(--vandal-primary-border-color);
   cursor: pointer;
-  font-size: 11px;
-  position: relative;
 }
 
 .month:hover {
@@ -88,11 +85,11 @@
 }
 
 .month__value {
-  color: var(--vandal-text-color);
-  padding: 7px;
   position: absolute;
   top: 0;
   right: 0;
+  padding: 7px;
+  color: var(--vandal-text-color);
 }
 
 .month__placeholder {
@@ -101,17 +98,17 @@
 }
 
 .loader__container {
-  flex: 0 0 55px;
   display: flex;
+  flex: 0 0 55px;
   justify-content: flex-end;
   border-top: 1px solid var(--vandal-graph-loader-border-color);
   border-bottom: 1px solid var(--vandal-graph-loader-border-color);
 }
 
 .loader__month {
-  border-right: 1px solid var(--vandal-graph-loader-border-color);
   flex: 0 0 80px;
   margin: 0 2px;
+  border-right: 1px solid var(--vandal-graph-loader-border-color);
 }
 
 .loader__month:last-child {
@@ -119,9 +116,9 @@
 }
 
 .loader {
-  flex: 0 0 80px;
   position: relative;
   top: 27px;
+  flex: 0 0 80px;
 }
 
 .error__container {
@@ -137,36 +134,38 @@
   justify-content: center;
 
   /* background: var(--vandal-cl-err-bg-color); */
+
   /* border-radius: 100%; */
   width: 90px;
+
   /* height: 90px; */
   margin-top: 60px;
 }
 
 .error__icon {
   position: relative;
-  left: 1px;
   top: 3px;
+  left: 1px;
   fill: var(--vandal-cl-err-icon-color);
 }
 
 .error__msg {
-  color: var(--vandal-text-color);
-  font-size: 13px;
   position: relative;
   top: 8px;
+  color: var(--vandal-text-color);
+  font-size: 13px;
 }
 
 .retry__btn {
-  background: var(--vandal-cl-retry-bg-color);
-  box-shadow: none;
-  border: 0;
-  border-radius: 3px;
-  color: var(--vandal-input-color);
-  cursor: pointer;
-  font-size: 13px;
   margin-top: 15px;
   padding: 13px 10px;
+  color: var(--vandal-input-color);
+  font-size: 13px;
+  background: var(--vandal-cl-retry-bg-color);
+  border: 0;
+  border-radius: 3px;
+  box-shadow: none;
+  cursor: pointer;
 }
 
 .retry__btn:hover {
@@ -174,8 +173,8 @@
 }
 
 .calendar__error {
-  background: none;
   width: auto;
   height: auto;
   margin-top: 30px;
+  background: none;
 }

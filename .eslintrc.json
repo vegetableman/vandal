@@ -16,6 +16,10 @@
     "react/jsx-props-no-spreading": "off",
     "react/destructuring-assignment": "off",
     "react/forbid-prop-types": "off",
+    "react/state-in-constructor": [
+      1,
+      "never"
+    ],
     "comma-dangle": "off",
     "quotes": [
       "error",

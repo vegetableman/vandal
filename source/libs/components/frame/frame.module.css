@@ -1,24 +1,23 @@
 .root {
   display: flex;
   align-items: center;
-
+  height: 100%;
   background: var(--vandal-primary-background-color);
   border-bottom: 1px solid var(--vandal-primary-border-color);
-  height: 100%;
 }
 
-:host-context(.vandal[data-theme='dark']) .root {
+:host-context(.vandal[data-theme="dark"]) .root {
   border-bottom: none;
-  box-shadow: inset 0px -3px 0px -2px rgba(0, 0, 0, 0.76);
+  box-shadow: inset 0 -3px 0 -2px rgba(0, 0, 0, 0.76);
 }
 
 .left {
-  flex: 0 0 100px;
   display: flex;
+  flex: 0 0 100px;
+  align-content: center;
+  align-items: center;
   justify-content: flex-start;
   padding: 0 20px;
-  align-items: center;
-  align-content: center;
 }
 
 .logo {
@@ -37,10 +36,11 @@
 }
 
 .reload__icon {
+  position: relative;
   fill: var(--vandal-primary-icon-color);
   stroke: var(--vandal-primary-icon-color);
-  position: relative;
   stroke-width: 3px;
+
   /* top: 5px; */
 }
 
@@ -63,14 +63,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 33px;
+  height: 30px;
+  margin-left: 15px;
   background: var(--vandal-button-background-color);
   border: 1px solid var(--vandal-primary-border-color);
   border-radius: 3px;
-  cursor: pointer;
-  height: 30px;
-  margin-left: 15px;
-  width: 33px;
   outline: none;
+  cursor: pointer;
 }
 
 .resource__btn__active {
@@ -78,11 +78,11 @@
 }
 
 .resource__icon {
-  fill: var(--vandal-primary-icon-color);
-  height: 23px;
-  width: 23px;
   position: relative;
   top: 1px;
+  width: 23px;
+  height: 23px;
+  fill: var(--vandal-primary-icon-color);
 }
 
 .resource__btn:hover {
@@ -91,67 +91,65 @@
 
 .right__action__container {
   display: flex;
+  flex: 1;
   align-items: flex-end;
   justify-content: flex-start;
-  flex: 1;
   margin-left: 0;
 }
 
-.vertical__menu__container {
+.vertical_menu__container {
   display: flex;
   flex: 0 0 95px;
-  justify-content: space-evenly;
   align-items: center;
-
+  justify-content: space-evenly;
   border-left: 1px solid var(--vandal-primary-border-color);
 }
 
-:host-context(.vandal[data-theme='dark']) .vertical__menu__container {
+:host-context(.vandal[data-theme="dark"]) .vertical__menu__container {
   border-left: 1px solid #868686;
 }
 
-.vertical__menu {
+.vertical_menu {
+  flex: 0 0 30px;
+  height: 30px;
+  margin-left: 5px;
   background: var(--vandal-button-background-color);
   border: 1px solid var(--vandal-primary-border-color);
   border-radius: 3px;
-  height: 30px;
-  flex: 0 0 30px;
-  margin-left: 5px;
 }
 
-.vertical__menu:hover {
+.vertical_menu:hover {
   background: var(--vandal-secondary-background-color);
 }
 
-.vertical__menu__icon__container {
+.vertical_menu__icon__container {
   display: flex;
   align-items: flex-start;
   justify-content: space-evenly;
-
-  height: 100%;
   width: 100%;
+  height: 100%;
   outline: none;
 }
 
-.vertical__menu__icon {
-  fill: var(--vandal-primary-icon-color);
-  height: 24px;
-  width: 24px;
+.vertical_menu__icon {
   position: relative;
   top: 4px;
+  width: 24px;
+  height: 24px;
+  fill: var(--vandal-primary-icon-color);
 }
 
-.vertical__menu__icon:hover {
+.vertical_menu__icon:hover {
   fill: var(--vandal-primary-icon-active-color);
 }
 
-.vertical__menu__list {
-  border: 1px solid var(--vandal-menu-border-color);
-  background: var(--vandal-menu-background-color);
-  padding: 5px 0;
-  width: 140px;
-  right: -1px;
+.vertical_menu__list {
   top: 32px;
+  right: -1px;
+  width: 140px;
+  padding: 5px 0;
+  background: var(--vandal-menu-background-color);
+  border: 1px solid var(--vandal-menu-border-color);
 }
 
 .vertical__menu__list__item {
@@ -168,8 +166,8 @@
 }
 
 .vertical__wayback__icon {
-  fill: var(--vandal-primary-icon-color);
   margin-left: 7px;
+  fill: var(--vandal-primary-icon-color);
 }
 
 .donate__btn {
@@ -196,31 +194,31 @@
 }
 
 .backward__nav__icon {
-  transform: rotate(180deg);
-  stroke-width: 3px;
-  stroke: var(--vandal-primary-icon-color);
-  fill: var(--vandal-primary-icon-color);
   width: 24px;
   height: 37px;
+  transform: rotate(180deg);
+  fill: var(--vandal-primary-icon-color);
+  stroke: var(--vandal-primary-icon-color);
+  stroke-width: 3px;
 }
 
 .forward__nav__icon {
-  stroke-width: 3px;
-  stroke: var(--vandal-primary-icon-color);
-  fill: var(--vandal-primary-icon-color);
-  height: 37px;
   width: 24px;
+  height: 37px;
+  fill: var(--vandal-primary-icon-color);
+  stroke: var(--vandal-primary-icon-color);
+  stroke-width: 3px;
 }
 
 .backward__nav__btn,
 .forward__nav__btn,
 .reload__btn,
 .stop__btn {
-  cursor: pointer;
+  padding: 0;
   background: none;
   border: 0;
-  padding: 0;
   outline: none;
+  cursor: pointer;
 }
 
 .backward__nav__btn {
@@ -234,8 +232,8 @@
 .backward__nav__btn:hover .backward__nav__icon,
 .forward__nav__btn:hover .forward__nav__icon,
 .reload__btn:hover .reload__icon {
-  stroke: var(--vandal-primary-icon-active-color);
   fill: var(--vandal-primary-icon-active-color);
+  stroke: var(--vandal-primary-icon-active-color);
 }
 
 .reload__btn:hover .reload__icon {
@@ -253,8 +251,8 @@
 
 .forward__nav__btn:disabled .forward__nav__icon,
 .backward__nav__btn:disabled .backward__nav__icon {
-  stroke: var(--vandal-disabled-icon-color);
   fill: var(--vandal-disabled-icon-color);
+  stroke: var(--vandal-disabled-icon-color);
 }
 
 .theme__switch {
@@ -262,8 +260,11 @@
   left: 10px;
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .theme__switch .react-switch-handle {
-  transition: background-color 0.05s ease 0s, transform 0.05s ease 0s,
+  transition:
+    background-color 0.05s ease 0s,
+    transform 0.05s ease 0s,
     box-shadow 0.01s ease 0s !important;
 }
 
@@ -273,9 +274,9 @@
 
 .toast__link {
   max-width: 330px;
+  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  overflow: hidden;
 }
 
 .toast__link a {
@@ -293,12 +294,12 @@
 
 .toast__open__btn,
 .toast__close__btn {
+  padding: 10px;
+  color: #fff;
   background: #ffffff24;
   border: 0;
-  color: #ffffff;
-  cursor: pointer;
   border-radius: 3px;
-  padding: 10px;
+  cursor: pointer;
 }
 
 .toast__close__btn {
@@ -307,61 +308,58 @@
 
 .toast__open__btn:hover,
 .toast__close__btn:hover {
-  background: #ffffff33;
+  background: #fff3;
 }
 
 .toast__close__icon {
-  cursor: pointer;
-  margin-left: 8px;
   position: relative;
+  top: -1px;
+  right: -6px;
+  width: 10px;
+  margin-left: 8px;
+  cursor: pointer;
   fill: #fff;
   stroke: #fff;
   stroke-width: 44px;
-  right: -6px;
-  top: -1px;
-  width: 10px;
 }
 
 .tooltip {
-  border-radius: 2px !important;
-  transition: none !important;
   padding: 5px 10px 3px 10px !important;
   font-size: 12px !important;
+  border-radius: 2px !important;
+  transition: none !important;
 }
 
 .modal__container {
+  position: fixed;
+  top: 60px;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-
-  position: fixed;
-  top: 60px;
   width: 100%;
   height: 100%;
   background-color: var(--vandal-overlay-background-color);
 }
 
 .modal {
+  position: relative;
   display: flex;
   flex-direction: column;
-
-  background-color: #f3f0ea;
-  border-radius: 3px;
   box-sizing: content-box !important;
-  box-shadow: rgb(0 0 0 / 39%) 0px 1px 5px;
+  width: 400px;
   height: 465px;
   margin-top: 80px;
   padding: 20px;
-  position: relative;
-  width: 400px;
+  background-color: #f3f0ea;
+  border-radius: 3px;
+  box-shadow: rgb(0 0 0 / 39%) 0 1px 5px;
 }
 
 .cover {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-
+  justify-content: center;
   padding: 5px 20px 20px 10px;
 }
 
@@ -370,8 +368,8 @@
 }
 
 .icon__title {
-  margin-top: 20px;
   width: 200px;
+  margin-top: 20px;
 }
 
 .ack {
@@ -380,36 +378,36 @@
 }
 
 .version {
-  font-weight: 800;
   margin-top: 15px;
-  font-family: Helvetica;
+  color: #777;
+  font-weight: 800;
   font-size: 13px;
-  color: #777777;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .about {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: flex-start;
+  justify-content: center;
 }
 
 .archive__icon {
-  width: 12px;
-  height: 12px;
-  fill: #000000;
   position: relative;
   top: 0.9px;
+  width: 12px;
+  height: 12px;
+  fill: #000;
 }
 
 .about__close__icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1111;
+  width: 15px;
   cursor: pointer;
   fill: #333;
-  position: absolute;
   stroke: #333;
   stroke-width: 44px;
-  right: 10px;
-  top: 10px;
-  width: 15px;
-  z-index: 1111;
 }

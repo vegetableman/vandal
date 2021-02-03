@@ -1,19 +1,18 @@
 .container {
   display: flex;
-  justify-content: flex-end;
-  align-items: baseline;
   flex: 0 0 27px;
-
+  align-items: baseline;
+  justify-content: flex-end;
   background: var(--vandal-timetravel-footer-background-color);
   border-top: 1px dotted var(--vandal-timetravel-footer-border-color);
 }
 
 .error__icon {
-  fill: var(--vandal-error-icon-color);
-  height: 14px;
-  margin: 0 60px 0 0;
   position: relative;
   top: 3.5px;
+  height: 14px;
+  margin: 0 60px 0 0;
+  fill: var(--vandal-error-icon-color);
 }
 
 .error__icon:hover {
@@ -25,11 +24,11 @@
 }
 
 .control {
+  padding: 0 5px;
   background: none;
   border: 0;
-  cursor: pointer;
-  padding: 0 5px;
   outline: none;
+  cursor: pointer;
 }
 
 .control:disabled {
@@ -50,12 +49,12 @@
 }
 
 .backward__icon {
-  width: 23px;
-  height: 15px;
-  fill: var(--vandal-primary-icon-color);
   position: relative;
   top: 5px;
+  width: 23px;
+  height: 15px;
   transform: rotate(180deg);
+  fill: var(--vandal-primary-icon-color);
 }
 
 .first__icon {
@@ -64,10 +63,10 @@
 }
 
 .prev__icon {
-  transform: rotate(180deg);
   position: relative;
   top: 5px;
   width: 14px;
+  transform: rotate(180deg);
 }
 
 .next__icon {
@@ -77,10 +76,10 @@
 }
 
 .forward__icon {
-  width: 23px;
-  height: 15px;
   position: relative;
   top: 5px;
+  width: 23px;
+  height: 15px;
 }
 
 .last__icon {
@@ -89,8 +88,8 @@
 }
 
 .tooltip {
-  border-radius: 2px !important;
-  transition: none !important;
   padding: 15px 9px 12px 9px !important;
   font-size: 12px !important;
+  border-radius: 2px !important;
+  transition: none !important;
 }

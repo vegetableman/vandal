@@ -5,10 +5,7 @@ export default function withDialog(Component, { ignoreClickOnClass } = {}) {
   const componentName = Component.displayName || Component.name;
 
   class DialogComponent extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = { isDialogClosed: false };
-    }
+    state = { isDialogClosed: false };
 
     componentDidMount() {
       document.addEventListener("click", this.handleClickOutside, true);

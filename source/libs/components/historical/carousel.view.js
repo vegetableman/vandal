@@ -1,10 +1,25 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+
 import React from "react";
+import PropTypes from "prop-types";
 import { Carousel, Icon } from "../common";
 import styles from "./historical.module.css";
 
 export default class CarouselView extends React.Component {
   state = {
     caption: this.props.getCaption(this.props.selectedIndex)
+  };
+
+  componentDidMount() {
+    if (this.carouselContainerRef) {
+      this.carouselContainerRef.focus();
+    }
+  }
+
+  handleChange = (index) => {
+    this.setState({
+      caption: this.props.getCaption(index)
+    });
   };
 
   handleKeydown = (e) => {
@@ -19,21 +34,17 @@ export default class CarouselView extends React.Component {
     }
   };
 
-  handleChange = (index) => {
-    this.setState({
-      caption: this.props.getCaption(index)
-    });
-  };
-
   render() {
     const { images, selectedIndex, onClose } = this.props;
     const { caption } = this.state;
     return (
       <div
+        role="dialog"
         className={styles.carousel}
         onKeyDown={this.handleKeydown}
-        ref={(_ref) => (this.carouselContainerRef = _ref)}
-        tabIndex="0"
+        ref={(_ref) => {
+          this.carouselContainerRef = _ref;
+        }}
       >
         <div className={styles.caption}>
           <span className={styles.caption__title}>
@@ -44,7 +55,9 @@ export default class CarouselView extends React.Component {
         <div className={styles.slider__container}>
           <Carousel
             images={images}
-            ref={(_ref) => (this.carouselRef = _ref)}
+            ref={(_ref) => {
+              this.carouselRef = _ref;
+            }}
             selectedIndex={selectedIndex}
             getCaption={this.props.getCaption}
             onChange={this.handleChange}
@@ -58,10 +71,16 @@ export default class CarouselView extends React.Component {
       </div>
     );
   }
-
-  componentDidMount() {
-    if (this.carouselContainerRef) {
-      this.carouselContainerRef.focus();
-    }
-  }
 }
+
+CarouselView.propTypes = {
+  getCaption: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  selectedIndex: PropTypes.number,
+  images: PropTypes.arrayOf(PropTypes.string)
+};
+
+CarouselView.defaultProps = {
+  selectedIndex: 0,
+  images: []
+};

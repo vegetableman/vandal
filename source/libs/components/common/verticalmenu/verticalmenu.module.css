@@ -1,51 +1,49 @@
 .icon {
-  cursor: pointer;
   width: 24px;
   height: 24px;
+  cursor: pointer;
 }
 
-.iconContainer {
+.icon__container {
   display: flex;
 }
 
 .menu {
-  cursor: pointer;
   position: relative;
+  cursor: pointer;
 }
 
 .list {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: baseline;
-
+  margin: 0;
+  padding: 0;
+  list-style: none;
   background: var(--vandal-menu-list-background-color);
   border: 1px solid var(--vandal-menu-list-border-color);
   border-radius: 3px;
-  border-bottom-left-radius: 3px;
   border-bottom-right-radius: 3px;
-
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  right: 2px;
-  top: 4px;
-  z-index: 1;
+  border-bottom-left-radius: 3px;
 }
 
-.listItem {
+.list__item {
   display: flex;
+  width: 100%;
+  padding: 6px 0 6px 10px;
   color: var(--vandal-menu-item-color);
   font-size: 13px;
-  padding: 6px 0 6px 10px;
   text-align: left;
-  width: 100%;
 }
 
-.listItem:last-child {
-  border-bottom: 0px;
+.list__item:last-child {
+  border-bottom: 0;
 }
 
-.listItem:hover {
+.list__item:hover {
   background: var(--vandal-menu-item-hover-background-color);
 }

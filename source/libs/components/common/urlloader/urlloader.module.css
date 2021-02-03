@@ -1,4 +1,4 @@
-/*The MIT License (MIT)
+/* The MIT License (MIT)
 
 Copyright (c) 2016 Connor Atherton
 
@@ -13,22 +13,23 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 }
 
 .loader > div {
-  border-radius: 100%;
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  margin: -2px -5px 0 -5px;
+  background: 0 0 !important;
   border: 2px solid var(--vandal-url-loader-border-color);
   border-bottom-color: transparent;
-  height: 13px;
-  width: 13px;
-  background: 0 0 !important;
-  display: inline-block;
+  border-radius: 100%;
   -webkit-animation: rotate 0.75s 0s linear infinite;
   animation: rotate 0.75s 0s linear infinite;
-  margin: -2px -5px 0 -5px;
 }
 
 @keyframes rotate {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }

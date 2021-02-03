@@ -1,7 +1,5 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-
 import React, {
-  memo, useEffect, useRef, useState
+  memo, useCallback, useEffect, useRef, useState
 } from "react";
 import VirtualList from "react-tiny-virtual-list";
 import PerfectScrollbar from "perfect-scrollbar";
@@ -9,7 +7,7 @@ import cx from "classnames";
 import PropTypes from "prop-types";
 
 import { toTwelveHourTime, compareProps } from "../../../utils";
-import { Icon } from "..";
+import Icon from "../icon";
 
 import styles from "./card.module.css";
 import Progress from "./progress";
@@ -20,8 +18,8 @@ const SnapshotList = memo((props) => {
   useEffect(
     () => {
       if (!props.loadingSnapshots && scrollContainerRef && scrollContainerRef.current) {
-        // const ps = new PerfectScrollbar(scrollContainerRef.current.rootNode);
-        PerfectScrollbar.initialize(scrollContainerRef.current.rootNode);
+        // eslint-disable-next-line no-new
+        new PerfectScrollbar(scrollContainerRef.current.rootNode);
       }
     },
     [props.loadingSnapshots]
@@ -60,11 +58,11 @@ const SnapshotList = memo((props) => {
                   {(status === 301 || status === 302) && (
                     <Icon
                       className={cx({
-                        [styles.redirectIcon]: true,
-                        [styles.redirectIcon___active]:
-                          props.redirectTSCollection
-                          && value
-                            === props.redirectTSCollection[props.redirectedTS]
+                        [styles.redirect_icon]: true,
+                        [styles.redirect_icon___active]:
+                          props.redirectTSCollection &&
+                          value ===
+                            props.redirectTSCollection[props.redirectedTS]
                       })}
                       name="redirect"
                       width={10}
@@ -72,7 +70,7 @@ const SnapshotList = memo((props) => {
                   )}
                   {status > 400 && (
                     <Icon
-                      className={styles.errorIcon}
+                      className={styles.error__icon}
                       name="error"
                       title="Error"
                       width={10}
@@ -89,14 +87,26 @@ const SnapshotList = memo((props) => {
 }, compareProps(["snapshots", "loadingSnapshots", "selectedTS", "redirectedTS", "redirectTSCollection"]));
 
 SnapshotList.propTypes = {
-  loadingSnapshots: PropTypes.bool.isRequired
+  onTsClick: PropTypes.func.isRequired,
+  loadingSnapshots: PropTypes.bool.isRequired,
+  snapshots: PropTypes.array,
+  selectedTS: PropTypes.number,
+  redirectTSCollection: PropTypes.object,
+  redirectedTS: PropTypes.number
+};
+
+SnapshotList.defaultProps = {
+  snapshots: [],
+  selectedTS: null,
+  redirectedTS: null,
+  redirectTSCollection: null
 };
 
 const Card = memo((props) => {
   const {
     day,
     month,
-    ts,
+    snapshots,
     x,
     y,
     year,
@@ -120,7 +130,7 @@ const Card = memo((props) => {
       if (_.isNull(showCard)) return;
 
       if (showCard) {
-        if (!__CACHED__ && _.isEmpty(ts)) {
+        if (!__CACHED__ && _.isEmpty(snapshots)) {
           loadSnaphots(
             `${year}${_.padStart(month, 2, "0")}${_.padStart(day, 2, "0")}`
           );
@@ -131,7 +141,7 @@ const Card = memo((props) => {
         cancelLoadSnapshots();
       }
     },
-    [__CACHED__, abort, cancelLoadSnapshots, day, loadSnaphots, month, showCard, ts, year]
+    [__CACHED__, abort, cancelLoadSnapshots, day, loadSnaphots, month, showCard, snapshots, year]
   );
 
   if (!showCard) {
@@ -142,11 +152,11 @@ const Card = memo((props) => {
     <div
       className={cx({
         [styles.card]: true,
-        [styles.card___empty]: _.isEmpty(ts),
+        [styles.card___empty]: _.isEmpty(snapshots),
         [styles.card___redirect]: _.some(
-          ts,
-          (t) => _.indexOf([301, 302], _.get(t, "status")) > -1
-            || _.get(t, "status") > 400
+          snapshots,
+          (t) => _.indexOf([301, 302], _.get(t, "status")) > -1 ||
+            _.get(t, "status") > 400
         )
       })}
       style={{ transform: `translate(${x}px, ${y}px)` }}
@@ -158,8 +168,8 @@ const Card = memo((props) => {
         </button>
       ) : null}
       <SnapshotList
-        loadingSnapshots={loadingSnapshots || (!__CACHED__ && _.isEmpty(ts))}
-        snapshots={ts}
+        loadingSnapshots={loadingSnapshots || (!__CACHED__ && _.isEmpty(snapshots))}
+        snapshots={snapshots}
         selectedTS={selectedTS}
         redirectedTS={redirectedTS}
         redirectTSCollection={redirectTSCollection}
@@ -170,22 +180,62 @@ const Card = memo((props) => {
       />
     </div>
   );
-}, compareProps(["day", "x", "y", "ts", "tsCount", "year", "selectedTS", "redirectedTS", "redirectTSCollection", "__CACHED__", "showCard", "loadingSnapshots"]));
+}, compareProps(["day", "x", "y", "snapshots", "tsCount", "year", "selectedTS", "redirectedTS", "redirectTSCollection", "__CACHED__", "showCard", "loadingSnapshots"]));
+
+Card.propTypes = {
+  onCardLeave: PropTypes.func.isRequired,
+  cancelLoadSnapshots: PropTypes.func.isRequired,
+  loadSnaphots: PropTypes.func.isRequired,
+  onTsClick: PropTypes.func.isRequired,
+  day: PropTypes.number,
+  month: PropTypes.number,
+  snapshots: PropTypes.array,
+  x: PropTypes.number,
+  y: PropTypes.number,
+  year: PropTypes.number,
+  showCard: PropTypes.bool,
+  selectedTS: PropTypes.number,
+  redirectedTS: PropTypes.number,
+  redirectTSCollection: PropTypes.object,
+  abort: PropTypes.func.isRequired,
+  loadingSnapshots: PropTypes.bool,
+  snapshotsError: PropTypes.bool,
+  retry: PropTypes.func.isRequired,
+  __CACHED__: PropTypes.bool
+};
+
+Card.defaultProps = {
+  day: null,
+  month: null,
+  snapshots: null,
+  x: null,
+  y: null,
+  year: null,
+  redirectTSCollection: null,
+  selectedTS: null,
+  redirectedTS: null,
+  showCard: false,
+  loadingSnapshots: false,
+  snapshotsError: false,
+  __CACHED__: false
+};
 
 let cardInterpreter;
 const CardContainer = memo((props) => {
   const [cardState, setCardState] = useState(
     _.get(props, "cardRef.state.context", {})
   );
-  const loadSnaphots = (date) => {
+
+  const loadSnaphots = useCallback((date) => {
     props.cardRef.send("LOAD_SNAPSHOTS", {
       payload: {
         url: props.url,
         date
       }
     });
-  };
-  const debouncedLoadSnapshots = useRef(_.debounce(loadSnaphots, 1000));
+  }, [props.cardRef]);
+
+  const debouncedLoadSnapshots = _.debounce(loadSnaphots, 1000);
 
   useEffect(
     () => {
@@ -197,21 +247,16 @@ const CardContainer = memo((props) => {
             ...{
               loadingSnapshots: state.matches("loadingSnapshots"),
               snapshotsError:
-                state.matches("snapshotsError.rejected")
-                || state.matches("snapshotsError.timeout"),
+                state.matches("snapshotsError.rejected") ||
+                state.matches("snapshotsError.timeout"),
               url: props.url,
-              showCard: state.context.showCard,
-              onTsClick: props.onTsClick,
-              onCardLeave: () => {
-                props.cardRef.send("HIDE_CARD");
-                props.onCardLeave();
-              }
+              showCard: state.context.showCard
             }
           });
         }
       });
     },
-    [props, props.cardRef]
+    [props.cardRef]
   );
 
   useEffect(() => {
@@ -228,13 +273,18 @@ const CardContainer = memo((props) => {
   return (
     <Card
       {...cardState}
-      ts={_.get(cardState, "ts")}
+      snapshots={_.get(cardState, "ts")}
       selectedTS={props.selectedTS}
       redirectedTS={props.redirectedTS}
       redirectTSCollection={props.redirectTSCollection}
-      loadSnaphots={debouncedLoadSnapshots.current}
+      loadSnaphots={debouncedLoadSnapshots}
       cancelLoadSnapshots={() => {
-        debouncedLoadSnapshots.current.cancel();
+        debouncedLoadSnapshots.cancel();
+      }}
+      onTsClick={props.onTsClick}
+      onCardLeave={() => {
+        props.cardRef.send("HIDE_CARD");
+        props.onCardLeave();
       }}
       retry={() => {
         props.cardRef.send("RETRY");
@@ -250,15 +300,16 @@ CardContainer.propTypes = {
   cardRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   url: PropTypes.string.isRequired,
   onCardLeave: PropTypes.func.isRequired,
-  onTsClick: PropTypes.func.isRequired
+  onTsClick: PropTypes.func.isRequired,
+  selectedTS: PropTypes.number,
+  redirectedTS: PropTypes.number,
+  redirectTSCollection: PropTypes.object
 };
 
-Card.defaultProps = {
-  ts: [],
-  onCardEnter: () => {},
-  onCardLeave: () => {},
-  onCardMove: () => {},
-  selectedTS: null
+CardContainer.defaultProps = {
+  selectedTS: null,
+  redirectedTS: null,
+  redirectTSCollection: null
 };
 
 export default CardContainer;

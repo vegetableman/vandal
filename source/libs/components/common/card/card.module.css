@@ -1,15 +1,14 @@
 .card {
-  background: var(--vandal-primary-background-color);
-  border: 1px solid var(--vandal-primary-border-color);
-
+  position: absolute;
+  top: 0;
   left: 0;
+  z-index: 1;
   width: 95px;
   min-height: 27px;
   max-height: 400px;
-  position: absolute;
   text-align: center;
-  top: 0;
-  z-index: 1;
+  background: var(--vandal-primary-background-color);
+  border: 1px solid var(--vandal-primary-border-color);
 }
 
 .card___empty {
@@ -21,78 +20,59 @@
 }
 
 .title {
-  color: var(--vandal-text-color);
-  font-family: Helvetica;
-  font-size: 13px;
   padding: 8px 5px 5px 9px;
+  color: var(--vandal-text-color);
+  font-size: 13px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   text-align: left;
 }
 
-.body {
-  display: flex;
-  flex-direction: column;
-
-  height: 100%;
-  max-height: 400px;
-  padding: 2px 0 5px 0;
-  position: relative;
-}
-
-.body___noTitle {
-  padding: 5px 0 5px 0;
-}
-
-.body___title {
-  max-height: 459px;
-}
-
 .value {
-  align-items: center;
   display: flex;
   flex: 0 0 25px;
-
-  color: var(--vandal-text-color);
-  cursor: pointer;
-  font-size: 11px;
-  font-family: 'VANDAL__Cousine';
+  align-items: center;
   justify-content: flex-start;
-  padding: 0 2px 0 10px;
   width: 100%;
+  padding: 0 2px 0 10px;
+  color: var(--vandal-text-color);
+  font-size: 11px;
+  font-family: "VANDAL__Cousine", "Courier New", Courier, monospace;
+  cursor: pointer;
 }
 
 .value___selected {
   color: var(--vandal-link-color);
-  background: var(--vandal-link-selected-color);
   text-decoration: underline;
+  background: var(--vandal-link-selected-color);
 }
 
 .value:hover {
   text-decoration: underline;
 }
 
-.redirectIcon {
-  fill: var(--vandal-card-status-icon);
+.redirect_icon {
   margin-left: 7px;
+  fill: var(--vandal-card-status-icon);
 }
 
-.redirectIcon___active {
+.redirect_icon___active {
   fill: var(--vandal-link-color);
   stroke-width: 2px;
 }
 
-.errorIcon {
-  fill: red;
+.error__icon {
   margin: -1px 0 0 7px;
+  fill: red;
 }
 
 .retry__btn {
-  background: var(--vandal-cl-retry-bg-color);
-  box-shadow: none;
-  border: 0;
-  border-radius: 3px;
-  color: var(--vandal-input-color);
-  cursor: pointer;
-  font-size: 10px;
   margin: 10px auto;
   padding: 10px;
+  color: var(--vandal-input-color);
+  font-size: 10px;
+  background: var(--vandal-cl-retry-bg-color);
+  border: 0;
+  border-radius: 3px;
+  box-shadow: none;
+  cursor: pointer;
 }

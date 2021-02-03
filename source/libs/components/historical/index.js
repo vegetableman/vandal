@@ -51,7 +51,7 @@ const Error = ({ err, onRetry }) => (err === "mismatch" ? (
       width={30}
       height={30}
     />
-    <div className={styles.notFound__err}>NOT FOUND</div>
+    <div className={styles.not_found__err}>NOT FOUND</div>
   </div>
 ) : (
   <div className={styles.err_container}>

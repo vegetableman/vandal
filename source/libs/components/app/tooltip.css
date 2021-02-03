@@ -1,62 +1,72 @@
+/* stylelint-disable selector-class-pattern */
+
 .__react_component_tooltip {
-  border-radius: 3px;
-  display: inline-block;
-  font-size: 13px;
-  left: -999em;
-  opacity: 0;
-  padding: 8px 21px;
   position: fixed;
-  pointer-events: none;
-  transition: opacity 0.3s ease-out;
   top: -999em;
-  visibility: hidden;
+  left: -999em;
   z-index: 999;
+  display: inline-block;
+  padding: 8px 21px;
+  font-size: 13px;
+  border-radius: 3px;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+  pointer-events: none;
 }
+
 .__react_component_tooltip.allow_hover,
 .__react_component_tooltip.allow_click {
   pointer-events: auto;
 }
+
 .__react_component_tooltip::before,
 .__react_component_tooltip::after {
-  content: '';
+  position: absolute;
   width: 0;
   height: 0;
-  position: absolute;
+  content: "";
 }
+
 .__react_component_tooltip.show {
-  opacity: 0.9;
   margin-top: 0;
   margin-left: 0;
   visibility: visible;
+  opacity: 0.9;
 }
+
 .__react_component_tooltip.place-top::before {
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
   bottom: -8px;
   left: 50%;
   margin-left: -10px;
-}
-.__react_component_tooltip.place-bottom::before {
-  border-left: 10px solid transparent;
   border-right: 10px solid transparent;
+  border-left: 10px solid transparent;
+}
+
+.__react_component_tooltip.place-bottom::before {
   top: -8px;
   left: 50%;
   margin-left: -10px;
+  border-right: 10px solid transparent;
+  border-left: 10px solid transparent;
 }
+
 .__react_component_tooltip.place-left::before {
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
+  top: 50%;
   right: -8px;
-  top: 50%;
   margin-top: -5px;
-}
-.__react_component_tooltip.place-right::before {
   border-top: 6px solid transparent;
   border-bottom: 6px solid transparent;
-  left: -8px;
-  top: 50%;
-  margin-top: -5px;
 }
+
+.__react_component_tooltip.place-right::before {
+  top: 50%;
+  left: -8px;
+  margin-top: -5px;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+}
+
 .__react_component_tooltip .multi-line {
   display: block;
   padding: 2px 0;

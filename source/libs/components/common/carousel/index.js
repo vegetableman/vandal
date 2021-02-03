@@ -15,7 +15,7 @@ const NextArrow = ({ className, style, onClick }) => (
     onClick={onClick}
     className={cx({
       [className]: true,
-      [styles.rightArrow]: true
+      [styles.right__arrow]: true
     })}
   />
 );
@@ -39,7 +39,7 @@ const PrevArrow = ({ className, style, onClick }) => (
     onClick={onClick}
     className={cx({
       [className]: true,
-      [styles.leftArrow]: true
+      [styles.left__arrow]: true
     })}
   />
 );

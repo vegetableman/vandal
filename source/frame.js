@@ -114,11 +114,11 @@ function getSources() {
   const imgs = findElementsByTagName(window, "img");
   for (let i = 0, len = imgs.length; i < len; i++) {
     // exclude WBM /static/images, leaked images and embedded data URIs
-    const isImageInvalid = !imgs[i].src
-      || imgs[i].src.startsWith(prefix)
-      || !imgs[i].src.startsWith(window.location.origin)
-      || imgs[i].src.startsWith("data:")
-      || imgs[i].src.startsWith(ARCHIVE_STATIC_PATH);
+    const isImageInvalid = !imgs[i].src ||
+      imgs[i].src.startsWith(prefix) ||
+      !imgs[i].src.startsWith(window.location.origin) ||
+      imgs[i].src.startsWith("data:") ||
+      imgs[i].src.startsWith(ARCHIVE_STATIC_PATH);
 
     if (!isImageInvalid) {
       if (!imageMap[imgs[i].src]) {
@@ -146,10 +146,10 @@ function getSources() {
 
   const scripts = findElementsByTagName(window, "script");
   for (let i = 0, len = scripts.length; i < len; i++) {
-    const isSrcInvalid = !scripts[i].src
-    || scripts[i].src.startsWith(prefix)
-    || !scripts[i].src.startsWith(window.location.origin)
-    || scripts[i].src.startsWith(ARCHIVE_STATIC_PATH);
+    const isSrcInvalid = !scripts[i].src ||
+    scripts[i].src.startsWith(prefix) ||
+    !scripts[i].src.startsWith(window.location.origin) ||
+    scripts[i].src.startsWith(ARCHIVE_STATIC_PATH);
 
     if (!isSrcInvalid) {
       srcList.push(scripts[i].src);
@@ -159,10 +159,10 @@ function getSources() {
   // link.href (CSS, RSS, etc)
   const links = findElementsByTagName(window, "link");
   for (let i = 0, len = links.length; i < len; i++) {
-    const isLinkInvalid = !links[i].href
-    || links[i].href.startsWith(prefix)
-    || !links[i].href.startsWith(window.location.origin)
-    || links[i].href.startsWith(ARCHIVE_STATIC_PATH);
+    const isLinkInvalid = !links[i].href ||
+    links[i].href.startsWith(prefix) ||
+    !links[i].href.startsWith(window.location.origin) ||
+    links[i].href.startsWith(ARCHIVE_STATIC_PATH);
 
     if (!isLinkInvalid) {
       if (links[i].rel && links[i].rel === "stylesheet") {

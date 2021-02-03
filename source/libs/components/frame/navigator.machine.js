@@ -1,12 +1,13 @@
-import { Machine, actions } from 'xstate';
-import _ from 'lodash';
-import { historyDB } from '../../utils/storage';
-import { getCurrentDate } from '../../utils';
+import { Machine, actions } from "xstate";
+import _ from "lodash";
+import { historyDB } from "../../utils/storage";
+import { getCurrentDate } from "../../utils";
+
 const { assign } = actions;
 const navigatorMachine = Machine(
   {
-    id: 'navigator',
-    initial: 'idle',
+    id: "navigator",
+    initial: "idle",
     context: {
       allRecords: [],
       currentRecords: [],
@@ -17,35 +18,35 @@ const navigatorMachine = Machine(
     states: {
       idle: {
         invoke: {
-          id: 'loadHistory',
-          src: 'loadHistory',
+          id: "loadHistory",
+          src: "loadHistory",
           onDone: {
-            target: 'historyLoaded',
+            target: "historyLoaded",
             actions: assign({
-              allRecords: (_ctx, e) => _.get(e, 'data.records', [])
+              allRecords: (_ctx, e) => _.get(e, "data.records", [])
             })
           }
         }
       },
       historyLoaded: {
-        initial: 'unknown',
+        initial: "unknown",
         states: {
           unknown: {
             on: {
               UPDATE_HISTORY_ONCOMMIT: {
                 actions: [
                   assign((ctx, e) => {
-                    const transitionType = _.get(e, 'payload.type');
-                    const url = _.get(e, 'payload.url');
-                    if (transitionType === 'redirect') {
+                    const transitionType = _.get(e, "payload.type");
+                    const url = _.get(e, "payload.url");
+                    if (transitionType === "redirect") {
                       return {
-                        currentURL: _.get(e, 'payload.url'),
+                        currentURL: _.get(e, "payload.url"),
                         currentRecords: [...ctx.currentRecords, url]
                       };
                     }
 
                     if (
-                      transitionType !== 'auto' ||
+                      transitionType !== "auto" ||
                       _.isEmpty(ctx.currentRecords) ||
                       _.size(ctx.currentRecords) === 1
                     ) {
@@ -66,7 +67,7 @@ const navigatorMachine = Machine(
                     }
 
                     return {
-                      currentURL: _.get(e, 'payload.url'),
+                      currentURL: _.get(e, "payload.url"),
                       currentRecords: ctx.prevRecords,
                       currentIndex
                     };
@@ -77,14 +78,14 @@ const navigatorMachine = Machine(
                 actions: [
                   assign((ctx, e) => {
                     const { allRecords = [] } = ctx;
-                    const url = _.get(e, 'payload.url');
-                    const transitionType = _.get(e, 'payload.type');
+                    const url = _.get(e, "payload.url");
+                    const transitionType = _.get(e, "payload.type");
 
                     let currentRecords = [];
-                    let currentIndex = ctx.currentIndex;
+                    let { currentIndex } = ctx;
 
                     if (
-                      (transitionType === 'auto' &&
+                      (transitionType === "auto" &&
                         !_.isEmpty(ctx.currentRecords) &&
                         _.indexOf(ctx.currentRecords, url) > -1) ||
                       ctx.isBack ||
@@ -102,7 +103,7 @@ const navigatorMachine = Machine(
                       _.last(ctx.currentRecords) === url &&
                       currentIndex === _.lastIndexOf(ctx.currentRecords, url)
                     ) {
-                      //if reload, do nothing
+                      // if reload, do nothing
                     } else if (_.last(ctx.currentRecords) !== url) {
                       currentRecords = [
                         ..._.slice(
@@ -124,34 +125,32 @@ const navigatorMachine = Machine(
                       previousIndex: ctx.currentIndex,
                       currentIndex,
                       allRecords:
-                        _.get(_.last(allRecords), 'url') !== url
-                          ? [
-                              ...allRecords,
-                              {
-                                url,
-                                date: getCurrentDate()
-                              }
-                            ]
-                          : allRecords,
+                        _.get(_.last(allRecords), "url") !== url ?
+                          [
+                            ...allRecords,
+                            {
+                              url,
+                              date: getCurrentDate()
+                            }
+                          ] :
+                          allRecords,
                       currentRecords
                     };
                   }),
-                  'persistHistory'
+                  "persistHistory"
                 ]
               },
               CLEAR_HISTORY: {
                 actions: [
                   assign({
-                    allRecords: () => {
-                      return [];
-                    }
+                    allRecords: () => []
                   }),
-                  'clearHistory'
+                  "clearHistory"
                 ]
               },
               GO_BACK: {
                 actions: [
-                  assign((ctx, e) => {
+                  assign((ctx) => {
                     const { currentRecords, currentIndex } = ctx;
                     return {
                       isBack: true,
@@ -162,12 +161,12 @@ const navigatorMachine = Machine(
                       )
                     };
                   }),
-                  'updateVandalURL'
+                  "updateVandalURL"
                 ]
               },
               GO_FORWARD: {
                 actions: [
-                  assign((ctx, e) => {
+                  assign((ctx) => {
                     const { currentRecords, currentIndex } = ctx;
                     return {
                       isForward: true,
@@ -178,17 +177,15 @@ const navigatorMachine = Machine(
                       )
                     };
                   }),
-                  'updateVandalURL'
+                  "updateVandalURL"
                 ]
               },
               RELOAD: {
                 actions: [
-                  assign((ctx, e) => {
-                    return {
-                      isReload: true
-                    };
-                  }),
-                  'reloadVandalURL'
+                  assign(() => ({
+                    isReload: true
+                  })),
+                  "reloadVandalURL"
                 ]
               }
             }

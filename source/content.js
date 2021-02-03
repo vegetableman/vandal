@@ -13,9 +13,11 @@ async function onDomReady() {
   document.body.style.paddingLeft = 0;
 
   const box = document.createElement("div");
-  box.className = "vandal-box";
+  box.className = "vandal_box";
+  box.id = "vandal-box";
   const drawer = document.createElement("div");
-  drawer.className = "vandal-drawer";
+  drawer.className = "vandal_drawer";
+  drawer.id = "vandal-drawer";
 
   // use iframe.html as it's a web accessible resource
   // / to avoid blocked by client errors
@@ -34,7 +36,7 @@ async function onDomReady() {
   }
 
   frame.id = "vandal-iframe";
-  frame.className = "vandal-iframe";
+  frame.className = "vandal_iframe";
   frame.setAttribute("frameborder", "0");
 
   const container = document.createElement("div");

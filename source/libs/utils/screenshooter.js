@@ -1,6 +1,6 @@
 import { caches as cachesPolyfill } from "cache-polyfill";
 import { abort } from "./api";
-import { Lambda } from "./lambda";
+import Lambda from "./lambda";
 
 const caches = typeof window.caches === "undefined" ? cachesPolyfill : window.caches;
 

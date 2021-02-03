@@ -1,3 +1,5 @@
+/* stylelint-disable selector-class-pattern */
+
 /*!
  * Load Awesome v1.1.0 (http://github.danielcardoso.net/load-awesome/)
  * Copyright 2015 Daniel Cardoso <@DanielCardoso>
@@ -10,38 +12,38 @@
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+
 .la-timer {
-  display: block;
-  font-size: 0;
-  color: #fff;
-  left: -7px;
   top: -1px;
+  left: -7px;
+  display: block;
+  width: 32px;
+  height: 32px;
+  color: #fff;
+  font-size: 0;
 }
+
 .la-timer.la-light {
-  color: #000000;
+  color: #000;
 }
+
 .la-timer.la-dark {
-  color: #ffffff;
+  color: #fff;
 }
+
 .la-timer > div {
   display: inline-block;
   float: none;
-  background-color: currentColor;
-  border: 0 solid currentColor;
-}
-.la-timer {
-  width: 32px;
-  height: 32px;
-}
-.la-timer > div {
   width: 32px;
   height: 32px;
   background: transparent;
+  border: 0 solid currentColor;
   border-width: 2px;
   border-radius: 100%;
 }
-.la-timer > div:before,
-.la-timer > div:after {
+
+.la-timer > div::before,
+.la-timer > div::after {
   position: absolute;
   top: 14px;
   left: 14px;
@@ -49,7 +51,6 @@
   width: 2px;
   margin-top: -1px;
   margin-left: -1px;
-  content: '';
   background: currentColor;
   border-radius: 2px;
   -webkit-transform-origin: 1px 1px 0;
@@ -65,11 +66,14 @@
   -moz-animation-delay: -625ms;
   -o-animation-delay: -625ms;
   animation-delay: -625ms;
+  content: "";
 }
-.la-timer > div:before {
+
+.la-timer > div::before {
   height: 12px;
 }
-.la-timer > div:after {
+
+.la-timer > div::after {
   height: 8px;
   -webkit-animation-duration: 15s;
   -moz-animation-duration: 15s;
@@ -80,18 +84,21 @@
   -o-animation-delay: -7.5s;
   animation-delay: -7.5s;
 }
+
 .la-timer.la-sm {
   width: 16px;
   height: 16px;
   transform: scale(0.9);
 }
+
 .la-timer.la-sm > div {
   width: 16px;
   height: 16px;
   border-width: 1px;
 }
-.la-timer.la-sm > div:before,
-.la-timer.la-sm > div:after {
+
+.la-timer.la-sm > div::before,
+.la-timer.la-sm > div::after {
   top: 7px;
   left: 7px;
   width: 1px;
@@ -104,10 +111,12 @@
   -o-transform-origin: 0.5px 0.5px 0;
   transform-origin: 0.5px 0.5px 0;
 }
-.la-timer.la-sm > div:before {
+
+.la-timer.la-sm > div::before {
   height: 6px;
 }
-.la-timer.la-sm > div:after {
+
+.la-timer.la-sm > div::after {
   height: 4px;
 }
 
@@ -119,31 +128,37 @@
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
 }
+
 @-moz-keyframes timer-loader {
   0% {
     -moz-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -moz-transform: rotate(360deg);
     transform: rotate(360deg);
   }
 }
+
 @-o-keyframes timer-loader {
   0% {
     -o-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -o-transform: rotate(360deg);
     transform: rotate(360deg);
   }
 }
+
 @keyframes timer-loader {
   0% {
     -webkit-transform: rotate(0deg);
@@ -151,6 +166,7 @@
     -o-transform: rotate(0deg);
     transform: rotate(0deg);
   }
+
   100% {
     -webkit-transform: rotate(360deg);
     -moz-transform: rotate(360deg);
