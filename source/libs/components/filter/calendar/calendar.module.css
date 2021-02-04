@@ -71,6 +71,7 @@
   height: 27px;
   padding: 4px 0 0 0;
   text-align: center;
+  outline: none;
 }
 
 .day___active {

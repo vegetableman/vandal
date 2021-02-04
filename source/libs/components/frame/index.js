@@ -131,7 +131,7 @@ const Frame = (props) => {
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener(onMessage);
-  }, [onMessage]);
+  }, []);
 
   const allRecords = useMemo(
     () => _.get(navState, "context.allRecords"),

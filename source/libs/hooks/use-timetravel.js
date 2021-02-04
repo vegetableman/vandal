@@ -107,7 +107,7 @@ const TimetravelProvider = ({ children, machine }) => {
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener(onMessage);
-  }, [onMessage]);
+  }, []);
 
   const value = { state: ttState, send: machine.send };
   return (

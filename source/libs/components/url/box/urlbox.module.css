@@ -58,7 +58,9 @@
   color: var(--vandal-input-color);
   font-size: 13.5px;
   background: var(--vandal-date-background-color);
+  border: 0;
   border-left: 1px solid var(--vandal-date-border-color);
+  outline: none;
   cursor: pointer;
 }
 

@@ -160,11 +160,11 @@ URL.propTypes = {
   showTimeTravel: PropTypes.bool,
   sparklineLoaded: PropTypes.bool,
   noSparklineFound: PropTypes.bool,
-  selectedTS: PropTypes.string,
-  redirectedTS: PropTypes.string,
+  selectedTS: PropTypes.number,
+  redirectedTS: PropTypes.number,
   isSaving: PropTypes.bool,
   history: PropTypes.array,
-  redirectTSCollection: PropTypes.any
+  redirectTSCollection: PropTypes.object
 };
 
 URL.defaultProps = {
@@ -175,7 +175,7 @@ URL.defaultProps = {
   selectedTS: null,
   redirectedTS: null,
   history: [],
-  redirectTSCollection: []
+  redirectTSCollection: null
 };
 
 const URLContainer = memo((props) => {

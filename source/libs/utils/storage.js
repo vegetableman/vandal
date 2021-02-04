@@ -20,7 +20,7 @@ export const historyDB = {
     const key = `${historyPrefix}__${suffix}`;
     chrome.storage.local.set({ [key]: collection }, () => {
       // Notify that we saved.
-      console.log("Settings saved");
+      console.log("HistoryDB: Settings saved");
     });
   },
 
@@ -58,7 +58,7 @@ export const drawerDB = {
   setHeight(value) {
     chrome.storage.local.set({ [drawerKey]: value }, () => {
       // Notify that we saved.
-      console.log("Settings saved");
+      console.log("DrawerDB: Settings saved");
     });
   },
 

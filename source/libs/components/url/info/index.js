@@ -114,13 +114,13 @@ const URLInfo = memo(
 URLInfo.propTypes = {
   dialogRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   url: PropTypes.string.isRequired,
-  redirectTSCollection: PropTypes.array,
-  redirectedTS: PropTypes.string,
-  selectedTS: PropTypes.string,
+  redirectTSCollection: PropTypes.object,
+  redirectedTS: PropTypes.number,
+  selectedTS: PropTypes.number,
 };
 
 URLInfo.defaultProps = {
-  redirectTSCollection: [],
+  redirectTSCollection: null,
   redirectedTS: null,
   selectedTS: null
 };

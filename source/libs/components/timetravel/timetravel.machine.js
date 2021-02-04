@@ -679,26 +679,23 @@ const timetravelMachine = Machine(
       }
     },
     services: {
-      fetchSparkline: (ctx, e) => {
-        console.log("fetchSparkline", ctx.selectedTS, _.get(e, "payload.ts"));
-        return new Promise(async (resolve, reject) => {
-          const [sparklineData, err] = await api(
-            `${ROOT_URL}/__wb/sparkline?url=${encodeURIComponent(
-              ctx.url
-            )}&collection=web&output=json`
-          );
+      fetchSparkline: (ctx, e) => new Promise(async (resolve, reject) => {
+        const [sparklineData, err] = await api(
+          `${ROOT_URL}/__wb/sparkline?url=${encodeURIComponent(
+            ctx.url
+          )}&collection=web&output=json`
+        );
 
-          if (err) {
-            return reject(err);
-          }
+        if (err) {
+          return reject(err);
+        }
 
-          return resolve({
-            ...sparklineData,
-            ts: _.get(e, "payload.ts"),
-            force: _.get(e, "payload.force")
-          });
+        return resolve({
+          ...sparklineData,
+          ts: _.get(e, "payload.ts"),
+          force: _.get(e, "payload.force")
         });
-      },
+      }),
       fetchCalendar: (ctx, e) => new Promise(async (resolve, reject) => {
         const force = _.get(e, "payload.force");
         if (force) {

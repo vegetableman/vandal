@@ -370,7 +370,7 @@ const DrawerContainer = (props) => {
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener(messageListener);
-  }, [messageListener]);
+  }, []);
 
   return (
     <ShadowDOM
