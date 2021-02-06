@@ -1,11 +1,8 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-console */
 
 const validTabs = {};
-let isBrowserActionClicked = false;
-let hasNavigationCompleted = true;
 let isBeforeNavigate = false;
+let hasNavigationCompleted = true;
 
 const log = (message, ...args) => {
   console.info(`Vandal: ${message}`, ...args);
@@ -18,11 +15,11 @@ const hasValidTabs = () => Object.keys(validTabs).length;
 const getWindowCount = () => {
   const windowIds = [];
   if (!validTabs) return null;
-  for (const [__, details] of Object.entries(validTabs)) {
+  Object.values(validTabs).forEach((details) => {
     if (!windowIds.includes(details.windowId)) {
       windowIds.push(details.windowId);
     }
-  }
+  });
   return windowIds.length;
 };
 
@@ -68,7 +65,7 @@ class NavigationHandler {
       return;
     }
 
-    log("Before navigate", validTabs, tabId);
+    log("Before Navigate", validTabs, tabId);
 
     if (!validTabs[tabId].parentFrameId) {
       validTabs[tabId].parentFrameId = parentFrameId;
@@ -167,8 +164,9 @@ class NavigationHandler {
       return;
     }
 
-    commitURL = null;
     log("Completed");
+
+    commitURL = null;
     hasNavigationCompleted = true;
     chrome.tabs.sendMessage(tabId, {
       message: "__VANDAL__NAV__COMPLETE",
@@ -189,6 +187,9 @@ class NavigationHandler {
       return;
     }
 
+    log("History Change");
+
+    hasNavigationCompleted = true;
     chrome.tabs.sendMessage(tabId, {
       message: "__VANDAL__NAV__HISTORYCHANGE",
       data: {
@@ -196,7 +197,6 @@ class NavigationHandler {
         type: getTransitionType(transitionQualifiers, transitionType, url)
       }
     });
-    hasNavigationCompleted = true;
   };
 
   errorHandler = (details) => {
@@ -204,6 +204,9 @@ class NavigationHandler {
     if (!isValidTab(tabId) || !isValidFrame(tabId, frameId)) {
       return;
     }
+
+    log("Navigation Error");
+
     hasNavigationCompleted = true;
     chrome.tabs.sendMessage(tabId, {
       message: "__VANDAL__NAV__ERROR",
@@ -214,37 +217,14 @@ class NavigationHandler {
     });
   };
 
-  beforeSendHandler = (details) => {
-    // if (
-    //   details.url !==
-    //   'https://web.archive.org/__wb/calendarcaptures?url=https%3A%2F%2Fwww.google.com%2F&selected_year=2019' &&
-    //   (details.url.indexOf('web.archive.org') < 0 ||
-    //     !isValidTab(tabId) ||
-    //     !isValidFrame(tabId, frameId, parentFrameId))
-    // ) {
-    //   return;
-    // }
-
-    const requestHeaders = details.requestHeaders.map((header) => {
-      const isEncodingHeader = /accept-encoding/i.test(header.name);
-      if (isEncodingHeader) {
-        header.value = "Identity";
-      } else if (header.name === "Sec-Fetch-Mode") {
-        header.value = "no-cors";
-      } else if (header.name === "Sec-Fetch-Site") {
-        header.value = "same-origin";
-      }
-      return header;
-    });
-    return { requestHeaders };
-  };
-
   // https://github.com/segmentio/chrome-sidebar/blob/ae9f07e97bb08927631d1f2eb5fb31e965959bde/examples/github-trending/src/background.js
   headerReceivedHandler = (details) => {
-    log("Header Received", details.url, details.statusCode, details);
+    log("Header Received", details.url, details.statusCode, details, isValidTab(details.tabId),
+      isValidFrame(details.tabId, details.frameId));
 
-    // handle youtube video
-    if (details.url.indexOf(".googlevideo.com/videoplayback") > -1) {
+    // Return on youtube video or invalid sub-frames
+    if (details.url.indexOf(".googlevideo.com/videoplayback") > -1 ||
+    !(isValidTab(details.tabId) && isValidFrame(details.tabId, details.frameId))) {
       return null;
     }
 
@@ -260,19 +240,8 @@ class NavigationHandler {
       });
     }
 
-    // if (
-    //   (details.url.indexOf('web.archive.org') < 0 ||
-    //     details.initiator.indexOf('chrome-extension://') === 0) &&
-    //   !(
-    //     details.type === 'xmlhttprequest' &&
-    //     details.url.replace(/\/$/, '') === details.initiator
-    //   ) &&
-    //   (!isValidTab(tabId) || !isValidFrame(tabId, frameId, parentFrameId))
-    // ) {
-    //   return;
-    // }
-
-    const responseHeaders = details.responseHeaders.map((header) => {
+    const responseHeaders = details.responseHeaders.map((mheader) => {
+      const header = mheader;
       const isCSPHeader = /content-security-policy/i.test(header.name);
       const isFrameHeader = /^x-frame-options/i.test(header.name);
       const isXSSHeader = /^x-xss-protection/i.test(header.name);
@@ -315,50 +284,34 @@ class NavigationHandler {
       return header;
     });
 
-    const headerCount = Object.keys(responseHeaders).length;
-    const extraHeaders = {
-      // 'Access-Control-Allow-Origin': '*',
-      "Access-Control-Allow-Methods":
-        "GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH"
-      // 'Access-Control-Allow-Credentials': 'false'
-    };
-
-    let extraIndex = headerCount > 0 ? headerCount : 0;
-    for (const i in extraHeaders) {
-      if (Object.prototype.hasOwnProperty.call(extraHeaders, i)) {
-        responseHeaders[extraIndex] = {
-          name: i,
-          value: extraHeaders[i]
-        };
-        extraIndex++;
-      }
-    }
-
     return { responseHeaders };
   };
 
   beforeRedirectHandler = (details) => {
-    log("Before Redirect", details.url, details);
     const { initiator, redirectUrl, tabId } = details;
     if (initiator.indexOf("chrome-extension://") === 0) {
       return;
     }
+
     try {
       const redirectHost = new URL(redirectUrl).host;
       const initiatorHost = new URL(initiator).host;
       if (redirectHost !== initiatorHost) {
+        log("Before Redirect", details.url, details);
+
         chrome.tabs.sendMessage(tabId, {
           message: "__VANDAL__NAV__REDIRECTMISMATCH",
           data: { redirectHost, initiatorHost }
         });
       }
     } catch (ex) {
-      console.error("Error parsing url");
+      console.error("beforeRedirectHandler: Error parsing url");
     }
   };
 
   onRequestCompletedHandler = (details) => {
     log("Request Completed", details.url, details);
+
     if (
       isValidTab(details.tabId) &&
       isValidFrame(details.tabId, details.frameId) &&
@@ -370,6 +323,10 @@ class NavigationHandler {
         data: { url: details.url }
       });
     }
+  };
+
+  tabReplacedHandler = (details) => {
+    log("Tab Replaced", details);
   };
 }
 
@@ -393,15 +350,6 @@ const eventMap = {
       types: ["sub_frame"]
     },
     extras: ["responseHeaders"]
-  },
-  onBeforeSendHeaders: {
-    type: "webRequest",
-    handler: "beforeSendHandler",
-    options: {
-      urls: requestFilters,
-      types: ["sub_frame", "xmlhttprequest"]
-    },
-    extras: ["blocking", "requestHeaders", "extraHeaders"]
   },
   onRequestCompleted: {
     name: "onCompleted",
@@ -447,6 +395,10 @@ const eventMap = {
       urls: requestFilters,
       types: ["sub_frame"]
     }
+  },
+  onTabReplaced: {
+    type: "webNavigation",
+    handler: "tabReplacedHandler"
   }
 };
 
@@ -455,6 +407,7 @@ let navigationHandler;
 function removeListeners() {
   if (!navigationHandler) return;
   log("Remove Listeners");
+  // eslint-disable-next-line no-restricted-syntax
   for (const [event, value] of Object.entries(eventMap)) {
     chrome[value.type][value.name || event].removeListener(
       navigationHandler[value.handler]
@@ -467,6 +420,7 @@ function addListeners() {
   if (navigationHandler) return;
   navigationHandler = new NavigationHandler();
   log("Add Listeners");
+  // eslint-disable-next-line no-restricted-syntax
   for (const [event, value] of Object.entries(eventMap)) {
     if (value.type !== "webRequest") {
       if (
@@ -569,6 +523,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;
 });
 
+let isBrowserActionClicked = false;
 chrome.browserAction.onClicked.addListener(() => {
   chrome.tabs.query(
     {

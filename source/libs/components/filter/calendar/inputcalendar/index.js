@@ -157,11 +157,11 @@ Calendar.propTypes = {
   dialogRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   color: PropTypes.func.isRequired,
   years: PropTypes.array.isRequired,
-  currentMonth: PropTypes.number.isRequired,
-  currentYear: PropTypes.number.isRequired,
-  sparkline: PropTypes.object.isRequired,
   onSelect: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
+  currentMonth: PropTypes.number,
+  currentYear: PropTypes.number,
+  sparkline: PropTypes.object,
   isDialogClosed: PropTypes.bool,
   selectedMonth: PropTypes.number,
   selectedYear: PropTypes.number
@@ -170,6 +170,9 @@ Calendar.propTypes = {
 Calendar.defaultProps = {
   isDialogClosed: true,
   selectedMonth: null,
+  currentMonth: null,
+  currentYear: null,
+  sparkline: null,
   selectedYear: null
 };
 
@@ -282,21 +285,24 @@ const InputCalendar = memo((props) => {
 }, compareProps(["sparkline", "currentMonth", "selectedMonth", "selectedYear", "currentYear", "disabled", "date", "disableNext"]));
 
 InputCalendar.propTypes = {
-  sparkline: PropTypes.object.isRequired,
   goToPrevious: PropTypes.func.isRequired,
   goToNext: PropTypes.func.isRequired,
   disableNext: PropTypes.bool.isRequired,
-  currentMonth: PropTypes.number.isRequired,
-  currentYear: PropTypes.number.isRequired,
   onSelect: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
   date: PropTypes.string.isRequired,
+  sparkline: PropTypes.object,
+  currentMonth: PropTypes.number,
+  currentYear: PropTypes.number,
   selectedMonth: PropTypes.number,
   selectedYear: PropTypes.number
 };
 
 InputCalendar.defaultProps = {
+  sparkline: null,
+  currentMonth: null,
+  currentYear: null,
   selectedMonth: null,
   selectedYear: null
 };

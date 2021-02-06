@@ -146,6 +146,7 @@ const URL = memo((props) => {
           at
           {" "}
           {_.get(redirectedDateTime, "humanizedDate")}
+          .
         </div>
       </Toast>
     </>

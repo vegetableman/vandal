@@ -19,6 +19,7 @@
   box-sizing: content-box;
   color: #555;
   border-right: 1px dotted var(--vandal-primary-border-color);
+  outline: none;
   cursor: pointer;
 }
 
@@ -63,6 +64,7 @@
   justify-content: flex-end;
   font-size: 11px;
   border-right: 1px dotted var(--vandal-primary-border-color);
+  outline: none;
   cursor: pointer;
 }
 

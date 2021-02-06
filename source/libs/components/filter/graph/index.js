@@ -17,36 +17,25 @@ import { useTheme, useTimeTravel } from "../../../hooks";
 
 import styles from "./graph.module.css";
 
-const captureGraphScale = (years, maxcount) => {
+// From https://web.archive.org/ source
+const captureGraphScale = (sparkline, maxcount) => {
   const scaled = [];
-  // for (const year in years) {
-  //   if (!years[year]) {
-  //     continue;
-  //   }
-  //   scaled[year] = years[year].map(Math.log1p);
-  // }
-  _.each(years, (year) => {
-    if (years[year]) {
-      scaled[year] = years[year].map(Math.log1p);
+  _.each(sparkline, (year) => {
+    if (sparkline[year]) {
+      scaled[year] = sparkline[year].map(Math.log1p);
     }
   });
   return [scaled, Math.log1p(maxcount)];
 };
 
-const captureGraphScaleIsRequired = (years) => {
+// From https://web.archive.org/ source
+const captureGraphScaleIsRequired = (sparkline) => {
   let max = 0;
   let min = 1000;
-  // for (const year in years) {
-  //   if (years[year] == undefined) {
-  //     continue;
-  //   }
-  //   max = Math.max(max, Math.max.apply(null, years[year]));
-  //   min = Math.min(min, Math.min.apply(null, years[year].filter(Boolean)));
-  // }
-  _.each(years, (year) => {
-    if (years[year]) {
-      max = Math.max(max, Math.max.apply(null, years[year]));
-      min = Math.min(min, Math.min.apply(null, years[year].filter(Boolean)));
+  _.each(sparkline, (year) => {
+    if (sparkline[year]) {
+      max = Math.max(max, Math.max.apply(null, sparkline[year]));
+      min = Math.min(min, Math.min.apply(null, sparkline[year].filter(Boolean)));
     }
   });
   return Math.log1p(max) - Math.log1p(min) > 3;
@@ -60,8 +49,7 @@ const Bars = memo(({ theme, ...rest }) => (
       fill: theme === "dark" ? "#5B85AC" : "#708090"
     }}
   />
-), (prevProps, newProps) => prevProps.width === newProps.width &&
-prevProps.height === newProps.height && prevProps.margin === newProps.margin);
+), compareProps(["theme", "width", "height", "margin"]));
 
 Bars.propTypes = {
   theme: PropTypes.string.isRequired
@@ -75,17 +63,14 @@ const Curve = memo(({ theme, ...rest }) => (
       fill: theme === "dark" ? "#5B85AC" : "#708090"
     }}
   />
-), (prevProps, newProps) => prevProps.width === newProps.width &&
-prevProps.height === newProps.height && prevProps.margin === newProps.margin);
+), compareProps(["theme", "width", "height", "margin"]));
 
 Curve.propTypes = {
   theme: PropTypes.string.isRequired
 };
 
 const Spark = memo((props) => <Sparklines {...props} />,
-  (prevProps, newProps) => prevProps.width === newProps.width &&
-prevProps.height === newProps.height && prevProps.margin === newProps.margin &&
-prevProps.min === newProps.min && prevProps.max === newProps.max);
+  compareProps(["min", "max", "width", "height", "margin"]));
 
 const GraphFilter = memo((props) => {
   const {
@@ -136,7 +121,9 @@ const GraphFilter = memo((props) => {
         </button>
       </div>
     );
-  } if (_.isEmpty(_.keys(sparkline))) return null;
+  }
+
+  if (_.isEmpty(_.keys(sparkline))) return null;
 
   let date;
   if (currentYear && currentMonth) {
@@ -144,12 +131,6 @@ const GraphFilter = memo((props) => {
   }
 
   let maxcount = 0;
-  // for (const year in sparkline) {
-  //   if (sparkline[year] == undefined) {
-  //     continue;
-  //   }
-  //   maxcount = Math.max(maxcount, Math.max.apply(null, sparkline[year]));
-  // }
   _.each(_.keys(sparkline), (year) => {
     if (sparkline[year]) {
       maxcount = Math.max(maxcount, Math.max.apply(null, sparkline[year]));
@@ -161,6 +142,8 @@ const GraphFilter = memo((props) => {
     sparkline = _.nth(scaled, 0);
     maxcount = _.nth(scaled, 1);
   }
+
+  console.log("sparkline:", sparkline);
 
   const years = _.map(Object.keys(sparkline), (y) => _.parseInt(y));
 

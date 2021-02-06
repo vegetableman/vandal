@@ -50,7 +50,7 @@
   color: var(--vandal-total-count);
   font-weight: bold;
   font-size: 11.5px;
-  font-family: "VANDAL__Inconsolata", "Courier New", Courier, monospace;
+  font-family: "VANDAL__Inconsolata";
   letter-spacing: 0.5px;
   text-overflow: ellipsis;
   background-color: var(--vandal-total-bg-color);

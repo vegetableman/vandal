@@ -4,6 +4,9 @@
     "stylelint-order",
     "stylelint-config-rational-order"
   ],
+  "ignoreFiles": [
+    "**/*.js"
+  ],
   "rules": {
     "color-no-invalid-hex": true,
     "selector-type-no-unknown": true,
@@ -15,7 +18,8 @@
       true,
       {
         "ignoreFontFamilies": [
-          "slick"
+          "slick",
+          "VANDAL__Inconsolata"
         ]
       }
     ],
