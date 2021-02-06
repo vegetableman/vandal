@@ -20,7 +20,7 @@ import styles from "./graph.module.css";
 // From https://web.archive.org/ source
 const captureGraphScale = (sparkline, maxcount) => {
   const scaled = [];
-  _.each(sparkline, (year) => {
+  _.each(_.keys(sparkline), (year) => {
     if (sparkline[year]) {
       scaled[year] = sparkline[year].map(Math.log1p);
     }
@@ -32,7 +32,7 @@ const captureGraphScale = (sparkline, maxcount) => {
 const captureGraphScaleIsRequired = (sparkline) => {
   let max = 0;
   let min = 1000;
-  _.each(sparkline, (year) => {
+  _.each(_.keys(sparkline), (year) => {
     if (sparkline[year]) {
       max = Math.max(max, Math.max.apply(null, sparkline[year]));
       min = Math.min(min, Math.min.apply(null, sparkline[year].filter(Boolean)));
