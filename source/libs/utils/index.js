@@ -5,8 +5,6 @@ import _ from "lodash";
 export { api, abort } from "./api";
 export { default as fetch } from "./fetch";
 export { default as Screenshooter } from "./screenshooter";
-export { default as useRefCallback } from "./use-ref-callback";
-export { default as useEventCallback } from "./use-event-callback";
 export { default as useDidUpdateEffect } from "./use-didupdate-effect";
 export { default as compareProps } from "./compare-props";
 export { default as Lambda } from "./lambda";

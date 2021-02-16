@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import React, { memo } from "react";
+import { compareProps } from "../../../utils";
 
 const icons = {
   heart: ({ ...props }) => (
@@ -463,8 +464,7 @@ const Icon = memo(
   React.forwardRef((props, ref) => {
     const { name, ...others } = props;
     return icons[name](others, ref);
-  }, (prevProps, newProps) => prevProps.name === newProps.name &&
-  prevProps.width === newProps.width && prevProps.className === newProps.className)
+  }, compareProps(["name", "className", "width"]))
 );
 
 export default Icon;

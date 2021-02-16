@@ -108,8 +108,20 @@
 
 .loader__month {
   flex: 0 0 80px;
-  margin: 0 2px;
   border-right: 1px solid var(--vandal-graph-loader-border-color);
+}
+
+.err__month {
+  display: flex;
+  flex: 0 0 80px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid var(--vandal-graph-loader-border-color);
+}
+
+.err__month__icon {
+  font-size: 5px;
 }
 
 .loader__month:last-child {
@@ -169,7 +181,20 @@
   cursor: pointer;
 }
 
-.retry__btn:hover {
+.month_retry__btn {
+  margin-top: 4px;
+  padding: 8px 5px;
+  color: var(--vandal-input-color);
+  font-size: 9px;
+  background: var(--vandal-cl-retry-bg-color);
+  border: 0;
+  border-radius: 3px;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.retry__btn:hover,
+.month_retry__btn:hover {
   background: var(--vandal-cl-retry-bg-hover-color);
 }
 

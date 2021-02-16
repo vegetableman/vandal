@@ -12,7 +12,7 @@
   ],
   "rules": {
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "off",
+    "react-hooks/exhaustive-deps": "warn",
     "react/jsx-props-no-spreading": "off",
     "react/destructuring-assignment": "off",
     "react/forbid-prop-types": "off",

@@ -1,7 +1,9 @@
 /* eslint-disable jsx-a11y/no-noninteractive-tabindex */
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
-import React, { useRef, useEffect, useState } from "react";
+import React, {
+  useRef, useEffect, useState, useCallback
+} from "react";
 import PropTypes from "prop-types";
 import { useMachine } from "@xstate/react";
 import ReactTooltip from "react-tooltip";
@@ -14,8 +16,7 @@ import Terms from "./terms";
 import {
   toTwelveHourTime,
   getDateTsFromURL,
-  longMonthNames,
-  useEventCallback
+  longMonthNames
 } from "../../utils";
 import { historicalDB } from "../../utils/storage";
 import { VerticalMenu, Icon } from "../common";
@@ -74,12 +75,11 @@ Error.propTypes = {
   onRetry: PropTypes.func.isRequired
 };
 
-const Historical = (props) => {
+const Historical = ({ onClose, openURL, ...props }) => {
   const containerRef = useRef(null);
   const { theme } = useTheme();
   const { state: ttstate } = useTimeTravel();
   const [showInfoModal, toggleInfoModal] = useState(false);
-
   const [state, send, service] = useMachine(
     historicalMachine.withConfig(
       {
@@ -100,14 +100,13 @@ const Historical = (props) => {
       }
     )
   );
-
   const { context: ctx } = state;
 
-  const onOptionSelect = useEventCallback(
+  const onOptionSelect = useCallback(
     (index, year) => async (option) => {
-      const archiveURL = ctx.archiveURLs[index];
+      const archiveURL = _.nth(_.get(service, "state.context.archiveURLs"), index);
       if (option === "retry") {
-        send("SET_SNAPSHOT", { payload: { index, value: null } });
+        service.send("SET_SNAPSHOT", { payload: { index, value: null } });
         const [snapshot, newArchiveURL] = await fetchSnapshot({
           url: props.url,
           year,
@@ -115,39 +114,39 @@ const Historical = (props) => {
         });
 
         if (newArchiveURL) {
-          send("SET_ARCHIVE_URL", { payload: { index, value: newArchiveURL } });
+          service.send("SET_ARCHIVE_URL", { payload: { index, value: newArchiveURL } });
         }
         const [data, err] = snapshot;
-        send("SET_SNAPSHOT", { payload: { index, value: { data, err } } });
+        service.send("SET_SNAPSHOT", { payload: { index, value: { data, err } } });
       } else if (option === "showMonths") {
-        send("TOGGLE_MONTH_VIEW_OPEN", {
+        service.send("TOGGLE_MONTH_VIEW_OPEN", {
           payload: { show: true, year }
         });
       } else if (option === "openInNewTab") {
         window.open(archiveURL, "_blank");
       } else if (option === "openInVandal") {
-        props.openURL(archiveURL);
-        props.onClose();
+        openURL(archiveURL);
+        onClose();
       }
     },
-    [ctx.archiveURLs]
+    [openURL, onClose, props.url, service]
   );
 
-  const getCaption = (index) => {
+  const getCaption = useCallback((index) => {
     if (ctx.carouselMode === "month") {
       return { title: ctx.selectedYear, date: longMonthNames[index] };
     }
     return { title: "YEAR", date: ctx.years[index] };
-  };
+  }, [ctx.carouselMode, ctx.selectedYear, ctx.years]);
 
-  const onKeyDown = (e) => {
+  const onKeyDown = useCallback((e) => {
     e.stopPropagation();
     if (e.keyCode === 27) {
       cleanUp();
       service.stop();
-      props.onClose();
+      onClose();
     }
-  };
+  }, [onClose, service]);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -170,14 +169,13 @@ const Historical = (props) => {
 
   useEffect(
     () => {
-      const years = _.keys(_.get(ttstate, "context.sparkline"));
-      if (!_.isEmpty(years)) {
+      if (!_.isEmpty(ctx.years)) {
         send("INIT_HISTORICAL", {
-          payload: { years, url: props.url }
+          payload: { years: ctx.years, url: props.url }
         });
       }
     },
-    [props.url, send, ttstate]
+    [props.url]
   );
 
   if (!!ttstate.matches("loadingSparkline") || (!ttstate.matches("sparklineError") && _.isEmpty(ctx.years))) {
@@ -350,14 +348,14 @@ const Historical = (props) => {
           <div style={{ height: 255 }} />
         </div>
         {ctx.showCarousel && (
-        <CarouselView
-          images={ctx.images}
-          selectedIndex={ctx.selectedIndex}
-          getCaption={getCaption}
-          onClose={() => {
-            send("TOGGLE_CAROUSEL_CLOSE");
-          }}
-        />
+          <CarouselView
+            images={ctx.images}
+            selectedIndex={ctx.selectedIndex}
+            getCaption={getCaption}
+            onClose={() => {
+              send("TOGGLE_CAROUSEL_CLOSE");
+            }}
+          />
         )}
       </div>
       <div className={styles.action__container}>

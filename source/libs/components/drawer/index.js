@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, {
+  useEffect, useState, useCallback, memo
+} from "react";
 import PropTypes from "prop-types";
 import cx from "classnames";
 import clickDrag from "react-clickdrag";
@@ -9,7 +11,6 @@ import {
   dateTimeDiff,
   formatDateTimeTS,
   stripArchiveURL,
-  useEventCallback,
   isArchiveURL,
   getDateTsFromURL
 } from "../../utils";
@@ -112,7 +113,7 @@ const getIcon = (url) => {
   return <Icon name="document" className={styles.doc__icon} />;
 };
 
-const Drawer = (props) => {
+const Drawer = memo((props) => {
   const [state, send] = useMachine(drawerMachine);
   const { context: ctx } = state;
 
@@ -155,7 +156,7 @@ const Drawer = (props) => {
     send("SET_HEIGHT", {
       payload: { value: Math.min(Math.max(startHeight - delta, 100), 500) }
     });
-  });
+  }, [send]);
 
   const onDragStart = useCallback(
     () => {
@@ -183,7 +184,6 @@ const Drawer = (props) => {
     <div
       className={styles.drawer}
       style={{ height: `${ctx.height}px` }}
-      ref={props.dialogRef}
     >
       <DrawerHeaderDraggable
         frame={props.frame}
@@ -316,10 +316,9 @@ const Drawer = (props) => {
       </div>
     </div>
   );
-};
+});
 
 Drawer.propTypes = {
-  dialogRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   onClose: PropTypes.func.isRequired,
   frame: PropTypes.any.isRequired,
   sources: PropTypes.array,
@@ -339,10 +338,14 @@ const DrawerContainer = (props) => {
   const [sources, setSources] = useState([]);
   const [selectedTS, setSelectedTS] = useState(null);
 
-  const messageListener = useEventCallback(
-    (request) => {
+  const toggleVisible = () => {
+    setVisible((mvisible) => !mvisible);
+  };
+
+  useEffect(() => {
+    const messageListener = (request) => {
       if (request.message === "__VANDAL__CLIENT__TOGGLEDRAWER") {
-        setVisible(!visible);
+        toggleVisible();
       } else if (
         request.message === "__VANDAL__NAV__BEFORENAVIGATE" ||
         request.message === "__VANDAL__NAV__HISTORYCHANGE"
@@ -364,12 +367,11 @@ const DrawerContainer = (props) => {
         setNavComplete(true);
         setSelectedTS(null);
       }
-    },
-    [visible]
-  );
-
-  useEffect(() => {
+    };
     chrome.runtime.onMessage.addListener(messageListener);
+    return () => {
+      chrome.runtime.onMessage.removeListener(messageListener);
+    };
   }, []);
 
   return (
@@ -385,7 +387,7 @@ const DrawerContainer = (props) => {
             sources={sources}
             isNavComplete={isNavComplete}
             selectedTS={selectedTS}
-            onClose={() => setVisible(false)}
+            onClose={toggleVisible}
           />
         )}
       </div>

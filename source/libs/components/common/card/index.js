@@ -128,7 +128,6 @@ const Card = memo((props) => {
   useEffect(
     () => {
       if (_.isNull(showCard)) return;
-
       if (showCard) {
         if (!__CACHED__ && _.isEmpty(snapshots)) {
           loadSnaphots(
@@ -137,11 +136,11 @@ const Card = memo((props) => {
         } else {
           abort();
         }
-      } else {
+      } else if (!__CACHED__) {
         cancelLoadSnapshots();
       }
     },
-    [__CACHED__, abort, cancelLoadSnapshots, day, loadSnaphots, month, showCard, snapshots, year]
+    [showCard]
   );
 
   if (!showCard) {
@@ -226,16 +225,16 @@ const CardContainer = memo((props) => {
     _.get(props, "cardRef.state.context", {})
   );
 
-  const loadSnaphots = useCallback((date) => {
+  const loadSnaphots = (date) => {
     props.cardRef.send("LOAD_SNAPSHOTS", {
       payload: {
         url: props.url,
         date
       }
     });
-  }, [props.cardRef]);
+  };
 
-  const debouncedLoadSnapshots = _.debounce(loadSnaphots, 1000);
+  const debouncedLoadSnapshots = useCallback(_.debounce(loadSnaphots, 1000), []);
 
   useEffect(
     () => {
@@ -256,7 +255,7 @@ const CardContainer = memo((props) => {
         }
       });
     },
-    [props.cardRef]
+    [props.cardRef, props.url]
   );
 
   useEffect(() => {

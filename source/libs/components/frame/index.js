@@ -3,7 +3,8 @@ import React, {
   useCallback,
   useRef,
   useMemo,
-  useState
+  useState,
+  memo
 } from "react";
 import PropTypes from "prop-types";
 import ReactTooltip from "react-tooltip";
@@ -44,26 +45,11 @@ const options = [
   }
 ];
 
-const Frame = (props) => {
+const Frame = memo(({ onExit, ...props }) => {
   const [state, send, frameService] = useMachine(frameMachine);
   const { theme, setTheme } = useTheme();
   const [showAbout, toggleAbout] = useState(false);
   const verticalMenuRef = useRef(null);
-
-  const onOptionSelect = (option) => {
-    if (option === "wayback") {
-      window.open(`https://web.archive.org/web/*/${props.url}`, "_blank");
-    } else if (option === "exit") {
-      props.onExit();
-    } else if (option === "diffView") {
-      send("TOGGLE_DIFF_MODE");
-    } else if (option === "histView") {
-      send("TOGGLE_HISTORICAL_MODE");
-    } else if (option === "about") {
-      toggleAbout(true);
-    }
-  };
-
   const [navState, sendToNav] = useMachine(
     navigatorMachine.withConfig(
       {
@@ -83,60 +69,97 @@ const Frame = (props) => {
     )
   );
 
+  const onHistoricalClose = useCallback(() => {
+    send("TOGGLE_HISTORICAL_MODE");
+  }, [send]);
+
+  const navigateToURL = useCallback((url) => {
+    browser.navigate(url);
+  }, []);
+
+  const clearHistory = useCallback(() => {
+    sendToNav("CLEAR_HISTORY");
+  }, [sendToNav]);
+
+  const toggleTimeTravel = useCallback(() => {
+    send("TOGGLE_TIMETRAVEL");
+  }, [send]);
+
+  const onThemeChange = useCallback((checked) => {
+    setTheme(checked ? "dark" : "light");
+  }, [setTheme]);
+
+  const toggleDrawer = useCallback(() => {
+    send("TOGGLE_RESOURCEL_DRAWER");
+    chrome.runtime.sendMessage({
+      message: "__VANDAL__CLIENT__TOGGLEDRAWER"
+    });
+  }, [send]);
+
+  const onOptionSelect = useCallback((option) => {
+    if (option === "wayback") {
+      window.open(`https://web.archive.org/web/*/${props.url}`, "_blank");
+    } else if (option === "exit") {
+      onExit();
+    } else if (option === "diffView") {
+      send("TOGGLE_DIFF_MODE");
+    } else if (option === "histView") {
+      send("TOGGLE_HISTORICAL_MODE");
+    } else if (option === "about") {
+      toggleAbout(true);
+    }
+  }, [onExit, props.url, send]);
+
+  useEffect(() => {
+    const onMessage = (request) => {
+      const frameURL = _.get(request.data, "url");
+
+      switch (request.message) {
+        case "__VANDAL__NAV__COMMIT":
+          sendToNav("UPDATE_HISTORY_ONCOMMIT", {
+            payload: {
+              url: frameURL,
+              type: _.get(request.data, "type")
+            }
+          });
+          break;
+
+        case "__VANDAL__NAV__BEFORENAVIGATE":
+        case "__VANDAL__NAV__HISTORYCHANGE":
+          sendToNav("UPDATE_HISTORY", {
+            payload: {
+              url: frameURL,
+              type: _.get(request.data, "type")
+            }
+          });
+          break;
+
+        case "__VANDAL__FRAME__MOUSEDOWN":
+          if (frameService.state.matches("idle.timetravel.open")) {
+            frameService.send("TOGGLE_TIMETRAVEL");
+          }
+          if (verticalMenuRef.current) {
+            verticalMenuRef.current.hideMenu();
+          }
+          break;
+
+        default:
+          break;
+      }
+    };
+    chrome.runtime.onMessage.addListener(onMessage);
+    return () => {
+      chrome.runtime.onMessage.removeListener(onMessage);
+    };
+  }, []);
+
   useEffect(
     () => {
       if (props.loaded) {
         send("LOAD_SPARKLINE", { payload: { url: props.url } });
       }
     },
-    [props.loaded, props.url, send]
-  );
-
-  const onMessage = useCallback((request) => {
-    const frameURL = _.get(request.data, "url");
-
-    switch (request.message) {
-      case "__VANDAL__NAV__COMMIT":
-        sendToNav("UPDATE_HISTORY_ONCOMMIT", {
-          payload: {
-            url: frameURL,
-            type: _.get(request.data, "type")
-          }
-        });
-        break;
-
-      case "__VANDAL__NAV__BEFORENAVIGATE":
-      case "__VANDAL__NAV__HISTORYCHANGE":
-        sendToNav("UPDATE_HISTORY", {
-          payload: {
-            url: frameURL,
-            type: _.get(request.data, "type")
-          }
-        });
-        break;
-
-      case "__VANDAL__FRAME__MOUSEDOWN":
-        if (frameService.state.matches("idle.timetravel.open")) {
-          send("TOGGLE_TIMETRAVEL");
-        }
-        if (verticalMenuRef.current) {
-          verticalMenuRef.current.hideMenu();
-        }
-        break;
-
-      default:
-        break;
-    }
-  }, [frameService.state, send, sendToNav]);
-
-  useEffect(() => {
-    chrome.runtime.onMessage.addListener(onMessage);
-  }, []);
-
-  const allRecords = useMemo(
-    () => _.get(navState, "context.allRecords"),
-    [navState],
-    [_.get(navState, "context.allRecords")]
+    [props.loaded]
   );
 
   const selectTabIndex = useCallback((idx) => {
@@ -144,7 +167,7 @@ const Frame = (props) => {
       type: "SET_SELECTED_TABINDEX",
       payload: { value: idx }
     });
-  }, []);
+  }, [send]);
 
   const menuItems = useMemo(
     () => [
@@ -162,9 +185,7 @@ const Frame = (props) => {
               uncheckedIcon={false}
               onColor="#f7780b"
               className={styles.theme__switch}
-              onChange={(checked) => {
-                setTheme(checked ? "dark" : "light");
-              }}
+              onChange={onThemeChange}
             />
           </div>
         ),
@@ -179,7 +200,7 @@ const Frame = (props) => {
         text: "Exit"
       }
     ],
-    [setTheme, theme]
+    [theme, onThemeChange]
   );
 
   const disableBack = _.indexOf(navState.context.currentRecords, navState.context.currentURL) <=
@@ -245,13 +266,11 @@ const Frame = (props) => {
         </div>
         <div className={styles.mid}>
           <URL
-            history={allRecords}
+            history={_.get(navState, "context.allRecords")}
             showTimeTravel={state.matches("idle.timetravel.open")}
             url={props.url}
-            clearHistory={() => {
-              sendToNav("CLEAR_HISTORY");
-            }}
-            toggleTimeTravel={() => send("TOGGLE_TIMETRAVEL")}
+            clearHistory={clearHistory}
+            toggleTimeTravel={toggleTimeTravel}
           />
         </div>
         <div className={styles.right}>
@@ -266,12 +285,7 @@ const Frame = (props) => {
                   "idle.resourcedrawer.open"
                 )
               })}
-              onClick={() => {
-                send("TOGGLE_RESOURCEL_DRAWER");
-                chrome.runtime.sendMessage({
-                  message: "__VANDAL__CLIENT__TOGGLEDRAWER"
-                });
-              }}
+              onClick={toggleDrawer}
             >
               <Icon name="resource" className={styles.resource__icon} />
             </button>
@@ -325,12 +339,8 @@ const Frame = (props) => {
         {state.matches("idle.historical.open") && (
           <Historical
             url={props.url}
-            onClose={() => {
-              send("TOGGLE_HISTORICAL_MODE");
-            }}
-            openURL={(url) => {
-              browser.navigate(url);
-            }}
+            onClose={onHistoricalClose}
+            openURL={navigateToURL}
           />
         )}
         <ReactTooltip
@@ -389,7 +399,7 @@ const Frame = (props) => {
       </div>
     </TimetravelProvider>
   );
-};
+});
 
 Frame.propTypes = {
   url: PropTypes.string.isRequired,

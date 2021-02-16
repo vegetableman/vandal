@@ -20,14 +20,12 @@ import "./scrollbar.css";
 import styles from "./app.module.css";
 import { IntroProvider, useIntro } from "../../hooks/use-intro";
 
+const sendExit = () => {
+  chrome.runtime.sendMessage({ message: "___VANDAL__CLIENT__EXIT" });
+};
+
 const App = (props) => {
-  const sendExit = () => {
-    chrome.runtime.sendMessage({ message: "___VANDAL__CLIENT__EXIT" });
-  };
-
   const { showIntro, toggleIntro } = useIntro();
-  const [showDonateModal, toggleDonateModal] = useState(false);
-
   const [state, sendToParentMachine] = useMachine(
     parentMachine.withConfig(
       {
@@ -49,33 +47,7 @@ const App = (props) => {
   );
   const { context: ctx } = state;
 
-  const onMessage = useCallback(
-    async (request) => {
-      const url = _.get(request.data, "url");
-      switch (request.message) {
-        case "__VANDAL__NAV__BEFORENAVIGATE":
-        case "__VANDAL__NAV__HISTORYCHANGE":
-        case "__VANDAL__NAV__COMMIT":
-          sendToParentMachine({ type: "SET_URL", payload: { url } });
-          browser.setURL(url);
-          break;
-        case "__VANDAL__NAV__BUSTED":
-          if (ctx.url) {
-            sendToParentMachine("TOGGLE_BUSTED_ERROR", {
-              payload: { value: true },
-            });
-          }
-          break;
-        case "__VANDAL__NAV__NOTFOUND":
-          sendToParentMachine("CHECK_AVAILABILITY");
-          break;
-        default:
-          break;
-      }
-    },
-    [ctx.url, sendToParentMachine]
-  );
-
+  const [showDonateModal, toggleDonateModal] = useState(false);
   const checkDonate = async () => {
     const donateState = await appDB.getDonateState();
     const setDonateState = (__v) => {
@@ -99,12 +71,39 @@ const App = (props) => {
     }
   };
 
+  const onExit = useCallback(() => {
+    sendToParentMachine("EXIT");
+  }, [sendToParentMachine]);
+
   useEffect(() => {
     browser.setBrowser(props.browser);
     browser.setBaseURL(props.baseURL);
     chrome.runtime.sendMessage({ message: "__VANDAL__CLIENT__LOADED" }, () => {
       sendToParentMachine("LOADED");
     });
+    const onMessage = (request) => {
+      const url = _.get(request.data, "url");
+      switch (request.message) {
+        case "__VANDAL__NAV__BEFORENAVIGATE":
+        case "__VANDAL__NAV__HISTORYCHANGE":
+        case "__VANDAL__NAV__COMMIT":
+          sendToParentMachine({ type: "SET_URL", payload: { url } });
+          browser.setURL(url);
+          break;
+        case "__VANDAL__NAV__BUSTED":
+          if (ctx.url) {
+            sendToParentMachine("TOGGLE_BUSTED_ERROR", {
+              payload: { value: true },
+            });
+          }
+          break;
+        case "__VANDAL__NAV__NOTFOUND":
+          sendToParentMachine("CHECK_AVAILABILITY");
+          break;
+        default:
+          break;
+      }
+    };
     chrome.runtime.onMessage.addListener(onMessage);
     document.addEventListener("beforeunload", sendExit);
     checkDonate();
@@ -112,14 +111,13 @@ const App = (props) => {
       document.removeEventListener("beforeunload", sendExit);
       chrome.runtime.onMessage.removeListener(onMessage);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div className={styles.container}>
       <Frame
         loaded={ctx.loaded}
-        onExit={() => sendToParentMachine("EXIT")}
+        onExit={onExit}
         url={ctx.url}
       />
       <Toast
@@ -269,9 +267,9 @@ App.propTypes = {
 };
 
 const AppContainer = (props) => {
-  const notifyThemeChanged = (ctx) => {
+  const notifyThemeChanged = useCallback((ctx) => {
     props.root.setAttribute("data-theme", ctx.theme);
-  };
+  }, [props.root]);
 
   return (
     <ShadowDOM

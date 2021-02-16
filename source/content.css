@@ -144,7 +144,7 @@ body {
   --vandal-cl-err-bg-color: #eee;
   --vandal-cl-err-icon-color: #555;
   --vandal-cl-retry-bg-color: #eee;
-  --vandal-cl-retry-bg-hover-color: #eaeaea;
+  --vandal-cl-retry-bg-hover-color: #929090;
   --vandal-cl-disabled-icon-color: #ababab;
 
   /* Graph */
@@ -256,7 +256,7 @@ body {
   --vandal-cl-err-bg-color: #777;
   --vandal-cl-err-icon-color: #fff;
   --vandal-cl-retry-bg-color: #777;
-  --vandal-cl-retry-bg-hover-color: #eaeaea;
+  --vandal-cl-retry-bg-hover-color: #929090;
   --vandal-cl-disabled-icon-color: #949494;
 
   /* Graph */

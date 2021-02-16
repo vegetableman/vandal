@@ -1,11 +1,12 @@
-import React, { useEffect, useState, memo } from "react";
+import React, {
+  useEffect, useState, memo, useCallback
+} from "react";
 import PropTypes from "prop-types";
 import { useMachine } from "@xstate/react";
 import {
   compareProps,
   getDateTimeFromTS,
-  toTwelveHourTime,
-  useEventCallback
+  toTwelveHourTime
 } from "../../utils";
 import { Toast, Icon } from "../common";
 
@@ -18,39 +19,74 @@ import urlMachine from "./url.machine";
 
 import styles from "./url.module.css";
 
-const URL = memo((props) => {
+const URL = memo(({ toggleTimeTravel, showTimeTravel, ...props }) => {
   const [state, send, service] = useMachine(urlMachine);
-  const showURLInfo = state.matches("menus.info.open");
-  const showURLHistory = state.matches("menus.history.open");
   const [isNoSnapError, setSnapError] = useState(false);
   const redirectedDateTime = props.redirectedTS && getDateTimeFromTS(props.redirectedTS);
 
-  const onMessage = useEventCallback(
-    (request) => {
-      if (request.message === "__VANDAL__FRAME__MOUSEDOWN") {
-        if (service.state.matches("menus.history.open")) {
-          send("TOGGLE_HISTORY");
-        } else if (service.state.matches("menus.info.open")) {
-          send("TOGGLE_INFO");
-        }
-      }
-    },
-    [state.value]
-  );
+  const onMouseDown = useCallback(() => {
+    if (service.state.matches("menus.history.open")) {
+      service.send("TOGGLE_HISTORY");
+    } else if (service.state.matches("menus.info.open")) {
+      service.send("TOGGLE_INFO");
+    }
+  }, [service]);
+
+  const onToggleURLHistory = useCallback(() => {
+    send("TOGGLE_HISTORY");
+    if (showTimeTravel) {
+      toggleTimeTravel();
+    }
+    if (service.state.matches("menus.info.open")) {
+      send("TOGGLE_INFO");
+    }
+  }, [send, service.state, showTimeTravel, toggleTimeTravel]);
+
+  const onToggleTimeTravel = useCallback(() => {
+    toggleTimeTravel();
+    if (service.state.matches("menus.history.open")) {
+      send("TOGGLE_HISTORY");
+    }
+    if (service.state.matches("menus.info.open")) {
+      send("TOGGLE_INFO");
+    }
+  }, [send, service.state, toggleTimeTravel]);
+
+  const onToggleURLInfo = useCallback(() => {
+    send("TOGGLE_INFO");
+    if (service.state.matches("menus.history.open")) {
+      send("TOGGLE_HISTORY");
+    }
+    if (showTimeTravel) {
+      toggleTimeTravel();
+    }
+  }, [service.state, send, showTimeTravel, toggleTimeTravel]);
+
+  const onInfoClose = useCallback(() => {
+    send("TOGGLE_INFO");
+  }, [send]);
 
   useEffect(() => {
+    const onMessage = (request) => {
+      if (request.message === "__VANDAL__FRAME__MOUSEDOWN") {
+        onMouseDown();
+      }
+    };
     chrome.runtime.onMessage.addListener(onMessage);
+    return () => {
+      chrome.runtime.onMessage.removeListener(onMessage);
+    };
   }, []);
 
   useEffect(
     () => {
-      if (isNoSnapError && (!props.noSparklineFound || props.isSaving)) {
+      if (isNoSnapError && !props.noSparklineFound) {
         setSnapError(false);
       } else if (props.noSparklineFound) {
         setSnapError(true);
       }
     },
-    [props.noSparklineFound, props.isSaving]
+    [props.noSparklineFound]
   );
 
   return (
@@ -61,48 +97,28 @@ const URL = memo((props) => {
         redirectTSCollection={props.redirectTSCollection}
         sparklineLoaded={props.sparklineLoaded}
         selectedTS={props.selectedTS}
-        showURLHistory={showURLHistory}
-        showURLInfo={showURLInfo}
-        showTimeTravel={props.showTimeTravel}
-        toggleURLHistory={() => {
-          send("TOGGLE_HISTORY");
-          if (props.showTimeTravel) {
-            props.toggleTimeTravel();
-          }
-          if (service.state.matches("menus.info.open")) {
-            send("TOGGLE_INFO");
-          }
-        }}
-        toggleURLInfo={() => {
-          send("TOGGLE_INFO");
-          if (service.state.matches("menus.history.open")) {
-            send("TOGGLE_HISTORY");
-          }
-        }}
-        toggleTimeTravel={() => {
-          props.toggleTimeTravel();
-          if (service.state.matches("menus.history.open")) {
-            send("TOGGLE_HISTORY");
-          }
-        }}
+        showURLHistory={state.matches("menus.history.open")}
+        showURLInfo={state.matches("menus.info.open")}
+        showTimeTravel={showTimeTravel}
+        toggleURLHistory={onToggleURLHistory}
+        toggleTimeTravel={onToggleTimeTravel}
+        toggleURLInfo={onToggleURLInfo}
       />
-      {showURLInfo &&
+      {state.matches("menus.info.open") &&
         props.selectedTS && (
           <URLInfo
             url={props.url}
             selectedTS={props.selectedTS}
             redirectedTS={props.redirectedTS}
             redirectTSCollection={props.redirectTSCollection}
-            onClose={() => send("TOGGLE_INFO")}
+            onClose={onInfoClose}
           />
       )}
-      {showURLHistory && (
+      {state.matches("menus.history.open") && (
         <URLHistory
           history={props.history}
           clearHistory={props.clearHistory}
-          onSelect={() => {
-            send("TOGGLE_HISTORY");
-          }}
+          onSelect={onToggleTimeTravel}
         />
       )}
       <Toast className={styles.toast__notfound} show={isNoSnapError} exit={0}>
@@ -151,7 +167,7 @@ const URL = memo((props) => {
       </Toast>
     </>
   );
-}, compareProps(["isRedirecting", "noSparklineFound", "isOverCapacity", "sparklineLoaded", "redirectedTS", "selectedTS", "redirectTSCollection", "url", "showTimeTravel", "history", "isSaving"]));
+}, compareProps(["isRedirecting", "noSparklineFound", "isOverCapacity", "sparklineLoaded", "redirectedTS", "selectedTS", "redirectTSCollection", "url", "showTimeTravel", "history"]));
 
 URL.propTypes = {
   isRedirecting: PropTypes.bool.isRequired,
@@ -163,7 +179,6 @@ URL.propTypes = {
   noSparklineFound: PropTypes.bool,
   selectedTS: PropTypes.number,
   redirectedTS: PropTypes.number,
-  isSaving: PropTypes.bool,
   history: PropTypes.array,
   redirectTSCollection: PropTypes.object
 };
@@ -172,7 +187,6 @@ URL.defaultProps = {
   showTimeTravel: false,
   sparklineLoaded: false,
   noSparklineFound: false,
-  isSaving: false,
   selectedTS: null,
   redirectedTS: null,
   history: [],
@@ -195,17 +209,8 @@ const URLContainer = memo((props) => {
       isOverCapacity={ctx.isOverCapacity}
       redirectTSCollection={ctx.redirectTSCollection}
       selectedTS={ctx.selectedTS}
-      isSaving={props.isSaving}
     />
   );
-}, compareProps(["showTimeTravel", "url", "history", "isSaving"]));
-
-URLContainer.propTypes = {
-  isSaving: PropTypes.bool
-};
-
-URLContainer.defaultProps = {
-  isSaving: false
-};
+}, compareProps(["showTimeTravel", "url", "history"]));
 
 export default URLContainer;

@@ -17,7 +17,9 @@ export const fetchSnapshot = async ({ url, year, archiveURL }) => {
   let snapshotURL = archiveURL;
 
   const [result, archiveErr] = await api(
-    `https://archive.org/wayback/available?url=${url}&timestamp=${year}12`
+    `https://archive.org/wayback/available?url=${url}&timestamp=${year}12`, {
+      meta: { type: "available" }
+    }
   );
   if (archiveErr) {
     return [{ data: null, err: archiveErr }];

@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
 import React, {
-  useState, forwardRef, useImperativeHandle, memo
+  useState, forwardRef, useImperativeHandle, memo, useCallback
 } from "react";
 import PropTypes from "prop-types";
 import _ from "lodash";
@@ -78,14 +78,22 @@ const VerticalMenu = memo(
   }, ref) => {
     const [isVisible, toggleMenu] = useState(false);
 
-    const onOptionSelect = (value, hideOnSelect = true) => (event) => {
+    const onClick = useCallback(() => {
+      toggleMenu((prevState) => !prevState);
+    }, [toggleMenu]);
+
+    const onOptionSelect = useCallback((value, hideOnSelect = true) => (event) => {
       event.preventDefault();
       event.stopPropagation();
       onSelect(value, event);
       if (hideOnSelect) {
         toggleMenu(false);
       }
-    };
+    }, [onSelect]);
+
+    const onClose = useCallback(() => {
+      toggleMenu(false);
+    }, [toggleMenu]);
 
     useImperativeHandle(ref, () => ({
       hideMenu() {
@@ -107,9 +115,7 @@ const VerticalMenu = memo(
             [styles.icon__container]: true,
             [iconContainerClass]: !!iconContainerClass
           })}
-          onClick={() => {
-            toggleMenu((prevState) => !prevState);
-          }}
+          onClick={onClick}
         >
           <Icon
             name="verticalMenu"
@@ -123,9 +129,7 @@ const VerticalMenu = memo(
           <WithDialogList
             options={props.options}
             handleOption={onOptionSelect}
-            onClose={() => {
-              toggleMenu(false);
-            }}
+            onClose={onClose}
             listClass={props.listClass}
             listItemClass={props.listItemClass}
           />

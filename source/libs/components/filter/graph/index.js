@@ -83,7 +83,9 @@ const GraphFilter = memo((props) => {
     showSparkError,
     showCalendarError,
     showSparkLoader,
-    isOverCapacity
+    isOverCapacity,
+    retryMonth,
+    monthStates
   } = props;
 
   let { sparkline } = props;
@@ -143,8 +145,6 @@ const GraphFilter = memo((props) => {
     maxcount = _.nth(scaled, 1);
   }
 
-  console.log("sparkline:", sparkline);
-
   const years = _.map(Object.keys(sparkline), (y) => _.parseInt(y));
 
   return (
@@ -177,7 +177,7 @@ const GraphFilter = memo((props) => {
           </div>
         ))}
       </div>
-      {showCalendarLoader && (
+      {showCalendarLoader && !isOverCapacity && (
         <div className={styles.loader__container}>
           {_.map(monthNames, (_m, index) => (
             <div className={styles.loader__month} key={index}>
@@ -190,70 +190,99 @@ const GraphFilter = memo((props) => {
           ))}
         </div>
       )}
-      {!showCalendarLoader &&
+      {(!showCalendarLoader || isOverCapacity) &&
         currentYear && (
           <div className={styles.month__container}>
-            {!_.isEmpty(months) &&
-              _.map(months, (m, index) => {
-                const lastDate = getLastDate(
-                  `${index + 1}/1/${currentYear}`
-                ).getDate();
-                const month = _.merge(
-                  Array.from(new Array(lastDate).keys()),
-                  m
-                );
-                const countList = _.map(month, (mc) => _.get(mc, "cnt", 0));
-                const max = _.max(countList);
-                const points = dataToPoints({
-                  data: countList,
-                  limit: 0,
-                  width: 100,
-                  height: 20,
-                  margin: 0,
-                  min: 0,
-                  max: !max ? max + 1 : max
-                });
-
+            {_.map(monthNames, (_n, index) => {
+              if (_.get(monthStates, `${currentYear}.${index}.error`)) {
                 return (
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    className={cx({
-                      [styles.month]: true,
-                      [styles.month___selected]:
-                        theme !== "dark" && index === currentMonth - 1,
-                      [styles.month___selected___dark]:
-                        theme === "dark" && index === currentMonth - 1
-                    })}
-                    key={`month-${index}-${currentYear}`}
-                    onClick={onMonthChange(index + 1)}
-                  >
-                    <span className={styles.month__value}>
-                      {monthNames[index]}
-                    </span>
-                    {!!max && !_.isEmpty(points) ? (
-                      <Spark
-                        points={points}
-                        margin={0}
-                        min={0}
-                        max={!max ? max + 1 : max}
-                        width={100}
-                        height={20}
-                      >
-                        <Curve theme={theme} />
-                      </Spark>
-                    ) : null}
-                    {!!max && _.isEmpty(points) && isOverCapacity ? (
-                      <GraphLoader
-                        key={index}
-                        className={styles.month__placeholder}
-                        theme={theme}
-                      />
-                    ) : null}
+                  <div className={styles.err__month} key={index}>
+                    <span className={styles.err__month__icon}>❌</span>
+                    <button
+                      type="button"
+                      className={styles.month_retry__btn}
+                      onClick={() => {
+                        retryMonth(index, currentYear);
+                      }}
+                    >
+                      Retry
+                    </button>
                   </div>
                 );
-              })}
-            {_.isEmpty(months) &&
+              }
+
+              const m = months[index] ? months[index] : null;
+              if ((!m && _.nth(_.get(sparkline, currentYear), index) > 0) ||
+              _.get(monthStates, `${currentYear}.${index}.loading`)) {
+                return (
+                  <div className={styles.loader__month} key={index}>
+                    <GraphLoader
+                      key={index}
+                      className={styles.loader}
+                      theme={theme}
+                    />
+                  </div>
+                );
+              }
+
+              const lastDate = getLastDate(
+                `${index + 1}/1/${currentYear}`
+              ).getDate();
+              const month = _.merge(
+                Array.from(new Array(lastDate).keys()),
+                m
+              );
+              const countList = _.map(month, (mc) => _.get(mc, "cnt", 0));
+              const max = _.max(countList);
+              const points = dataToPoints({
+                data: countList,
+                limit: 0,
+                width: 100,
+                height: 20,
+                margin: 0,
+                min: 0,
+                max: !max ? max + 1 : max
+              });
+              return (
+                <div
+                  role="button"
+                  tabIndex={0}
+                  className={cx({
+                    [styles.month]: true,
+                    [styles.month___selected]:
+                      theme !== "dark" && index === currentMonth - 1,
+                    [styles.month___selected___dark]:
+                      theme === "dark" && index === currentMonth - 1
+                  })}
+                  key={`month-${index}-${currentYear}`}
+                  onClick={onMonthChange(index + 1)}
+                >
+                  <span className={styles.month__value}>
+                    {monthNames[index]}
+                  </span>
+                  {!!max && !_.isEmpty(points) ? (
+                    <Spark
+                      points={points}
+                      margin={0}
+                      min={0}
+                      max={!max ? max + 1 : max}
+                      width={100}
+                      height={20}
+                    >
+                      <Curve theme={theme} />
+                    </Spark>
+                  ) : null}
+                  {!!max && _.isEmpty(points) && isOverCapacity ? (
+                    <GraphLoader
+                      key={index}
+                      className={styles.month__placeholder}
+                      theme={theme}
+                    />
+                  ) : null}
+                </div>
+              );
+            })}
+            { !isOverCapacity && _.isEmpty(months) &&
               _.map(monthNames, (m, index) => (
                 <div
                   role="button"
@@ -283,7 +312,8 @@ const GraphFilter = memo((props) => {
     </div>
   );
 }, compareProps(["selectedYear", "selectedMonth", "currentYear", "currentMonth", "currentDay",
-  "showError", "showCalendarLoader", "showSparkError", "showSparkLoader", "showCalendarError", "sparkline", "months", "highlightedDay", "calendarLoaded", "mountCount", "isOverCapacity"]));
+  "showError", "showCalendarLoader", "showSparkError", "showSparkLoader", "showCalendarError", "sparkline",
+  "months", "highlightedDay", "calendarLoaded", "mountCount", "isOverCapacity", "monthStates"]));
 
 const GraphFilterContainer = (props) => {
   const { state } = useTimeTravel();
@@ -303,6 +333,7 @@ const GraphFilterContainer = (props) => {
       currentDay={ctx.currentDay}
       highlightedDay={ctx.highlightedDay}
       sparkline={ctx.sparkline}
+      monthStates={ctx.monthStates}
       error={ctx.error}
       showCalendarLoader={state.matches("sparklineLoaded.loadingCalendar")}
       showSparkLoader={state.matches("loadingSparkline")}
@@ -319,32 +350,36 @@ GraphFilter.propTypes = {
   getColor: PropTypes.func.isRequired,
   onMouseMove: PropTypes.func.isRequired,
   onMouseLeave: PropTypes.func.isRequired,
-  sparkline: PropTypes.object.isRequired,
   onYearChange: PropTypes.func.isRequired,
   onMonthChange: PropTypes.func.isRequired,
   onClick: PropTypes.func.isRequired,
   retry: PropTypes.func.isRequired,
+  retryMonth: PropTypes.func.isRequired,
+  sparkline: PropTypes.object,
   showCalendarLoader: PropTypes.bool,
   showSparkError: PropTypes.bool,
   showCalendarError: PropTypes.bool,
   showSparkLoader: PropTypes.bool,
   currentMonth: PropTypes.number,
   currentYear: PropTypes.number,
-  error: PropTypes.bool,
+  error: PropTypes.string,
   isOverCapacity: PropTypes.bool,
-  months: PropTypes.array
+  months: PropTypes.array,
+  monthStates: PropTypes.object
 };
 
 GraphFilter.defaultProps = {
+  sparkline: null,
   showCalendarLoader: false,
   showSparkError: false,
   showCalendarError: false,
   showSparkLoader: false,
   currentMonth: null,
   currentYear: null,
-  error: false,
+  error: null,
   isOverCapacity: false,
-  months: []
+  months: [],
+  monthStates: null
 };
 
 export default GraphFilterContainer;

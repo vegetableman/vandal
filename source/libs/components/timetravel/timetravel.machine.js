@@ -159,6 +159,18 @@ const fetchCalendar = async (url, year) => {
   );
 };
 
+export const fetchMonth = async (url, month, year) => {
+  const [response, err] = await api(
+    `${ROOT_URL}/__wb/calendarcaptures/2?url=${url}&date=${
+      year
+    }${_.padStart(month + 1, 2, "0")}&groupby=day`
+  );
+  return [
+    _.get(response, "items"),
+    err
+  ];
+};
+
 const memoizedFetchCalendar = memoizeOne(fetchCalendar, (arg1, arg2) => (
   arg1 === arg2 ||
     _.replace(arg1, "https://", "http://") ===
@@ -190,9 +202,15 @@ const timetravelMachine = Machine(
       showCard: false,
       card: null,
       dir: null,
-      error: null
+      error: null,
+      monthStates: {}
     },
     on: {
+      SET_VIEW: {
+        actions: assign({
+          view: (_ctx, e) => _.get(e, "value")
+        })
+      },
       LOAD_SPARKLINE: {
         target: "loadingSparkline",
         actions: assign((_ctx, e) => ({
@@ -304,7 +322,25 @@ const timetravelMachine = Machine(
       },
       UPDATE_CALENDAR_CB: {
         actions: assign({
-          calendar: (_ctx, e) => _.get(e, "payload.calendar")
+          calendar: (_ctx, e) => _.get(e, "payload.calendar"),
+          monthStates: (_ctx, e) => _.get(e, "payload.monthStates")
+        })
+      },
+      SET_MONTH_STATE: {
+        actions: assign({
+          monthStates: (ctx, e) => {
+            const { monthStates } = ctx;
+            const {
+              loading, month, year, error
+            } = _.get(e, "payload");
+            _.set(monthStates, `${year}.${month}`, { loading, error });
+            return { ...monthStates };
+          }
+        })
+      },
+      SET_CALENDAR: {
+        actions: assign({
+          calendar: (_ctx, e) => _.get(e, "value")
         })
       }
     },
@@ -359,10 +395,7 @@ const timetravelMachine = Machine(
           onError: {
             target: "sparklineError.rejected",
             actions: assign({
-              error: (_context, event) => {
-                console.log("event: ", event.data);
-                return event.data;
-              }
+              error: (_context, event) => event.data
             })
           }
         }
@@ -487,7 +520,13 @@ const timetravelMachine = Machine(
             }
           },
           calendarLoaded: {
+            invoke: {
+              src: "loadOtherMonths"
+            },
             on: {
+              LOAD_OTHER_MONTHS: {
+                target: "calendarLoaded"
+              },
               RELOAD_SPARKLINE: {
                 target: "#loadingSparkline"
               },
@@ -714,8 +753,8 @@ const timetravelMachine = Machine(
           });
         }
 
-        let response; let
-          err;
+        let response;
+        let err;
         let calendar;
         let lastTS;
 
@@ -752,7 +791,6 @@ const timetravelMachine = Machine(
               ctx.currentYear
             );
           } catch (ex) {
-            console.log("fetchCalendar error:", ex.message);
             memoizedFetchCalendar.apply({}, []);
             err = ex.message;
           }
@@ -826,7 +864,61 @@ const timetravelMachine = Machine(
         calendar.url = ctx.url;
 
         return resolve({ calendar, lastTS, payload: e.payload });
-      })
+      }),
+      loadOtherMonths: (ctx) => (callback) => {
+        let response;
+        let err;
+        if (!(ctx.isOverCapacity && ctx.view === "graph")) {
+          return;
+        }
+        const loadMonth = async (month) => {
+          [response, err] = await api(
+            `${ROOT_URL}/__wb/calendarcaptures/2?url=${ctx.url}&date=${
+              ctx.currentYear
+            }${_.padStart(month + 1, 2, "0")}&groupby=day`
+          );
+          const { monthStates } = ctx;
+
+          if (err) {
+            _.set(monthStates, `${ctx.currentYear}.${month}`, { loading: false, error: true });
+            callback({
+              type: "UPDATE_CALENDAR_CB",
+              payload: { calendar: ctx.calendar, monthStates: { ...monthStates } }
+            });
+            return;
+          }
+
+          const calendar = _.reduce(
+            response.items,
+            (acc, item) => {
+              const date = _.nth(item, 0);
+              _.set(
+                acc,
+                `${ctx.currentYear}.${month}.${_.parseInt(
+                  date
+                ) - 1}.cnt`,
+                _.parseInt(_.nth(item, 2))
+              );
+              return acc;
+            },
+            ctx.calendar || {}
+          );
+
+          _.set(monthStates, `${ctx.currentYear}.${month}`, { loading: false, error: false });
+
+          callback({
+            type: "UPDATE_CALENDAR_CB",
+            payload: { calendar, monthStates: { ...monthStates } }
+          });
+        };
+
+        for (let i = 0; i < 12; i++) {
+          if (_.nth(_.get(ctx.sparkline, ctx.currentYear), i) > 0 &&
+          !_.get(ctx.calendar, `${ctx.currentYear}.${i}`)) {
+            loadMonth(i);
+          }
+        }
+      }
     },
     guards: {
       isSparklineEmpty: (ctx) => _.isEmpty(ctx.sparkline),

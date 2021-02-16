@@ -1,7 +1,10 @@
-import React, { useState, useEffect, memo } from "react";
+import React, {
+  useState, useEffect, memo, useMemo, useCallback
+} from "react";
 import PropTypes from "prop-types";
 import ReactTooltip from "react-tooltip";
 import cx from "classnames";
+import _ from "lodash";
 
 import ArchiveLoader from "./loader";
 import { URLLoader, Icon, Toast } from "../../common";
@@ -17,22 +20,21 @@ import { useTheme } from "../../../hooks";
 
 import styles from "./urlbox.module.css";
 
-const URLBox = memo((props) => {
+const URLBox = memo(({ toggleTimeTravel, ...props }) => {
   const { showIntro, toggleIntro } = useIntro();
-  const getTS = () => {
-    if (props.redirectedTS) {
-      return props.redirectedTS;
-    }
-    return props.selectedTS;
-  };
-
+  const { theme } = useTheme();
+  const getTS = () => (props.redirectedTS ? props.redirectedTS : props.selectedTS);
   const [currentTS, setCurrentTs] = useState(getTS());
+  const dateObj = useMemo(() => getDateTimeFromTS(currentTS) || {}, [currentTS]);
   const [isSWRendered, toggleSWRender] = useState(false);
-  const dateObj = currentTS ? getDateTimeFromTS(currentTS) : {};
   const [showURLLoader, toggleURLLoader] = useState(false);
   const [showFrameLoader, toggleFrameLoader] = useState(false);
   const [showReadOnly, toggleReadOnly] = useState(false);
-  const { theme } = useTheme();
+
+  const onTimeTravelClick = useCallback(() => {
+    toggleIntro(false);
+    toggleTimeTravel();
+  }, [toggleIntro, toggleTimeTravel]);
 
   useEffect(
     () => {
@@ -41,50 +43,50 @@ const URLBox = memo((props) => {
     [props.redirectedTS, props.selectedTS]
   );
 
-  let frameLoaderTimeout;
-  const onMessage = async (request) => {
-    switch (request.message) {
-      case "__VANDAL__NAV__BEFORENAVIGATE":
-        toggleURLLoader(true);
-        if (isArchiveURL(_.get(request.data, "url"))) {
-          toggleFrameLoader(true);
-          if (frameLoaderTimeout) {
-            clearTimeout(frameLoaderTimeout);
-          }
-          frameLoaderTimeout = setTimeout(() => {
-            toggleFrameLoader(false);
-          }, 2500);
-        }
-        break;
-      case "__VANDAL__NAV__ERROR":
-        toggleURLLoader(false);
-        break;
-      case "__VANDAL__NAV__COMPLETE":
-        toggleSWRender(false);
-        toggleURLLoader(false);
-        toggleFrameLoader(false);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const checkServiceWorker = async () => {
-    if (!navigator.serviceWorker.controller) return;
-    const keys = await window.caches.keys();
-    const isPageCached = await Promise.all(keys).then(async (key) => {
-      const result = await caches.open(key);
-      const requests = await result.keys();
-      return _.some(requests, (request) => request.url === props.url);
-    });
-    if (isPageCached) {
-      toggleSWRender(true);
-    }
-  };
-
   useEffect(() => {
+    let frameLoaderTimeout;
+    const onMessage = async (request) => {
+      switch (request.message) {
+        case "__VANDAL__NAV__BEFORENAVIGATE":
+          toggleURLLoader(true);
+          if (isArchiveURL(_.get(request.data, "url"))) {
+            toggleFrameLoader(true);
+            if (frameLoaderTimeout) {
+              clearTimeout(frameLoaderTimeout);
+            }
+            frameLoaderTimeout = setTimeout(() => {
+              toggleFrameLoader(false);
+            }, 2500);
+          }
+          break;
+        case "__VANDAL__NAV__ERROR":
+          toggleURLLoader(false);
+          break;
+        case "__VANDAL__NAV__COMPLETE":
+          toggleSWRender(false);
+          toggleURLLoader(false);
+          toggleFrameLoader(false);
+          break;
+        default:
+          break;
+      }
+    };
     chrome.runtime.onMessage.addListener(onMessage);
+
+    const checkServiceWorker = async () => {
+      if (!_.get(navigator, "serviceWorker.controller")) return;
+      const keys = await window.caches.keys();
+      const isPageCached = await Promise.all(keys).then(async (key) => {
+        const result = await caches.open(key);
+        const requests = await result.keys();
+        return _.some(requests, (request) => request.url === props.url);
+      });
+      if (isPageCached) {
+        toggleSWRender(true);
+      }
+    };
     checkServiceWorker();
+
     return () => {
       chrome.runtime.onMessage.removeListener(onMessage);
     };
@@ -178,10 +180,7 @@ const URLBox = memo((props) => {
             [styles.timetravel__btn___updated]: props.sparklineLoaded,
             [styles.timetravel__btn__intro]: showIntro
           })}
-          onClick={() => {
-            toggleIntro(false);
-            props.toggleTimeTravel();
-          }}
+          onClick={onTimeTravelClick}
         >
           <Icon
             className={cx({
@@ -192,8 +191,9 @@ const URLBox = memo((props) => {
             width={22}
           />
           {showIntro && (
-            <button
-              type="button"
+            // eslint-disable-next-line jsx-a11y/interactive-supports-focus
+            // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+            <div
               className={styles.intro}
               onClick={() => {
                 toggleIntro(false);
@@ -206,7 +206,7 @@ const URLBox = memo((props) => {
                 className={styles.intro_arrow__icon}
               />
               <span className={styles.intro__text}>Get started!</span>
-            </button>
+            </div>
           )}
         </button>
       </div>
@@ -238,10 +238,10 @@ const URLBox = memo((props) => {
 }, compareProps(["redirectedTS", "selectedTS", "url", "redirectTSCollection", "showURLHistory", "showURLInfo", "showTimeTravel", "sparklineLoaded"]));
 
 URLBox.propTypes = {
-  toggleURLInfo: PropTypes.func.isRequired,
   toggleURLHistory: PropTypes.func.isRequired,
   toggleTimeTravel: PropTypes.func.isRequired,
   url: PropTypes.string.isRequired,
+  toggleURLInfo: PropTypes.func,
   redirectedTS: PropTypes.number,
   selectedTS: PropTypes.number,
   showURLHistory: PropTypes.bool,
@@ -256,6 +256,7 @@ URLBox.defaultProps = {
   showURLHistory: false,
   showTimeTravel: false,
   sparklineLoaded: false,
+  toggleURLInfo: () => {},
   showURLInfo: false
 };
 

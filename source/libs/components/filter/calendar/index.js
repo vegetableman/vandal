@@ -112,9 +112,8 @@ Calendar.propTypes = {
   date: PropTypes.string.isRequired
 };
 
-const CalendarFilter = memo((props) => {
+const CalendarFilter = memo(({ onChange, ...props }) => {
   const currentDateInstance = new Date();
-
   const [date, setDate] = useState(
     props.currentYear && props.currentMonth ?
       `${props.currentYear}-${_.padStart(props.currentMonth, 2, "0")}` :
@@ -132,18 +131,18 @@ const CalendarFilter = memo((props) => {
     [props.currentMonth, props.currentYear]
   );
 
-  const onCalendarSelect = (month, year) => {
+  const onInputCalendarSelect = useCallback((month, year) => {
     const selectedDate = `${year}-${_.padStart(month, 2, "0")}`;
     setDate(selectedDate);
-    props.onChange(selectedDate);
-  };
+    onChange(selectedDate);
+  }, [onChange]);
 
-  const onChange = useCallback((e) => {
+  const onInputCalendarChange = useCallback((e) => {
     e.persist();
     const { value: dateValue } = e.target;
     setDate(dateValue);
-    props.onChange(dateValue);
-  });
+    onChange(dateValue);
+  }, [onChange]);
 
   return (
     <div className={styles.container}>
@@ -156,6 +155,7 @@ const CalendarFilter = memo((props) => {
         <div className={styles.nav__container}>
           <div className={styles.input__container}>
             <InputCalendar
+              date={date}
               selectedMonth={props.selectedMonth}
               selectedYear={props.selectedYear}
               disabled={props.showSparkError || props.showCalendarError}
@@ -171,9 +171,8 @@ const CalendarFilter = memo((props) => {
               sparkline={props.sparkline}
               goToNext={props.goToNext}
               goToPrevious={props.goToPrevious}
-              onSelect={onCalendarSelect}
-              date={date}
-              onChange={onChange}
+              onSelect={onInputCalendarSelect}
+              onChange={onInputCalendarChange}
             />
           </div>
         </div>
@@ -263,10 +262,10 @@ CalendarFilter.propTypes = {
   onMouseLeave: PropTypes.func.isRequired,
   goToNext: PropTypes.func.isRequired,
   goToPrevious: PropTypes.func.isRequired,
-  sparkline: PropTypes.object.isRequired,
   onClick: PropTypes.func.isRequired,
   retry: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
+  sparkline: PropTypes.object,
   showCalendarLoader: PropTypes.bool,
   showSparkError: PropTypes.bool,
   showCalendarError: PropTypes.bool,
@@ -279,10 +278,11 @@ CalendarFilter.propTypes = {
   selectedYear: PropTypes.number,
   highlightedDay: PropTypes.number,
   showErrLoader: PropTypes.bool,
-  error: PropTypes.bool
+  error: PropTypes.string
 };
 
 CalendarFilter.defaultProps = {
+  sparkline: null,
   showCalendarLoader: false,
   showSparkError: false,
   showCalendarError: false,
@@ -295,7 +295,7 @@ CalendarFilter.defaultProps = {
   selectedYear: null,
   highlightedDay: null,
   showErrLoader: false,
-  error: false
+  error: null
 };
 
 export default CalendarFilterContainer;

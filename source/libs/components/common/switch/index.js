@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import PropTypes from "prop-types";
 import Switch from "react-switch";
 
@@ -7,10 +7,10 @@ const DefaultSwitch = ({
 }) => {
   const [checked, setChecked] = useState(defaultValue);
 
-  const toggleChange = (mchecked) => {
+  const toggleChange = useCallback((mchecked) => {
     setChecked(mchecked);
     onChange(mchecked);
-  };
+  }, [setChecked, onChange]);
 
   return (
     <div>

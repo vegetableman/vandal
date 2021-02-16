@@ -18,7 +18,7 @@ import {
   getDateTimeFromTS,
   countVersions,
   monthNames,
-  useEventCallback
+  useDidUpdateEffect,
 } from "../../utils";
 import CalendarFilter from "../filter/calendar";
 import GraphFilter from "../filter/graph";
@@ -33,26 +33,25 @@ import graphCalendarStyle from "../filter/graph/calendar.module.css";
 import { useTimeTravel, useTheme } from "../../hooks";
 import { colors } from "../../constants";
 import Controller from "./controller";
+import { fetchMonth } from "./timetravel.machine";
 
 const memoizedDateTimeFromTS = _.memoize(getDateTimeFromTS);
 const memoizedCountVersions = memoizeOne(countVersions);
-
-const colorFromRange = memoizeOne((min, max) => scaleLinear()
+const memoizedColorFromRange = memoizeOne((min, max) => scaleLinear()
   .domain([min, max])
   .range(["#d4f8d0", max <= 5 ? "#a6ef9c" : "#5ee64e"]));
+const memoizedCount = memoizeOne((calendar, year, month) => (_.map(_.get(calendar, `${year}.${month}`), "cnt")));
 
-let cardX;
-let cardY;
 const TimeTravel = (props) => {
   const { state, send } = useTimeTravel();
   const { context: ctx } = state;
   const { theme } = useTheme();
-
+  const cardX = useRef();
+  const cardY = useRef();
   const capacityRef = useRef(null);
+  const [isManualReload, setManualReload] = useState(false);
 
-  const memoizedCount = memoizeOne((year, month) => _.map(_.get(ctx.calendar, `${year}.${month}`), "cnt"));
-
-  const getColor = (day) => {
+  const getColor = useCallback((day) => {
     const {
       calendar,
       selectedTS,
@@ -65,7 +64,7 @@ const TimeTravel = (props) => {
       `${currentYear}.${currentMonth - 1}.${day - 1}.cnt`
     );
 
-    const cnt = memoizedCount(currentYear, currentMonth - 1);
+    const cnt = memoizedCount(calendar, currentYear, currentMonth - 1);
     const max = _.max(cnt);
     const min = _.min(cnt);
 
@@ -85,7 +84,7 @@ const TimeTravel = (props) => {
         selectedYear === currentYear;
     }
 
-    const color = colorFromRange(min, max);
+    const color = memoizedColorFromRange(min, max);
     const bgColor = color(dayCount);
 
     return {
@@ -104,21 +103,21 @@ const TimeTravel = (props) => {
           "none",
       color: match ? colors.BL_33 : "inherit"
     };
-  };
+  }, [ctx, theme]);
 
-  const onCalendarChange = (date) => {
+  const onCalendarChange = useCallback((date) => {
     const dateArr = _.split(date, "-");
     const year = _.parseInt(_.nth(dateArr, 0));
     const month = _.parseInt(_.nth(dateArr, 1));
     send("GOTO__MONTHYEAR", { payload: { year, month } });
-  };
+  }, [send]);
 
-  const onYearChange = (year) => () => send("GOTO__TS_YEAR", {
+  const onYearChange = useCallback((year) => () => send("GOTO__TS_YEAR", {
     payload: {
       month: ctx.currentMonth,
       year
     }
-  });
+  }), [send, ctx.currentMonth]);
 
   const onDateMove = useCallback((day) => (e) => {
     if (ctx.highlightedDay) return;
@@ -132,9 +131,9 @@ const TimeTravel = (props) => {
 
     const { offsetLeft, offsetTop } = e.target;
     const x = e.nativeEvent.offsetX;
-    cardX = x;
+    cardX.current = x;
     const y = e.nativeEvent.offsetY;
-    cardY = y;
+    cardY.current = y;
     const status = _.get(date, "st", []);
 
     ctx.cardRef.send({
@@ -151,13 +150,13 @@ const TimeTravel = (props) => {
         __CACHED__: _.get(date, "__CACHED__")
       }
     });
-  });
+  }, [ctx.calendar, ctx.cardRef, ctx.currentMonth, ctx.currentYear, ctx.highlightedDay]);
 
-  const onMonthChange = (selectedMonth) => () => send("GOTO__MONTHYEAR", {
+  const onMonthChange = useCallback((selectedMonth) => () => send("GOTO__MONTHYEAR", {
     payload: { year: ctx.selectedYear, month: selectedMonth }
-  });
+  }), [ctx.selectedYear, send]);
 
-  const onDateClick = (day) => (e) => {
+  const onDateClick = useCallback((day) => (e) => {
     const date = _.get(
       ctx.calendar,
       `${ctx.currentYear}.${ctx.currentMonth - 1}.${day - 1}`
@@ -173,8 +172,8 @@ const TimeTravel = (props) => {
     ctx.cardRef.send({
       type: "SHOW_CARD",
       payload: {
-        x: offsetLeft + cardX,
-        y: offsetTop + cardY + 10,
+        x: offsetLeft + cardX.current,
+        y: offsetTop + cardY.current + 10,
         ts: _.map(_.get(date, "ts"), (value, i) => ({ value, status: status[i] })),
         day,
         monthName: monthNames[Math.max(ctx.currentMonth - 1, 0)],
@@ -182,31 +181,65 @@ const TimeTravel = (props) => {
         year: ctx.currentYear
       }
     });
-  };
+  }, [ctx.calendar, ctx.cardRef, send, ctx.currentMonth, ctx.currentYear]);
 
   const onDateLeave = useCallback(() => {
     if (ctx.highlightedDay) return;
     ctx.cardRef.send("HIDE_CARD");
-  });
+  }, [ctx.cardRef, ctx.highlightedDay]);
 
-  const [isManualReload, setManualReload] = useState(false);
-
-  const onReload = () => {
+  const onReload = useCallback(() => {
     setManualReload(true);
     if (!ctx.sparkline) {
       send("RELOAD_SPARKLINE");
       return;
     }
     send({ type: "RELOAD_CALENDAR", payload: { force: true } });
-  };
+  }, [send, ctx.sparkline]);
 
-  const onRetry = () => {
+  const onRetry = useCallback(() => {
     if (!ctx.sparkline || state.matches("sparklineError")) {
       send("RELOAD_SPARKLINE_ON_ERROR");
       return;
     }
     send({ type: "RELOAD_CALENDAR_ON_ERROR", payload: { force: true } });
-  };
+  }, [send, ctx.sparkline, state]);
+
+  const onRetryMonth = useCallback(async (month, year) => {
+    send("SET_MONTH_STATE", { payload: { loading: true, month, year } });
+    const [result, error] = await fetchMonth(ctx.url, month, year);
+    if (error) {
+      send("SET_MONTH_STATE", {
+        payload: {
+          loading: false, month, year, error
+        }
+      });
+      return;
+    }
+    const calendar = _.reduce(
+      result,
+      (acc, item) => {
+        const date = _.nth(item, 0);
+        _.set(
+          acc,
+          `${year}.${month}.${_.parseInt(
+            date
+          ) - 1}.cnt`,
+          _.parseInt(_.nth(item, 2))
+        );
+        return acc;
+      },
+      ctx.calendar || {}
+    );
+    send("SET_CALENDAR", {
+      value: calendar
+    });
+    send("SET_MONTH_STATE", {
+      payload: {
+        loading: false, month, year
+      }
+    });
+  }, [send, ctx.url, ctx.calendar]);
 
   useEffect(() => {
     if (
@@ -221,7 +254,7 @@ const TimeTravel = (props) => {
     }
   });
 
-  const onCalNext = useEventCallback(
+  const onCalNext = useCallback(
     () => {
       const { currentMonth, currentYear } = ctx;
       if (currentMonth === 12) {
@@ -240,10 +273,10 @@ const TimeTravel = (props) => {
         });
       }
     },
-    [ctx.currentMonth, ctx.currentYear]
+    [ctx, send]
   );
 
-  const onCalPrevious = useEventCallback(
+  const onCalPrevious = useCallback(
     () => {
       const { currentMonth, currentYear } = ctx;
       if (currentMonth === 1) {
@@ -262,37 +295,44 @@ const TimeTravel = (props) => {
         });
       }
     },
-    [ctx.currentMonth, ctx.currentYear]
+    [ctx, send]
   );
+
+  const onCardLeave = useCallback(() => {
+    send({ type: "SET_DATE_HIGHLIGHTED", value: null });
+  }, [send]);
+
+  const onTsClick = useCallback((ts) => () => {
+    send({ type: "NAVIGATETO__TS", value: ts });
+  }, [send]);
 
   const versionCount = memoizedCountVersions(ctx.sparkline);
 
-  const onEscape = useEventCallback((e) => {
-    if (e.keyCode === 27 && _.get(ctx, "cardRef.state.context.showCard")) {
+  useEffect(() => {
+    const onClickOutside = (e) => {
+      if (!_.get(ctx, "cardRef.state.context.showCard")) return;
+      const path = _.toArray(e.composedPath());
+      if (
+        _.some(path, (node) => (
+          _.isElement(node) &&
+            node.matches &&
+            (node.matches(`.${_.get(cardStyle, "card")}`) ||
+              node.matches(`.${_.get(calendarStyle, "day")}`) ||
+              node.matches(`.${_.get(graphCalendarStyle, "day")}`))
+        ))
+      ) {
+        return;
+      }
       ctx.cardRef.send("HIDE_CARD");
       send({ type: "SET_DATE_HIGHLIGHTED", value: null });
-    }
-  }, []);
+    };
+    const onEscape = (e) => {
+      if (e.keyCode === 27 && _.get(ctx, "cardRef.state.context.showCard")) {
+        ctx.cardRef.send("HIDE_CARD");
+        send({ type: "SET_DATE_HIGHLIGHTED", value: null });
+      }
+    };
 
-  const onClickOutside = useCallback((e) => {
-    if (!_.get(ctx, "cardRef.state.context.showCard")) return;
-    const path = _.toArray(e.composedPath());
-    if (
-      _.some(path, (node) => (
-        _.isElement(node) &&
-          node.matches &&
-          (node.matches(`.${_.get(cardStyle, "card")}`) ||
-            node.matches(`.${_.get(calendarStyle, "day")}`) ||
-            node.matches(`.${_.get(graphCalendarStyle, "day")}`))
-      ))
-    ) {
-      return;
-    }
-    ctx.cardRef.send("HIDE_CARD");
-    send({ type: "SET_DATE_HIGHLIGHTED", value: null });
-  });
-
-  useEffect(() => {
     document.addEventListener("click", onClickOutside, true);
     document.addEventListener("keydown", onEscape);
 
@@ -300,7 +340,7 @@ const TimeTravel = (props) => {
       document.removeEventListener("click", onClickOutside, true);
       document.removeEventListener("keydown", onEscape);
     };
-  }, [onClickOutside, onEscape]);
+  }, []);
 
   useEffect(
     () => {
@@ -317,12 +357,16 @@ const TimeTravel = (props) => {
         });
       }
     },
-    [props.url, send, state, state.value]
+    [state.value]
   );
 
   useEffect(() => () => {
     send("CLEANUP");
-  }, [send]);
+  }, []);
+
+  useDidUpdateEffect(() => {
+    send("LOAD_OTHER_MONTHS");
+  }, [props.selectedTabIndex]);
 
   useEffect(
     () => {
@@ -336,7 +380,7 @@ const TimeTravel = (props) => {
         }
       }
     },
-    [ctx.isOverCapacity, ctx.showLimitTooltip, send]
+    [ctx.isOverCapacity, ctx.showLimitTooltip]
   );
 
   const { month: selectedMonth, year: selectedYear } = memoizedDateTimeFromTS(ctx.selectedTS) || {};
@@ -466,7 +510,10 @@ const TimeTravel = (props) => {
         defaultIndex={props.selectedTabIndex}
         className={styles.tabs}
         selectedTabClassName={styles.tab___active}
-        onSelect={props.selectTabIndex}
+        onSelect={(index) => {
+          send("SET_VIEW", { value: !index ? "calendar" : "graph" });
+          props.selectTabIndex(index);
+        }}
       >
         <TabList className={styles.tab__list}>
           <Tab className={`${styles.tab} ${styles.tab___calendar}`}>
@@ -490,6 +537,7 @@ const TimeTravel = (props) => {
         <TabPanel>
           <GraphFilter
             retry={onRetry}
+            retryMonth={onRetryMonth}
             getColor={getColor}
             onYearChange={onYearChange}
             onMonthChange={onMonthChange}
@@ -506,12 +554,8 @@ const TimeTravel = (props) => {
         selectedTS={ctx.selectedTS}
         redirectedTS={ctx.redirectedTS}
         redirectTSCollection={ctx.redirectTSCollection}
-        onCardLeave={() => {
-          send({ type: "SET_DATE_HIGHLIGHTED", value: null });
-        }}
-        onTsClick={(ts) => () => {
-          send({ type: "NAVIGATETO__TS", value: ts });
-        }}
+        onCardLeave={onCardLeave}
+        onTsClick={onTsClick}
       />
       {((!!(ctx.firstTS || ctx.lastTS || !ctx.sparkline) &&
         !state.matches("sparklineError") &&

@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 
 import React from "react";
+import memoizeOne from "memoize-one";
 import PropTypes from "prop-types";
 import {
   getDateTsFromURL,
@@ -27,10 +28,12 @@ const formatHistoryByDate = (history) => _.reduce(
   {}
 );
 
+const memoizedFormatHistoryByDate = memoizeOne(formatHistoryByDate);
+
 const URLHistory = ({
   dialogRef, history, clearHistory, onSelect
 }) => {
-  const dhistory = formatHistoryByDate(history);
+  const dhistory = memoizedFormatHistoryByDate(history);
   return (
     <div className={styles.root} ref={dialogRef}>
       <ul className={styles.list}>
