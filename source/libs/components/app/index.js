@@ -60,6 +60,7 @@ const App = (props) => {
     if (!_.get(donateState, "date")) {
       setDonateState(1);
     } else if (
+      // show donate modal after 5 days of usage, every 30 days and first of month
       (dateDiffInDays(new Date(_.get(donateState, "date")), new Date()) > 5 &&
       _.get(donateState, "__v") === 1) ||
       (dateDiffInDays(new Date(_.get(donateState, "date")), new Date()) > 30 &&
@@ -228,7 +229,7 @@ const App = (props) => {
                   className={styles.donate__button}
                   onClick={() => {
                     window.open(
-                      "https://archive.org/donate/?ref=vandal",
+                      "https://archive.org/donate/?referrer=vandal",
                       "_blank"
                     );
                   }}

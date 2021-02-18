@@ -40,6 +40,8 @@ export default class CarouselView extends React.Component {
     return (
       <div
         role="dialog"
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
+        tabIndex={0}
         className={styles.carousel}
         onKeyDown={this.handleKeydown}
         ref={(_ref) => {

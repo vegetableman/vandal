@@ -191,7 +191,6 @@ const URLBox = memo(({ toggleTimeTravel, ...props }) => {
             width={22}
           />
           {showIntro && (
-            // eslint-disable-next-line jsx-a11y/interactive-supports-focus
             // eslint-disable-next-line jsx-a11y/no-static-element-interactions
             <div
               className={styles.intro}

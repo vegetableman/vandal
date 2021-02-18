@@ -23,21 +23,6 @@
 }
 
 @font-face {
-  font-weight: bold;
-  font-family: "VANDAL__Cousine";
-  font-style: normal;
-  src:
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Cousine-Bold.eot?#iefix")
-    format("embedded-opentype"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Cousine-Bold.woff")
-    format("woff"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Cousine-Bold.ttf")
-    format("truetype"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Cousine-Bold.svg#Cousine-Bold")
-    format("svg");
-}
-
-@font-face {
   font-weight: normal;
   font-family: "VANDAL__Inconsolata";
   font-style: normal;

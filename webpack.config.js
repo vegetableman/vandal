@@ -1,6 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const DotEnvPlugin = require("dotenv-webpack");
 const getCSSModuleLocalIdent = require("react-dev-utils/getCSSModuleLocalIdent");
@@ -84,7 +85,18 @@ module.exports = () => ({
     new DotEnvPlugin()
   ],
   optimization: {
-    // Without this, function names will be garbled and enableFeature won't work
-    concatenateModules: true
+    concatenateModules: true,
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,
+        terserOptions: {
+          mangle: false,
+          output: {
+            beautify: true,
+            indent_level: 4
+          }
+        }
+      })
+    ]
   }
 });

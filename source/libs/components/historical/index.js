@@ -215,45 +215,45 @@ const Historical = ({ onClose, openURL, ...props }) => {
       tabIndex="0"
     >
       {ctx.showTermModal && (
-      <Terms
-        onClose={() => {
-          send("CLOSE_TERM_MODAL");
-        }}
-      />
+        <Terms
+          onClose={() => {
+            send("CLOSE_TERM_MODAL");
+          }}
+        />
       )}
       {state.matches("historicalUnAvailable") && (
-      <div className={styles.disabled__overlay}>
-        <div className={styles.disabled__modal}>
-          <div className={styles.disabled__cover__container}>
-            <img alt="warning" src={chrome.runtime.getURL("images/warning.png")} />
-          </div>
-          <div style={{ padding: "0 10px 10px 10px" }}>
-            <h2 style={{ fontSize: "14px" }}>
-              Historical View is no longer operational!
-            </h2>
-            <p style={{ fontSize: "14px" }}>
-              <i>
-                &quot;No! I am out of Power! Wish I hadn&apos;t destroyed this planet
-                and disrupted the gravitational balance in the solar
-                system.... Well, time for lunch !&quot;
-              </i>
-              {" "}
-              - Vandal
-            </p>
-            <span style={{ fontSize: "14px" }}>
-              To know more, click
-              {" "}
-              <a
-                rel="noopener noreferrer"
-                target="_blank"
-                href="https://github.com/vegetableman/vandal/issues/1"
-              >
-                here
-              </a>
-            </span>
+        <div className={styles.disabled__overlay}>
+          <div className={styles.disabled__modal}>
+            <div className={styles.disabled__cover__container}>
+              <img alt="warning" src={chrome.runtime.getURL("images/warning.png")} />
+            </div>
+            <div style={{ padding: "0 10px 10px 10px" }}>
+              <h2 style={{ fontSize: "14px" }}>
+                Historical View is no longer operational!
+              </h2>
+              <p style={{ fontSize: "14px" }}>
+                <i>
+                  &quot;No! I am out of Power! Wish I hadn&apos;t destroyed this planet
+                  and disrupted the gravitational balance in the solar
+                  system.... Well, time for lunch !&quot;
+                </i>
+                {" "}
+                - Vandal
+              </p>
+              <span style={{ fontSize: "14px" }}>
+                To know more, click
+                {" "}
+                <a
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href="https://github.com/vegetableman/vandal/issues/1"
+                >
+                  here
+                </a>
+              </span>
+            </div>
           </div>
         </div>
-      </div>
       )}
       <div role="dialog" className={styles.container} onKeyDown={onKeyDown} tabIndex="0">
         <div
@@ -359,9 +359,9 @@ const Historical = ({ onClose, openURL, ...props }) => {
         )}
       </div>
       <div className={styles.action__container}>
-        <Icon name="close" className={styles.close} onClick={props.onClose} />
+        <Icon name="close" className={styles.close} onClick={onClose} />
       </div>
-      {showInfoModal && state.matches("loadingHistorical") ? (
+      {showInfoModal ? (
         <div className={styles.info__modal__container}>
           <CSSTransition
             in
@@ -395,30 +395,36 @@ const Historical = ({ onClose, openURL, ...props }) => {
                   timetravel machine has been stolen by a colony of giant
                   roaches.
                 </p>
-                <p style={{ fontSize: 14 }}>
+                <p style={{ fontSize: 14, marginBottom: 0 }}>
                   Resources are low.
                   {" "}
-                  <a
-                    href="https://archive.org/donate/?ref=vandal"
-                    target="blank"
-                    style={{ color: "#a50025" }}
-                  >
-                    Fund the Internet Archive to keep Vandal running.
-                  </a>
+                  Fund the Internet Archive to keep Vandal running.
                 </p>
               </div>
-              <button
-                type="button"
-                className={styles.info__button}
-                onClick={() => {
-                  toggleInfoModal(false);
-                  historicalDB.setInfo(1);
-                }}
-              >
-                <span className={styles.info__button__text}>Got it</span>
-                {" "}
-                <Icon name="thumbsUp" fill="#D2B13D" width="18" />
-              </button>
+              <div className={styles.info__container}>
+                <button
+                  type="button"
+                  className={styles.info__button}
+                  onClick={() => {
+                    window.open("https://archive.org/donate/?referrer=vandal", "_blank");
+                    toggleInfoModal(false);
+                    historicalDB.setInfo(1);
+                  }}
+                >
+                  <span className={styles.info__button__text}>Donate</span>
+                </button>
+                <div
+                  role="link"
+                  className={styles.info__link}
+                  tabIndex={0}
+                  onClick={() => {
+                    toggleInfoModal(false);
+                    historicalDB.setInfo(1);
+                  }}
+                >
+                  Later
+                </div>
+              </div>
               <h3
                 style={{
                   fontSize: "13px",

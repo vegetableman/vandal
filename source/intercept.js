@@ -219,8 +219,7 @@ class NavigationHandler {
 
   // https://github.com/segmentio/chrome-sidebar/blob/ae9f07e97bb08927631d1f2eb5fb31e965959bde/examples/github-trending/src/background.js
   headerReceivedHandler = (details) => {
-    log("Header Received", details.url, details.statusCode, details, isValidTab(details.tabId),
-      isValidFrame(details.tabId, details.frameId));
+    log("Header Received");
 
     // Return on youtube video or invalid sub-frames
     if (details.url.indexOf(".googlevideo.com/videoplayback") > -1 ||
