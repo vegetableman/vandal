@@ -446,27 +446,20 @@ header > section {
   align-items: center;
   background-repeat: repeat-x;
   background-size: 25px;
-  min-height: 210px;
+  min-height: 280px;
   padding-top: 7px;
 }
 .action-container > .message {
-  font-size: 32px;
+  font-size: 16px;
   font-family: "Fenix";
   color: #333;
+  line-height: 21px;
+  max-width: 600px;
 }
 .action-container .download {
   margin-top: 10px;
 }
-@media only screen and (max-width: 700px) {
-  .action-container > .message {
-    width: 80%;
-    text-align: center;
-  }
-}
 @media only screen and (max-width: 486px) {
-  .action-container > .message {
-    font-size: 21px;
-  }
   .action-container .download {
     margin-top: 0;
   }
