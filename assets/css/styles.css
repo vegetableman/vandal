@@ -98,7 +98,7 @@ header > section {
   }
 }
 .intro-bubble {
-  background-image: url("assets/images/intro-bubble.svg");
+  background-image: url("../images/intro-bubble.svg");
   margin-top: 3px;
   height: 93px;
   width: 381px;
@@ -117,7 +117,7 @@ header > section {
   top: 10px;
 }
 .switch-bubble {
-  background-image: url("assets/images/switch-bubble.svg");
+  background-image: url("../images/switch-bubble.svg");
   height: 68px;
   width: 380px;
 }
@@ -244,7 +244,7 @@ header > section {
     flex-direction: column-reverse;
   }
   .switch-bubble {
-    background-image: url("assets/images/bubble.svg");
+    background-image: url("../images/bubble.svg");
     height: 82px;
     width: 334px;
     transform: scale(0.9) translate(2%, -10px);
@@ -275,7 +275,7 @@ header > section {
   max-width: 705px;
 }
 .controls-bubble {
-  background-image: url("assets/images/controls-bubble.svg");
+  background-image: url("../images/controls-bubble.svg");
   position: relative;
   height: 86px;
   width: 321px;
@@ -312,7 +312,7 @@ header > section {
   padding: 8px 10px;
 }
 .history-bubble {
-  background-image: url("assets/images/history-bubble.svg");
+  background-image: url("../images/history-bubble.svg");
   height: 83px;
   width: 381px;
   position: relative;
@@ -371,7 +371,7 @@ header > section {
   width: 100%;
 }
 .drawer-bubble {
-  background-image: url("assets/images/drawer-bubble.svg");
+  background-image: url("../images/drawer-bubble.svg");
   height: 100px;
   width: 397px;
   position: relative;
@@ -421,7 +421,7 @@ header > section {
   margin-top: 30px;
 }
 .historical-bubble {
-  background-image: url("assets/images/historical-bubble.svg");
+  background-image: url("../images/historical-bubble.svg");
   height: 100px;
   width: 397px;
   position: relative;
@@ -467,7 +467,7 @@ header > section {
 .footer {
   display: flex;
   align-items: flex-end;
-  background-image: url("assets/images/pattern.png");
+  background-image: url("../images/pattern.png");
   background-repeat: repeat-x;
   background-size: 20px;
   min-height: 90px;
