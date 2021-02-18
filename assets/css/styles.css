@@ -443,7 +443,7 @@ header > section {
   align-items: center;
   background-repeat: repeat-x;
   background-size: 25px;
-  min-height: 280px;
+  min-height: 300px;
   padding-top: 7px;
 }
 .action-container > .message {
