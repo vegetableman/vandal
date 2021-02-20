@@ -6,7 +6,7 @@ import PerfectScrollbar from "perfect-scrollbar";
 import cx from "classnames";
 import PropTypes from "prop-types";
 
-import { toTwelveHourTime, compareProps } from "../../../utils";
+import { toTwelveHourTime, compareProps, useDidUpdateEffect } from "../../../utils";
 import Icon from "../icon";
 
 import styles from "./card.module.css";
@@ -125,11 +125,14 @@ const Card = memo((props) => {
     __CACHED__
   } = props;
 
-  useEffect(
+  useDidUpdateEffect(
     () => {
-      if (_.isNull(showCard)) return;
+      if (!_.isEmpty(snapshots)) {
+        return;
+      }
+
       if (showCard) {
-        if (!__CACHED__ && _.isEmpty(snapshots)) {
+        if (!__CACHED__) {
           loadSnaphots(
             `${year}${_.padStart(month, 2, "0")}${_.padStart(day, 2, "0")}`
           );
@@ -138,6 +141,7 @@ const Card = memo((props) => {
         }
       } else if (!__CACHED__) {
         cancelLoadSnapshots();
+        abort();
       }
     },
     [showCard]
@@ -167,7 +171,8 @@ const Card = memo((props) => {
         </button>
       ) : null}
       <SnapshotList
-        loadingSnapshots={loadingSnapshots || (!__CACHED__ && _.isEmpty(snapshots))}
+        loadingSnapshots={loadingSnapshots || (!__CACHED__ && _.isEmpty(snapshots) &&
+          !snapshotsError)}
         snapshots={snapshots}
         selectedTS={selectedTS}
         redirectedTS={redirectedTS}

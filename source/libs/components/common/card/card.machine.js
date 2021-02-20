@@ -21,11 +21,7 @@ const cardMachine = Machine(
           date: _.get(e, "payload.date", ctx.date)
         }))
       },
-      TOGGLE_CARD: {
-        actions: assign({
-          showCard: (_ctx, e) => e.value
-        })
-      },
+      // No target is set to avoid state reset on repeated mouseover events on the day
       SHOW_CARD: {
         actions: assign({
           showCard: true,
@@ -33,6 +29,7 @@ const cardMachine = Machine(
         })
       },
       HIDE_CARD: {
+        target: "idle",
         actions: assign({
           showCard: false,
           card: null
