@@ -20,12 +20,15 @@ class List extends React.Component {
   }
 
   render() {
-    const { options, handleOption, dialogRef } = this.props;
+    const {
+      options, handleOption, dialogRef, listClass,
+      listItemClass
+    } = this.props;
     return (
       <ul
         className={cx({
+          [listClass]: !!listClass,
           [styles.list]: true,
-          [this.props.listClass]: !!this.props.listClass
         })}
         ref={dialogRef}
       >
@@ -33,7 +36,7 @@ class List extends React.Component {
           <li
             className={cx({
               [styles.list__item]: true,
-              [this.props.listItemClass]: !!this.props.listItemClass
+              [listItemClass]: !!listItemClass
             })}
             key={index}
           >
