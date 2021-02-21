@@ -47,6 +47,8 @@ body {
   display: flex;
   align-items: center;
   color: #333;
+  margin-right: 35px;
+  text-align: right;
 }
 @media only screen and (max-width: 486px) {
   .built-info {
@@ -122,10 +124,13 @@ header > section {
   width: 380px;
 }
 .lead {
+  margin-top: 10px;
+  max-width: 600px;
   color: #5a5049;
   font-family: "Fenix";
-  margin-top: 10px;
   font-size: 18px;
+  line-height: 25px;
+  text-align: center;
 }
 @media only screen and (max-width: 486px) {
   .lead {
