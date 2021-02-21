@@ -441,10 +441,22 @@ header > section {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-repeat: repeat-x;
-  background-size: 25px;
-  min-height: 300px;
+  background-image: url("../images/moebius.png");
+  background-size: 100% 400px;
+  background-position-y: -50px;
+  min-height: 350px;
   padding-top: 7px;
+}
+@media only screen and (max-width: 1000px) {
+  .action-container {
+    background-position-y: 0;
+    background-size: cover;
+  }
+}
+@media only screen and (max-width: 460px) {
+  .action-container {
+    background: none;
+  }
 }
 .action-container > .message {
   font-size: 16px;
