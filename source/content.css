@@ -172,6 +172,9 @@ body {
   --vandal-overlay-background-color: #777777bf;
   --vandal-overlay-text-color: #fff;
   --vandal-overlay-arrow-color: #000;
+
+  /* About */
+  --vandal-modal-background-color: #f6f6f6;
 }
 
 .vandal[data-theme="dark"] {
@@ -284,6 +287,9 @@ body {
   --vandal-overlay-background-color: #1e1e23bf;
   --vandal-overlay-text-color: #eac030;
   --vandal-overlay-arrow-color: #fff;
+
+  /* About */
+  --vandal-modal-background-color: #f3f0ea;
 }
 
 .vandal,

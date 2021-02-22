@@ -115,6 +115,7 @@ const About = ({ toggleAbout }) => (
           >
             Bhuvan
           </a>
+          ,
           <a rel="noreferrer" href="https://thenounproject.com/cosmac/" target="_blank">
             Sewon Park
           </a>
