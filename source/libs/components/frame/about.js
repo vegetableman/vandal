@@ -39,10 +39,10 @@ const About = ({ toggleAbout }) => (
       <div className={styles.about}>
         <div style={{ fontSize: 14 }}>
           <div>
-            Created by: Vignesh Anand
+            Built by: Vignesh Anand
             {" "}
-            <a rel="noreferrer" href="https://twitter.com/vgnanand" target="_blank">
-              @vgnanand
+            <a rel="noreferrer" href="https://twitter.com/vivxanand" target="_blank">
+              @vivxanand
             </a>
           </div>
           <div>
@@ -59,6 +59,11 @@ const About = ({ toggleAbout }) => (
             {" "}
             <a rel="noreferrer" href="https://github.com/vegetableman/vandal" target="_blank">
               Github
+            </a>
+            ,
+            &nbsp;
+            <a rel="noreferrer" href="https://github.com/vegetableman/vandal/issues/new/choose" target="_blank">
+              Report Issue
             </a>
           </div>
         </div>
