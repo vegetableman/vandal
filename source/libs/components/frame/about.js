@@ -50,13 +50,6 @@ const About = ({ toggleAbout }) => (
             </a>
           </div>
           <div>
-            Built using the
-            {" "}
-            <img alt="wayback" width={78} height={22} className={styles.wayback_logo} src={chrome.runtime.getURL("images/wayback.png")} />
-            {" "}
-            API by Internet Archive.
-          </div>
-          <div>
             Source Code:
             {" "}
             <a rel="noreferrer" href="https://github.com/vegetableman/vandal" target="_blank">
@@ -67,6 +60,13 @@ const About = ({ toggleAbout }) => (
             <a rel="noreferrer" href="https://github.com/vegetableman/vandal/issues/new/choose" target="_blank">
               Report Issue
             </a>
+          </div>
+          <div>
+            Built using the
+            {" "}
+            <img alt="wayback" width={78} height={22} className={styles.wayback_logo} src={chrome.runtime.getURL("images/wayback.png")} />
+            {" "}
+            API by Internet Archive.
           </div>
         </div>
         <div className={styles.ack}>
