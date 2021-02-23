@@ -291,23 +291,18 @@ header > section {
   top: 14px;
 }
 .control-image-container {
-  background: #f8f7f7;
+  background: #ffffff;
   border-radius: 3px;
-  border: 1px solid #e8e8e8;
+  border: 1px solid #c7c7c7;
   text-align: center;
   padding: 10px 10px 5px 10px;
 }
-.control-image-container:hover,
-.history-image-container:hover,
-.drawer-image-container:hover {
-  background-color: #ffffff;
-}
 .history-image-container {
-  background: #f8f7f7;
+  background: #ffffff;
   border-radius: 3px;
-  border: 1px solid #e8e8e8;
+  border: 1px solid #c7c7c7;
   text-align: center;
-  padding: 8px 10px;
+  padding: 5px 10px;
 }
 .drawer-image-container {
   background: #f8f7f7;
