@@ -316,7 +316,7 @@ const Frame = memo(({ onExit, ...props }) => {
             <div
               className={styles.donate__btn}
               data-for="vandal-donate"
-              data-tip="Donate to Archive"
+              data-tip="Donate to Internet Archive"
             >
               <a href="https://archive.org/donate/?referrer=vandal" target="_blank" rel="noopener noreferrer">
                 <Icon

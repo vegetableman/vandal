@@ -9,7 +9,6 @@
     "storage",
     "unlimitedStorage",
     "activeTab",
-    "pageCapture",
     "webRequest",
     "webRequestBlocking",
     "webNavigation",
@@ -18,9 +17,7 @@
     "https://*/*",
     "https://web.archive.org/*",
     "https://archive.org/*",
-    "https://zzgi3cdqi7.execute-api.us-east-2.amazonaws.com/*",
     "*://d1smdru0lrhqpr.cloudfront.net/*",
-    "http://service.prerender.cloud/*",
     "*://*/*"
   ],
   "browser_action": {
@@ -33,7 +30,6 @@
   "background": {
     "scripts": [
       "background.js",
-      "sw.js",
       "intercept.js"
     ],
     "persistent": true

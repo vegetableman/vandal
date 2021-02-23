@@ -43,7 +43,7 @@ chrome.runtime.onConnect.addListener((port) => {
 chrome.runtime.onMessage.addListener(async (request) => {
   const { message, data } = request;
   if (message) {
-    chrome.tabs.query({ active: true }, (tabs) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       chrome.tabs.sendMessage(tabs[0].id, { message, data });
     });
   }
