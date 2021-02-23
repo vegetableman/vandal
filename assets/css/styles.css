@@ -88,8 +88,8 @@ header > section {
 }
 .bubble > span {
   font-family: "Fira Code";
-  font-size: 13px;
-  line-height: 21px;
+  font-size: 14px;
+  line-height: 23px;
   position: relative;
   padding: 0 15px;
 }
@@ -102,8 +102,8 @@ header > section {
 .intro-bubble {
   background-image: url("../images/intro-bubble.svg");
   margin-top: 3px;
-  height: 93px;
-  width: 381px;
+  height: 97px;
+  width: 396px;
 }
 @media only screen and (max-width: 486px) {
   .intro-bubble {
@@ -120,15 +120,15 @@ header > section {
 }
 .switch-bubble {
   background-image: url("../images/switch-bubble.svg");
-  height: 68px;
-  width: 380px;
+  height: 72px;
+  width: 400px;
 }
 .lead {
   margin-top: 10px;
   max-width: 600px;
   color: #5a5049;
   font-family: "Fenix";
-  font-size: 18px;
+  font-size: 19px;
   line-height: 25px;
   text-align: center;
 }
@@ -282,13 +282,13 @@ header > section {
 .controls-bubble {
   background-image: url("../images/controls-bubble.svg");
   position: relative;
-  height: 86px;
-  width: 321px;
+  height: 92px;
+  width: 342px;
   left: -90px;
   top: 10px;
 }
 .controls-bubble > span {
-  top: 12px;
+  top: 14px;
 }
 .control-image-container {
   background: #f8f7f7;
@@ -318,8 +318,8 @@ header > section {
 }
 .history-bubble {
   background-image: url("../images/history-bubble.svg");
-  height: 83px;
-  width: 381px;
+  height: 89px;
+  width: 410px;
   position: relative;
   right: -270px;
   top: 15px;
@@ -377,8 +377,8 @@ header > section {
 }
 .drawer-bubble {
   background-image: url("../images/drawer-bubble.svg");
-  height: 100px;
-  width: 397px;
+  height: 104px;
+  width: 410px;
   position: relative;
   top: 15px;
 }
@@ -427,8 +427,8 @@ header > section {
 }
 .historical-bubble {
   background-image: url("../images/historical-bubble.svg");
-  height: 100px;
-  width: 397px;
+  height: 108px;
+  width: 425px;
   position: relative;
   top: 15px;
 }
