@@ -5,6 +5,7 @@ html {
   color: #333333;
   font-size: 16px;
   line-height: 1.15;
+  min-width: 320px;
 }
 body {
   background-color: #f2f1ea;
@@ -85,6 +86,17 @@ header > section {
   background-repeat: no-repeat;
   background-size: cover;
   transform: scale(0.9);
+}
+.link {
+  color:#864D23;
+  border-bottom: 1px dashed;
+  font-weight: bold;
+  text-decoration: none;
+}
+@media only screen and (max-width: 1242px) {
+  .bubble {
+    transform: scale(0.8);
+  }
 }
 .bubble > span {
   font-family: "Fira Code";
@@ -206,13 +218,14 @@ header > section {
 @media only screen and (max-width: 600px) {
   .screencast-message {
     font-size: 0.4rem;
+    width: 90%;
   }
 }
 .screencast > video {
   width: 1100px;
   border-radius: 3px;
 }
-@media only screen and (max-width: 1128px) {
+@media only screen and (max-width: 1242px) {
   .screencast {
     display: flex;
     flex-direction: column;
@@ -237,12 +250,13 @@ header > section {
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  min-height: 400px;
 }
 .switch-image {
   width: 90%;
   max-width: 700px;
 }
-@media only screen and (max-width: 1128px) {
+@media only screen and (max-width: 1242px) {
   .switch > .group {
     align-items: center;
     justify-content: center;
@@ -250,9 +264,9 @@ header > section {
   }
   .switch-bubble {
     background-image: url("../images/bubble.svg");
-    height: 82px;
-    width: 334px;
-    transform: scale(0.9) translate(2%, -10px);
+    height: 86px;
+    width: 350px;
+    transform: scale(0.8) translate(2%, -10px);
     margin-top: 15px;
   }
   .switch-bubble > span {
@@ -272,7 +286,7 @@ header > section {
   }
 }
 .controls-image {
-  height: 250px;
+  height: 242px;
 }
 .history-image {
   width: 100%;
@@ -342,7 +356,7 @@ header > section {
   flex-direction: column;
   align-items: center;
 }
-@media only screen and (max-width: 1128px) {
+@media only screen and (max-width: 1242px) {
   .features {
     padding: 50px 0;
   }
@@ -368,32 +382,37 @@ header > section {
 }
 .drawer-image {
   max-width: 900px;
-  width: 100%;
+  width: 90%;
 }
 .drawer-bubble {
   background-image: url("../images/drawer-bubble.svg");
   height: 104px;
-  width: 410px;
+  width: 415px;
   position: relative;
   top: 15px;
 }
 .drawer-bubble > span {
   top: 15px;
 }
-@media only screen and (max-width: 486px) {
+@media only screen and (max-width: 396px ) {
   .history-bubble {
-    height: 69px;
-    width: 319px;
+    height: 89px;
+    width: 355px;
   }
   .history-bubble > span {
-    top: 12px;
+    top: 5px;
   }
+}
+@media only screen and (max-width: 486px) {
   .drawer-bubble {
-    height: 81px;
+    background-size: 320px 100px;
+    background-position-y: -3px;
+    height: 93px;
     width: 321px;
   }
   .drawer-bubble > span {
     top: 12px;
+    line-height: 17px;
   }
 }
 .historical {
@@ -403,13 +422,13 @@ header > section {
   background: #fdf6e2;
   padding: 50px 100px 100px 100px;
 }
-@media only screen and (max-width: 1128px) {
+@media only screen and (max-width: 1242px) {
   .historical {
     padding-left: 0;
     padding-right: 0;
   }
 }
-.historical > .title {
+.title {
   font-family: "Fenix";
   color: #864d23;
   font-size: 21px;
@@ -419,12 +438,16 @@ header > section {
 .historical-image {
   width: 80%;
   margin-top: 30px;
+  border-radius: 3px;
 }
 .historical-bubble {
   background-image: url("../images/historical-bubble.svg");
-  height: 108px;
-  width: 425px;
+  height: 111px;
+  width: 442px;
   position: relative;
+  top: 15px;
+}
+.historical-bubble > span {
   top: 15px;
 }
 @media only screen and (max-width: 486px) {
@@ -432,9 +455,45 @@ header > section {
     height: 82px;
     width: 327px;
   }
+  .historical-bubble > span {
+    top: 12px;
+  }
 }
-.historical-bubble > span {
-  top: 15px;
+.faq {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 0 50px 0;
+}
+.faq-wrapper {
+  padding: 30px 0 0 0;
+  max-width: 600px;
+  width: 90%;
+}
+.faq-details {
+  background-color: white;
+  border: 1px solid #c7c7c7;
+  margin: 0 auto 15px;
+  padding: 10px 10px;
+}
+.faq-summary {
+  font-family: 'Fenix';
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+}
+.faq-details > p {
+  font-family: 'Fenix';
+  line-height: 21px;
+  padding: 0 10px;
+}
+.faq-details li {
+  font-family: 'Fenix';
+  line-height: 21px;
+  padding: 7px 0;
+}
+.action {
+  background: #F7FAF5;
 }
 .action-container {
   display: flex;
@@ -491,7 +550,7 @@ header > section {
   width: 1200px;
   margin-bottom: 28px;
 }
-@media only screen and (max-width: 1128px) {
+@media only screen and (max-width: 1242px) {
   .footer > .wrapper {
     padding: 0 8%;
   }
