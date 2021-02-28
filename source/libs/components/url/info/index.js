@@ -103,7 +103,7 @@ const URLInfo = memo(
           </span>
           {" "}
           reflects the time on which Wayback Machine archived the page and not
-          the actual page update time by the website owner.
+          the time at which website owner updated the page.
         </div>
       </div>
     );

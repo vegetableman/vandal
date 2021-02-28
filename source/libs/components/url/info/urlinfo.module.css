@@ -13,7 +13,6 @@
   border-left: 1px solid var(--vandal-menu-border-color);
   border-bottom-right-radius: 3px;
   border-bottom-left-radius: 3px;
-  user-select: none;
 }
 
 .list {
