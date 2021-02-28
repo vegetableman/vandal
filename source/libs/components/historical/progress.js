@@ -53,6 +53,9 @@ const Progress = ({ current, total, show }) => (
           {" "}
           snapshots...
         </div>
+        <div style={{ fontSize: 12, fontWeight: "bold" }}>
+          Meanwhile, you can grab some coffee ☕
+        </div>
         <div style={{ fontSize: 12, paddingTop: 5, fontStyle: "italic" }}>
           Note: This process will take a while to reduce load on Archive
           servers.
