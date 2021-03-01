@@ -45,8 +45,8 @@ const About = ({ toggleAbout }) => (
           <div>
             Built by: Vignesh Anand
             {" "}
-            <a rel="noreferrer" href="https://twitter.com/vivxanand" target="_blank">
-              @vivxanand
+            <a rel="noreferrer" href="https://twitter.com/vghanand" target="_blank">
+              @vghanand
             </a>
           </div>
           <div>

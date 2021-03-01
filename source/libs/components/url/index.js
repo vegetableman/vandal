@@ -40,7 +40,7 @@ const URL = memo(({ toggleTimeTravel, showTimeTravel, ...props }) => {
     if (service.state.matches("menus.info.open")) {
       send("TOGGLE_INFO");
     }
-  }, [send, service.state, showTimeTravel, toggleTimeTravel]);
+  }, [send, service, showTimeTravel, toggleTimeTravel]);
 
   const onToggleTimeTravel = useCallback(() => {
     toggleTimeTravel();
@@ -50,7 +50,7 @@ const URL = memo(({ toggleTimeTravel, showTimeTravel, ...props }) => {
     if (service.state.matches("menus.info.open")) {
       send("TOGGLE_INFO");
     }
-  }, [send, service.state, toggleTimeTravel]);
+  }, [send, service, toggleTimeTravel]);
 
   const onToggleURLInfo = useCallback(() => {
     send("TOGGLE_INFO");
@@ -60,7 +60,7 @@ const URL = memo(({ toggleTimeTravel, showTimeTravel, ...props }) => {
     if (showTimeTravel) {
       toggleTimeTravel();
     }
-  }, [service.state, send, showTimeTravel, toggleTimeTravel]);
+  }, [service, send, showTimeTravel, toggleTimeTravel]);
 
   const onInfoClose = useCallback(() => {
     send("TOGGLE_INFO");

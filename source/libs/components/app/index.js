@@ -65,7 +65,8 @@ const App = (props) => {
       _.get(donateState, "__v") === 1) ||
       (dateDiffInDays(new Date(_.get(donateState, "date")), new Date()) > 30 &&
         _.get(donateState, "__v") === 2) ||
-      (_.get(donateState, "__v") === 2 && new Date().getDate() === 1)
+      (_.get(donateState, "__v") === 2 && new Date().getDate() === 1 &&
+      dateDiffInDays(new Date(_.get(donateState, "date")), new Date()) !== 0)
     ) {
       toggleDonateModal(true);
       setDonateState(2);

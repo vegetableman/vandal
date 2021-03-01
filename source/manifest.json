@@ -15,9 +15,6 @@
     "tabs",
     "http://*/*",
     "https://*/*",
-    "https://web.archive.org/*",
-    "https://archive.org/*",
-    "*://d1smdru0lrhqpr.cloudfront.net/*",
     "*://*/*"
   ],
   "browser_action": {
