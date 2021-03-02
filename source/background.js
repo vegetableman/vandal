@@ -3,8 +3,8 @@ const { fetch } = require("./libs/utils");
 const requests = {};
 
 chrome.browserAction.onClicked.addListener(() => {
-  chrome.tabs.insertCSS({ file: "content.css" });
-  chrome.tabs.executeScript({ file: "content.js" });
+  chrome.tabs.insertCSS({ file: "build/content.css" });
+  chrome.tabs.executeScript({ file: "build/content.js" });
 });
 
 chrome.runtime.onConnect.addListener((port) => {

@@ -29,7 +29,7 @@ const About = ({ toggleAbout }) => (
           className={styles.icon}
           width={90}
           height={90}
-          src={chrome.runtime.getURL("images/icon-black.png")}
+          src={chrome.runtime.getURL("build/images/icon-black.png")}
         />
         <img
           alt="logo"

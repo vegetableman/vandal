@@ -21,7 +21,7 @@ async function onDomReady() {
 
   // use iframe.html as it's a web accessible resource
   // / to avoid blocked by client errors
-  const baseURL = chrome.runtime.getURL("iframe.html");
+  const baseURL = chrome.runtime.getURL("build/iframe.html");
   const frame = document.createElement("iframe");
 
   let url = new URL(window.location.href);

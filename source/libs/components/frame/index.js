@@ -222,7 +222,7 @@ const Frame = memo(({ onExit, ...props }) => {
             <img
               alt="logo"
               className={styles.logo}
-              src={chrome.runtime.getURL("images/icon.png")}
+              src={chrome.runtime.getURL("build/images/icon.png")}
             />
           </div>
           <div className={styles.navigation}>

@@ -151,7 +151,7 @@ class NavigationHandler {
     log("Dom Loaded");
 
     chrome.tabs.executeScript(tabId, {
-      file: "frame.js",
+      file: "build/frame.js",
       frameId,
       matchAboutBlank: true
     });

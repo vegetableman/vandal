@@ -377,7 +377,7 @@ const DrawerContainer = (props) => {
   return (
     <ShadowDOM
       include={[
-        "chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/vandal.css"
+        "chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/vandal.css"
       ]}
     >
       <div>
