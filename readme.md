@@ -7,12 +7,24 @@ ___
 
 ![](docs/sample.gif)
 
- > Vandal is a browser extension that simplifies the Wayback machine interface.
+ > Vandal is a browser extension that helps you quickly navigate the web archive without leaving the current tab.
 
 - [Why?](#why)
+- [Features](#features)
+- [Limitations](#limitations)
+- [Security risks](#security)
+- [Comparison to Wayback Machine](#comparison)
+- [Technologies Used](#stack)
 
 ## Why?
-The goal of this project is to present an alternate navigation interface focused on ease of usage. I found the navigation 
+The goal of this project is to present an alternate navigation interface focused on ease-of-use. At the same time, it tries to capture the essence of time-travel in it's own whimsical way. 
+
+## Features
+Vandal supports the following features:
+
+
+## Comparison to Wayback Machine
+It's more of a subset to the mighty machine
 
 
 
