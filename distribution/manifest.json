@@ -1,0 +1,56 @@
+{
+  "name": "Vandal",
+  "version": "0.0.0",
+  "description": "Navigator for Web Archive",
+  "homepage_url": "https://github.com/vegetableman/vandal",
+  "manifest_version": 2,
+  "minimum_chrome_version": "58",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "activeTab",
+    "webRequest",
+    "webRequestBlocking",
+    "webNavigation",
+    "tabs",
+    "*://*/*"
+  ],
+  "browser_action": {
+    "default_icon": "icon.png",
+    "browser_style": true
+  },
+  "icons": {
+    "128": "icon.png"
+  },
+  "background": {
+    "scripts": [
+      "build/background.js",
+      "build/intercept.js"
+    ],
+    "persistent": true
+  },
+  "web_accessible_resources": [
+    "build/images/*",
+    "build/vandal.css",
+    "build/fonts/sourcesanspro-regular-webfont.woff",
+    "build/fonts/sourcesanspro-regular-webfont.woff2",
+    "build/fonts/Cousine-Regular.woff",
+    "build/fonts/Cousine-Regular.ttf",
+    "build/fonts/Cousine-Regular.svg",
+    "build/fonts/Cousine-Regular.eot",
+    "build/fonts/Cousine-Bold.ttf",
+    "build/fonts/Cousine-Bold.woff",
+    "build/fonts/Cousine-Bold.svg",
+    "build/fonts/Cousine-Bold.eot",
+    "build/fonts/Inconsolata-Regular.woff",
+    "build/fonts/Inconsolata-Regular.ttf",
+    "build/fonts/Inconsolata-Regular.eot",
+    "build/fonts/Inconsolata-Regular.svg",
+    "build/fonts/Inconsolata-Bold.woff",
+    "build/fonts/Inconsolata-Bold.ttf",
+    "build/fonts/Inconsolata-Bold.eot",
+    "build/fonts/Inconsolata-Bold.svg",
+    "build/iframe.html",
+    "build/iframe.js"
+  ]
+}
