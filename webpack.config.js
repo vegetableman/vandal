@@ -19,7 +19,7 @@ module.exports = () => ({
     intercept: "./source/intercept"
   },
   output: {
-    path: path.join(__dirname, "distribution"),
+    path: path.join(__dirname, "distribution/build"),
     filename: "[name].js"
   },
   module: {
