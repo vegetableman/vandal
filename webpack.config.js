@@ -88,6 +88,7 @@ module.exports = () => ({
     concatenateModules: true,
     minimizer: [
       new TerserPlugin({
+        extractComments: false,
         parallel: true,
         terserOptions: {
           mangle: false,

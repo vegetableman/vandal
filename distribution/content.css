@@ -1,0 +1,318 @@
+@font-face {
+  font-family: "VANDAL__SourceSansPro";
+  src:
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/sourcesanspro-regular-webfont.woff2")
+    format("woff2"),
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/sourcesanspro-regular-webfont.woff")
+    format("woff");
+}
+
+@font-face {
+  font-weight: normal;
+  font-family: "VANDAL__Cousine";
+  font-style: normal;
+  src:
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Cousine-Regular.eot?#iefix")
+    format("embedded-opentype"),
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Cousine-Regular.woff")
+    format("woff"),
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Cousine-Regular.ttf")
+    format("truetype"),
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Cousine-Regular.svg#Cousine-Regular")
+    format("svg");
+}
+
+@font-face {
+  font-weight: normal;
+  font-family: "VANDAL__Inconsolata";
+  font-style: normal;
+  src:
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Regular.eot?#iefix")
+    format("embedded-opentype"),
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Regular.woff")
+    format("woff"),
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Regular.ttf")
+    format("truetype"),
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Regular.svg#Inconsolata-Regular")
+    format("svg");
+}
+
+@font-face {
+  font-weight: bold;
+  font-family: "VANDAL__Inconsolata";
+  font-style: normal;
+  src:
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Bold.eot?#iefix")
+    format("embedded-opentype"),
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Bold.woff")
+    format("woff"),
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Bold.ttf")
+    format("truetype"),
+    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/fonts/Inconsolata-Bold.svg#Inconsolata-Bold")
+    format("svg");
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+.vandal {
+  position: fixed !important;
+  top: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  width: 100% !important;
+  height: 100% !important;
+
+  --vandal-primary-background-color: #f6f6f6;
+  --vandal-secondary-background-color: #f5f5f5;
+  --vandal-blink-background-color: #eee;
+  --vandal-date-background-color: #f5f5f5;
+  --vandal-url-info-background-color: #f5f5f5;
+  --vandal-drawer-background-color: #eee;
+  --vandal-drawer-item-hover-background-color: #e5e5e5;
+  --vandal-url-info-redirect-background-color: #eee;
+  --vandal-text-selection-color: #b3d7ff;
+  --vandal-input-background-color: #fff;
+  --vandal-input-color: #333;
+  --vandal-text-color: #333;
+  --vandal-text-bright-color: #333;
+  --vandal-tooltip-color: #333;
+  --vandal-link-color: blue;
+  --vandal-link-selected-color: #d9e2ff;
+  --vandal-url-info-color: navy;
+  --vandal-drawer-text-color: #555;
+  --vandal-drawer-icon-color: #333;
+  --vandal-error-icon-color: #ef0a0a;
+  --vandal-primary-border-color: #ccc;
+  --vandal-border-separator-color: #ccc;
+  --vandal-date-border-color: #ddd;
+  --vandal-menu-border-color: var(--vandal-primary-border-color);
+  --vandal-primary-icon-color: #777;
+  --vandal-primary-icon-dark-color: #333;
+  --vandal-primary-icon-active-color: #666;
+  --vandal-disabled-icon-color: #bbb;
+  --vandal-button-background-color: #fff;
+  --vandal-menu-background-color: #fff;
+  --vandal-menu-item-color: #333;
+  --vandal-menu-item-hover-background-color: #e8e8e8;
+  --vandal-menu-list-background-color: #f6f6f6;
+  --vandal-menu-list-border-color: #ccc;
+  --vandal-frame-menu-item-hover-background-color: #f5f5f5;
+
+  /* History */
+  --vandal-history-list-background-color: #fff;
+  --vandal-history-item-hover-background-color: #f5f5f5;
+  --vandal-history-item-selection-color: #000;
+  --vandal-history-footer-background-color: #f5f5f5;
+  --vandal-history-footer-border-color: #ddd;
+  --vandal-history-separator-color: #ddd;
+
+  /* URL Loader */
+  --vandal-url-loader-border-color: steelblue;
+
+  /* Graph Loader */
+  --vandal-graph-loader-border-color: #ddd;
+
+  /* Timetravel */
+  --vandal-timetravel-footer-background-color: #f1f1f1;
+  --vandal-timetravel-footer-border-color: #ccc;
+  --vandal-timetravel-btn-intro-background-color: #f4f0ea;
+  --vandal-timetravel-btn-intro-fill-color: #ab6025;
+  --vandal-cl-day-color: #333;
+  --vandal-cl-day-active-color: #333;
+  --vandal-total-count: #555;
+  --vandal-total-bg-color: #fff;
+  --vandal-cl-err-bg-color: #eee;
+  --vandal-cl-err-icon-color: #555;
+  --vandal-cl-retry-bg-color: #eee;
+  --vandal-cl-retry-bg-hover-color: #929090;
+  --vandal-cl-disabled-icon-color: #ababab;
+
+  /* Graph */
+  --vandal-timetravel-graph-border-color: #d8d8d8;
+  --vandal-timetravel-graph-background-hover-color: #eaeaea;
+
+  /* Card */
+  --vandal-card-status-icon: #555;
+  --vandal-card-progress-color: #29d;
+
+  /* Tooltips */
+  --vandal-tooltip-background-color: #fff;
+  --vandal-tooltip-border-color: var(--vandal-primary-border-color);
+
+  /* Tabs */
+  --vandal-timetravel-tab-active-background-color: #2492ff;
+  --vandal-timetravel-tab-inactive-background-color: #e8e8e8;
+  --vandal-timetravel-tab-inactive-color: #373737;
+
+  /* Historical */
+  --vandal-mode-background-color: 66, 66, 66;
+  --vandal-mode-border-color: #ccc;
+  --vandal-mode-tab-title-color: #333;
+  --vandal-mode-tab-background-color: #51adfb;
+  --vandal-mode-tab-list-border-color: #cecece;
+  --vandal-mode-item-background-color: #dcdcdc;
+  --vandal-mode-item-info-color: #3da3f9;
+  --vandal-mode-item-border-color: #d2d2d2;
+  --vandal-mode-item-hover-background-color: #d4d4d4;
+  --vandal-mode-item-title-color: #333;
+  --vandal-mode-item-icon-color: #000;
+  --vandal-mode-carousel-background-color: #333333d4;
+  --vandal-mode-cc-hover-background-color: #dadada;
+  --vandal-mode-item-highlight-background-color: #079e072b;
+  --vandal-vertical-list-border-color: none;
+  --vandal-carousel-icon-color: #ffffff9e;
+  --vandal-carousel-icon-hover-color: #fff;
+  --vandal-input-nav-background-color: #eee;
+  --vandal-input-nav-border-color: var(--vandal-primary-border-color);
+  --vandal-overlay-background-color: #777777bf;
+  --vandal-overlay-text-color: #fff;
+  --vandal-overlay-arrow-color: #000;
+
+  /* About */
+  --vandal-modal-background-color: #f6f6f6;
+}
+
+.vandal[data-theme="dark"] {
+  --vandal-primary-background-color: #3b3a39;
+  --vandal-secondary-background-color: #848383;
+  --vandal-blink-background-color: #8e8d8d;
+  --vandal-date-background-color: #807f7e;
+  --vandal-url-info-background-color: var(--vandal-primary-background-color);
+  --vandal-drawer-background-color: #505050;
+  --vandal-drawer-item-hover-background-color: #525151;
+  --vandal-url-info-redirect-background-color: #444343;
+  --vandal-text-selection-color: #fff;
+  --vandal-input-background-color: #71706e;
+  --vandal-input-color: #fff;
+  --vandal-text-color: #ddd;
+  --vandal-text-bright-color: #fff;
+  --vandal-tooltip-color: #fff;
+  --vandal-link-color: orange;
+  --vandal-link-selected-color: #6b3e0e;
+  --vandal-url-info-color: #ffa500d1;
+  --vandal-drawer-text-color: #ddd;
+  --vandal-drawer-icon-color: #fff;
+  --vandal-primary-border-color: #333;
+  --vandal-border-separator-color: #4a4a4a;
+  --vandal-date-border-color: #333;
+  --vandal-menu-border-color: #272727;
+  --vandal-primary-icon-color: #ddd;
+  --vandal-primary-icon-active-color: #fff;
+  --vandal-primary-icon-dark-color: #fff;
+  --vandal-disabled-icon-color: #848484;
+  --vandal-error-icon-color: #ef0a0ab3;
+  --vandal-button-background-color: #71706e;
+  --vandal-menu-background-color: var(--vandal-primary-background-color);
+  --vandal-menu-item-color: #ddd;
+  --vandal-menu-item-hover-background-color: #525151;
+  --vandal-menu-list-background-color: var(--vandal-menu-background-color);
+  --vandal-menu-list-border-color: transparent;
+  --vandal-frame-menu-item-hover-background-color:
+    var(
+      --vandal-menu-item-hover-background-color
+    );
+  --vandal-history-list-background-color:
+    var(
+      --vandal-primary-background-color
+    );
+  --vandal-history-item-hover-background-color: #525151;
+  --vandal-history-item-selection-color: #fff;
+  --vandal-history-footer-background-color: #4a4949;
+  --vandal-history-footer-border-color: #333;
+  --vandal-history-separator-color: #6d6d6d;
+
+  /* URL Loader */
+  --vandal-url-loader-border-color: #ff920b;
+
+  /* Graph Loader */
+  --vandal-graph-loader-border-color: #333;
+
+  /* Timetravel */
+  --vandal-timetravel-footer-background-color: #4e4c4c;
+  --vandal-timetravel-footer-border-color: #777;
+  --vandal-timetravel-btn-intro-background-color: #b18b0c;
+  --vandal-timetravel-btn-intro-fill-color: var(--vandal-primary-icon-color);
+  --vandal-cl-day-color: #ddd;
+  --vandal-cl-day-active-color: #fff;
+  --vandal-total-count: #ddd;
+  --vandal-total-bg-color: transparent;
+  --vandal-cl-err-bg-color: #777;
+  --vandal-cl-err-icon-color: #fff;
+  --vandal-cl-retry-bg-color: #777;
+  --vandal-cl-retry-bg-hover-color: #929090;
+  --vandal-cl-disabled-icon-color: #949494;
+
+  /* Graph */
+  --vandal-timetravel-graph-border-color: #2f2f2f;
+  --vandal-timetravel-graph-background-hover-color: #464646;
+
+  /* Card */
+  --vandal-card-status-icon: #ddd;
+  --vandal-card-progress-color: #ff920b;
+
+  /* Tooltips */
+  --vandal-tooltip-background-color: #4e4c4c;
+  --vandal-tooltip-border-color: var(--vandal-tooltip-background-color);
+
+  /* Tabs */
+  --vandal-timetravel-tab-active-background-color: #da6f14;
+  --vandal-timetravel-tab-inactive-background-color: #fdfcfc3b;
+  --vandal-timetravel-tab-inactive-color: #ddd;
+
+  /* Historical */
+  --vandal-mode-background-color: 59, 58, 57;
+  --vandal-mode-border-color: #000;
+  --vandal-mode-tab-title-color: #fff;
+  --vandal-mode-tab-background-color: orange;
+  --vandal-mode-tab-list-border-color: #000;
+  --vandal-mode-item-background-color: #71706e;
+  --vandal-mode-item-info-color: #71706e;
+  --vandal-mode-item-border-color: none;
+  --vandal-mode-item-hover-background-color: gray;
+  --vandal-mode-item-title-color: #fff;
+  --vandal-mode-item-icon-color: #fff;
+  --vandal-mode-carousel-background-color: #333333d4;
+  --vandal-mode-cc-hover-background-color: #505050;
+  --vandal-mode-item-highlight-background-color: #f1ae3561;
+  --vandal-vertical-list-border-color: #2d2d2d;
+  --vandal-carousel-icon-color: #ffffff9e;
+  --vandal-carousel-icon-hover-color: #fff;
+  --vandal-input-nav-background-color: var(--vandal-input-background-color);
+  --vandal-input-nav-border-color: var(--vandal-input-background-color);
+  --vandal-overlay-background-color: #1e1e23bf;
+  --vandal-overlay-text-color: #eac030;
+  --vandal-overlay-arrow-color: #fff;
+
+  /* About */
+  --vandal-modal-background-color: #f3f0ea;
+}
+
+.vandal,
+.vandal_box {
+  margin: 0;
+  padding: 0;
+}
+
+.vandal_iframe {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.vandal__root {
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+}
+
+.vandal__root.resolved {
+  margin: 0;
+  padding: 0;
+  opacity: 1;
+}

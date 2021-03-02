@@ -13,8 +13,6 @@
     "webRequestBlocking",
     "webNavigation",
     "tabs",
-    "http://*/*",
-    "https://*/*",
     "*://*/*"
   ],
   "browser_action": {
