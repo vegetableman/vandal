@@ -23,7 +23,6 @@ import {
 import CalendarFilter from "../filter/calendar";
 import GraphFilter from "../filter/graph";
 
-import "./tooltip.css";
 import styles from "./timetravel.module.css";
 import boxStyle from "../url/box/urlbox.module.css";
 import cardStyle from "../common/card/card.module.css";
