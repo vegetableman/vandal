@@ -5,3 +5,5 @@
 
 ___
 
+![](docs/sample.gif)
+
