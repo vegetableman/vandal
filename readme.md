@@ -21,13 +21,13 @@ The goal of this project is to present an alternate navigation interface focused
 
 ## Features
 Vandal supports the following features:
-- *Calendar View*: The default navigation mode which uses the least amount of surface area with a mini calendar view. Supports a custom calendar input that shows archival stats across the calendar.
-- *Graph View*: Navigation mode based on graphs.
-- *Navigation Panel*: A bottom panel with navigation buttons to zip through archived snapshots for a date or across the month.
-- *History Panel*: Access your navigation history for a website.
+- **Calendar View**: The default navigation mode which uses the least amount of surface area with a mini calendar view. Supports a custom calendar input that shows archival stats across the calendar.
+- **Graph View**: Navigation mode based on graphs.
+- **Navigation Panel**: A bottom panel with navigation buttons to zip through archived snapshots for a date or across the month.
+- **History Panel**: Access your navigation history for a website.
 - Info Panel: Access your current navigation URL and redirection info.
-- *Resource Drawer*: A drawer that you can toggle to view timestamp differences of resources such as images, scripts, etc. relative to the page.
-- **Historical View**: Displays the snapshots of a website throughout the years.
+- **Resource Drawer**: A drawer that you can toggle to view timestamp differences of resources such as images, scripts, etc. relative to the page.
+- **Historical View**: Displays the snapshots of a website throughout the years. There are limitations to this feature.
 
 ## Comparison to Wayback Machine
 It's more of a subset to the mighty machine
