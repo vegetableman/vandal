@@ -5,9 +5,9 @@
 
 ___
 
-![](docs/sample.gif)
+> Vandal is a browser extension that helps you quickly navigate the web archive without leaving the current tab.
 
- > Vandal is a browser extension that helps you quickly navigate the web archive without leaving the current tab.
+![](docs/sample.gif)
 
 - [Why?](#why)
 - [Features](#features)
@@ -25,7 +25,7 @@ Vandal supports the following features:
 - **Graph View**: Navigation mode based on graphs.
 - **Navigation Panel**: A bottom panel with navigation buttons to zip through archived snapshots for a date or across the month.
 - **History Panel**: Access your navigation history for a website.
-- Info Panel: Access your current navigation URL and redirection info.
+- **Info Panel**: Access your current navigation URL and redirection info.
 - **Resource Drawer**: A drawer that you can toggle to view timestamp differences of resources such as images, scripts, etc. relative to the page.
 - **Historical View**: Displays the snapshots of a website throughout the years. There are limitations to this feature.
 
