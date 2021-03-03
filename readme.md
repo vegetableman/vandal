@@ -27,7 +27,7 @@ Vandal supports the following features:
 - *History Panel*: Access your navigation history for a website.
 - Info Panel: Access your current navigation URL and redirection info.
 - *Resource Drawer*: A drawer that you can toggle to view timestamp differences of resources such as images, scripts, etc. relative to the page.
-- *Historical View*: Displays the snapshots of a website throughout the years.
+- **Historical View**: Displays the snapshots of a website throughout the years.
 
 ## Comparison to Wayback Machine
 It's more of a subset to the mighty machine
