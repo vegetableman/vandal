@@ -45,5 +45,8 @@ Vandal is not affliated to Internet Archive. As for features, it's more of a sub
 ## API and Tools Used
 Vandal uses the [Wayback Machine API](https://archive.org/help/wayback_api.php).
 
-It is primarily built on frameworks - [XState](https://github.com/davidkpiano/xstate) and [React](https://github.com/facebook/react). Illustrations and logo design created on [Figma](https://figma.com/).
+It is primarily built on frameworks - [XState](https://github.com/davidkpiano/xstate) and [React](https://github.com/facebook/react). Illustrations and logo design created on [Figma](https://figma.com/) and icons have been plucked from the [Icon Project](https://thenounproject.com/).
+
+Icons designed by:
+[Christian Antonius](https://thenounproject.com/christian_antonius/), [Ralf Schmitzer](https://thenounproject.com/ralfschmitzer/), [Park Sung Hyo](https://thenounproject.com/parksunghyo126/), [Bhuvan](https://thenounproject.com/bhuvan.mahes/), [Sewon Park](https://thenounproject.com/cosmac/),[Alfa Design](https://thenounproject.com/alfadesign/),[Emmanuel Roy](https://thenounproject.com/emmanuelroy/),[unlimicon](https://thenounproject.com/unlimicon/), [Hui Qin Ng](https://thenounproject.com/hui_qin/),[Bluetip Design](https://thenounproject.com/bluetip/), [iconsmind.com](https://thenounproject.com/imicons/),[mikicon](https://thenounproject.com/mikicon/), [Bharat](https://thenounproject.com/bharatkumara321),[Aaron K. Kim](https://thenounproject.com/inspign/), [i cons](https://thenounproject.com/iconsguru/)
 
