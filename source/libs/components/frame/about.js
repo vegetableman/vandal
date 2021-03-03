@@ -36,7 +36,7 @@ const About = ({ toggleAbout }) => (
           className={styles.icon__title}
           width={200}
           height={35}
-          src={chrome.runtime.getURL("images/logo-title.png")}
+          src={chrome.runtime.getURL("build/images/logo-title.png")}
         />
         <div className={styles.version}>Version 1.0.0</div>
       </div>
@@ -64,7 +64,7 @@ const About = ({ toggleAbout }) => (
           <div>
             Built using the
             {" "}
-            <img alt="wayback" width={78} height={22} className={styles.wayback_logo} src={chrome.runtime.getURL("images/wayback.png")} />
+            <img alt="wayback" width={78} height={22} className={styles.wayback_logo} src={chrome.runtime.getURL("build/images/wayback.png")} />
             {" "}
             API by Internet Archive.
           </div>

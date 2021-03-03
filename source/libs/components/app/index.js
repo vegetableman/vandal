@@ -205,7 +205,7 @@ const App = (props) => {
           <img
             alt="cover"
             className={styles.cover}
-            src={chrome.runtime.getURL("images/cover-art.png")}
+            src={chrome.runtime.getURL("build/images/cover-art.png")}
           />
         </div>
       )}
@@ -221,7 +221,7 @@ const App = (props) => {
             />
             <img
               alt="donate"
-              src={chrome.runtime.getURL("images/donate.png")}
+              src={chrome.runtime.getURL("build/images/donate.png")}
             />
             <div className={styles.donate__text}>
               <div>

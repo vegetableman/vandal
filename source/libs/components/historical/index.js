@@ -225,7 +225,7 @@ const Historical = ({ onClose, openURL, ...props }) => {
         <div className={styles.disabled__overlay}>
           <div className={styles.disabled__modal}>
             <div className={styles.disabled__cover__container}>
-              <img alt="warning" src={chrome.runtime.getURL("images/warning.png")} />
+              <img alt="warning" src={chrome.runtime.getURL("build/images/warning.png")} />
             </div>
             <div style={{ padding: "0 10px 10px 10px" }}>
               <h2 style={{ fontSize: "14px" }}>
@@ -382,7 +382,7 @@ const Historical = ({ onClose, openURL, ...props }) => {
               <img
                 alt="cover"
                 className={styles.info__cover}
-                src={chrome.runtime.getURL("images/historical-cover-art.png")}
+                src={chrome.runtime.getURL("build/images/historical-cover-art.png")}
               />
               <div
                 style={{
