@@ -21,7 +21,9 @@ The goal of this project is to present an alternate navigation interface focused
 
 ## Features
 Vandal supports the following features:
-
+- Calendar View: The default navigation mode which uses the least amount of surface area with a mini calendar view. Supports a custom calendar input that shows archival stats across the calendar.
+- Graph View: Navigation mode based on graphs.
+- Controls: Zip through snapshots 
 
 ## Comparison to Wayback Machine
 It's more of a subset to the mighty machine
