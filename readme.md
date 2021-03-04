@@ -7,7 +7,11 @@ ___
 
 > Vandal is a browser extension that helps you quickly navigate the web archive without leaving the current tab.
 
-![](docs/sample.gif)
+<p align="center">
+
+  ![](docs/sample.gif)
+
+</p>
 
 - [Why?](#why)
 - [Features](#features)
@@ -27,13 +31,13 @@ Vandal supports the following features:
 - 🕛 History Panel: Access your navigation history for a website.
 - 💡 Info Panel: Access your current navigation URL and redirection info.
 - 🔩 Resource Drawer: A drawer that you can toggle to view timestamp differences of resources such as images, scripts, etc. relative to the page. This drawer updates automaticaly based on URL.
-- ⌛ Historical View: Displays the snapshots of a website throughout the years. There are limitations to this feature.
+- ⌛ Historical View: Displays the snapshots of a website throughout the years. ⚠️ This feature is experimental though.
 
 ## Limitations
 
 - It uses Iframe to load a webpage which has inherent limitations, although Vandal does replicate the behaviour of a browser to some degree, for instance, navigation history, reload, etc. It does not work in cases where pages are using frame busters and when the document matching the URL itself is cached using service workers. It shows an error message instead.
 - It does not support (and likely won't) saving a page to Archive. Although, It does notify you to do so on an unarchived page. Additionaly, save api requires login and has a complicated post api.
-- It's only available in Chrome for now. Firefox support was delayed to avoid procrastination on my part.
+- It's only available in Chrome for now. Firefox support is being delayed to avoid procrastination on my part.
 
 ## Security risks
 
