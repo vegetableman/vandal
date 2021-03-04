@@ -1,6 +1,8 @@
 <p align="center">
   <img src="docs/logo-full.svg" width="250">
   <div align="center">Navigator for Web Archive</div>
+  <br/>
+  <img src="source/libs/assets/images/cover-art.png"/>
 </p>
 
 ___
