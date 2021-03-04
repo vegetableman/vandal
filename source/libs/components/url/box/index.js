@@ -81,6 +81,7 @@ const URLBox = memo(({ toggleTimeTravel, ...props }) => {
         const requests = await result.keys();
         resolve(_.some(requests, (request) => request.url === props.url));
       })));
+      // If the URL itself is cached, show message.
       if (_.some(cacheResult)) {
         toggleSWRender(true);
       }
