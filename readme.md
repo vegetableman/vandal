@@ -17,7 +17,7 @@ ___
 - [API and Tools Used](#api-and-tools-used)
 
 ## Why?
-The goal of this project is to present an alternate navigation interface focused on ease-of-use. At the same time, it tries to capture the essence of time-travel in it's own whimsical way. 
+The goal of this project is to present an alternate navigation interface focused on ease-of-use. At the same time, it tries to capture the essence of ⌛ time-travel in it's own whimsical way. 
 
 ## Features
 Vandal supports the following features:
@@ -27,7 +27,7 @@ Vandal supports the following features:
 - 🕛 History Panel: Access your navigation history for a website.
 - 💡 Info Panel: Access your current navigation URL and redirection info.
 - 🔩 Resource Drawer: A drawer that you can toggle to view timestamp differences of resources such as images, scripts, etc. relative to the page. This drawer updates automaticaly based on URL.
-- 🌇 Historical View: Displays the snapshots of a website throughout the years. There are limitations to this feature.
+- ⌛ Historical View: Displays the snapshots of a website throughout the years. There are limitations to this feature.
 
 ## Limitations
 
