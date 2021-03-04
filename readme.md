@@ -1,6 +1,6 @@
 <p align="center">
   <img src="docs/logo-full.svg" width="250">
-  <div align="center">Navigator for the Web Archive</div>
+  <div align="center">Navigator for web archive</div>
 </p>
 
 ___
@@ -29,7 +29,7 @@ Vandal supports the following features:
 - 🕛 History Panel: Access your navigation history for a website.
 - 💡 Info Panel: Access your current navigation URL and redirection info.
 - 🔩 Resource Drawer: A drawer that you can toggle to view timestamp differences of resources such as images, scripts, etc. relative to the page. This drawer updates automaticaly based on URL.
-- ⌛ Historical View: Displays the snapshots of a website throughout the years. ⚠️ This feature is experimental though.
+- ⌛ Historical View: Displays the snapshots of a website throughout the years. This feature is experimental ⚠️ though.
 
 ## Limitations
 
