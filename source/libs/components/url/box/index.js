@@ -76,16 +76,21 @@ const URLBox = memo(({ toggleTimeTravel, ...props }) => {
     const checkServiceWorker = async () => {
       if (!_.get(navigator, "serviceWorker.controller")) return;
       const keys = await window.caches.keys();
-      const isPageCached = await Promise.all(keys).then(async (key) => {
+      const cacheResult = await Promise.all(_.map(keys, (key) => new Promise(async (resolve) => {
         const result = await caches.open(key);
         const requests = await result.keys();
-        return _.some(requests, (request) => request.url === props.url);
-      });
-      if (isPageCached) {
+        resolve(_.some(requests, (request) => request.url === props.url));
+      })));
+      if (_.some(cacheResult)) {
         toggleSWRender(true);
       }
     };
-    checkServiceWorker();
+
+    try {
+      checkServiceWorker();
+    } catch (ex) {
+      console.error("Failed to check service workers");
+    }
 
     return () => {
       chrome.runtime.onMessage.removeListener(onMessage);
