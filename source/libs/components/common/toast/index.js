@@ -11,9 +11,7 @@ const Toast = memo(
     const [isVisible, toggleVisible] = useState(false);
 
     useDidUpdateEffect(() => {
-      if (show) {
-        toggleVisible(show);
-      } else if (!show && closeTimeout) {
+      if (!show && closeTimeout) {
         setTimeout(() => {
           toggleVisible(show);
         }, closeTimeout);

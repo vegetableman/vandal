@@ -23,7 +23,8 @@ import styles from "./urlbox.module.css";
 const URLBox = memo(({ toggleTimeTravel, ...props }) => {
   const { showIntro, toggleIntro } = useIntro();
   const { theme } = useTheme();
-  const getTS = () => (props.redirectedTS ? props.redirectedTS : props.selectedTS);
+  const getTS = useCallback(() => (props.redirectedTS ?
+    props.redirectedTS : props.selectedTS), [props.redirectedTS, props.selectedTS]);
   const [currentTS, setCurrentTs] = useState(getTS());
   const dateObj = useMemo(() => getDateTimeFromTS(currentTS) || {}, [currentTS]);
   const [isSWRendered, toggleSWRender] = useState(false);
@@ -240,7 +241,7 @@ const URLBox = memo(({ toggleTimeTravel, ...props }) => {
       </Toast>
     </div>
   );
-}, compareProps(["redirectedTS", "selectedTS", "url", "redirectTSCollection", "showURLHistory", "showURLInfo", "showTimeTravel", "sparklineLoaded"]));
+}, compareProps(["redirectedTS", "selectedTS", "url", "showURLHistory", "showURLInfo", "showTimeTravel", "sparklineLoaded"]));
 
 URLBox.propTypes = {
   toggleURLHistory: PropTypes.func.isRequired,

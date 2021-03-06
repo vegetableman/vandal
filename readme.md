@@ -5,7 +5,7 @@
 
 ___
 
-> Vandal is a browser extension that helps you quickly navigate the web archive without leaving the current tab.
+### <sub> _Vandal is a browser extension that helps you quickly navigate the web archive without leaving the current tab._ </sub>
 
 <p align="center">
   <img src="https://github.com/vegetableman/vandal/raw/master/docs/sample.gif">
@@ -13,13 +13,12 @@ ___
 
 - [Why?](#why)
 - [Features](#features)
-- [Limitations](#limitations)
-- [Security risks](#security-risks)
+- [Limitations and Security risks](#limitations-and-security-risks)
 - [Comparison to Wayback Machine](#comparison-to-wayback-machine)
 - [API and Tools Used](#api-and-tools-used)
 
 ## Why?
-The goal of this project is to present an alternate navigation interface focused on ease-of-use. At the same time, it tries to capture the essence of ⌛ time-travel in it's own whimsical way. 
+The goal of this project is to present an alternate navigation interface to Wayback Machine focused on ease-of-use. At the same time, it tries to capture the essence of ⌛ time-travel in it's own whimsical way. 
 
 ## Features
 Vandal supports the following features:
@@ -31,13 +30,12 @@ Vandal supports the following features:
 - 🔩 Resource Drawer: A drawer that you can toggle to view timestamp differences of resources such as images, scripts, etc. relative to the page. This drawer updates automaticaly based on URL.
 - ⌛ Historical View: Displays the snapshots of a website throughout the years. This feature is experimental ⚠️ though.
 
-## Limitations
-
+## Limitations and Security risks
+### Limitations
 - It uses Iframe to load a webpage which has inherent limitations, although Vandal does replicate the behaviour of a browser to some degree, for instance, navigation history, reload, etc. It does not work in cases where pages are using frame busters and when the document matching the URL itself is cached using service workers. It shows an error message instead.
 - It does not support (and likely won't) saving a page to Archive. Although, It does notify you to do so on an unarchived page. Additionaly, save api requires login and has a complicated post api.
 - It's only available in Chrome for now. Firefox support is being delayed to avoid procrastination on my part.
-
-## Security risks
+### Security risks
 
 Write more...
 

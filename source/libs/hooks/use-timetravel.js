@@ -62,11 +62,13 @@ const TimetravelProvider = ({ children, machine: timetravelMachine }) => {
             timetravelMachine.send("RESET_CALENDAR", {
               payload: { reset: strippedOffURL !== ctx.url }
             });
+          } else {
+            timetravelMachine.send("RESET_TS", {
+              payload: { ts: undefined }
+            });
           }
           break;
         case "__VANDAL__NAV__REDIRECTMISMATCH":
-          break;
-        case "__VANDAL__NAV__REDIRECT":
           break;
         case "__VANDAL__NAV__COMMIT":
           if (_.get(request, "data.type") === "redirect") {

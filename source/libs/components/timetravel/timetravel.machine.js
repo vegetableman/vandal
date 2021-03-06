@@ -226,6 +226,11 @@ const timetravelMachine = Machine(
           calendar: null
         }))
       },
+      RESET_TS: {
+        actions: assign((_ctx, e) => ({
+          selectedTS: _.get(e, "payload.ts")
+        }))
+      },
       SET_REDIRECT_INFO: {
         target: "sparklineLoaded.loadingCalendar",
         actions: assign((ctx, e) => {

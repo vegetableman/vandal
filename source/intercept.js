@@ -221,63 +221,23 @@ class NavigationHandler {
   headerReceivedHandler = (details) => {
     log("Header Received");
 
-    // Return on youtube video or invalid sub-frames
-    if (details.url.indexOf(".googlevideo.com/videoplayback") > -1 ||
-    !(isValidTab(details.tabId) && isValidFrame(details.tabId, details.frameId))) {
+    // Return on invalid frames
+    if (!(isValidTab(details.tabId) && isValidFrame(details.tabId, details.frameId))) {
       return null;
-    }
-
-    if (
-      details.statusCode === 302 &&
-      details.type === "sub_frame" &&
-      Array.isArray(details.responseHeaders) &&
-      details.responseHeaders.some((header) => header.name === "x-ts" && header.value === "302")
-    ) {
-      chrome.tabs.sendMessage(details.tabId, {
-        message: "__VANDAL__NAV__REDIRECT",
-        data: { url: details.url }
-      });
     }
 
     const responseHeaders = details.responseHeaders.map((mheader) => {
       const header = mheader;
       const isCSPHeader = /content-security-policy/i.test(header.name);
       const isFrameHeader = /^x-frame-options/i.test(header.name);
-      const isXSSHeader = /^x-xss-protection/i.test(header.name);
-      const isOriginHeader = /^access-control-allow-origin/i.test(header.name);
       if (isCSPHeader) {
         let csp = header.value;
-        csp = csp.replace(/frame-ancestors ((.*?);|'none'|'self')/gi, "");
-        if (csp.indexOf("web.archive.org") === -1) {
-          csp = csp.replace(
-            /default-src (.*?);/gi,
-            "default-src $1 web.archive.org;"
-          );
-          csp = csp.replace(
-            /connect-src (.*?);/gi,
-            "connect-src $1 https://web.archive.org;"
-          );
-          csp = csp.replace(
-            /script-src (.*?);/gi,
-            "script-src $1 https://web.archive.org;"
-          );
-          csp = csp.replace(
-            /style-src (.*?);/gi,
-            "style-src $1 https://web.archive.org;"
-          );
-          csp = csp.replace(
-            /frame-src (.*?);/gi,
-            "frame-src $1 https://web.archive.org;"
-          );
-          csp = csp.replace(/frame-ancestors (.*?)$/gi, "frame-ancestors *");
+        if (csp.indexOf("frame-ancestors") > -1) {
+          csp = csp.replace(/frame-ancestors ((.*?);|'none'|'self')/gi, "");
         }
         header.value = csp;
       } else if (isFrameHeader) {
         header.value = "ALLOWALL";
-      } else if (isXSSHeader) {
-        header.value = "0";
-      } else if (isOriginHeader) {
-        header.value = details.initiator || "*";
       }
 
       return header;

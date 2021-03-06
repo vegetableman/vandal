@@ -19,8 +19,8 @@ async function onDomReady() {
   drawer.className = "vandal_drawer";
   drawer.id = "vandal-drawer";
 
-  // use iframe.html as it's a web accessible resource
-  // / to avoid blocked by client errors
+  // using iframe.html as it's a web accessible resource
+  // so as to avoid getting blocked by client errors
   const baseURL = chrome.runtime.getURL("build/iframe.html");
   const frame = document.createElement("iframe");
 

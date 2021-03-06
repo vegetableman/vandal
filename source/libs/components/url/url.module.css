@@ -15,7 +15,7 @@
 }
 
 .toast__redirect {
-  left: calc(50% - 50px);
+  left: calc(50% - 100px);
 }
 
 .redirect__icon {

@@ -94,7 +94,6 @@ const URL = memo(({ toggleTimeTravel, showTimeTravel, ...props }) => {
       <URLBox
         url={props.url}
         redirectedTS={props.redirectedTS}
-        redirectTSCollection={props.redirectTSCollection}
         sparklineLoaded={props.sparklineLoaded}
         selectedTS={props.selectedTS}
         showURLHistory={state.matches("menus.history.open")}
@@ -151,7 +150,7 @@ const URL = memo(({ toggleTimeTravel, showTimeTravel, ...props }) => {
       >
         <div style={{ textAlign: "center", width: "100%" }}>
           <Icon className={styles.redirect__icon} name="redirect" width={11} />
-          Redirecting to
+          Redirected to
           {" "}
           <u>
             {toTwelveHourTime(
@@ -161,8 +160,7 @@ const URL = memo(({ toggleTimeTravel, showTimeTravel, ...props }) => {
           {" "}
           at
           {" "}
-          {_.get(redirectedDateTime, "humanizedDate")}
-          .
+          <b>{_.get(redirectedDateTime, "humanizedDate")}</b>
         </div>
       </Toast>
     </>
@@ -198,7 +196,6 @@ const URLContainer = memo((props) => {
     state: ttstate,
     state: { context: ctx }
   } = useTimeTravel();
-
   return (
     <URL
       {...props}
