@@ -5,7 +5,7 @@
 
 ___
 
-> Vandal is a browser extension that helps you quickly navigate the web archive without leaving the current tab.
+> Vandal is a browser extension that helps you quickly navigate the web archive and travel back in time without leaving the current tab.
 
 <p align="center">
   <img src="https://github.com/vegetableman/vandal/raw/master/docs/sample.gif">
@@ -21,10 +21,10 @@ ___
 The goal of this project is to present an alternate navigation interface to Wayback Machine focused on ease-of-use. At the same time, it tries to capture the essence of ⌛ time-travel in it's own whimsical way. 
 
 ## Features
-Vandal supports the following features:
-- 📅  Calendar View: The default navigation mode which uses the least amount of surface area with a mini calendar view. Supports a custom calendar input that shows archival stats across the calendar.
-- 📊  Graph View: Navigation mode based on graphs.
-- 🧭 Navigator: Built-in browser with ◀️ ▶️ 🔄 actions.
+Vandal supports the following features for navigation and inspection:
+- 📅  Calendar View: The default navigation mode which uses the least amount of surface area with a mini calendar view. Supports a calendar input that shows archival stats and allows selection of month across the years.
+- 📊  Graph View: Navigation mode based on graphs of year and month.
+- 🧭 Navigator: Built-in minimal browser with ◀️ ▶️ 🔄 actions.
 - 🎮  Navigation Panel: A bottom panel with navigation buttons to zip through archived snapshots for a date or across the month.
 - 🕛 History Panel: Access your navigation history for a website.
 - 💡 Info Panel: Access your current navigation URL and redirection info.
