@@ -5,7 +5,7 @@
 
 ___
 
-> ##### Vandal is a browser extension that helps you quickly navigate the web archive without leaving the current tab.
+> Vandal is a browser extension that helps you quickly navigate the web archive without leaving the current tab.
 
 <p align="center">
   <img src="https://github.com/vegetableman/vandal/raw/master/docs/sample.gif">
