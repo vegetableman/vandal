@@ -1,6 +1,6 @@
 <p align="center">
   <img src="docs/logo-full.svg" width="250">
-  <div align="center">Navigator for Web Archive</div>
+  <div align="center"><i>Navigator for Web Archive</i></div>
 </p>
 
 ___
