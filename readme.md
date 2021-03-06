@@ -5,7 +5,8 @@
 
 ___
 
-### <sub> _Vandal is a browser extension that helps you quickly navigate the web archive without leaving the current tab._ </sub>
+### <sub> _<font color="#EAC43A">Vandal</font> is a browser extension that helps you quickly navigate the web archive without leaving the current tab._ </sub>
+
 
 <p align="center">
   <img src="https://github.com/vegetableman/vandal/raw/master/docs/sample.gif">
