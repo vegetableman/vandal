@@ -23,7 +23,6 @@ const fetchRequest = async ({
   method = "GET",
   meta,
   body,
-  headers = {},
   fetchFromCache,
   fetchResHeader,
   cacheResponse,
@@ -32,9 +31,9 @@ const fetchRequest = async ({
   let request;
   if (controller) {
     const { signal } = controller;
-    request = new Request(endpoint, { signal, headers });
+    request = new Request(endpoint, { signal });
   } else {
-    request = new Request(endpoint, { headers });
+    request = new Request(endpoint);
   }
 
   if (fetchFromCache && typeof caches !== "undefined") {
@@ -45,7 +44,9 @@ const fetchRequest = async ({
   }
 
   try {
-    const resFromFetch = await fetch(request.clone(), { method, body });
+    const headers = new Headers();
+    headers.append("x-user-agent", "Vandal/1.0");
+    const resFromFetch = await fetch(request.clone(), { method, body, headers });
     if (fetchResHeader) {
       const responseHeader = resFromFetch.headers.get(fetchResHeader);
       return [responseHeader, null];
