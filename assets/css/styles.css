@@ -285,6 +285,15 @@ header > section {
     margin-top: 3px;
   }
 }
+.browser-image {
+  height: 80px;
+}
+@media only screen and (max-width: 486px) {
+  .browser-image {
+    width: 90%;
+    height: auto;
+  }
+}
 .controls-image {
   height: 242px;
 }
@@ -304,27 +313,6 @@ header > section {
 .controls-bubble > span {
   top: 14px;
 }
-.control-image-container {
-  background: #ffffff;
-  border-radius: 3px;
-  border: 1px solid #c7c7c7;
-  text-align: center;
-  padding: 10px 10px 5px 10px;
-}
-.history-image-container {
-  background: #ffffff;
-  border-radius: 3px;
-  border: 1px solid #c7c7c7;
-  text-align: center;
-  padding: 5px 10px;
-}
-.drawer-image-container {
-  background: #f8f7f7;
-  border-radius: 3px;
-  border: 1px solid #e8e8e8;
-  text-align: center;
-  padding: 8px 10px;
-}
 .history-bubble {
   background-image: url("../images/history-bubble.svg");
   height: 89px;
@@ -339,6 +327,11 @@ header > section {
 .features {
   min-height: 420px;
   padding: 80px 0;
+}
+.features-t-panel {
+  display: flex;
+  margin-bottom: 100px;
+  padding-left: 12%;
 }
 .features-u-panel {
   display: flex;
@@ -360,8 +353,19 @@ header > section {
   .features {
     padding: 50px 0;
   }
+  .features-t-panel {
+    display: flex;
+    padding-left: 0;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 60px;
+  }
+  .features-l-panel {
+    margin-bottom: 40px;
+  }
   .features-u-panel {
     flex-direction: column;
+    margin-bottom: 80px;
   }
   .column {
     align-items: center;
@@ -394,6 +398,30 @@ header > section {
 .drawer-bubble > span {
   top: 15px;
 }
+.browser-bubble {
+  background-image: url("../images/browser-bubble-left.svg");
+  position: relative;
+  height: 59px;
+  width: 388px;
+  top: 15px;
+}
+.browser-bubble > span {
+  top: 0px;
+  left: 19px;
+}
+@media only screen and (max-width: 1242px) {
+  .browser-bubble {
+    background-image: url("../images/history-bubble.svg");
+    height: 89px;
+    width: 390px;
+    transform: scale(0.8) translate(2%, -10px);
+    margin-top: 5px;
+  }
+  .browser-bubble > span {
+    left: 10px;
+    top: 12px;
+  }
+}
 @media only screen and (max-width: 396px ) {
   .history-bubble {
     height: 89px;
@@ -401,6 +429,12 @@ header > section {
   }
   .history-bubble > span {
     top: 5px;
+  }
+  .browser-bubble {
+    width: 340px;
+  }
+  .browser-bubble > span {
+    top: 3px;
   }
 }
 @media only screen and (max-width: 486px) {
