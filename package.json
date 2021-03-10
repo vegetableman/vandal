@@ -8,13 +8,7 @@
     "fix:js": "eslint . --fix",
     "fix:css": "stylelint 'source/**/*.css' --fix",
     "build": "webpack --mode=production",
-    "watch": "webpack --mode=development --watch",
-    "release:amo": "cd distribution && webext submit",
-    "release:cws": "cd distribution && webstore upload --auto-publish",
-    "release": "run-s build update-version save-url release:*",
-    "save-url": "echo https://github.com/$TRAVIS_REPO_SLUG/tree/$TRAVIS_COMMIT > distribution/SOURCE_URL",
-    "update-version": "VERSION=$(utc-version); echo $VERSION; dot-json distribution/manifest.json version $VERSION",
-    "can-release": "if [ \"$TRAVIS_EVENT_TYPE\" = cron ] && [ $(git rev-list -n 1 --since=\"26 hours ago\" master) ]; then echo :ship-it:; else false; fi"
+    "watch": "webpack --mode=development --watch"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",

@@ -24,7 +24,7 @@ The goal of this project is to present an alternate navigation interface to Wayb
 Vandal supports the following features for navigation and inspection:
 - 📅  Calendar View: The default navigation mode which uses the least amount of surface area with a mini calendar view. Supports a calendar input that shows archival stats and allows selection of month across the years.
 - 📊  Graph View: Navigation mode based on graphs of year and month.
-- 🧭 Navigator: Built-in minimal browser with ◀️ ▶️ 🔄 actions.
+- 🧭 Navigator: Built-in browser with ◀️ ▶️ 🔄 actions.
 - 🎮  Navigation Panel: A bottom panel with navigation buttons to zip through archived snapshots for a date or across the month.
 - 🕛 History Panel: Access your navigation history for a website.
 - 💡 Info Panel: Access your current navigation URL and redirection info.
