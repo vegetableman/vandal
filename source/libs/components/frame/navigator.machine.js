@@ -1,7 +1,14 @@
 import { Machine, actions } from "xstate";
 import _ from "lodash";
 import { historyDB } from "../../utils/storage";
-import { getCurrentDate } from "../../utils";
+import { longMonthNames } from "../../utils";
+
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  return `${currentDate.getDate()} ${
+    longMonthNames[currentDate.getMonth()]
+  }, ${currentDate.getFullYear()}`;
+};
 
 const { assign } = actions;
 const navigatorMachine = Machine(
@@ -196,8 +203,11 @@ const navigatorMachine = Machine(
   },
   {
     actions: {
-      persistHistory: async (ctx) => {
-        historyDB.setRecords(ctx.url, ctx.allRecords);
+      persistHistory: async (ctx, e) => {
+        const test = _.get(e, "payload.meta.test");
+        if (!test) {
+          historyDB.setRecords(ctx.url, ctx.allRecords);
+        }
       },
       clearHistory: async (ctx) => {
         await historyDB.clearRecords(ctx.url);

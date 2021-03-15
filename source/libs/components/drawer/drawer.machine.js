@@ -69,8 +69,8 @@ const drawerMachine = Machine(
       ADD_TIMESTAMP: {
         actions: assign((ctx, e) => {
           const { timestamps } = ctx;
-          const { ts, err, index } = _.get(e, "payload");
-          timestamps[index] = { ts, err, isValid: !ts && !err };
+          const { datetime, err, index } = _.get(e, "payload");
+          timestamps[index] = { datetime, err, isValid: !datetime && !err };
           return {
             timestamps
           };
@@ -106,8 +106,8 @@ const drawerMachine = Machine(
         resourceTSController.reset();
         resourceTSController.loadTimestamps(
           _.get(e, "payload.sources"),
-          (ts, err, index) => {
-            callback({ type: "ADD_TIMESTAMP", payload: { ts, err, index } });
+          (datetime, err, index) => {
+            callback({ type: "ADD_TIMESTAMP", payload: { datetime, err, index } });
           }
         );
       }

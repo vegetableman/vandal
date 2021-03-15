@@ -11,7 +11,7 @@ import {
 
 import GraphLoader from "./loader";
 import Calendar from "./calendar";
-import { monthNames, compareProps, getLastDate } from "../../../utils";
+import { monthNames, compareProps, getLastDateOfMonth } from "../../../utils";
 import { Icon } from "../../common";
 import { useTheme, useTimeTravel } from "../../../hooks";
 
@@ -225,8 +225,8 @@ const GraphFilter = memo((props) => {
                 );
               }
 
-              const lastDate = getLastDate(
-                `${index + 1}/1/${currentYear}`
+              const lastDate = getLastDateOfMonth(
+                new Date(`${index + 1}/1/${currentYear}`)
               ).getDate();
               const month = _.merge(
                 Array.from(new Array(lastDate).keys()),

@@ -18,7 +18,7 @@ ___
 - [API and Tools Used](#api-and-tools-used)
 
 ## Why?
-The goal of this project is to present an alternate navigation interface to Wayback Machine focused on ease-of-use. At the same time, it tries to capture the essence of ⌛ time-travel in it's own whimsical way. 
+The goal of this project is to present an alternate navigation interface to [Wayback Machine](https://web.archive.org/) focused on ease-of-use. At the same time, it tries to capture the essence of ⌛ time-travel in it's own whimsical way. 
 
 ## Features
 Vandal supports the following features for navigation and inspection:
@@ -37,7 +37,7 @@ Vandal supports the following features for navigation and inspection:
 - It's only available in Chrome for now. Firefox support is being delayed to avoid procrastination on my part.
 
 ## Comparison to Wayback Machine
-Vandal is not affliated to Internet Archive. As for features, it's more of a subset to the mighty [Wayback Machine](https://web.archive.org/), a web archive service provided by them.
+Vandal is not affliated to Internet Archive. As for features, it's more of a subset to the mighty [Wayback Machine](https://web.archive.org/) and is built using the [Wayback Machine API](https://archive.org/help/wayback_api.php).
 
 ## API and Tools Used
 Vandal uses the [Wayback Machine API](https://archive.org/help/wayback_api.php).

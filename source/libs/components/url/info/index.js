@@ -76,7 +76,7 @@ const URLInfo = memo(
                   <React.Fragment key={ts}>
                     <div className={styles.redirect__ts__list__item}>
                       {`${dateObj.humanizedDate} ${toTwelveHourTime(
-                        dateObj.ts
+                        dateObj.time
                       )}`}
                     </div>
                     {index !== _.size(redirectTSList) - 1 ? (
@@ -99,7 +99,7 @@ const URLInfo = memo(
             {`${_.get(
               infoDateObj,
               "humanizedDate"
-            )} ${toTwelveHourTime(_.get(infoDateObj, "ts"))}`}
+            )} ${toTwelveHourTime(_.get(infoDateObj, "time"))}`}
           </span>
           {" "}
           reflects the time on which Wayback Machine archived the page and not

@@ -78,20 +78,26 @@ export const safeElementReady = (selector) => {
   return waiting.catch(() => null);
 };
 
-export const isArchiveURL = (url) => {
-  if (!url) return false;
-  const ua = new URL(url);
-  return url && ua.host === "web.archive.org" && ua.pathname !== "/";
-};
-
-const stripRegExp = new RegExp(
+const archiveRegExp = new RegExp(
   /https?:\/\/web\.archive\.org\/web\/\d+.*_?\/*/
 );
 
-export const stripArchiveURL = (url) => (url && isArchiveURL(url) && stripRegExp.test(url) ?
+/**
+ * Check if URL is an archive URL
+ * @param {String} url - URL to validate
+ * @returns {Boolean} Whether input is a valid archive URL
+ */
+export const isArchiveURL = (url) => {
+  if (!url) return false;
+  const ua = new URL(url);
+  return url && ua.host === "web.archive.org" && ua.pathname !== "/" && archiveRegExp.test(ua.href);
+};
+
+export const stripArchiveURL = (url) => (url && isArchiveURL(url) && archiveRegExp.test(url) ?
   _.nth(_.split(url, /web\/\d+(?:.*?)_?\//), 1) :
   url);
 
+const timeRegexp = new RegExp(/^(\d{2})[\s|:]*(\d{2})[\s|:]*(\d{2})$/i);
 function getPeriod(hour) {
   if (parseInt(hour, 10) >= 12) {
     return "pm";
@@ -99,34 +105,20 @@ function getPeriod(hour) {
   return "am";
 }
 
-const timeRegexp = new RegExp(/(\d{1,2})[\s|:]*(\d{1,2})[\s|:]*(\d{1,2})/i);
-
-export const toTwelveHourTime = (time, mformat) => {
+/**
+ * Convert time to twelve hour clock format
+ * @param {time} time - time format in string, ex: 12:01:11
+ * @returns {String} - twelve hour clock format
+ */
+export const toTwelveHourTime = (time, format = "hh:MM:ss a") => {
   const match = timeRegexp.exec(time);
   if (!match) return null;
-
   const hour = match[1];
   const minute = match[2];
   const seconds = match[3];
-
-  let format = mformat;
-  // Default argument for format
-  if (!format) {
-    format = "hh:MM:ss a";
-  }
-
-  if (parseInt(hour, 10) > 12) {
-    return format
-      .replace("hh", _.padStart(parseInt(hour, 10) - 12 || 12, 2, "0"))
-      .replace("HH", _.padStart((parseInt(hour, 10) && hour) || 12, 12, "0"))
-      .replace("mm", minute)
-      .replace("MM", minute)
-      .replace("ss", seconds)
-      .replace("a", "pm")
-      .replace("A", "PM");
-  }
   return format
-    .replace("hh", _.padStart((parseInt(hour, 10) && hour) || 12, 2, "0"))
+    .replace("hh", _.padStart(parseInt(hour, 10) > 12 ? (parseInt(hour, 10) - 12) :
+      (parseInt(hour, 10) && hour) || 12, 2, "0"))
     .replace("HH", _.padStart((parseInt(hour, 10) && hour) || 12, 2, "0"))
     .replace("mm", minute)
     .replace("MM", minute)
@@ -135,16 +127,8 @@ export const toTwelveHourTime = (time, mformat) => {
     .replace("A", getPeriod(hour).toUpperCase());
 };
 
-export const formatDateTimeTS = (dt) => (_.isString(dt) ?
-  _.replace(
-    _.replace(dt, dt.slice(-12, -4), toTwelveHourTime(dt.slice(-12, -4))),
-    "GMT",
-    ""
-  ) :
-  dt);
-
-const tsRegexp = new RegExp(/(\d+)i?m?_?/);
-const tsDRegexp = new RegExp(/(\d+)/);
+const tsRegexp = new RegExp(/(\d{14})i?m?_?/);
+const tsDRegexp = new RegExp(/^\d{14}$/);
 const dateRegexp = new RegExp(/(\d{0,4})(\d{0,2})(\d{0,2})/);
 
 const getDate = (d) => {
@@ -159,6 +143,11 @@ const getDate = (d) => {
   };
 };
 
+/**
+ * Get date details from Archive URL
+ * @param {String} url - Archive URL
+ * @returns {Object} - timestamp, time and date
+ */
 export const getDateTsFromURL = (url) => {
   const match = tsRegexp.exec(url);
   if (!match) return null;
@@ -169,17 +158,21 @@ export const getDateTsFromURL = (url) => {
   };
 };
 
+/**
+ * Parse date from timestamp
+ * @param {Number} ts - snapshot timestamp
+ * @returns {Object} - Time, humanized date, all related calendar details
+ */
 export const getDateTimeFromTS = (ts) => {
-  if (!ts) return null;
+  if (!ts || !tsDRegexp.test(ts)) return null;
   const match = tsDRegexp.exec(ts);
-  if (!match) return ts;
   const {
     date, humanizedDate, month, day, year
   } = getDate(
-    match[1].substr(0, 8)
+    match[0].substr(0, 8)
   );
   return {
-    ts: match[1].substr(-6),
+    time: match[0].substr(-6),
     humanizedDate,
     date,
     month,
@@ -188,6 +181,11 @@ export const getDateTimeFromTS = (ts) => {
   };
 };
 
+/**
+ * Count the number of snapshots for a URL
+ * @param {Object} sparkline - object containing snapshot count details
+ * @returns {Number} - number of snapshots
+ */
 export const countVersions = (sparkline) => {
   if (_.isEmpty(sparkline)) return 0;
   return _.reduce(_.keys(sparkline), (count, n) => {
@@ -197,8 +195,14 @@ export const countVersions = (sparkline) => {
   }, 0);
 };
 
-export const getLastDate = (d) => {
-  const last = new Date(d);
+/**
+ * Get last date of month
+ * @param {Date} d - date
+ * @returns {Date} - last date of month
+ */
+export const getLastDateOfMonth = (d) => {
+  if (!_.isDate(d)) return null;
+  const last = d;
   last.setHours(0);
   last.setMinutes(0);
   last.setSeconds(0);
@@ -207,21 +211,16 @@ export const getLastDate = (d) => {
   return last;
 };
 
-export const getCurrentDate = () => {
-  const currentDate = new Date();
-  return `${currentDate.getDate()} ${
-    longMonthNames[currentDate.getMonth()]
-  }, ${currentDate.getFullYear()}`;
-};
-
-export const isCurrentDate = (d) => {
-  const dt = new Date(d);
-  return new Date(getCurrentDate()).getTime() === dt.getTime();
-};
-
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
+/**
+ * find the difference between dates in days
+ * @param {Date} a - older date to compare against
+ * @param {Date} b - newer or current date
+ * @returns {Number} - number of days
+ */
 export const dateDiffInDays = (a, b) => {
+  if (!_.isDate(a) || !_.isDate(b)) return null;
   // Discard the time and time-zone information.
   const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
   const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
@@ -243,8 +242,14 @@ const splitTimestamp = (mtimestamp) => {
   ];
 };
 
-const timestamp2datetime = (timestamp) => {
-  const tsArray = splitTimestamp(timestamp);
+/**
+ * Convert snapshot timestamp to date
+ * @param {timestamp} timestamp
+ * @returns {Date} return date
+ */
+export const timestamp2datetime = (ts) => {
+  if (_.isNull(ts) || !tsDRegexp.test(ts)) return null;
+  const tsArray = splitTimestamp(ts);
   return new Date(
     Date.UTC(
       tsArray[0],
@@ -257,9 +262,15 @@ const timestamp2datetime = (timestamp) => {
   );
 };
 
-export function dateTimeDiff(dtmsec, captureTS) {
-  if (!dtmsec || !captureTS) return null;
-  let diff = Date.parse(dtmsec) - Date.parse(timestamp2datetime(captureTS));
+/**
+ * Find the diff of dates
+ * @param {Date} datetime1 - date
+ * @param {Date} datetime2 - date
+ * @returns {Object} diff and the delta
+ */
+export function dateTimeDiff(datetime1, datetime2) {
+  if (!_.isDate(datetime1) || !_.isDate(datetime2)) return null;
+  let diff = Date.parse(datetime1) - Date.parse(datetime2);
   let prefix = "";
   let delta;
   if (diff < 0) {
@@ -270,13 +281,10 @@ export function dateTimeDiff(dtmsec, captureTS) {
     delta = 1;
     prefix += "+";
   }
-  let highlight = false;
-
   // equal to the page datetime
   if (diff < 1000) {
-    return { diff, text: "", highlight };
+    return { delta: null, text: "" };
   }
-  const totalDiff = diff;
   const yearsDiff = Math.floor(diff / 1000 / 60 / 60 / 24 / 30 / 12);
   diff -= yearsDiff * 1000 * 60 * 60 * 24 * 30 * 12;
   const monthsDiff = Math.floor(diff / 1000 / 60 / 60 / 24 / 30);
@@ -292,17 +300,13 @@ export function dateTimeDiff(dtmsec, captureTS) {
   let parts = [];
   if (yearsDiff > 1) {
     parts.push(`${yearsDiff} years`);
-    highlight = true;
   } else if (yearsDiff === 1) {
     parts.push(`${yearsDiff} year`);
-    highlight = true;
   }
   if (monthsDiff > 1) {
     parts.push(`${monthsDiff} months`);
-    highlight = true;
   } else if (monthsDiff === 1) {
     parts.push(`${monthsDiff} month`);
-    highlight = true;
   }
   if (daysDiff > 1) {
     parts.push(`${daysDiff} days`);
@@ -328,9 +332,7 @@ export function dateTimeDiff(dtmsec, captureTS) {
     parts = parts.slice(0, 2);
   }
   return {
-    diff: totalDiff,
     delta,
-    text: prefix + parts.join(" "),
-    highlight
+    text: prefix + parts.join(" ")
   };
 }

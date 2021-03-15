@@ -9,12 +9,25 @@ import {
   toTwelveHourTime,
   isArchiveURL,
   browser,
-  isCurrentDate
+  longMonthNames
 } from "../../../utils";
 import { withDialog, Icon } from "../../common";
 
 import styles from "./urlhistory.module.css";
 import boxStyles from "../box/urlbox.module.css";
+
+/**
+ * Get current date in format DD MMMM, YYYY
+ * @returns {String} - Formatted current date
+ */
+const getCurrentDate = () => {
+  const currentDate = new Date();
+  return `${currentDate.getDate()} ${
+    longMonthNames[currentDate.getMonth()]
+  }, ${currentDate.getFullYear()}`;
+};
+
+export const isCurrentDate = (d) => d === getCurrentDate();
 
 const formatHistoryByDate = (history) => _.reduce(
   history,
@@ -65,7 +78,7 @@ const URLHistory = ({
                           dateTimeObj,
                           "humanizedDate"
                         )} ${toTwelveHourTime(
-                          _.get(dateTimeObj, "ts")
+                          _.get(dateTimeObj, "time")
                         )}`}
                       </div>
                       )}

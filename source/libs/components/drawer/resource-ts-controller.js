@@ -8,12 +8,12 @@ class ResourceTSController {
 
   loadTimestamps(sources, callback) {
     _.every(sources, async (source, index) => {
-      const [ts, err] = await api(_.replace(source, /(\d+)im_?/, "$1"), {
+      const [datetime, err] = await api(_.replace(source, /(\d+)im_?/, "$1"), {
         method: "HEAD",
         fetchResHeader: "Memento-Datetime"
       });
       if (!this.isAborted) {
-        callback(ts, err, index);
+        callback(datetime, err, index);
       }
       return !this.isAborted;
     });

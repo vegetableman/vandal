@@ -276,7 +276,7 @@ const AppContainer = (props) => {
   return (
     <ShadowDOM
       include={[
-        "chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/vandal.css",
+        `chrome-extension://${chrome.runtime.id}/build/vandal.css`,
       ]}
     >
       <div className="vandal__root">

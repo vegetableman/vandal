@@ -1,11 +1,13 @@
 {
   "private": true,
   "scripts": {
+    "ava": "ava",
     "lint": "run-p lint:* --continue-on-error",
     "lint:js": "eslint .",
     "lint:css": "stylelint 'source/**/*.css'",
     "fix": "run-p fix:* --continue-on-error",
     "fix:js": "eslint . --fix",
+    "test": "run-p ava lint:* build",
     "fix:css": "stylelint 'source/**/*.css' --fix",
     "build": "webpack --mode=production",
     "watch": "webpack --mode=development --watch"
@@ -47,7 +49,9 @@
     "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
+    "ava": "^3.15.0",
     "babel-loader": "^8.2.2",
+    "browser-env": "^3.3.0",
     "chrome-webstore-upload-cli": "^1.2.0",
     "copy-webpack-plugin": "^4.6.0",
     "css-loader": "^1.0.1",
@@ -58,6 +62,7 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.17.0",
     "eslint-plugin-react-hooks": "^2.5.1",
+    "esm": "^3.2.25",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^2.0.0",
     "npm-run-all": "^4.1.5",
@@ -72,5 +77,11 @@
     "url-loader": "^1.1.2",
     "webpack": "^4.33.0",
     "webpack-cli": "^3.3.3"
+  },
+  "ava": {
+    "require": [
+      "esm",
+      "./test/_setup-browser-env.js"
+    ]
   }
 }

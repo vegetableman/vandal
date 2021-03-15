@@ -203,16 +203,9 @@ const Frame = memo(({ onExit, ...props }) => {
     [theme, onThemeChange]
   );
 
-  const disableBack = _.indexOf(navState.context.currentRecords, navState.context.currentURL) <=
-    0;
-
-  const disableForward = _.indexOf(navState.context.currentRecords, navState.context.currentURL) ===
-      -1 ||
-    _.lastIndexOf(
-      navState.context.currentRecords,
-      navState.context.currentURL
-    ) ===
-      _.size(navState.context.currentRecords) - 1;
+  const disableBack = navState.context.currentIndex === 0;
+  const disableForward = navState.context.currentIndex ===
+    _.size(navState.context.currentRecords) - 1;
 
   return (
     <TimetravelProvider machine={state.context.timetravelRef}>

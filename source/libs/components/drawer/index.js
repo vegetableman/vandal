@@ -9,15 +9,24 @@ import { useMachine } from "@xstate/react";
 
 import {
   dateTimeDiff,
-  formatDateTimeTS,
   stripArchiveURL,
   isArchiveURL,
-  getDateTsFromURL
+  getDateTsFromURL,
+  timestamp2datetime,
+  toTwelveHourTime
 } from "../../utils";
 import { URLLoader, Icon } from "../common";
 import drawerMachine from "./drawer.machine";
 import styles from "./drawer.module.css";
 import resourceTSController from "./resource-ts-controller";
+
+export const formatDateTimeToTS = (dt) => (_.isString(dt) ?
+  _.replace(
+    _.replace(dt, dt.slice(-12, -4), toTwelveHourTime(dt.slice(-12, -4))),
+    "GMT",
+    ""
+  ) :
+  dt);
 
 const DrawerHeader = ({
   dataDrag,
@@ -180,6 +189,8 @@ const Drawer = memo((props) => {
     </span>
   ) : null);
 
+  const selectedDateTime = props.selectedTS ? timestamp2datetime(props.selectedTS) : null;
+
   return (
     <div
       className={styles.drawer}
@@ -247,10 +258,10 @@ const Drawer = memo((props) => {
           props.selectedTS && (
             <ul className={styles.list}>
               {_.map(props.sources, (source, index) => {
-                const ts = _.get(ctx.timestamps[index], "ts");
+                const datetime = _.get(ctx.timestamps[index], "datetime");
                 const err = _.get(ctx.timestamps[index], "err");
                 const isValid = _.get(ctx.timestamps[index], "isValid");
-                const dt = dateTimeDiff(ts, props.selectedTS);
+                const dt = dateTimeDiff(datetime ? new Date(datetime) : null, selectedDateTime);
                 return (
                   <li
                     key={index}
@@ -263,7 +274,7 @@ const Drawer = memo((props) => {
                     }}
                   >
                     <div className={styles.item__left}>
-                      {ts || err || isValid ? (
+                      {datetime || err || isValid ? (
                         getIcon(source)
                       ) : (
                         <URLLoader className={styles.ts__loader} />
@@ -280,7 +291,7 @@ const Drawer = memo((props) => {
                     </div>
                     <div className={styles.item__timestamp}>
                       {err &&
-                        !ts &&
+                        !datetime &&
                         (_.get(err, "status") === 404 ? (
                           <span className={styles.timestamp__delta___notfound}>
                             Not Archived
@@ -291,7 +302,7 @@ const Drawer = memo((props) => {
                           </span>
                         ))}
                       {!err &&
-                        (ts ? (
+                        (datetime ? (
                           <span
                             className={cx({
                               [styles.timestamp__delta]: true,
@@ -305,7 +316,7 @@ const Drawer = memo((props) => {
                           </span>
                         ) : getDelta(isValid))}
                       <div className={styles.timestamp__value}>
-                        {!err && ts && formatDateTimeTS(ts)}
+                        {!err && datetime && formatDateTimeToTS(datetime)}
                       </div>
                     </div>
                   </li>
@@ -377,7 +388,7 @@ const DrawerContainer = (props) => {
   return (
     <ShadowDOM
       include={[
-        "chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/vandal.css"
+        `chrome-extension://${chrome.runtime.id}/build/vandal.css`
       ]}
     >
       <div>

@@ -8,7 +8,7 @@ const themeMachine = Machine(
     id: "theme",
     initial: "idle",
     context: {
-      theme: "light"
+      theme: "dark"
     },
     states: {
       idle: {

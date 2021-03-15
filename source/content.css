@@ -1,9 +1,9 @@
 @font-face {
   font-family: "VANDAL__SourceSansPro";
   src:
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/sourcesanspro-regular-webfont.woff2")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/sourcesanspro-regular-webfont.woff2")
     format("woff2"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/sourcesanspro-regular-webfont.woff")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/sourcesanspro-regular-webfont.woff")
     format("woff");
 }
 
@@ -12,13 +12,13 @@
   font-family: "VANDAL__Cousine";
   font-style: normal;
   src:
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/Cousine-Regular.eot?#iefix")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.eot?#iefix")
     format("embedded-opentype"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/Cousine-Regular.woff")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.woff")
     format("woff"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/Cousine-Regular.ttf")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.ttf")
     format("truetype"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/Cousine-Regular.svg#Cousine-Regular")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.svg#Cousine-Regular")
     format("svg");
 }
 
@@ -27,13 +27,13 @@
   font-family: "VANDAL__Inconsolata";
   font-style: normal;
   src:
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/Inconsolata-Regular.eot?#iefix")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.eot?#iefix")
     format("embedded-opentype"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/Inconsolata-Regular.woff")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.woff")
     format("woff"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/Inconsolata-Regular.ttf")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.ttf")
     format("truetype"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/Inconsolata-Regular.svg#Inconsolata-Regular")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.svg#Inconsolata-Regular")
     format("svg");
 }
 
@@ -42,13 +42,13 @@
   font-family: "VANDAL__Inconsolata";
   font-style: normal;
   src:
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/Inconsolata-Bold.eot?#iefix")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.eot?#iefix")
     format("embedded-opentype"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/Inconsolata-Bold.woff")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.woff")
     format("woff"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/Inconsolata-Bold.ttf")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.ttf")
     format("truetype"),
-    url("chrome-extension://hjmnlkneihjloicfbdghgpkppoeiehbf/build/fonts/Inconsolata-Bold.svg#Inconsolata-Bold")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.svg#Inconsolata-Bold")
     format("svg");
 }
 
