@@ -106,6 +106,7 @@ let overlay;
 const ARCHIVE_STATIC_PATH = "https://web.archive.org/_static/";
 const ARCHIVE_DONATE_PATH = "https://archive.org/includes/donate.php";
 
+// Derived from web.archive.org source
 function getSources() {
   imageMap = {};
   overlay = null;
@@ -203,15 +204,13 @@ const messageHandler = async (request) => {
   }
 };
 
-function onDomReady() {
+function onDomReady(window) {
   window.removeEventListener("mousedown", mousedownHandler);
   window.addEventListener("mousedown", mousedownHandler);
   chrome.runtime.onMessage.removeListener(messageHandler);
   chrome.runtime.onMessage.addListener(messageHandler);
 }
 
-const link = document.createElement("meta");
-link.setAttribute("charset", "utf-8");
-document.head.appendChild(link);
-
-onDomReady();
+(function invoke(global) {
+  onDomReady(global);
+}(window));

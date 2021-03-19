@@ -117,7 +117,7 @@ const URL = memo(({ toggleTimeTravel, showTimeTravel, ...props }) => {
         <URLHistory
           history={props.history}
           clearHistory={props.clearHistory}
-          onSelect={onToggleTimeTravel}
+          onSelect={onToggleURLHistory}
         />
       )}
       <Toast className={styles.toast__notfound} show={isNoSnapError} exit={0}>

@@ -95,14 +95,6 @@ class NavigationHandler {
       transitionType
     } = details;
 
-    // Manual_subframe / auto_subframe detect navigation for back/forward
-    if (
-      url.indexOf("chrome-extension://") === 0 &&
-      transitionType === "manual_subframe"
-    ) {
-      isManualTransition = true;
-    }
-
     if (
       url.indexOf("chrome-extension://") === 0 ||
       !isValidTab(tabId) ||
@@ -110,6 +102,14 @@ class NavigationHandler {
       url === "about:blank"
     ) {
       return;
+    }
+
+    // Manual_subframe / auto_subframe detect navigation for back/forward
+    if (
+      url.indexOf("chrome-extension://") === 0 &&
+      transitionType === "manual_subframe"
+    ) {
+      isManualTransition = true;
     }
 
     if (transitionType === "manual_subframe") {

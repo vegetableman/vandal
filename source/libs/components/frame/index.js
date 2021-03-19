@@ -54,11 +54,17 @@ const Frame = memo(({ onExit, ...props }) => {
     navigatorMachine.withConfig(
       {
         actions: {
-          updateVandalURL: (ctx) => {
+          reload: () => {
+            browser.reload();
+          },
+          navigateToURL: (ctx) => {
             browser.navigate(ctx.currentURL);
           },
-          reloadVandalURL: () => {
-            browser.reload();
+          navigateBack: () => {
+            window.history.back();
+          },
+          navigateForward: () => {
+            window.history.forward();
           }
         }
       },
@@ -203,9 +209,9 @@ const Frame = memo(({ onExit, ...props }) => {
     [theme, onThemeChange]
   );
 
-  const disableBack = navState.context.currentIndex === 0;
-  const disableForward = navState.context.currentIndex ===
-    _.size(navState.context.currentRecords) - 1;
+  const disableBack = !navState.context.currentIndex;
+  const disableForward = _.isEmpty(navState.context.currentRecords) ||
+        navState.context.currentIndex === _.size(navState.context.currentRecords) - 1;
 
   return (
     <TimetravelProvider machine={state.context.timetravelRef}>

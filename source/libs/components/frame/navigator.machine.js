@@ -48,35 +48,48 @@ const navigatorMachine = Machine(
                     if (transitionType === "redirect") {
                       return {
                         currentURL: _.get(e, "payload.url"),
-                        currentRecords: [...ctx.currentRecords, url]
+                        currentRecords: [...ctx.currentRecords, url],
+                        currentIndex: ctx.currentIndex + 1
                       };
                     }
 
                     if (
-                      transitionType !== "auto" ||
+                      (transitionType !== "auto" && _.indexOf(ctx.currentRecords, url) === ctx.currentIndex) ||
                       _.isEmpty(ctx.currentRecords) ||
                       _.size(ctx.currentRecords) === 1
                     ) {
                       return ctx;
                     }
 
-                    let currentIndex;
-
-                    if (
-                      _.lastIndexOf(ctx.prevRecords, url) < ctx.previousIndex
-                    ) {
-                      currentIndex = Math.max(ctx.previousIndex - 1, 0);
-                    } else {
-                      currentIndex = Math.min(
-                        ctx.previousIndex + 1,
-                        _.size(ctx.prevRecords) - 1
-                      );
+                    let { currentIndex, currentRecords } = ctx;
+                    // Handle <- | -> transitions
+                    if (transitionType === "auto") {
+                      if (_.nth(ctx.currentRecords, Math.max(ctx.currentIndex - 1, 0)) === url) {
+                        currentIndex = Math.max(ctx.currentIndex - 1, 0);
+                      } else if (_.nth(ctx.currentRecords, ctx.currentIndex + 1) === url) {
+                        currentIndex += 1;
+                      }
+                    } else if (transitionType === "manual") {
+                      // handles click on document with url already present in the record.
+                      // A -> B -> click logo/home -> A
+                      if (url === _.last(ctx.currentRecords)) {
+                        currentIndex += 1;
+                      } else {
+                        currentRecords = [
+                          ..._.slice(
+                            ctx.currentRecords,
+                            0,
+                            Math.max(currentIndex + 1, 0)
+                          ),
+                          url
+                        ];
+                        currentIndex = Math.max(_.size(currentRecords) - 1, 0);
+                      }
                     }
 
                     return {
-                      currentURL: _.get(e, "payload.url"),
-                      currentRecords: ctx.prevRecords,
-                      currentIndex
+                      currentIndex,
+                      currentRecords
                     };
                   })
                 ]
@@ -84,34 +97,39 @@ const navigatorMachine = Machine(
               UPDATE_HISTORY: {
                 actions: [
                   assign((ctx, e) => {
-                    const { allRecords = [] } = ctx;
+                    const { allRecords = [], isReload } = ctx;
+
+                    // Reload button
+                    if (isReload) {
+                      return { isReload: false };
+                    }
+
                     const url = _.get(e, "payload.url");
-                    const transitionType = _.get(e, "payload.type");
 
-                    let currentRecords = [];
-                    let { currentIndex } = ctx;
+                    // Right click -> Reload frame scenario
+                    if (_.nth(ctx.currentRecords, ctx.currentIndex) === url) {
+                      return ctx;
+                    }
 
-                    if (
-                      (transitionType === "auto" &&
-                        !_.isEmpty(ctx.currentRecords) &&
-                        _.indexOf(ctx.currentRecords, url) > -1) ||
-                      ctx.isBack ||
-                      ctx.isForward ||
-                      ctx.isReload ||
-                      url === _.last(ctx.currentRecords)
-                    ) {
-                      currentRecords = ctx.currentRecords;
+                    let { currentIndex, currentRecords } = ctx;
+
+                    // Handles <- | -> transitions for history changes
+                    if (_.get(e, "payload.type") === "auto" && !_.isEmpty(ctx.currentRecords) &&
+                    _.indexOf(ctx.currentRecords, url) > -1) {
+                      if (_.nth(ctx.currentRecords, Math.max(ctx.currentIndex - 1, 0)) === url) {
+                        currentIndex = Math.max(ctx.currentIndex - 1, 0);
+                      } else if (_.nth(ctx.currentRecords, ctx.currentIndex + 1) === url) {
+                        currentIndex += 1;
+                      }
+                    } else if (ctx.isBack || ctx.isForward) {
                       if (ctx.isBack) {
                         currentIndex = Math.max(currentIndex - 1, 0);
                       } else if (ctx.isForward) {
-                        currentIndex = Math.max(currentIndex + 1, 0);
+                        currentIndex += 1;
                       }
-                    } else if (
-                      _.last(ctx.currentRecords) === url &&
-                      currentIndex === _.lastIndexOf(ctx.currentRecords, url)
-                    ) {
-                      // if reload, do nothing
-                    } else if (_.last(ctx.currentRecords) !== url) {
+                    } else if (_.last(ctx.currentRecords) !== url &&
+                    // to avoid entry in auto cases
+                    _.indexOf(ctx.currentRecords, url) < 0) {
                       currentRecords = [
                         ..._.slice(
                           ctx.currentRecords,
@@ -168,7 +186,7 @@ const navigatorMachine = Machine(
                       )
                     };
                   }),
-                  "updateVandalURL"
+                  "navigateBack"
                 ]
               },
               GO_FORWARD: {
@@ -184,7 +202,7 @@ const navigatorMachine = Machine(
                       )
                     };
                   }),
-                  "updateVandalURL"
+                  "navigateToURL"
                 ]
               },
               RELOAD: {
@@ -192,7 +210,7 @@ const navigatorMachine = Machine(
                   assign(() => ({
                     isReload: true
                   })),
-                  "reloadVandalURL"
+                  "reload"
                 ]
               }
             }
