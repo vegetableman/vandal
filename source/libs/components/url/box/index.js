@@ -237,7 +237,18 @@ const URLBox = memo(({ toggleTimeTravel, ...props }) => {
         className={styles.frame_render_err__toast}
         show={isSWRendered && showURLLoader}
       >
-        <span>Vandal is experiencing issues rendering this page.</span>
+        <span>
+          Vandal may experience issues navigating this website. Open the URL on
+          <a
+            href={`https://web.archive.org/web/*/${props.url}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.wayback__link}
+          >
+            Wayback Machine
+          </a>
+          <Icon name="openURL" width={11} className={styles.wayback__link_icon} />
+        </span>
       </Toast>
     </div>
   );

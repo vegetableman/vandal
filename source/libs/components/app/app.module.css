@@ -29,7 +29,7 @@
   left: 43%;
 }
 
-.wayback__icon {
+.wayback__link_icon {
   position: relative;
   top: 3px;
   left: 4px;
@@ -42,7 +42,7 @@
 }
 
 .toast__notfound {
-  left: 39%;
+  left: 45%;
 }
 
 .toast__close__icon {

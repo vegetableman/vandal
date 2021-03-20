@@ -32,7 +32,7 @@ Vandal supports the following features for navigation and inspection:
 - ⌛ Historical View: Displays the snapshots of a website throughout the years. This feature is experimental ⚠️ though.
 
 ## Limitations
-- It uses Iframe to load a webpage which has inherent limitations, although Vandal does replicate the behaviour of a browser to some degree, for instance, navigation history, reload, etc. It does not work in cases where pages are using frame busters and when the document matching the URL itself is cached using service workers. It shows an error message instead.
+- It uses Iframe to load a webpage which has inherent limitations, although Vandal does replicate the behaviour of a browser to some degree, for instance, navigation history, reload, etc. It does not work in cases where pages are using frame busters and when the document matching the URL itself is cached using service workers causing the webRequest API to fail. It does notify with an error message for such cases.
 - It does not support saving page to Archive. Although, It does notify you to do so on an unarchived page.
 - It's only available in Chrome for now. Firefox support is being delayed to avoid procrastination on my part.
 

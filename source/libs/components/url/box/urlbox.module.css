@@ -272,5 +272,17 @@
 }
 
 .frame_render_err__toast {
-  left: 43%;
+  left: 34%;
+}
+
+.wayback__link {
+  padding-left: 5px;
+  color: #fff;
+}
+
+.wayback__link_icon {
+  position: relative;
+  top: 3px;
+  left: 4px;
+  fill: white;
 }

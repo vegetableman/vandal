@@ -283,10 +283,6 @@ class NavigationHandler {
       });
     }
   };
-
-  tabReplacedHandler = (details) => {
-    log("Tab Replaced", details);
-  };
 }
 
 const requestFilters = ["http://*/*", "https://*/*"];
@@ -354,10 +350,6 @@ const eventMap = {
       urls: requestFilters,
       types: ["sub_frame"]
     }
-  },
-  onTabReplaced: {
-    type: "webNavigation",
-    handler: "tabReplacedHandler"
   }
 };
 

@@ -138,7 +138,7 @@ const App = (props) => {
           >
             Wayback Machine
           </a>
-          <Icon name="openURL" width={11} className={styles.wayback__icon} />
+          <Icon name="openURL" width={11} className={styles.wayback__link_icon} />
         </span>
       </Toast>
       <Toast
@@ -155,7 +155,7 @@ const App = (props) => {
       >
         <div>
           <span>
-            Found snapshot recorded on
+            Found snapshot recorded on&nbsp;
             {ctx.availableDate}
           </span>
           <button
@@ -184,6 +184,22 @@ const App = (props) => {
       >
         <div>
           <span>Error finding snapshot. Please try again later.</span>
+          <Icon
+            name="close"
+            className={styles.toast__close__icon}
+            onClick={() => {
+              sendToParentMachine("CLOSE");
+            }}
+          />
+        </div>
+      </Toast>
+      <Toast
+        err
+        className={styles.toast__notfound}
+        show={state.matches("snapshotNotFound")}
+      >
+        <div>
+          <span>No snapshots found for this URL.</span>
           <Icon
             name="close"
             className={styles.toast__close__icon}
