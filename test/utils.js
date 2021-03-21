@@ -108,7 +108,7 @@ test("Parse date", (t) => {
   t.is(d, null);
   d = parseDate("2001011092929");
   t.is(d, null);
-  d = parseDate("20010110");
+  d = parseDate(20010110);
   t.deepEqual(d, {
     date: "10/01/2001",
     month: 1,
