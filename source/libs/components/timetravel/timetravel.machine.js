@@ -2,7 +2,7 @@
 import { Machine, actions, spawn } from "xstate";
 import memoizeOne from "memoize-one";
 import {
-  api, abort, getDateTimeFromTS, browser
+  api, abort, getDateTimeFromTS, browser, parseDate
 } from "../../utils";
 import cardMachine from "../common/card/card.machine";
 
@@ -307,7 +307,7 @@ const timetravelMachine = Machine(
       },
       ON_SNAPSHOTS: {
         actions: assign((ctx, e) => {
-          const { month, day, year } = getDateTimeFromTS(
+          const { month, day, year } = parseDate(
             _.get(e, "payload.date")
           );
           const snapshots = _.get(e, "payload.snapshots");

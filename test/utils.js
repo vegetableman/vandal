@@ -5,7 +5,8 @@ import {
   dateTimeDiff,
   timestamp2datetime,
   isArchiveURL,
-  stripArchiveURL
+  stripArchiveURL,
+  parseDate
 } from "../source/libs/utils";
 
 test("difference between dates in days", (t) => {
@@ -94,4 +95,25 @@ test("Strip archive details from a URL", (t) => {
     "https://parliamentofindia.nic.in/ls/1901010/debates/vol11p11.htm");
   t.is(stripArchiveURL("https://www.google.com"), "https://www.google.com");
   t.is(stripArchiveURL("https://www.google.com/"), "https://www.google.com/");
+});
+
+test("Parse date", (t) => {
+  let d = parseDate("20010110");
+  t.is(d.year, 2001);
+  t.is(d.month, 1);
+  t.is(d.day, 10);
+  d = parseDate(null);
+  t.is(d, null);
+  d = parseDate(undefined);
+  t.is(d, null);
+  d = parseDate("2001011092929");
+  t.is(d, null);
+  d = parseDate("20010110");
+  t.deepEqual(d, {
+    date: "10/01/2001",
+    month: 1,
+    day: 10,
+    year: 2001,
+    humanizedDate: "10 Jan, 2001"
+  });
 });

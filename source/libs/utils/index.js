@@ -129,17 +129,22 @@ export const toTwelveHourTime = (time, format = "hh:MM:ss a") => {
 
 const tsRegexp = new RegExp(/(\d{14})i?m?_?/);
 const tsDRegexp = new RegExp(/^\d{14}$/);
-const dateRegexp = new RegExp(/(\d{0,4})(\d{0,2})(\d{0,2})/);
+const dateRegexp = new RegExp(/^(\d{0,4})(\d{0,2})(\d{0,2})$/);
 
-const getDate = (d) => {
+/**
+ * Parse date to individual components
+ * @param {String} d - The date string in format yyyyMMdd
+ * @returns {Object}
+ */
+export const parseDate = (d) => {
+  if (!dateRegexp.test(d)) return null;
   const dateArr = dateRegexp.exec(d);
-  if (!dateArr) return d;
   return {
     date: [dateArr[1], dateArr[2], dateArr[3]].reverse().join("/"),
     month: _.parseInt(dateArr[2]),
     day: _.parseInt(dateArr[3]),
     year: _.parseInt(dateArr[1]),
-    humanizedDate: `${dateArr[3]} ${monthNames[dateArr[2] - 1]}, ${dateArr[1]}`
+    humanizedDate: `${dateArr[3]} ${monthNames[_.parseInt(dateArr[2]) - 1]}, ${dateArr[1]}`
   };
 };
 
@@ -154,7 +159,7 @@ export const getDateTsFromURL = (url) => {
   return {
     ts: match[1],
     time: match[1].substr(-6),
-    date: getDate(match[1].substr(0, 8)).date
+    date: parseDate(match[1].substr(0, 8)).date
   };
 };
 
@@ -168,7 +173,7 @@ export const getDateTimeFromTS = (ts) => {
   const match = tsDRegexp.exec(ts);
   const {
     date, humanizedDate, month, day, year
-  } = getDate(
+  } = parseDate(
     match[0].substr(0, 8)
   );
   return {
