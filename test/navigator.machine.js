@@ -192,3 +192,58 @@ test("validate auto navigation entries [interpret]", (t) => new Promise(((resolv
   });
   navService.start();
 })));
+
+test("validate redirect [interpret]", (t) => new Promise(((resolve) => {
+  let loaded = false;
+  let loadedOne = false;
+  let loadedTwo = false;
+
+  const navService = interpret(NavigatorMachine.withConfig({
+    actions: {
+      updateVandalURL: () => {}
+    }
+  })).onTransition((state, event) => {
+    if (!loaded && state.matches("historyLoaded")) {
+      loaded = true;
+      navService.send("UPDATE_HISTORY", {
+        payload: {
+          url: "https://www.google.com/",
+          meta: { test: true }
+        }
+      });
+    } else if (!loadedOne && event.type === "UPDATE_HISTORY") {
+      loadedOne = true;
+      t.deepEqual(state.context.currentRecords, [
+        "https://www.google.com/"
+      ]);
+      navService.send("UPDATE_HISTORY", {
+        payload: {
+          url: "https://web.archive.org/web/20171231183454/https://www.google.com/",
+          meta: { test: true }
+        }
+      });
+    } else if (!loadedTwo && event.type === "UPDATE_HISTORY") {
+      loadedTwo = true;
+      t.deepEqual(state.context.currentRecords, [
+        "https://www.google.com/",
+        "https://web.archive.org/web/20171231183454/https://www.google.com/"
+      ]);
+      t.is(state.context.currentIndex, 1);
+      navService.send("UPDATE_HISTORY_ONCOMMIT", {
+        payload: {
+          url: "https://web.archive.org/web/20171231183457/https://www.google.com/",
+          type: "redirect",
+          meta: { test: true }
+        }
+      });
+    } else if (event.type === "UPDATE_HISTORY_ONCOMMIT") {
+      t.deepEqual(state.context.currentRecords, [
+        "https://www.google.com/",
+        "https://web.archive.org/web/20171231183457/https://www.google.com/"
+      ]);
+      t.is(state.context.currentIndex, 1);
+      resolve();
+    }
+  });
+  navService.start();
+})));

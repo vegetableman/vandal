@@ -46,10 +46,18 @@ const navigatorMachine = Machine(
                     const transitionType = _.get(e, "payload.type");
                     const url = _.get(e, "payload.url");
                     if (transitionType === "redirect") {
+                      const currentRecords = [
+                        ..._.slice(
+                          ctx.currentRecords,
+                          0,
+                          Math.max(ctx.currentIndex, 0)
+                        ),
+                        url
+                      ];
                       return {
                         currentURL: _.get(e, "payload.url"),
-                        currentRecords: [...ctx.currentRecords, url],
-                        currentIndex: ctx.currentIndex + 1
+                        currentRecords,
+                        currentIndex: _.size(ctx.currentRecords) - 1
                       };
                     }
 
