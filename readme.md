@@ -31,7 +31,7 @@ Vandal supports the following features for navigation and inspection:
 - 🕛 History Panel: Access your navigation history for a website.
 - 💡 Info Panel: Access your current navigation URL and redirection info.
 - 🔩 Resource Drawer: A drawer that you can toggle to view timestamp differences of resources such as images, scripts, etc. relative to the page. This drawer updates automaticaly based on URL.
-- ⌛ Historical View: Displays the snapshot of a website throughout the years. This feature is [experimental](https://github.com/vegetableman/vandal/issues/1) ⚠️ though.
+- ⌛ Historical View: Displays the snapshot of a website throughout the years. This feature is [experimental](https://github.com/vegetableman/vandal/issues/1) ⚠️.
 
 ## Limitations
 - It uses Iframe to load a webpage which has inherent limitations, although Vandal does replicate the behaviour of a browser to some degree, for instance, navigation history, reload, etc. It does not work in cases where pages are using frame busters and when the document matching the URL itself is cached using service workers causing the webRequest API to fail. It does notify with an error message for such cases.
