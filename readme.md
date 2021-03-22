@@ -39,7 +39,7 @@ Vandal supports the following features for navigation and inspection:
 - It's only available in Chrome for now. Firefox support is being delayed to avoid procrastination on my part.
 
 ## Comparison to Wayback Machine
-Vandal is not affliated to Internet Archive. As for features, it's more of a subset to the mighty [Wayback Machine](https://web.archive.org/).
+Vandal is not affliated to Internet Archive. As for features, it's more of a subset to the mighty Wayback Machine.
 
 ## API and Tools Used
 Vandal uses the [Wayback Machine API](https://archive.org/help/wayback_api.php).
