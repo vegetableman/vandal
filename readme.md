@@ -4,6 +4,7 @@
 </p>
 
 ![example workflow](https://github.com/vegetableman/vandal/actions/workflows/test.yml/badge.svg)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](http://www.gnu.org/licenses/agpl-3.0)
 ___
 
 > Vandal is a browser extension that helps you quickly navigate the web archive and travel back in time without leaving the current tab.
