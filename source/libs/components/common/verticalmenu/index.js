@@ -27,8 +27,8 @@ class List extends React.Component {
     return (
       <ul
         className={cx({
-          [listClass]: !!listClass,
           [styles.list]: true,
+          [listClass]: !!listClass
         })}
         ref={dialogRef}
       >

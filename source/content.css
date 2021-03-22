@@ -105,6 +105,7 @@ body {
 
   /* History */
   --vandal-history-list-background-color: #fff;
+  --vandal-frame-separator-border-color: #ccc;
   --vandal-history-item-hover-background-color: #f5f5f5;
   --vandal-history-item-selection-color: #000;
   --vandal-history-footer-background-color: #f5f5f5;
@@ -220,6 +221,7 @@ body {
     var(
       --vandal-primary-background-color
     );
+  --vandal-frame-separator-border-color: #1d1d1d;
   --vandal-history-item-hover-background-color: #525151;
   --vandal-history-item-selection-color: #fff;
   --vandal-history-footer-background-color: #4a4949;

@@ -102,7 +102,7 @@
   flex: 0 0 95px;
   align-items: center;
   justify-content: space-evenly;
-  border-left: 1px solid var(--vandal-primary-border-color);
+  border-left: 1px solid var(--vandal-frame-separator-border-color);
 }
 
 :host-context(.vandal[data-theme="dark"]) .vertical__menu__container {
