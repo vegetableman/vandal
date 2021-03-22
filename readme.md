@@ -3,6 +3,7 @@
   <div align="center"><i>Navigator for Web Archive</i></div>
 </p>
 
+![example workflow](https://github.com/vegetableman/vandal/actions/workflows/test.yml/badge.svg)
 ___
 
 > Vandal is a browser extension that helps you quickly navigate the web archive and travel back in time without leaving the current tab.
