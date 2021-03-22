@@ -45,6 +45,7 @@ const navigatorMachine = Machine(
                   assign((ctx, e) => {
                     const transitionType = _.get(e, "payload.type");
                     const url = _.get(e, "payload.url");
+                    // In case of server redirect, replace the last entry with new one.
                     if (transitionType === "redirect") {
                       const currentRecords = [
                         ..._.slice(
