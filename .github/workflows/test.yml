@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: npx lockfile-lint --path package-lock.json --allowed-schemes git+https: https:
+      - run: npx lockfile-lint --path package-lock.json --allowed-schemes "git+https:" "https:"
 
   AVA:
     runs-on: ubuntu-latest
