@@ -154,7 +154,7 @@ const URL = memo(({ toggleTimeTravel, showTimeTravel, ...props }) => {
           {" "}
           <u>
             {toTwelveHourTime(
-              _.toString(_.get(redirectedDateTime, "ts")).substr(-6)
+              _.get(redirectedDateTime, "time")
             )}
           </u>
           {" "}

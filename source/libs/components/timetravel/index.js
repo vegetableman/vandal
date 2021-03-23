@@ -432,7 +432,7 @@ const TimeTravel = (props) => {
                   delayShow={100}
                   getContent={() => (
                     <span>
-                      The number of captures for this URL has exceeded the
+                      The number of captures for this URL exceeds the
                       maximum limit. Some navigation controls have been
                       disabled.
                     </span>
