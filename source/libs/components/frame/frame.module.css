@@ -144,6 +144,7 @@
 }
 
 .vertical_menu__list {
+  composes: list from "../common/verticalmenu/verticalmenu.module.css";
   top: 32px;
   right: -1px;
   width: 140px;

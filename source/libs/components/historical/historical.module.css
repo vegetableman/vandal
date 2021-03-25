@@ -254,6 +254,7 @@
 }
 
 .list {
+  composes: list from "../common/verticalmenu/verticalmenu.module.css";
   z-index: 1;
   width: 125px;
   border: 1px solid var(--vandal-vertical-list-border-color);
