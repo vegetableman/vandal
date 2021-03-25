@@ -157,20 +157,23 @@
 }
 
 .tooltip {
-  max-width: 250px;
+  max-width: 260px;
   padding: 5px 10px !important;
   color: var(--vandal-text-color);
   border: 1px solid var(--vandal-primary-border-color) !important;
   opacity: 1 !important;
   transition: none !important;
   pointer-events: auto !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.tooltip__highlight {
+  color: var(--vandal-text-bold-color);
+  font-weight: bold;
 }
 
 .capacity_tooltip {
-  color: var(--vandal-text-bright-color);
-}
-
-.tooltip b {
   color: var(--vandal-text-bright-color);
 }
 

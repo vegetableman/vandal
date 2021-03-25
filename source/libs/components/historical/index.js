@@ -12,7 +12,6 @@ import cx from "classnames";
 import { CSSTransition } from "react-transition-group";
 import ImageLoader from "./loader";
 import CarouselView from "./carousel.view";
-import Terms from "./terms";
 import {
   toTwelveHourTime,
   getDateTsFromURL,
@@ -214,13 +213,6 @@ const Historical = ({ onClose, openURL, ...props }) => {
       ref={containerRef}
       tabIndex="0"
     >
-      {ctx.showTermModal && (
-        <Terms
-          onClose={() => {
-            send("CLOSE_TERM_MODAL");
-          }}
-        />
-      )}
       {state.matches("historicalUnAvailable") && (
         <div className={styles.disabled__overlay}>
           <div className={styles.disabled__modal}>

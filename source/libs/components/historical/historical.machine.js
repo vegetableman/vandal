@@ -49,7 +49,6 @@ const historicalMachine = Machine(
       isViewResized: false,
       showMonthPanel: false,
       showCarousel: null,
-      showTermModal: false,
       isHistoricalEnabled: true,
       snapshots: [],
       archiveURLs: []
@@ -141,11 +140,6 @@ const historicalMachine = Machine(
         actions: assign((_ctx, e) => ({
           isViewResized: _.get(e, "payload.resize")
         }))
-      },
-      CLOSE_TERM_MODAL: {
-        actions: assign({
-          showTermModal: false
-        })
       },
       ADD_SNAPSHOT: {
         actions: [

@@ -462,7 +462,7 @@ const TimeTravel = (props) => {
             getContent={(count) => (
               <span>
                 <span>This URL was saved </span>
-                <b>{count}</b>
+                <span className={styles.tooltip__highlight}>{count}</span>
                 <span>
                   {_.parseInt(count) > 1 || _.parseInt(count) === 0 ?
                     " times" :
@@ -470,12 +470,12 @@ const TimeTravel = (props) => {
                 </span>
                 {_.parseInt(count) === 1 && (
                 <div>
-                  <b>
+                  <span className={styles.tooltip__highlight}>
                     {_.get(
                       memoizedDateTimeFromTS(ctx.lastTS),
                       "humanizedDate"
                     )}
-                  </b>
+                  </span>
                 </div>
                 )}
                 {_.parseInt(count) > 1 && ctx.firstTS && ctx.lastTS ? (
@@ -483,21 +483,21 @@ const TimeTravel = (props) => {
                     {" "}
                     between
                     {" "}
-                    <b>
+                    <span className={styles.tooltip__highlight}>
                       {_.get(
                         memoizedDateTimeFromTS(ctx.firstTS),
                         "humanizedDate"
                       )}
-                    </b>
+                    </span>
                     {" "}
                     and
                     {" "}
-                    <b>
+                    <span className={styles.tooltip__highlight}>
                       {_.get(
                         memoizedDateTimeFromTS(ctx.lastTS),
                         "humanizedDate"
                       )}
-                    </b>
+                    </span>
                   </div>
                 ) : null}
               </span>
