@@ -1,32 +1,30 @@
 @font-face {
   font-family: "VANDAL__SourceSansPro";
   src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/sourcesanspro-regular-webfont.eot?#iefix")
-    format("embedded-opentype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/sourcesanspro-regular-webfont.woff2")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff2")
     format("woff2"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/sourcesanspro-regular-webfont.woff")
-    format("woff"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/sourcesanspro-regular-webfont.ttf")
-    format("truetype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/sourcesanspro-regular-webfont.svg#Source-Sans-Pro")
-    format("svg");
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff")
+    format("woff");
+}
+
+@font-face {
+  font-weight: 600;
+  font-family: "VANDAL__SourceSansPro";
+  src:
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff2")
+    format("woff2"),
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff")
+    format("woff");
 }
 
 @font-face {
   font-weight: bold;
   font-family: "VANDAL__SourceSansPro";
   src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/sourcesanspro-bold-webfont.eot?#iefix")
-    format("embedded-opentype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/sourcesanspro-bold-webfont.woff2")
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff2")
     format("woff2"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/sourcesanspro-bold-webfont.woff")
-    format("woff"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/sourcesanspro-bold-webfont.ttf")
-    format("truetype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/sourcesanspro-bold-webfont.svg#Source-Sans-Pro")
-    format("svg");
+    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff")
+    format("woff");
 }
 
 @font-face {
@@ -102,7 +100,6 @@ body {
   --vandal-input-color: #333;
   --vandal-text-color: #333;
   --vandal-text-bright-color: #333;
-  --vandal-text-bold-color: #555;
   --vandal-tooltip-color: #333;
   --vandal-link-color: blue;
   --vandal-link-selected-color: #d9e2ff;
@@ -215,7 +212,6 @@ body {
   --vandal-input-color: #fff;
   --vandal-text-color: #ddd;
   --vandal-text-bright-color: #fff;
-  --vandal-text-bold-color: #ddd;
   --vandal-tooltip-color: #fff;
   --vandal-link-color: orange;
   --vandal-link-selected-color: #6b3e0e;

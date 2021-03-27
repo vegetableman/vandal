@@ -20,6 +20,8 @@
 }
 
 .controls {
+  position: relative;
+  bottom: 1px;
   padding: 0 5px 0 0;
 }
 
@@ -71,7 +73,7 @@
 
 .next__icon {
   position: relative;
-  top: 4px;
+  top: 4.5px;
   width: 14px;
 }
 

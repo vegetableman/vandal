@@ -378,6 +378,11 @@
   line-height: 21px;
 }
 
+.ack > b {
+  color: #555;
+  font-weight: 600;
+}
+
 .version {
   margin-top: 15px;
   color: #777;

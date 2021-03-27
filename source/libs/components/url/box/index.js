@@ -171,7 +171,7 @@ const URLBox = memo(({ toggleTimeTravel, ...props }) => {
               })}
             />
           )}
-          <div className={styles.date__text}>
+          <div>
             <span style={{ marginRight: "3px" }}>{dateObj.humanizedDate}</span>
             {" "}
             <span>{toTwelveHourTime(dateObj.time)}</span>

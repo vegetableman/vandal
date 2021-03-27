@@ -52,6 +52,7 @@ const ROW_HEIGHT = 55;
 
 const Calendar = ({
   color,
+  theme,
   years,
   selectedMonth,
   selectedYear,
@@ -63,7 +64,6 @@ const Calendar = ({
   onClose,
   isDialogClosed
 }) => {
-  const { theme } = useTheme();
   const scrollContainerRef = useRef(null);
 
   useEffect(
@@ -156,6 +156,7 @@ const Calendar = ({
 Calendar.propTypes = {
   dialogRef: PropTypes.oneOfType([PropTypes.func, PropTypes.object]).isRequired,
   color: PropTypes.func.isRequired,
+  theme: PropTypes.string.isRequired,
   years: PropTypes.array.isRequired,
   onSelect: PropTypes.func.isRequired,
   onClose: PropTypes.func.isRequired,
@@ -187,6 +188,7 @@ const colorFromRange = memoizeOne((min, max) => scaleLinear()
   .range(["#d4f8d0", max <= 5 ? "#a6ef9c" : "#5ee64e"]));
 
 const InputCalendar = memo((props) => {
+  const { theme } = useTheme();
   const [isVisible, toggleCalendar] = useState(false);
 
   const {
@@ -220,6 +222,7 @@ const InputCalendar = memo((props) => {
           name="dropdown"
           className={cx({
             [styles.filter__icon]: true,
+            [styles.filter__icon___light]: theme === "light",
             [styles.filter__icon___active]: isVisible
           })}
           onClick={() => toggleCalendar((misVisible) => !misVisible)}
@@ -257,6 +260,7 @@ const InputCalendar = memo((props) => {
       {isVisible && (
         <div className={styles.calendar}>
           <WithDialogCalendar
+            theme={theme}
             years={years}
             sparkline={sparkline}
             selectedMonth={selectedMonth}

@@ -54,9 +54,9 @@ const URLHistory = ({
           _.keys(dhistory).sort((a, b) => new Date(b) - new Date(a)),
           (date) => (
             <div key={date}>
-              <h3 className={styles.date__title}>
-                <span>{isCurrentDate(date) ? "Recently Visted" : date}</span>
-              </h3>
+              <div className={styles.date__title}>
+                <span>{isCurrentDate(date) ? "Recently Visited" : date}</span>
+              </div>
               <div>
                 {_.map(_.reverse(_.slice(dhistory[date])), (url, index) => {
                   const dateTimeObj = isArchiveURL(url) ?
@@ -71,7 +71,7 @@ const URLHistory = ({
                         onSelect();
                       }}
                     >
-                      <div>{url}</div>
+                      <div className={styles.url}>{url}</div>
                       {dateTimeObj && (
                       <div className={styles.date}>
                         {`${_.get(

@@ -73,11 +73,20 @@
   font-size: 14px;
 }
 
+.url {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .date {
   position: relative;
   top: 1px;
+  flex-basis: 150px;
   color: var(--vandal-history-item-selection-color);
   font-size: 12px;
+  text-align: right;
 }
 
 .date__title {
