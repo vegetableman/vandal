@@ -123,8 +123,19 @@ const navigatorMachine = Machine(
                     let { currentIndex, currentRecords } = ctx;
 
                     // Handles <- | -> transitions for history changes
-                    if (_.get(e, "payload.type") === "auto" && !_.isEmpty(ctx.currentRecords) &&
-                    _.indexOf(ctx.currentRecords, url) > -1) {
+                    if (_.get(e, "payload.type") === "auto" && !_.isEmpty(ctx.currentRecords)) {
+                      // Handles Medium.com URL navigation
+                      // Add URL to currentRecords if not present
+                      if (_.indexOf(ctx.currentRecords, url) < 0) {
+                        currentRecords = [
+                          ..._.slice(
+                            ctx.currentRecords,
+                            0,
+                            Math.max(currentIndex, 0)
+                          ),
+                          url
+                        ];
+                      }
                       if (_.nth(ctx.currentRecords, Math.max(ctx.currentIndex - 1, 0)) === url) {
                         currentIndex = Math.max(ctx.currentIndex - 1, 0);
                       } else if (_.nth(ctx.currentRecords, ctx.currentIndex + 1) === url) {

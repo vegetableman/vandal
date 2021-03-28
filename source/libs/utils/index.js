@@ -341,3 +341,7 @@ export function dateTimeDiff(datetime1, datetime2) {
     text: prefix + parts.join(" ")
   };
 }
+
+export const log = (message, ...args) => {
+  console.info(`Vandal: ${message}`, ...args);
+};

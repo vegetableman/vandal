@@ -1,12 +1,10 @@
 /* eslint-disable no-console */
 
+const { log } = require("./libs/utils");
+
 const validTabs = {};
 let isBeforeNavigate = false;
 let hasNavigationCompleted = true;
-
-const log = (message, ...args) => {
-  console.info(`Vandal: ${message}`, ...args);
-};
 
 const isValidTab = (tabId) => !!validTabs[tabId];
 

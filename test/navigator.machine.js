@@ -247,3 +247,58 @@ test("validate redirect [interpret]", (t) => new Promise(((resolve) => {
   });
   navService.start();
 })));
+
+test("validate auto redirect with new URL's [interpret]", (t) => new Promise(((resolve) => {
+  let loaded = false;
+  let loadedOne = false;
+  let loadedTwo = false;
+
+  const navService = interpret(NavigatorMachine.withConfig({
+    actions: {
+      updateVandalURL: () => {}
+    }
+  })).onTransition((state, event) => {
+    if (!loaded && state.matches("historyLoaded")) {
+      loaded = true;
+      navService.send("UPDATE_HISTORY", {
+        payload: {
+          url: "https://medium.com/",
+          meta: { test: true }
+        }
+      });
+    } else if (!loadedOne && event.type === "UPDATE_HISTORY") {
+      loadedOne = true;
+      t.deepEqual(state.context.currentRecords, [
+        "https://medium.com/"
+      ]);
+      navService.send("UPDATE_HISTORY", {
+        payload: {
+          url: "https://medium.com/mind-cafe/three-things-in-life-that-arent-worth-the-effort-d9b536f91c2?source=extreme_main_feed---------4-73--------------------a9c4de03_e2ed_4835_a5b7_b30afb484541-------",
+          meta: { test: true }
+        }
+      });
+    } else if (!loadedTwo && event.type === "UPDATE_HISTORY") {
+      loadedTwo = true;
+      t.deepEqual(state.context.currentRecords, [
+        "https://medium.com/",
+        "https://medium.com/mind-cafe/three-things-in-life-that-arent-worth-the-effort-d9b536f91c2?source=extreme_main_feed---------4-73--------------------a9c4de03_e2ed_4835_a5b7_b30afb484541-------"
+      ]);
+      t.is(state.context.currentIndex, 1);
+      navService.send("UPDATE_HISTORY", {
+        payload: {
+          url: "https://medium.com/mind-cafe/three-things-in-life-that-arent-worth-the-effort",
+          type: "auto",
+          meta: { test: true }
+        }
+      });
+    } else if (event.type === "UPDATE_HISTORY") {
+      t.deepEqual(state.context.currentRecords, [
+        "https://medium.com/",
+        "https://medium.com/mind-cafe/three-things-in-life-that-arent-worth-the-effort"
+      ]);
+      t.is(state.context.currentIndex, 1);
+      resolve();
+    }
+  });
+  navService.start();
+})));

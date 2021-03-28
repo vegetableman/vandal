@@ -167,7 +167,7 @@
 }
 
 .tooltip__highlight {
-  color: var(--vandal-text-bold-color);
+  color: var(--vandal-text-bright-color);
   font-weight: 600;
 }
 

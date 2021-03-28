@@ -1,4 +1,4 @@
-const { fetch } = require("./libs/utils");
+const { fetch, log } = require("./libs/utils");
 
 const requests = {};
 
@@ -44,7 +44,11 @@ chrome.runtime.onMessage.addListener(async (request) => {
   const { message, data } = request;
   if (message) {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      chrome.tabs.sendMessage(tabs[0].id, { message, data });
+      if (tabs && tabs.length) {
+        chrome.tabs.sendMessage(tabs[0].id, { message, data });
+      } else {
+        log("Failed to find tab");
+      }
     });
   }
 });
