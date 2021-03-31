@@ -5,7 +5,9 @@ import ShadowDOM from "react-shadow";
 import { useMachine } from "@xstate/react";
 
 import { Toast, Icon } from "../common";
-import { browser, dateDiffInDays, trackDonate, trackUsage } from "../../utils";
+import {
+  browser, dateDiffInDays, trackDonate, trackUsage
+} from "../../utils";
 import { ThemeProvider } from "../../hooks";
 import { appDB } from "../../utils/storage";
 
