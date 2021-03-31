@@ -12,7 +12,7 @@ import cx from "classnames";
 import { useMachine } from "@xstate/react";
 
 import { VerticalMenu, Switch, Icon } from "../common";
-import { browser } from "../../utils";
+import { browser, trackDonate } from "../../utils";
 import { TimetravelProvider, useTheme } from "../../hooks";
 import { colors } from "../../constants";
 import URL from "../url";
@@ -317,7 +317,14 @@ const Frame = memo(({ onExit, ...props }) => {
               data-for="vandal-donate"
               data-tip="Donate to Internet Archive"
             >
-              <a href="https://archive.org/donate/?referrer=vandal" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://archive.org/donate/?utm_source=vandal"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  trackDonate();
+                }}
+              >
                 <Icon
                   name="heart"
                   className={styles.donate__icon}

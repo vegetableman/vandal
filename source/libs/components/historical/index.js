@@ -15,7 +15,8 @@ import CarouselView from "./carousel.view";
 import {
   toTwelveHourTime,
   getDateTsFromURL,
-  longMonthNames
+  longMonthNames,
+  trackDonate
 } from "../../utils";
 import { historicalDB } from "../../utils/storage";
 import { VerticalMenu, Icon } from "../common";
@@ -398,9 +399,10 @@ const Historical = ({ onClose, openURL, ...props }) => {
                   type="button"
                   className={styles.info__button}
                   onClick={() => {
-                    window.open("https://archive.org/donate/?referrer=vandal", "_blank");
+                    window.open("https://archive.org/donate/?utm_source=vandal", "_blank");
                     toggleInfoModal(false);
                     historicalDB.setInfo(1);
+                    trackDonate();
                   }}
                 >
                   <span className={styles.info__button__text}>Donate</span>

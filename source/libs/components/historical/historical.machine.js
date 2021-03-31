@@ -247,7 +247,7 @@ const historicalMachine = Machine(
       },
       checkHistoricalAvailable: () => new Promise(async (resolve, reject) => {
         const [result, err] = await api(
-          process.env.LAMBDA_SCREENSHOT_IS_AVAILABLE
+          process.env.LAMBDA_HISTORICAL_IS_AVAILABLE
         );
         if (err) {
           return reject(err);

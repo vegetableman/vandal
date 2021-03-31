@@ -8,6 +8,7 @@ export { default as Screenshooter } from "./screenshooter";
 export { default as useDidUpdateEffect } from "./use-didupdate-effect";
 export { default as compareProps } from "./compare-props";
 export { default as Lambda } from "./lambda";
+export * from "./track";
 
 export const monthNames = [
   "Jan",

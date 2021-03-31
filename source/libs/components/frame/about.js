@@ -4,6 +4,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Icon } from "../common";
 import styles from "./frame.module.css";
+import { trackDonate } from "../../utils";
 
 const About = ({ toggleAbout }) => (
   <div
@@ -80,9 +81,12 @@ const About = ({ toggleAbout }) => (
             through those changing tides of thought, censorship and
             access.&nbsp;
             <a
-              href="https://archive.org/donate/?referrer=vandal"
+              href="https://archive.org/donate/?utm_source=vandal"
               target="blank"
               style={{ fontWeight: "bold" }}
+              onClick={() => {
+                trackDonate();
+              }}
             >
               Please support the Internet Archive to encourage this ongoing
               work

@@ -1,4 +1,4 @@
-service: screenshot-as-a-service
+service: vandal-as-a-service
 
 provider:
   name: aws
@@ -32,4 +32,14 @@ functions:
             method: get
             path: is-historical-available
             cors: true
+
+    track:
+      handler: track.handler
+      events:
+        - http:
+            method: post
+            path: track-usage
+            cors: true
+            async: true
+            
 

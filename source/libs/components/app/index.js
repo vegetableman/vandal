@@ -5,7 +5,7 @@ import ShadowDOM from "react-shadow";
 import { useMachine } from "@xstate/react";
 
 import { Toast, Icon } from "../common";
-import { browser, dateDiffInDays } from "../../utils";
+import { browser, dateDiffInDays, trackDonate, trackUsage } from "../../utils";
 import { ThemeProvider } from "../../hooks";
 import { appDB } from "../../utils/storage";
 
@@ -109,6 +109,7 @@ const App = (props) => {
     chrome.runtime.onMessage.addListener(onMessage);
     document.addEventListener("beforeunload", sendExit);
     checkDonate();
+    trackUsage();
     return () => {
       document.removeEventListener("beforeunload", sendExit);
       chrome.runtime.onMessage.removeListener(onMessage);
@@ -246,9 +247,10 @@ const App = (props) => {
                   className={styles.donate__button}
                   onClick={() => {
                     window.open(
-                      "https://archive.org/donate/?referrer=vandal",
+                      "https://archive.org/donate/?utm_source=vandal",
                       "_blank"
                     );
+                    trackDonate();
                   }}
                 >
                   DONATE
