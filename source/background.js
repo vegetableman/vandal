@@ -40,15 +40,7 @@ chrome.runtime.onConnect.addListener((port) => {
   });
 });
 
-chrome.runtime.onMessage.addListener(async (request) => {
+chrome.runtime.onMessage.addListener(async (request, sender) => {
   const { message, data } = request;
-  if (message) {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs && tabs.length) {
-        chrome.tabs.sendMessage(tabs[0].id, { message, data });
-      } else {
-        log("Failed to find tab");
-      }
-    });
-  }
+  chrome.tabs.sendMessage(sender.tab.id, { message, data });
 });
