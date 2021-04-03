@@ -51,7 +51,7 @@ const Progress = ({ current, total, show }) => (
           {" "}
           {total}
           {" "}
-          snapshots...
+          snapshots
         </div>
         <div style={{ fontSize: 12 }}>
           Meanwhile, you could grab some casserole...
