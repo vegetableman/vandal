@@ -116,7 +116,7 @@ const Historical = ({ onClose, openURL, ...props }) => {
         if (newArchiveURL) {
           service.send("SET_ARCHIVE_URL", { payload: { index, value: newArchiveURL } });
         }
-        const [data, err] = snapshot;
+        const { data, err } = snapshot;
         service.send("SET_SNAPSHOT", { payload: { index, value: { data, err } } });
       } else if (option === "showMonths") {
         service.send("TOGGLE_MONTH_VIEW_OPEN", {
@@ -187,7 +187,7 @@ const Historical = ({ onClose, openURL, ...props }) => {
         ref={containerRef}
         tabIndex="0"
       >
-        <div className={styles.loading_text}>Loading...</div>
+        <div className={styles.loading_text}>No Data Found</div>
       </div>
     );
   }

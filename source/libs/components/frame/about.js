@@ -75,7 +75,7 @@ const About = ({ toggleAbout }) => (
             The web is always changing and these changes may not be in the
             best interests of those seeking information. The
             {" "}
-            <b>Internet Archive</b>
+            <b style={{ color: "#555" }}>Internet Archive</b>
             {" "}
             is an excellent resource to navigate
             through those changing tides of thought, censorship and
@@ -83,7 +83,7 @@ const About = ({ toggleAbout }) => (
             <a
               href="https://archive.org/donate/?utm_source=vandal"
               target="blank"
-              style={{ fontWeight: "bold" }}
+              style={{ fontWeight: 600 }}
               onClick={() => {
                 trackDonate();
               }}

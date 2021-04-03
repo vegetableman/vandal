@@ -432,10 +432,10 @@
 
 .loading_text,
 .no_data_text {
-  align-self: center;
+  align-self: flex-start;
   justify-content: center;
   padding-top: 300px;
   color: var(--vandal-text-color);
-  font-size: 17px;
+  font-size: 15px;
   font-family: "VANDAL__SourceSansPro", Arial, Helvetica, sans-serif;
 }
