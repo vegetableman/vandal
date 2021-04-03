@@ -1,12 +1,10 @@
-const IS_UNAVAILABLE = false;
-
 exports.handler = async () => {
   try {
     return {
       statusCode: 200,
-      body: JSON.stringify({ isAvailable: !IS_UNAVAILABLE })
+      body: JSON.stringify({ isAvailable: process.env.IS_AVAILABLE })
     };
-  } catch (err) {
-    return { statusCode: 500, body: err.toString() };
+  } catch (ex) {
+    return { statusCode: 500 };
   }
 };

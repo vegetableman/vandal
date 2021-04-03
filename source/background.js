@@ -1,4 +1,4 @@
-const { fetch, log } = require("./libs/utils");
+const { fetch } = require("./libs/utils");
 
 const requests = {};
 

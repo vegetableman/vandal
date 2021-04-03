@@ -1,12 +1,17 @@
 const getResponse = async (res) => {
   const contentType = _.get(res, "headers").get("content-type");
+  const contentLength = _.parseInt(_.get(res, "headers").get("content-length"));
+  if (!contentLength) {
+    return null;
+  }
   if (
     _.endsWith(_.get(res, "url"), ".png") ||
     (contentType && contentType.indexOf("image") > -1)
   ) {
     const responseBlob = await res.blob();
     return URL.createObjectURL(responseBlob);
-  } if (contentType && contentType.indexOf("text/") > -1) {
+  }
+  if (contentType && contentType.indexOf("text/") > -1) {
     const result = await res.text();
     return result;
   }
@@ -23,6 +28,7 @@ const fetchRequest = async ({
   method = "GET",
   meta,
   body,
+  headers,
   fetchFromCache,
   fetchResHeader,
   cacheResponse,
@@ -44,9 +50,14 @@ const fetchRequest = async ({
   }
 
   try {
-    const headers = new Headers();
-    headers.append("x-user-agent", "Vandal/1.0");
-    const resFromFetch = await fetch(request.clone(), { method, body, headers });
+    const headersObj = new Headers();
+    headersObj.append("x-user-agent", "Vandal/1.0");
+    if (!_.isEmpty(_.keys(headers))) {
+      _.each(_.keys(headers), (key) => {
+        headersObj.append(key, headers[key]);
+      });
+    }
+    const resFromFetch = await fetch(request.clone(), { method, body, headers: headersObj });
     if (fetchResHeader) {
       const responseHeader = resFromFetch.headers.get(fetchResHeader);
       return [responseHeader, null];

@@ -1,8 +1,8 @@
 import { api } from "./api";
 
-export function trackUsage() {
+export async function trackUsage() {
   try {
-    api(process.env.LAMBDA_TRACK, {
+    await api(process.env.LAMBDA_TRACK, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

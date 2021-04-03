@@ -5,7 +5,7 @@ const base = new Airtable({ apiKey: process.env.API_KEY }).base('appMBE0zOUzzaRL
 const recordId = 'rec4RFpFmlKpJWX5q';
 
 exports.handler = async (event) => {
-  const params = JSON.parse(event.body);
+  const params = typeof event.body === "string" ? JSON.parse(event.body): event.body || event;
   const isUsage = params.usage;
   const isDonate = params.donate;
   const update = () => {

@@ -1,5 +1,5 @@
 service: vandal-as-a-service
-
+useDotenv: true
 provider:
   name: aws
   runtime: nodejs12.x
@@ -7,6 +7,12 @@ provider:
   memorySize: 2048
   region: us-east-2
   versionFunctions: false
+
+package:
+  excludeDevDependencies: false
+  exclude:
+    - node_modules/sharp/**
+    - node_modules/chrome-aws-lambda/**
 
 functions:
     screenshot:
@@ -27,6 +33,8 @@ functions:
     
     is-historical-available:
       handler: is-available.handler
+      environment:
+        IS_AVAILABLE: ${env:IS_AVAILABLE}
       events:
         - http:
             method: get
@@ -35,6 +43,8 @@ functions:
 
     track:
       handler: track.handler
+      environment:
+        API_KEY: ${env:API_KEY}
       events:
         - http:
             method: post

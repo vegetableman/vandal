@@ -4,18 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "deploy": "serverless deploy"
+    "deploy": "sls deploy",
+    "invoke:track": "sls invoke local --function track -p event.json",
+    "invoke:is-available": "sls invoke local --function is-historical-available"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "chrome-aws-lambda": "^5.3.0"
-  },
   "dependencies": {
     "airtable": "^0.10.1",
-    "dotenv": "^8.2.0",
-    "serverless": "^2.1.1",
+    "chrome-aws-lambda": "^5.3.0",
     "sharp": "^0.26.1"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
   }
 }

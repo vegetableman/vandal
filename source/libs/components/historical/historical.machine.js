@@ -66,12 +66,15 @@ const historicalMachine = Machine(
                 isHistoricalEnabled: (_ctx, e) => _.get(e, "data.isAvailable")
               })
             ]
+          },
+          onError: {
+            target: "historicalUnAvailable"
           }
         }
       },
       processingHistorical: {
         on: {
-          "": [
+          always: [
             {
               target: "loadingHistorical",
               cond: "isHistoricalAvailable"
