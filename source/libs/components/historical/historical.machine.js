@@ -73,17 +73,15 @@ const historicalMachine = Machine(
         }
       },
       processingHistorical: {
-        on: {
-          always: [
-            {
-              target: "loadingHistorical",
-              cond: "isHistoricalAvailable"
-            },
-            {
-              target: "historicalUnAvailable"
-            }
-          ]
-        }
+        always: [
+          {
+            target: "loadingHistorical",
+            cond: "isHistoricalAvailable"
+          },
+          {
+            target: "historicalUnAvailable"
+          }
+        ]
       },
       historicalUnAvailable: {},
       loadingHistorical: {
