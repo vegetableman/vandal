@@ -22,7 +22,7 @@ export const fetchSnapshot = async ({ url, year, archiveURL }) => {
     }
   );
   if (archiveErr) {
-    return [{ data: null, err: archiveErr }, null];
+    return [[null, archiveErr], null];
   }
 
   const closestURL = _.get(result, "archived_snapshots.closest.url");
@@ -31,7 +31,7 @@ export const fetchSnapshot = async ({ url, year, archiveURL }) => {
   }
 
   if (!snapshotURL) {
-    return [{ data: null, err: "No Archive URL found" }, null];
+    return [[null, "No Archive URL found"], null];
   }
 
   return [
