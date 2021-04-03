@@ -50,6 +50,5 @@ functions:
             method: post
             path: track-usage
             cors: true
-            async: true
             
 

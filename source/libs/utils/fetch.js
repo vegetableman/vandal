@@ -1,9 +1,5 @@
 const getResponse = async (res) => {
   const contentType = _.get(res, "headers").get("content-type");
-  const contentLength = _.parseInt(_.get(res, "headers").get("content-length"));
-  if (!contentLength) {
-    return null;
-  }
   if (
     _.endsWith(_.get(res, "url"), ".png") ||
     (contentType && contentType.indexOf("image") > -1)
@@ -26,7 +22,6 @@ const fetchRequest = async ({
   endpoint,
   controller,
   method = "GET",
-  meta,
   body,
   headers,
   fetchFromCache,
@@ -45,7 +40,7 @@ const fetchRequest = async ({
   if (fetchFromCache && typeof caches !== "undefined") {
     const resFromCache = await caches.match(request);
     if (_.get(resFromCache, "status") === 200) {
-      return [await getResponse(resFromCache, meta), null];
+      return [await getResponse(resFromCache), null];
     }
   }
 
@@ -71,7 +66,7 @@ const fetchRequest = async ({
     }
 
     if (_.get(resFromFetch, "status") === 200) {
-      return [await getResponse(resFromFetch, meta), null];
+      return [await getResponse(resFromFetch), null];
     }
 
     throw new Error(resFromFetch.statusText || "Request failed");

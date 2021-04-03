@@ -14,7 +14,6 @@ chrome.runtime.onConnect.addListener((port) => {
       requests[uniqueId] = { controller: new AbortController(), meta };
       fetch({
         controller: requests[uniqueId].controller,
-        meta,
         ...rest
       }).then((...args) => {
         delete requests[uniqueId];

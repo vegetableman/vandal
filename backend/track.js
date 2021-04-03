@@ -41,7 +41,8 @@ exports.handler = async (event) => {
   try {
     await update();
     return {
-      statusCode: 200
+      statusCode: 200,
+      body: JSON.stringify(params)
     };
   }
   catch(ex) {
