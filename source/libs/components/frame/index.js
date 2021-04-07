@@ -318,7 +318,7 @@ const Frame = memo(({ onExit, ...props }) => {
               data-tip="Donate to Internet Archive"
             >
               <a
-                href="https://archive.org/donate/?utm_source=vandal"
+                href="https://archive.org/donate/?ref=vandal"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => {

@@ -81,7 +81,7 @@ const About = ({ toggleAbout }) => (
             through those changing tides of thought, censorship and
             access.&nbsp;
             <a
-              href="https://archive.org/donate/?utm_source=vandal"
+              href="https://archive.org/donate/?ref=vandal"
               target="blank"
               style={{ fontWeight: 600 }}
               onClick={() => {

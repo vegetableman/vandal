@@ -399,7 +399,7 @@ const Historical = ({ onClose, openURL, ...props }) => {
                   type="button"
                   className={styles.info__button}
                   onClick={() => {
-                    window.open("https://archive.org/donate/?utm_source=vandal", "_blank");
+                    window.open("https://archive.org/donate/?ref=vandal", "_blank");
                     toggleInfoModal(false);
                     historicalDB.setInfo(1);
                     trackDonate();

@@ -249,7 +249,7 @@ const App = (props) => {
                   className={styles.donate__button}
                   onClick={() => {
                     window.open(
-                      "https://archive.org/donate/?utm_source=vandal",
+                      "https://archive.org/donate/?ref=vandal",
                       "_blank"
                     );
                     trackDonate();
