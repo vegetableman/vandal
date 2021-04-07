@@ -56,7 +56,6 @@ class NavigationHandler {
       return;
     }
 
-
     if (details.url === "about:blank" && !!parentFrameId) {
       chrome.tabs.sendMessage(tabId, {
         message: "__VANDAL__NAV__BUSTED"

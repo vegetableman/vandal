@@ -1,7 +1,7 @@
 import { Machine, actions } from "xstate";
 import _ from "lodash";
 import { historyDB } from "../../utils/storage";
-import { isArchiveURL, isPrefixedArchiveURL, longMonthNames, removePrefixArchiveURL } from "../../utils";
+import { isPrefixedArchiveURL, longMonthNames, removePrefixArchiveURL } from "../../utils";
 
 const getCurrentDate = () => {
   const currentDate = new Date();
