@@ -83,6 +83,27 @@ const archiveRegExp = new RegExp(
   /https?:\/\/web\.archive\.org\/web\/\d+.*_?\/*/
 );
 
+const archivePrefixRegExp = new RegExp(
+  /https?:\/\/web\.archive\.org\/web\/\d+if_\/.*/
+);
+
+/**
+ * Check if archived URL has if_
+ * @param {String} - Archive URL
+ * @returns {Boolean} - whether URL is prefixed with if_
+ */
+export const isPrefixedArchiveURL = (url) => {
+  if (!url) return false;
+  return archivePrefixRegExp.test(url);
+};
+
+/**
+ * Removed if_ from Archive URL
+ * @param {String} - Archive URL
+ * @returns {String} - Archive URL without if_
+ */
+export const removePrefixArchiveURL = (url) => url.replace(/(https?:\/\/web\.archive\.org\/web\/\d+)if_(\/.*)/, "$1$2");
+
 /**
  * Check if URL is an archive URL
  * @param {String} url - URL to validate

@@ -186,6 +186,7 @@
 }
 
 .donate__btn:hover .donate__icon {
+  transform: scale(1.1);
   fill: #f50b0b;
 }
 

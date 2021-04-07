@@ -232,7 +232,7 @@ class NavigationHandler {
       if (isCSPHeader) {
         let csp = header.value;
         if (csp.indexOf("frame-ancestors") > -1) {
-          csp = csp.replace(/frame-ancestors ((.*?);|'none'|'self')/gi, "");
+          csp = "";
         }
         header.value = csp;
       } else if (isFrameHeader) {

@@ -1,5 +1,5 @@
 .toast__notfound {
-  left: calc(50% - 170px);
+  left: 41%;
 }
 
 .toast__close {
@@ -16,6 +16,11 @@
 
 .toast__redirect {
   left: calc(50% - 100px);
+}
+
+.redirect {
+  width: "100%";
+  text-align: "center";
 }
 
 .redirect__icon {

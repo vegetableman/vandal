@@ -1,7 +1,7 @@
 import { Machine, actions } from "xstate";
 import _ from "lodash";
 import { historyDB } from "../../utils/storage";
-import { longMonthNames } from "../../utils";
+import { isArchiveURL, isPrefixedArchiveURL, longMonthNames, removePrefixArchiveURL } from "../../utils";
 
 const getCurrentDate = () => {
   const currentDate = new Date();
@@ -44,7 +44,13 @@ const navigatorMachine = Machine(
                 actions: [
                   assign((ctx, e) => {
                     const transitionType = _.get(e, "payload.type");
-                    const url = _.get(e, "payload.url");
+                    let url = _.get(e, "payload.url");
+
+                    // URL's can be prefixed with _if
+                    // Remove if present
+                    if (isPrefixedArchiveURL(url)) {
+                      url = removePrefixArchiveURL(url);
+                    }
                     // In case of server redirect, replace the last entry with new one.
                     if (transitionType === "redirect") {
                       const currentRecords = [
@@ -77,6 +83,11 @@ const navigatorMachine = Machine(
                         currentIndex = Math.max(ctx.currentIndex - 1, 0);
                       } else if (_.nth(ctx.currentRecords, ctx.currentIndex + 1) === url) {
                         currentIndex += 1;
+                      } else {
+                        // the browser overwrites a manual transition with
+                        // an auto on archive navigation.
+                        // A - click -> B -> Archive_B
+                        currentIndex = _.lastIndexOf(ctx.currentRecords, url);
                       }
                     } else if (transitionType === "manual") {
                       // handles click on document with url already present in the record.
@@ -113,7 +124,13 @@ const navigatorMachine = Machine(
                       return { isReload: false };
                     }
 
-                    const url = _.get(e, "payload.url");
+                    let url = _.get(e, "payload.url");
+
+                    // URL's can be prefixed with _if
+                    // Remove if present
+                    if (isPrefixedArchiveURL(url)) {
+                      url = removePrefixArchiveURL(url);
+                    }
 
                     // Right click -> Reload frame scenario
                     if (_.nth(ctx.currentRecords, ctx.currentIndex) === url) {

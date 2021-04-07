@@ -148,7 +148,7 @@ const URL = memo(({ toggleTimeTravel, showTimeTravel, ...props }) => {
         closeTimeout={5000}
         show={redirectedDateTime && props.isRedirecting}
       >
-        <div style={{ textAlign: "center", width: "100%" }}>
+        <div className={styles.redirect}>
           <Icon className={styles.redirect__icon} name="redirect" width={11} />
           Redirected to
           {" "}
@@ -160,7 +160,7 @@ const URL = memo(({ toggleTimeTravel, showTimeTravel, ...props }) => {
           {" "}
           at
           {" "}
-          <b>{_.get(redirectedDateTime, "humanizedDate")}</b>
+          <span>{_.get(redirectedDateTime, "humanizedDate")}</span>
         </div>
       </Toast>
     </>

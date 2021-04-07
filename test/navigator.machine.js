@@ -302,3 +302,145 @@ test("validate auto redirect with new URL's [interpret]", (t) => new Promise(((r
   });
   navService.start();
 })));
+
+test.only("validate auto navigation with _if", (t) => new Promise(((resolve) => {
+  let loaded = false;
+  let loadedOne = false;
+  let loadedTwo = false;
+
+  const navService = interpret(NavigatorMachine.withConfig({
+    actions: {
+      updateVandalURL: () => {}
+    }
+  })).onTransition((state, event) => {
+    if (!loaded && state.matches("historyLoaded")) {
+      loaded = true;
+      navService.send("UPDATE_HISTORY", {
+        payload: {
+          url: "https://www.example.com/",
+          meta: { test: true }
+        }
+      });
+    } else if (!loadedOne && event.type === "UPDATE_HISTORY") {
+      loadedOne = true;
+      t.deepEqual(state.context.currentRecords, [
+        "https://www.example.com/"
+      ]);
+      navService.send("UPDATE_HISTORY", {
+        payload: {
+          url: "https://web.archive.org/web/20171231183457/https://www.example.com/",
+          meta: { test: true }
+        }
+      });
+      resolve();
+    } else if (!loadedTwo && event.type === "UPDATE_HISTORY") {
+      loadedTwo = true;
+      t.deepEqual(state.context.currentRecords, [
+        "https://www.example.com/",
+        "https://web.archive.org/web/20171231183457/https://www.example.com/"
+      ]);
+      navService.send("UPDATE_HISTORY", {
+        payload: {
+          url: "https://web.archive.org/web/20171231183456/https://www.example.com/",
+          meta: { test: true }
+        }
+      });
+    } else if (!loadedTwo && event.type === "UPDATE_HISTORY") {
+      loadedTwo = true;
+      t.deepEqual(state.context.currentRecords, [
+        "https://www.example.com/",
+        "https://web.archive.org/web/20171231183457/https://www.example.com/",
+        "https://web.archive.org/web/20171231183456/https://www.example.com/"
+      ]);
+      navService.send("UPDATE_HISTORY_ONCOMMIT", {
+        payload: {
+          url: "https://web.archive.org/web/20171231183457if_/https://www.example.com/",
+          type: "auto",
+          meta: { test: true }
+        }
+      });
+      resolve();
+    } else if (event.type === "UPDATE_HISTORY_ONCOMMIT") {
+      t.deepEqual(state.context.currentRecords, [
+        "https://www.example.com/",
+        "https://web.archive.org/web/20171231183457/https://www.example.com/",
+        "https://web.archive.org/web/20171231183456/https://www.example.com/"
+      ]);
+      t.is(state.context.currentURL, "https://web.archive.org/web/20171231183457/https://www.example.com/");
+      t.is(state.context.currentIndex, 1);
+      resolve();
+    }
+  });
+  navService.start();
+})));
+
+test.only("reset index on auto if no immediate match found", (t) => new Promise(((resolve) => {
+  let loaded = false;
+  let loadedOne = false;
+  let loadedTwo = false;
+
+  const navService = interpret(NavigatorMachine.withConfig({
+    actions: {
+      updateVandalURL: () => {}
+    }
+  })).onTransition((state, event) => {
+    if (!loaded && state.matches("historyLoaded")) {
+      loaded = true;
+      navService.send("UPDATE_HISTORY", {
+        payload: {
+          url: "https://www.example.com/",
+          meta: { test: true }
+        }
+      });
+    } else if (!loadedOne && event.type === "UPDATE_HISTORY") {
+      loadedOne = true;
+      t.deepEqual(state.context.currentRecords, [
+        "https://www.example.com/"
+      ]);
+      navService.send("UPDATE_HISTORY", {
+        payload: {
+          url: "https://www.example.com/blog/",
+          meta: { test: true }
+        }
+      });
+      resolve();
+    } else if (!loadedTwo && event.type === "UPDATE_HISTORY") {
+      loadedTwo = true;
+      t.deepEqual(state.context.currentRecords, [
+        "https://www.example.com/",
+        "https://www.example.com/blog/"
+      ]);
+      navService.send("UPDATE_HISTORY", {
+        payload: {
+          url: "https://web.archive.org/web/20171231183456/https://www.example.com/blog/",
+          meta: { test: true }
+        }
+      });
+    } else if (!loadedTwo && event.type === "UPDATE_HISTORY") {
+      loadedTwo = true;
+      t.deepEqual(state.context.currentRecords, [
+        "https://www.example.com/",
+        "https://www.example.com/blog/",
+        "https://web.archive.org/web/20171231183456/https://www.example.com/"
+      ]);
+      navService.send("UPDATE_HISTORY_ONCOMMIT", {
+        payload: {
+          url: "https://www.example.com/",
+          type: "auto",
+          meta: { test: true }
+        }
+      });
+      resolve();
+    } else if (event.type === "UPDATE_HISTORY_ONCOMMIT") {
+      t.deepEqual(state.context.currentRecords, [
+        "https://www.example.com/",
+        "https://web.archive.org/web/20171231183457/https://www.example.com/",
+        "https://web.archive.org/web/20171231183456/https://www.example.com/"
+      ]);
+      t.is(state.context.currentURL, "https://www.example.com/");
+      t.is(state.context.currentIndex, 0);
+      resolve();
+    }
+  });
+  navService.start();
+})));
