@@ -399,7 +399,7 @@ const Frame = memo(({ onExit, ...props }) => {
           place="bottom"
           type="dark"
           delayShow={500}
-          offset={{ bottom: 0, left: 0 }}
+          offset={{ bottom: 0, left: 5 }}
         />
         {showAbout && <About toggleAbout={toggleAbout} />}
       </div>
