@@ -1,6 +1,8 @@
 const url = decodeURIComponent(window.location.search.replace("?url=", ""));
 const iframe = document.createElement("iframe");
-iframe.src = url;
+if (url) {
+  iframe.src = url;
+}
 
 iframe.id = "vandal-inner-frame";
 iframe.style.width = "100%";
