@@ -37,6 +37,10 @@
   cursor: auto;
 }
 
+.control:active {
+  transform: scale(0.85);
+}
+
 .control__icon {
   width: 14px;
   fill: var(--vandal-primary-icon-color);

@@ -10,6 +10,10 @@
   fill: var(--vandal-primary-icon-color);
 }
 
+.filter__icon:active {
+  transform: rotate(90deg) scale(0.9);
+}
+
 .filter__icon___light {
   right: 42px;
 }
@@ -112,6 +116,14 @@
   width: 14px;
   height: 14px;
   fill: var(--vandal-primary-icon-color);
+}
+
+.prev__icon:active {
+  transform: rotate(180deg) scale(0.9);
+}
+
+.next__icon:active {
+  transform: scale(0.9);
 }
 
 .next__icon___disabled {

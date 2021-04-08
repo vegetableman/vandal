@@ -62,6 +62,10 @@
   stroke-width: 6px;
 }
 
+.clear__icon:active {
+  transform: scale(0.9);
+}
+
 .clear__icon:hover {
   fill: var(--vandal-primary-icon-active-color);
   stroke: var(--vandal-primary-icon-active-color);

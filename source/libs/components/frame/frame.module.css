@@ -40,8 +40,6 @@
   fill: var(--vandal-primary-icon-color);
   stroke: var(--vandal-primary-icon-color);
   stroke-width: 3px;
-
-  /* top: 5px; */
 }
 
 .stop__icon {
