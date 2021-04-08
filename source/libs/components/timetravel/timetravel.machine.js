@@ -86,7 +86,7 @@ export const findDayFromTs = (
         day = _.size(months[month - 1]);
         tsDayArr = _.get(months[month - 1][day - 1], "ts");
       }
-    } else if (day < _.size(months[month - 1])) {
+    } else if (day <= _.size(months[month - 1])) {
       tsDayArr = _.get(months[month - 1][day - 1], "ts");
     } else if (month < 12) {
       // Check next month
