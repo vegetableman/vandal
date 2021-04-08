@@ -137,7 +137,7 @@ export const findCalendarFromTS = (sparkline, year, dir) => {
       _.findIndex(sparkline[y], (m) => m > 0);
     if (month > -1) {
       return {
-        year,
+        year: y,
         month
       };
     }
