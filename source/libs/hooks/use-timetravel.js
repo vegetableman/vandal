@@ -13,13 +13,18 @@ import {
 const defaultValue = { state: { context: {} } };
 const TimetravelContext = createContext(defaultValue);
 
-const TimetravelProvider = ({ children, machine: timetravelMachine }) => {
+const TimetravelProvider = ({ children, machine: timetravelMachine, onNavigate }) => {
   const [ttState, setTTState] = useState(timetravelMachine.state);
   const linkTS = useRef(undefined);
   const isReset = useRef(false);
 
   useEffect(() => {
     timetravelMachine.onTransition((state) => {
+      // Send all archive navigations
+      if (_.findIndex(_.get(state, "actions"), ["type", "navigateToURL"]) > -1) {
+        const ctx = _.get(state, "context");
+        onNavigate(`https://web.archive.org/web/${_.get(ctx, "selectedTS")}/${_.get(ctx, "url")}`);
+      }
       if (state.changed) {
         setTTState(state);
       }
@@ -90,8 +95,6 @@ const TimetravelProvider = ({ children, machine: timetravelMachine }) => {
               });
             }
           }
-          break;
-        case "__VANDAL__NAV__COMPLETE":
           break;
         default:
           break;

@@ -116,7 +116,7 @@ test("validate auto navigation entries [interpret]", (t) => new Promise(((resolv
 
   const navService = interpret(NavigatorMachine.withConfig({
     actions: {
-      updateVandalURL: () => {}
+      navigateToURL: () => {}
     }
   })).onTransition((state, event) => {
     if (!loaded && state.matches("historyLoaded")) {
@@ -200,7 +200,7 @@ test("validate redirect [interpret]", (t) => new Promise(((resolve) => {
 
   const navService = interpret(NavigatorMachine.withConfig({
     actions: {
-      updateVandalURL: () => {}
+      navigateToURL: () => {}
     }
   })).onTransition((state, event) => {
     if (!loaded && state.matches("historyLoaded")) {
@@ -255,7 +255,7 @@ test("validate auto redirect with new URL's [interpret]", (t) => new Promise(((r
 
   const navService = interpret(NavigatorMachine.withConfig({
     actions: {
-      updateVandalURL: () => {}
+      navigateToURL: () => {}
     }
   })).onTransition((state, event) => {
     if (!loaded && state.matches("historyLoaded")) {
@@ -303,14 +303,14 @@ test("validate auto redirect with new URL's [interpret]", (t) => new Promise(((r
   navService.start();
 })));
 
-test.only("validate auto navigation with _if", (t) => new Promise(((resolve) => {
+test("validate auto navigation with _if", (t) => new Promise(((resolve) => {
   let loaded = false;
   let loadedOne = false;
   let loadedTwo = false;
 
   const navService = interpret(NavigatorMachine.withConfig({
     actions: {
-      updateVandalURL: () => {}
+      navigateToURL: () => {}
     }
   })).onTransition((state, event) => {
     if (!loaded && state.matches("historyLoaded")) {
@@ -374,14 +374,14 @@ test.only("validate auto navigation with _if", (t) => new Promise(((resolve) => 
   navService.start();
 })));
 
-test.only("reset index on auto if no immediate match found", (t) => new Promise(((resolve) => {
+test("reset index on auto if no immediate match found", (t) => new Promise(((resolve) => {
   let loaded = false;
   let loadedOne = false;
   let loadedTwo = false;
 
   const navService = interpret(NavigatorMachine.withConfig({
     actions: {
-      updateVandalURL: () => {}
+      navigateToURL: () => {}
     }
   })).onTransition((state, event) => {
     if (!loaded && state.matches("historyLoaded")) {

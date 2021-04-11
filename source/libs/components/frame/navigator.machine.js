@@ -20,7 +20,9 @@ const navigatorMachine = Machine(
       currentRecords: [],
       currentIndex: 0,
       url: null,
-      currentURL: null
+      currentURL: null,
+      navigatedURL: null,
+      prevNavigatedURL: null
     },
     states: {
       idle: {
@@ -64,6 +66,8 @@ const navigatorMachine = Machine(
                       return {
                         currentURL: _.get(e, "payload.url"),
                         currentRecords,
+                        isBackForward: false,
+                        prevNavigatedURL: null,
                         currentIndex: _.size(ctx.currentRecords) - 1
                       };
                     }
@@ -73,20 +77,27 @@ const navigatorMachine = Machine(
                       _.isEmpty(ctx.currentRecords) ||
                       _.size(ctx.currentRecords) === 1
                     ) {
-                      return ctx;
+                      return { prevNavigatedURL: null, isBackForward: false };
                     }
 
                     let { currentIndex, currentRecords } = ctx;
                     // Handle <- | -> transitions
-                    if (transitionType === "auto") {
-                      if (_.nth(ctx.currentRecords, Math.max(ctx.currentIndex - 1, 0)) === url) {
+                    if (transitionType === "auto" && (_.isNull(ctx.prevNavigatedURL) || url !== ctx.prevNavigatedURL) && !ctx.isBackForward) {
+                      const previousURL = _.nth(ctx.currentRecords,
+                        Math.max(ctx.currentIndex - 1, 0));
+                      const nextURL = _.nth(ctx.currentRecords, ctx.currentIndex + 1);
+
+                      if (previousURL === url && nextURL === url) {
+                        // do nothing
+                        console.log("fucked");
+                      } else if (previousURL === url) {
                         currentIndex = Math.max(ctx.currentIndex - 1, 0);
-                      } else if (_.nth(ctx.currentRecords, ctx.currentIndex + 1) === url) {
+                      } else if (nextURL === url) {
                         currentIndex += 1;
                       } else {
                         // the browser overwrites a manual transition with
-                        // an auto on archive navigation.
-                        // A - click -> B -> Archive_B
+                        // an auto on following scenario:
+                        // A - click -> B -> Archive_B -> back -> A
                         currentIndex = _.lastIndexOf(ctx.currentRecords, url);
                       }
                     } else if (transitionType === "manual") {
@@ -109,10 +120,17 @@ const navigatorMachine = Machine(
 
                     return {
                       currentIndex,
-                      currentRecords
+                      currentRecords,
+                      prevNavigatedURL: null,
+                      isBackForward: false
                     };
                   })
                 ]
+              },
+              SAVE_NAVIGATION_URL: {
+                actions: assign((_ctx, e) => ({
+                  navigatedURL: _.get(e, "payload.url")
+                }))
               },
               UPDATE_HISTORY: {
                 actions: [
@@ -166,7 +184,8 @@ const navigatorMachine = Machine(
                       }
                     } else if (_.last(ctx.currentRecords) !== url &&
                     // to avoid entry in auto cases
-                    _.indexOf(ctx.currentRecords, url) < 0) {
+                    (_.indexOf(ctx.currentRecords, url) < 0 ||
+                      (ctx.navigatedURL && ctx.navigatedURL !== ctx.currentURL))) {
                       currentRecords = [
                         ..._.slice(
                           ctx.currentRecords,
@@ -179,12 +198,13 @@ const navigatorMachine = Machine(
                     }
 
                     return {
+                      currentURL: url,
                       isBack: false,
                       isForward: false,
                       isReload: false,
-                      currentURL: url,
-                      prevRecords: ctx.currentRecords,
-                      previousIndex: ctx.currentIndex,
+                      navigatedURL: null,
+                      isBackForward: ctx.isBack || ctx.isForward,
+                      prevNavigatedURL: ctx.navigatedURL,
                       currentIndex,
                       allRecords:
                         _.get(_.last(allRecords), "url") !== url ?

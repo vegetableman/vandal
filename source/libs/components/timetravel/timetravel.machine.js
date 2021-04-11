@@ -549,7 +549,7 @@ const timetravelMachine = Machine(
                     currentMonth: (ctx) => _.get(memoizedDateTimeFromTS(ctx.selectedTS), "month"),
                     currentYear: (ctx) => _.get(memoizedDateTimeFromTS(ctx.selectedTS), "year")
                   }),
-                  "setBrowserURL"
+                  "navigateToURL"
                 ]
               },
               GOTO__TS_DATE: {
@@ -559,7 +559,7 @@ const timetravelMachine = Machine(
                     currentDay: (_ctx, e) => _.get(e, "payload.day"),
                     currentMonth: (ctx, e) => _.get(e, "payload.month", ctx.currentMonth)
                   }),
-                  "setBrowserURL"
+                  "navigateToURL"
                 ]
               },
               GOTO__TS_YEAR: {
@@ -593,7 +593,7 @@ const timetravelMachine = Machine(
                       currentDay: _.get(memoizedDateTimeFromTS(ts), "day")
                     };
                   }),
-                  "setBrowserURL"
+                  "navigateToURL"
                 ]
               },
               GOTO__MONTHYEAR: {
@@ -614,7 +614,7 @@ const timetravelMachine = Machine(
                     currentMonth: (ctx) => _.get(memoizedDateTimeFromTS(ctx.selectedTS), "month"),
                     currentYear: (ctx) => _.get(memoizedDateTimeFromTS(ctx.selectedTS), "year")
                   }),
-                  "setBrowserURL"
+                  "navigateToURL"
                 ]
               },
               SET_DATE_HIGHLIGHTED: {
@@ -691,7 +691,7 @@ const timetravelMachine = Machine(
       setLastTS: assign({
         lastTS: (ctx, e) => _.get(e, "data.lastTS", ctx.lastTS)
       }),
-      setBrowserURL: (ctx) => {
+      navigateToURL: (ctx) => {
         browser.navigate(
           `https://web.archive.org/web/${ctx.selectedTS}/${ctx.url}`
         );

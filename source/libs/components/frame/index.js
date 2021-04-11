@@ -75,6 +75,12 @@ const Frame = memo(({ onExit, ...props }) => {
     )
   );
 
+  const onNavigate = useCallback((url) => {
+    sendToNav("SAVE_NAVIGATION_URL", {
+      payload: { url }
+    });
+  }, [sendToNav]);
+
   const onHistoricalClose = useCallback(() => {
     send("TOGGLE_HISTORICAL_MODE");
   }, [send]);
@@ -214,7 +220,7 @@ const Frame = memo(({ onExit, ...props }) => {
         navState.context.currentIndex === _.size(navState.context.currentRecords) - 1;
 
   return (
-    <TimetravelProvider machine={state.context.timetravelRef}>
+    <TimetravelProvider machine={state.context.timetravelRef} onNavigate={onNavigate}>
       <div className={styles.root}>
         <div className={styles.left}>
           <div className={styles.logo__container}>
@@ -318,7 +324,7 @@ const Frame = memo(({ onExit, ...props }) => {
               data-tip="Donate to Internet Archive"
             >
               <a
-                href="https://archive.org/donate/?ref=vandal"
+                href="https://archive.org/donate/?referer=vandal"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => {

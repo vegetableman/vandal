@@ -42,7 +42,7 @@ const parentMachine = Machine(
               assign({
                 loaded: true
               }),
-              "updateVandalURL"
+              "navigateToURL"
             ]
           }
         }

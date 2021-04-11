@@ -313,13 +313,17 @@ const eventMap = {
       types: ["sub_frame"]
     }
   },
-  onBeforeNavigate: {
-    type: "webNavigation",
-    handler: "beforeNavigateHandler",
+  onErrorOccurred: {
+    type: "webRequest",
+    handler: "errorHandler",
     options: {
       urls: requestFilters,
       types: ["sub_frame"]
     }
+  },
+  onBeforeNavigate: {
+    type: "webNavigation",
+    handler: "beforeNavigateHandler"
   },
   onCommitted: {
     type: "webNavigation",
@@ -333,21 +337,9 @@ const eventMap = {
     type: "webNavigation",
     handler: "completedHandler"
   },
-  onErrorOccurred: {
-    type: "webRequest",
-    handler: "errorHandler",
-    options: {
-      urls: requestFilters,
-      types: ["sub_frame"]
-    }
-  },
   onHistoryStateUpdated: {
     type: "webNavigation",
-    handler: "historyHandler",
-    options: {
-      urls: requestFilters,
-      types: ["sub_frame"]
-    }
+    handler: "historyHandler"
   }
 };
 

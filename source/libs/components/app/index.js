@@ -32,7 +32,7 @@ const App = (props) => {
     parentMachine.withConfig(
       {
         actions: {
-          updateVandalURL: () => {
+          navigateToURL: () => {
             browser.navigate(props.url);
           },
           notifyExit: () => {
@@ -249,7 +249,7 @@ const App = (props) => {
                   className={styles.donate__button}
                   onClick={() => {
                     window.open(
-                      "https://archive.org/donate/?ref=vandal",
+                      "https://archive.org/donate/?referer=vandal",
                       "_blank"
                     );
                     trackDonate();
