@@ -87,9 +87,10 @@ const navigatorMachine = Machine(
                         Math.max(ctx.currentIndex - 1, 0));
                       const nextURL = _.nth(ctx.currentRecords, ctx.currentIndex + 1);
 
+                      // Bug: when the next and previous URL is same in the stack.
+                      // can't detect back or forward
                       if (previousURL === url && nextURL === url) {
                         // do nothing
-                        console.log("fucked");
                       } else if (previousURL === url) {
                         currentIndex = Math.max(ctx.currentIndex - 1, 0);
                       } else if (nextURL === url) {
