@@ -180,6 +180,10 @@ const navigatorMachine = Machine(
                     } else if (ctx.isBack || ctx.isForward) {
                       if (ctx.isBack) {
                         currentIndex = Math.max(currentIndex - 1, 0);
+                        // Handles scenario of missing immediate history entry
+                        if (_.nth(ctx.currentRecords, currentIndex) !== url) {
+                          currentIndex = _.lastIndexOf(ctx.currentRecords, url);
+                        }
                       } else if (ctx.isForward) {
                         currentIndex += 1;
                       }

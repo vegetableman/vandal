@@ -244,28 +244,6 @@ class NavigationHandler {
     return { responseHeaders };
   };
 
-  beforeRedirectHandler = (details) => {
-    const { initiator, redirectUrl, tabId } = details;
-    if (initiator.indexOf("chrome-extension://") === 0) {
-      return;
-    }
-
-    try {
-      const redirectHost = new URL(redirectUrl).host;
-      const initiatorHost = new URL(initiator).host;
-      if (redirectHost !== initiatorHost) {
-        log("Before Redirect", details.url, details);
-
-        chrome.tabs.sendMessage(tabId, {
-          message: "__VANDAL__NAV__REDIRECTMISMATCH",
-          data: { redirectHost, initiatorHost }
-        });
-      }
-    } catch (ex) {
-      console.error("beforeRedirectHandler: Error parsing url");
-    }
-  };
-
   onRequestCompletedHandler = (details) => {
     log("Request Completed", details.url, details);
 
@@ -294,15 +272,6 @@ const eventMap = {
       types: ["sub_frame"]
     },
     extras: ["blocking", "responseHeaders", "extraHeaders"]
-  },
-  onBeforeRedirect: {
-    type: "webRequest",
-    handler: "beforeRedirectHandler",
-    options: {
-      urls: requestFilters,
-      types: ["sub_frame"]
-    },
-    extras: ["responseHeaders"]
   },
   onRequestCompleted: {
     name: "onCompleted",

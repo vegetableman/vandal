@@ -73,8 +73,6 @@ const TimetravelProvider = ({ children, machine: timetravelMachine, onNavigate }
             });
           }
           break;
-        case "__VANDAL__NAV__REDIRECTMISMATCH":
-          break;
         case "__VANDAL__NAV__COMMIT":
           if (_.get(request, "data.type") === "redirect") {
             const redirectedTS = _.parseInt(
