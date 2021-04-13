@@ -422,7 +422,7 @@ const Historical = ({ onClose, openURL, ...props }) => {
               <h3
                 style={{
                   fontSize: "13px",
-                  fontWeight: 600,
+                  fontWeight: 500,
                   color: "#777",
                   padding: "0px 20px"
                 }}
