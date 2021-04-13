@@ -7,6 +7,9 @@ html {
   line-height: 1.15;
   min-width: 320px;
 }
+b, strong { 
+  font-weight: 500;
+}
 body {
   background-color: #f2f1ea;
   margin: 0;
@@ -21,7 +24,7 @@ body {
   }
 }
 .mascot-image {
-  height: 100px;
+  height: 85px;
   width: 80px;
 }
 @media only screen and (max-width: 486px) {
@@ -78,6 +81,7 @@ header > section {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: -60px;
 }
 .bubble {
   display: flex;
@@ -136,12 +140,12 @@ header > section {
   width: 400px;
 }
 .lead {
-  margin-top: 10px;
-  max-width: 600px;
+  margin-top: 17px;
+  max-width: 620px;
   color: #5a5049;
   font-family: "Fenix";
-  font-size: 19px;
-  line-height: 25px;
+  font-size: 21px;
+  line-height: 28px;
   text-align: center;
 }
 @media only screen and (max-width: 486px) {
@@ -180,7 +184,6 @@ header > section {
   width: 190px;
   height: 50px;
   border-radius: 2px;
-  margin-top: 20px;
 }
 .download-btn > .text {
   color: #ffffff;
@@ -521,6 +524,9 @@ header > section {
   line-height: 21px;
   padding: 0 10px;
 }
+.faq-details ul {
+  padding: 0 10px 0 20px;
+}
 .faq-details li {
   font-family: 'Fenix';
   line-height: 21px;
@@ -552,10 +558,10 @@ header > section {
   }
 }
 .action-container > .message {
-  font-size: 16px;
+  font-size: 17px;
   font-family: "Fenix";
   color: #333;
-  line-height: 23px;
+  line-height: 25px;
   max-width: 600px;
 }
 .action-container .download {
