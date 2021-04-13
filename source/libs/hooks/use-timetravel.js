@@ -114,7 +114,8 @@ const TimetravelProvider = ({ children, machine: timetravelMachine, onNavigate }
 
 TimetravelProvider.propTypes = {
   children: PropTypes.element.isRequired,
-  machine: PropTypes.any.isRequired
+  machine: PropTypes.any.isRequired,
+  onNavigate: PropTypes.func.isRequired
 };
 
 function useTimeTravel() {
