@@ -83,6 +83,11 @@ header > section {
   align-items: center;
   margin-top: -60px;
 }
+@media only screen and (max-width: 670px) {
+  .intro {
+    margin-top: auto;
+  }
+}
 .bubble {
   display: flex;
   flex-direction: column;
@@ -179,7 +184,7 @@ header > section {
   align-items: center;
   justify-content: center;
   background: #3fa39a;
-  border: 1px solid #f4df1a;
+  border: 2px solid #f4df1a;
   cursor: pointer;
   width: 190px;
   height: 50px;
@@ -545,6 +550,7 @@ header > section {
   background-position-y: -50px;
   min-height: 350px;
   padding-top: 7px;
+  padding-bottom: 10px;
 }
 @media only screen and (max-width: 1000px) {
   .action-container {
@@ -563,6 +569,11 @@ header > section {
   color: #333;
   line-height: 25px;
   max-width: 600px;
+}
+@media only screen and (max-width: 360px) {
+  .action-container > .message {
+    width: 90%;
+  }
 }
 .action-container .download {
   margin-top: 10px;

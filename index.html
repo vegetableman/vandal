@@ -98,9 +98,10 @@
 
     <section class="inline">
       <div class="screencast">
-        <video autoplay="true" loop="true" muted poster="assets/images/japantimes.png" controls>
-          <source typ="video/mp4" src="assets/videos/japantimes.mp4" />
-          <source type="video/webm" src="assets/videos/japantimes.webm" />
+        <video class="lazy" autoplay="true" loop="true" muted poster="assets/images/japantimes.png" controls
+          playsinline>
+          <source typ="video/mp4" data-src="assets/videos/japantimes.mp4" />
+          <source type="video/webm" data-src="assets/videos/japantimes.webm" />
         </video>
         <div class="screencast-message">* Vandal is not affiliated with The Japan Times. It's used for reference
           purposes
@@ -267,6 +268,42 @@
       </div>
     </div>
   </section>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const lazyVideos = [].slice.call(document.querySelectorAll("video.lazy"));
+
+      if ("IntersectionObserver" in window) {
+        const lazyVideoObserver = new IntersectionObserver(function (entries, observer) {
+          entries.forEach(function (video) {
+            if (video.isIntersecting) {
+              for (const source in video.target.children) {
+                const videoSource = video.target.children[source];
+                if (typeof videoSource.tagName === "string" && videoSource.tagName === "SOURCE") {
+                  videoSource.src = videoSource.dataset.src;
+                }
+              }
+
+              video.target.load();
+              video.target.classList.remove("lazy");
+              lazyVideoObserver.unobserve(video.target);
+            }
+          });
+        });
+
+        lazyVideos.forEach(function (lazyVideo) {
+          lazyVideoObserver.observe(lazyVideo);
+        });
+      } else {
+        for (const video of lazyVideos) {
+          const videoSource = video.children[0];
+          if (typeof videoSource.tagName === "string" && videoSource.tagName === "SOURCE") {
+            videoSource.src = videoSource.dataset.src;
+            video.load();
+          }
+        }
+      }
+    });
+  </script>
 </body>
 
 </html>
