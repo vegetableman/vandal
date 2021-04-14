@@ -221,8 +221,8 @@ const Historical = ({ onClose, openURL, ...props }) => {
               <img alt="warning" src={chrome.runtime.getURL("build/images/warning.png")} />
             </div>
             <div style={{ padding: "0 10px 10px 10px" }}>
-              <h2 style={{ fontSize: "14px" }}>
-                Historical View is no longer operational!
+              <h2 style={{ fontSize: "14px", fontWeight: 600 }}>
+                Historical View is not currently operational!
               </h2>
               <p style={{ fontSize: "14px" }}>
                 <i>
@@ -230,7 +230,7 @@ const Historical = ({ onClose, openURL, ...props }) => {
                   and disrupted the gravitational balance in the solar
                   system.... Well, time for lunch !&quot;
                 </i>
-                {" "}
+                <br />
                 - Vandal
               </p>
               <span style={{ fontSize: "14px" }}>
