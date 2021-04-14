@@ -122,6 +122,7 @@ body {
   --vandal-menu-list-background-color: #f6f6f6;
   --vandal-menu-list-border-color: #ccc;
   --vandal-frame-menu-item-hover-background-color: #f5f5f5;
+  --vandal-frame-menu-beta-color: #333;
 
   /* History */
   --vandal-history-list-background-color: #fff;
@@ -242,6 +243,9 @@ body {
       --vandal-primary-background-color
     );
   --vandal-frame-separator-border-color: #1d1d1d;
+  --vandal-frame-menu-beta-color: silver;
+
+  /* History */
   --vandal-history-item-hover-background-color: #525151;
   --vandal-history-item-selection-color: #fff;
   --vandal-history-footer-background-color: #4a4949;

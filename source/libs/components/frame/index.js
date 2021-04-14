@@ -27,10 +27,6 @@ import styles from "./frame.module.css";
 
 const options = [
   {
-    value: "histView",
-    text: "Historical View"
-  },
-  {
     value: "wayback",
     text: (
       <div className={styles.vertical__wayback__item}>
@@ -183,6 +179,15 @@ const Frame = memo(({ onExit, ...props }) => {
 
   const menuItems = useMemo(
     () => [
+      {
+        value: "histView",
+        text: (
+          <div>
+            <span>Historical View</span>
+            <span className={styles.beta}>Beta</span>
+          </div>
+        )
+      },
       ...options,
       {
         value: "switchTheme",
