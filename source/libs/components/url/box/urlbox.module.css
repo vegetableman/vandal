@@ -242,11 +242,11 @@
 
 .intro__text {
   position: relative;
-  bottom: -5px;
-  left: -25px;
+  bottom: -12px;
+  left: -50px;
   color: var(--vandal-overlay-text-color);
-  font-weight: 800;
-  font-size: 14px;
+  font-weight: 600;
+  font-size: 15px;
   font-family: "VANDAL__SourceSansPro", Arial, Helvetica, sans-serif;
   font-style: italic;
 }
