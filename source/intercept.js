@@ -229,11 +229,9 @@ class NavigationHandler {
       const isCSPHeader = /content-security-policy/i.test(header.name);
       const isFrameHeader = /^x-frame-options/i.test(header.name);
       if (isCSPHeader) {
-        let csp = header.value;
-        if (csp.indexOf("frame-ancestors") > -1) {
-          csp = "";
+        if (header.value.indexOf("frame-ancestors") > -1) {
+          header.value = header.value.replace(/frame-ancestors (.*?);/ig, "");
         }
-        header.value = csp;
       } else if (isFrameHeader) {
         header.value = "ALLOWALL";
       }
