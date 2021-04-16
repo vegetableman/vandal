@@ -52,7 +52,7 @@ export default class CarouselView extends React.Component {
           <span className={styles.caption__title}>
             {_.get(caption, "title")}
           </span>
-          <span className="date">{_.get(caption, "date")}</span>
+          <span className={styles.caption__date}>{_.get(caption, "date")}</span>
         </div>
         <div className={styles.slider__container}>
           <Carousel

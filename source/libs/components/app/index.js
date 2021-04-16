@@ -258,7 +258,7 @@ const App = (props) => {
                   DONATE
                 </button>
                 <span
-                  style={{ color: "#555", fontSize: 14, fontWeight: 700 }}
+                  style={{ color: "#555", fontSize: 14, fontWeight: 600 }}
                 >
                   to the Internet Archive
                 </span>

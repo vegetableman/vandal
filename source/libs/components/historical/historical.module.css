@@ -142,7 +142,7 @@
 
 .year__selected .value {
   color: var(--vandal-history-item-selection-color);
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .carousel__close {
@@ -178,11 +178,14 @@
   color: white;
   font-weight: 100;
   font-size: 35px;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .caption__title {
   font-size: 12px;
+}
+
+.caption__date {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .slider__container {
