@@ -83,7 +83,6 @@ const About = ({ toggleAbout }) => (
             <a
               href="https://archive.org/donate/?referer=vandal"
               target="blank"
-              style={{ fontWeight: 600 }}
               onClick={() => {
                 trackDonate();
               }}
