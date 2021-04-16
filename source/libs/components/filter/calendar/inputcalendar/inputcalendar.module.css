@@ -173,6 +173,7 @@
 }
 
 .scroll__container {
+  overflow: hidden !important;
   visibility: hidden;
   transition: visibility 0s linear 0s, opacity 300ms;
 }
