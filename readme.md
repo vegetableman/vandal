@@ -30,7 +30,7 @@ Vandal supports the following features for navigation and inspection:
 - 🎮  Navigation Panel: A bottom panel with navigation buttons to zip through archived snapshots for a date or across the month.
 - 🕛 History Panel: Access your navigation history for a website.
 - 💡 Info Panel: Access your current navigation URL and redirection info.
-- 🔩 Resource Drawer: A drawer that you can toggle to view timestamp differences of resources such as images, scripts, etc. relative to the page. This drawer updates automaticaly based on URL.
+- 🔩 Resource Drawer: A drawer that you can toggle to view timestamp differences of resources such as images, scripts, etc. relative to the page. This drawer updates automatically based on URL.
 - ⌛ Historical View: Displays the snapshot of a website throughout the years. This feature is [experimental](https://github.com/vegetableman/vandal/issues/1) ⚠️.
 
 ## Limitations
