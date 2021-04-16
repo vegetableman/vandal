@@ -6,3 +6,4 @@ _site
 .serverless
 .env
 .vandal.code-workspace
+distribution.zip
