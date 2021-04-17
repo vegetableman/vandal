@@ -14,9 +14,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 .loader > div {
   display: inline-block;
-  width: 13px;
-  height: 13px;
-  margin: -2px -5px 0 -5px;
   background: 0 0 !important;
   border: 2px solid var(--vandal-url-loader-border-color);
   border-bottom-color: transparent;

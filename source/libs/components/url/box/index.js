@@ -103,7 +103,7 @@ const URLBox = memo(({ toggleTimeTravel, ...props }) => {
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <div className={styles.favicon}>
-          {showURLLoader && !isSWRendered && <URLLoader />}
+          {showURLLoader && !isSWRendered && <URLLoader className={styles.url__loader}/>}
           {!currentTS &&
             (!showURLLoader || isSWRendered) && (
               <Icon name="globe" className={styles.url__icon} />

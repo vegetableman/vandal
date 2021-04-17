@@ -282,3 +282,9 @@
   left: 4px;
   fill: white;
 }
+
+.url__loader {
+  width: 13px;
+  height: 13px;
+  margin: -2px -5px 0 -5px;
+}

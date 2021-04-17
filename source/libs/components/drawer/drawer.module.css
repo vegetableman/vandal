@@ -167,7 +167,7 @@
   font-size: 14px;
 }
 
-.ts__loader > div {
+.ts__loader {
   width: 9px;
   height: 9px;
   margin: 3px 4px 2px 3px;
