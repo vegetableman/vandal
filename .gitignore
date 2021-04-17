@@ -3,3 +3,4 @@ distribution
 _site
 .serverless
 .env
+distribution.zip
