@@ -155,7 +155,7 @@ header > section {
 }
 .highlight {
   color:#864D23;
-  border-bottom: 1px solid;
+  border-bottom: 1px dotted;
   font-weight: bold;
 }
 @media only screen and (max-width: 486px) {
