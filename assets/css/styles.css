@@ -153,6 +153,11 @@ header > section {
   line-height: 28px;
   text-align: center;
 }
+.highlight {
+  color:#864D23;
+  border-bottom: 1px solid;
+  font-weight: bold;
+}
 @media only screen and (max-width: 486px) {
   .lead {
     font-size: 15px;
