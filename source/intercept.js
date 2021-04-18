@@ -63,7 +63,7 @@ class NavigationHandler {
       return;
     }
 
-    log("Before Navigate", validTabs, tabId);
+    log("Before Navigate");
 
     if (!validTabs[tabId].parentFrameId) {
       validTabs[tabId].parentFrameId = parentFrameId;
@@ -243,7 +243,7 @@ class NavigationHandler {
   };
 
   onRequestCompletedHandler = (details) => {
-    log("Request Completed", details.url, details);
+    log("Request Completed");
 
     if (
       isValidTab(details.tabId) &&
