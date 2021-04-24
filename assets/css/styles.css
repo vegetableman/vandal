@@ -189,11 +189,12 @@ header > section {
   align-items: center;
   justify-content: center;
   background: #3fa39a;
+  border-radius: 2px;
   border: 2px solid #f4df1a;
   cursor: pointer;
   width: 190px;
   height: 50px;
-  border-radius: 2px;
+  text-decoration: none;
 }
 .download-btn > .text {
   color: #ffffff;
