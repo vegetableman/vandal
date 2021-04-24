@@ -13,6 +13,9 @@ ___
   <img src="https://github.com/vegetableman/vandal/raw/master/docs/sample.gif">
 </p>
 
+## Install
+[link-chrome]: https://chrome.google.com/webstore/detail/vandal/knoccgahmcfhngbjhdbcodajdioedgdo 'Version published on Chrome Web Store'
+
 - [Why?](#why)
 - [Features](#features)
 - [Limitations](#limitations)
