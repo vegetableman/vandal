@@ -74,7 +74,10 @@ module.exports = () => ({
         ignore: ["*.js", "*.woff", "*.woff2", "*.ttf", "*.eot"]
       },
       { from: "*", context: "source/libs/assets/fonts", to: "fonts" },
-      { from: "*", context: "source/libs/assets/images", to: "images" }
+      { from: "*", context: "source/libs/assets/images", to: "images" },
+      {
+        from: require.resolve("webextension-polyfill")
+      }
     ]),
     new ExtractTextPlugin("vandal.css", {
       allChunks: true

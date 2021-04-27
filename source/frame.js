@@ -14,13 +14,13 @@ class Overlay {
       document.createTextNode(`
     @font-face {
       font-family: 'VANDAL__Inconsolata';
-      src: url('chrome-extension://${chrome.runtime.id}/build/fonts/Inconsolata-Bold.eot?#iefix')
+      src: url('chrome-extension://${browser.runtime.id}/build/fonts/Inconsolata-Bold.eot?#iefix')
           format('embedded-opentype'),
-        url('chrome-extension://${chrome.runtime.id}/build/fonts/Inconsolata-Bold.woff')
+        url('chrome-extension://${browser.runtime.id}/build/fonts/Inconsolata-Bold.woff')
           format('woff'),
-        url('chrome-extension://${chrome.runtime.id}/build/fonts/Inconsolata-Bold.ttf')
+        url('chrome-extension://${browser.runtime.id}/build/fonts/Inconsolata-Bold.ttf')
           format('truetype'),
-        url('chrome-extension://${chrome.runtime.id}/build/fonts/Inconsolata-Bold.svg#Inconsolata-Bold')
+        url('chrome-extension://${browser.runtime.id}/build/fonts/Inconsolata-Bold.svg#Inconsolata-Bold')
           format('svg');
       font-weight: bold;
       font-style: normal;
@@ -177,13 +177,13 @@ function getSources() {
 }
 
 const mousedownHandler = () => {
-  chrome.runtime.sendMessage({ message: "__VANDAL__FRAME__MOUSEDOWN" });
+  browser.runtime.sendMessage({ message: "__VANDAL__FRAME__MOUSEDOWN" });
 };
 
 const messageHandler = async (request) => {
   if (!request) return;
   if (request.message === "__VANDAL__CLIENT__FETCH__SOURCES") {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       message: "__VANDAL__FRAME__SOURCES",
       data: getSources()
     });
@@ -207,8 +207,8 @@ const messageHandler = async (request) => {
 function onDomReady(window) {
   window.removeEventListener("mousedown", mousedownHandler);
   window.addEventListener("mousedown", mousedownHandler);
-  chrome.runtime.onMessage.removeListener(messageHandler);
-  chrome.runtime.onMessage.addListener(messageHandler);
+  browser.runtime.onMessage.removeListener(messageHandler);
+  browser.runtime.onMessage.addListener(messageHandler);
 }
 
 (function invoke(global) {

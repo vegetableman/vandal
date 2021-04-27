@@ -6,7 +6,7 @@ import { useMachine } from "@xstate/react";
 
 import { Toast, Icon } from "../common";
 import {
-  browser, dateDiffInDays, trackDonate, trackUsage
+  navigator, dateDiffInDays, trackDonate, trackUsage
 } from "../../utils";
 import { ThemeProvider } from "../../hooks";
 import { appDB } from "../../utils/storage";
@@ -23,7 +23,7 @@ import styles from "./app.module.css";
 import { IntroProvider, useIntro } from "../../hooks/use-intro";
 
 const sendExit = () => {
-  chrome.runtime.sendMessage({ message: "___VANDAL__CLIENT__EXIT" });
+  browser.runtime.sendMessage({ message: "___VANDAL__CLIENT__EXIT" });
 };
 
 const App = (props) => {
@@ -33,7 +33,7 @@ const App = (props) => {
       {
         actions: {
           navigateToURL: () => {
-            browser.navigate(props.url);
+            navigator.navigate(props.url);
           },
           notifyExit: () => {
             sendExit();
@@ -80,9 +80,9 @@ const App = (props) => {
   }, [sendToParentMachine]);
 
   useEffect(() => {
-    browser.setBrowser(props.browser);
-    browser.setBaseURL(props.baseURL);
-    chrome.runtime.sendMessage({ message: "__VANDAL__CLIENT__LOADED" }, () => {
+    navigator.setNavigator(props.navigator);
+    navigator.setBaseURL(props.baseURL);
+    browser.runtime.sendMessage({ message: "__VANDAL__CLIENT__LOADED" }).then(() => {
       sendToParentMachine("LOADED");
     });
     const onMessage = (request) => {
@@ -92,7 +92,7 @@ const App = (props) => {
         case "__VANDAL__NAV__HISTORYCHANGE":
         case "__VANDAL__NAV__COMMIT":
           sendToParentMachine({ type: "SET_URL", payload: { url } });
-          browser.setURL(url);
+          navigator.setURL(url);
           break;
         case "__VANDAL__NAV__BUSTED":
           if (ctx.url) {
@@ -108,13 +108,13 @@ const App = (props) => {
           break;
       }
     };
-    chrome.runtime.onMessage.addListener(onMessage);
+    browser.runtime.onMessage.addListener(onMessage);
     document.addEventListener("beforeunload", sendExit);
     checkDonate();
     trackUsage();
     return () => {
       document.removeEventListener("beforeunload", sendExit);
-      chrome.runtime.onMessage.removeListener(onMessage);
+      browser.runtime.onMessage.removeListener(onMessage);
     };
   }, []);
 
@@ -165,7 +165,7 @@ const App = (props) => {
             type="button"
             className={styles.toast__open__btn}
             onClick={() => {
-              browser.navigate(ctx.availableURL);
+              navigator.navigate(ctx.availableURL);
               sendToParentMachine("CLOSE");
             }}
           >
@@ -224,7 +224,7 @@ const App = (props) => {
           <img
             alt="cover"
             className={styles.cover}
-            src={chrome.runtime.getURL("build/images/cover-art.png")}
+            src={browser.runtime.getURL("build/images/cover-art.png")}
           />
         </div>
       )}
@@ -240,7 +240,7 @@ const App = (props) => {
             />
             <img
               alt="donate"
-              src={chrome.runtime.getURL("build/images/donate.png")}
+              src={browser.runtime.getURL("build/images/donate.png")}
             />
             <div className={styles.donate__text}>
               <div>
@@ -285,7 +285,7 @@ const App = (props) => {
 App.propTypes = {
   url: PropTypes.string.isRequired,
   baseURL: PropTypes.string.isRequired,
-  browser: PropTypes.any.isRequired,
+  navigator: PropTypes.any.isRequired,
 };
 
 const AppContainer = (props) => {
@@ -296,7 +296,7 @@ const AppContainer = (props) => {
   return (
     <ShadowDOM
       include={[
-        `chrome-extension://${chrome.runtime.id}/build/vandal.css`,
+        `chrome-extension://${browser.runtime.id}/build/vandal.css`,
       ]}
     >
       <div className="vandal__root">

@@ -8,7 +8,7 @@ import {
   getDateTimeFromTS,
   toTwelveHourTime,
   isArchiveURL,
-  browser,
+  navigator,
   longMonthNames
 } from "../../../utils";
 import { withDialog, Icon } from "../../common";
@@ -67,7 +67,7 @@ const URLHistory = ({
                       className={styles.item}
                       key={index}
                       onClick={() => {
-                        browser.navigate(url);
+                        navigator.navigate(url);
                         onSelect();
                       }}
                     >

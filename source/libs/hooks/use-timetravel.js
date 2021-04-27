@@ -98,9 +98,9 @@ const TimetravelProvider = ({ children, machine: timetravelMachine, onNavigate }
           break;
       }
     };
-    chrome.runtime.onMessage.addListener(onMessage);
+    browser.runtime.onMessage.addListener(onMessage);
     return () => {
-      chrome.runtime.onMessage.removeListener(onMessage);
+      browser.runtime.onMessage.removeListener(onMessage);
     };
   }, []);
 

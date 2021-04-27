@@ -6,8 +6,8 @@ import _ from "lodash";
 // TODO: consider removing this, since runtime.lastError is merely a warning
 const promisifiedGet = (key) => new Promise((resolve, reject) => {
   chrome.storage.local.get([key], (value) => {
-    if (chrome.runtime.lastError) {
-      return reject(chrome.runtime.lastError);
+    if (browser.runtime.lastError) {
+      return reject(browser.runtime.lastError);
     }
     return resolve(value[key]);
   });
@@ -36,8 +36,8 @@ export const historyDB = {
   async clearRecords(suffix) {
     const promisifiedClear = (key) => new Promise((resolve, reject) => {
       chrome.storage.local.remove(key, () => {
-        if (chrome.runtime.lastError) {
-          return reject(chrome.runtime.lastError);
+        if (browser.runtime.lastError) {
+          return reject(browser.runtime.lastError);
         }
         return resolve();
       });

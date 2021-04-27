@@ -127,7 +127,7 @@ const Drawer = memo((props) => {
   const { context: ctx } = state;
 
   const handleMouseEnter = (source, ts) => () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       message: "__VANDAL__CLIENT__HIGHLIGHT__NODE",
       data: { source, ts, scrollOnHighlight: ctx.scrollOnHighlight }
     });
@@ -144,7 +144,7 @@ const Drawer = memo((props) => {
   );
 
   useEffect(() => () => {
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       message: "__VANDAL__CLIENT__REMOVE__HIGHLIGHT"
     });
     resourceTSController.abort();
@@ -153,7 +153,7 @@ const Drawer = memo((props) => {
   useEffect(
     () => {
       if (props.isNavComplete && props.selectedTS) {
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
           message: "__VANDAL__CLIENT__FETCH__SOURCES"
         });
       }
@@ -268,7 +268,7 @@ const Drawer = memo((props) => {
                     className={styles.item}
                     onMouseEnter={handleMouseEnter(source, _.get(dt, "text"))}
                     onMouseLeave={() => {
-                      chrome.runtime.sendMessage({
+                      browser.runtime.sendMessage({
                         message: "__VANDAL__CLIENT__REMOVE__HIGHLIGHT"
                       });
                     }}
@@ -379,16 +379,16 @@ const DrawerContainer = (props) => {
         setSelectedTS(null);
       }
     };
-    chrome.runtime.onMessage.addListener(messageListener);
+    browser.runtime.onMessage.addListener(messageListener);
     return () => {
-      chrome.runtime.onMessage.removeListener(messageListener);
+      browser.runtime.onMessage.removeListener(messageListener);
     };
   }, []);
 
   return (
     <ShadowDOM
       include={[
-        `chrome-extension://${chrome.runtime.id}/build/vandal.css`
+        `chrome-extension://${browser.runtime.id}/build/vandal.css`
       ]}
     >
       <div>
