@@ -44,6 +44,8 @@ const getTransitionType = (transitionQualifiers = [], transitionType) => {
   return null;
 };
 
+const isMozExtension = (url) => url.indexOf("moz-extension://") === 0;
+
 let isManualTransition = false;
 let commitURL;
 
@@ -52,7 +54,8 @@ class NavigationHandler {
     const {
       tabId, parentFrameId, frameId, url
     } = details;
-    if (!isValidTab(tabId) || !isValidFrame(tabId, frameId, parentFrameId)) {
+
+    if (!isValidTab(tabId) || !isValidFrame(tabId, frameId, parentFrameId) || isMozExtension(url)) {
       return;
     }
 
@@ -97,7 +100,8 @@ class NavigationHandler {
       url.indexOf("chrome-extension://") === 0 ||
       !isValidTab(tabId) ||
       !isValidFrame(tabId, frameId, parentFrameId) ||
-      url === "about:blank"
+      url === "about:blank" ||
+      isMozExtension(url)
     ) {
       return;
     }
@@ -142,7 +146,7 @@ class NavigationHandler {
 
   domLoadHandler = (details) => {
     const { tabId, frameId } = details;
-    if (!isValidTab(tabId) || !isValidFrame(tabId, frameId)) {
+    if (!isValidTab(tabId) || !isValidFrame(tabId, frameId) || isMozExtension(details.url)) {
       return;
     }
 
@@ -162,7 +166,7 @@ class NavigationHandler {
   completedHandler = (details) => {
     const { tabId, frameId, url } = details;
 
-    if (!isValidTab(tabId) || !isValidFrame(tabId, frameId)) {
+    if (!isValidTab(tabId) || !isValidFrame(tabId, frameId) || isMozExtension(url)) {
       return;
     }
 
@@ -224,7 +228,8 @@ class NavigationHandler {
     log("Header Received");
 
     // Return on invalid frames
-    if (!(isValidTab(details.tabId) && isValidFrame(details.tabId, details.frameId))) {
+    if (!(isValidTab(details.tabId) && isValidFrame(details.tabId, details.frameId)) ||
+    isMozExtension(details.url)) {
       return null;
     }
 
@@ -349,11 +354,18 @@ function addListeners() {
         navigationHandler[value.handler]
       )
     ) {
-      browser.webRequest[value.name || event].addListener(
-        navigationHandler[value.handler],
-        value.options,
-        value.extras ? value.extras.filter((e) => !!e) : null
-      );
+      if (value.extras) {
+        browser.webRequest[value.name || event].addListener(
+          navigationHandler[value.handler],
+          value.options,
+          value.extras.filter((e) => !!e)
+        );
+      } else {
+        browser.webRequest[value.name || event].addListener(
+          navigationHandler[value.handler],
+          value.options
+        );
+      }
     }
   }
 }

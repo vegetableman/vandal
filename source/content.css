@@ -1,75 +1,153 @@
-@font-face {
-  font-family: "VANDAL__SourceSansPro";
-  src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff2")
-    format("woff2"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff")
-    format("woff");
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "VANDAL__SourceSansPro";
+    src:
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff2")
+      format("woff2"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff")
+      format("woff");
+  }
+
+  @font-face {
+    font-weight: 600;
+    font-family: "VANDAL__SourceSansPro";
+    src:
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff2")
+      format("woff2"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff")
+      format("woff");
+  }
+
+  @font-face {
+    font-weight: bold;
+    font-family: "VANDAL__SourceSansPro";
+    src:
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff2")
+      format("woff2"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff")
+      format("woff");
+  }
+
+  @font-face {
+    font-weight: normal;
+    font-family: "VANDAL__Cousine";
+    font-style: normal;
+    src:
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.eot?#iefix")
+      format("embedded-opentype"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.woff")
+      format("woff"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.ttf")
+      format("truetype"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.svg#Cousine-Regular")
+      format("svg");
+  }
+
+  @font-face {
+    font-weight: normal;
+    font-family: "VANDAL__Inconsolata";
+    font-style: normal;
+    src:
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.eot?#iefix")
+      format("embedded-opentype"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.woff")
+      format("woff"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.ttf")
+      format("truetype"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.svg#Inconsolata-Regular")
+      format("svg");
+  }
+
+  @font-face {
+    font-weight: bold;
+    font-family: "VANDAL__Inconsolata";
+    font-style: normal;
+    src:
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.eot?#iefix")
+      format("embedded-opentype"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.woff")
+      format("woff"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.ttf")
+      format("truetype"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.svg#Inconsolata-Bold")
+      format("svg");
+  }
 }
 
-@font-face {
-  font-weight: 600;
-  font-family: "VANDAL__SourceSansPro";
-  src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff2")
-    format("woff2"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff")
-    format("woff");
-}
+@-moz-document url-prefix() {
+  @font-face {
+    font-family: "VANDAL__SourceSansPro";
+    src:
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff2")
+      format("woff2"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff")
+      format("woff");
+  }
 
-@font-face {
-  font-weight: bold;
-  font-family: "VANDAL__SourceSansPro";
-  src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff2")
-    format("woff2"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff")
-    format("woff");
-}
+  @font-face {
+    font-weight: 600;
+    font-family: "VANDAL__SourceSansPro";
+    src:
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff2")
+      format("woff2"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff")
+      format("woff");
+  }
 
-@font-face {
-  font-weight: normal;
-  font-family: "VANDAL__Cousine";
-  font-style: normal;
-  src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.eot?#iefix")
-    format("embedded-opentype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.woff")
-    format("woff"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.ttf")
-    format("truetype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.svg#Cousine-Regular")
-    format("svg");
-}
+  @font-face {
+    font-weight: bold;
+    font-family: "VANDAL__SourceSansPro";
+    src:
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff2")
+      format("woff2"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff")
+      format("woff");
+  }
 
-@font-face {
-  font-weight: normal;
-  font-family: "VANDAL__Inconsolata";
-  font-style: normal;
-  src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.eot?#iefix")
-    format("embedded-opentype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.woff")
-    format("woff"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.ttf")
-    format("truetype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.svg#Inconsolata-Regular")
-    format("svg");
-}
+  @font-face {
+    font-weight: normal;
+    font-family: "VANDAL__Cousine";
+    font-style: normal;
+    src:
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.eot?#iefix")
+      format("embedded-opentype"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.woff")
+      format("woff"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.ttf")
+      format("truetype"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.svg#Cousine-Regular")
+      format("svg");
+  }
 
-@font-face {
-  font-weight: bold;
-  font-family: "VANDAL__Inconsolata";
-  font-style: normal;
-  src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.eot?#iefix")
-    format("embedded-opentype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.woff")
-    format("woff"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.ttf")
-    format("truetype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.svg#Inconsolata-Bold")
-    format("svg");
+  @font-face {
+    font-weight: normal;
+    font-family: "VANDAL__Inconsolata";
+    font-style: normal;
+    src:
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.eot?#iefix")
+      format("embedded-opentype"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.woff")
+      format("woff"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.ttf")
+      format("truetype"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.svg#Inconsolata-Regular")
+      format("svg");
+  }
+
+  @font-face {
+    font-weight: bold;
+    font-family: "VANDAL__Inconsolata";
+    font-style: normal;
+    src:
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.eot?#iefix")
+      format("embedded-opentype"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.woff")
+      format("woff"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.ttf")
+      format("truetype"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.svg#Inconsolata-Bold")
+      format("svg");
+  }
 }
 
 html,
@@ -87,7 +165,7 @@ body {
   width: 100% !important;
   height: 100% !important;
 
-  --vandal-primary-background-color: #f6f6f6;
+  --vandal-primary-background-color: #f2f2f2;
   --vandal-secondary-background-color: #f5f5f5;
   --vandal-blink-background-color: #eee;
   --vandal-date-background-color: #f5f5f5;

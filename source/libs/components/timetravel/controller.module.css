@@ -25,6 +25,12 @@
   padding: 0 5px 0 0;
 }
 
+@-moz-document url-prefix() {
+  .controls {
+    bottom: 2px;
+  }
+}
+
 .control {
   padding: 0 5px;
   background: none;

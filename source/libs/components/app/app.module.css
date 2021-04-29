@@ -13,6 +13,7 @@
   contain: size style;
   -webkit-font-smoothing: initial;
   text-rendering: auto;
+  -moz-osx-font-smoothing: auto;
 }
 
 .container * {
