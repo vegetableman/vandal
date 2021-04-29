@@ -77,10 +77,17 @@
 
 .resource__icon {
   position: relative;
-  top: 1px;
+  top: 1.3px;
   width: 23px;
   height: 23px;
   fill: var(--vandal-primary-icon-color);
+}
+
+@-moz-document url-prefix() {
+  .resource__icon {
+    top: 1px;
+    transform: scale(1.25);
+  }
 }
 
 .resource__btn:hover {

@@ -7,7 +7,7 @@
   flex-direction: column;
   width: 260px;
   height: 335px;
-  background: var(--vandal-primary-background-color);
+  background: var(--vandal-timetravel-background-color);
   border-right: 1px solid var(--vandal-menu-border-color);
   border-bottom: 1px solid var(--vandal-menu-border-color);
   border-left: 1px solid var(--vandal-menu-border-color);
