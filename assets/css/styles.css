@@ -47,7 +47,7 @@ body {
   }
 }
 .built-info {
-  font-family: "Fenix";
+  font-family: "Alegreya";
   display: flex;
   align-items: center;
   color: #333;
@@ -82,6 +82,7 @@ header > section {
   flex-direction: column;
   align-items: center;
   margin-top: -60px;
+  min-height: 200px;
 }
 @media only screen and (max-width: 670px) {
   .intro {
@@ -99,7 +100,6 @@ header > section {
 .link {
   color:#864D23;
   border-bottom: 1px dashed;
-  font-weight: bold;
   text-decoration: none;
 }
 @media only screen and (max-width: 1242px) {
@@ -148,14 +148,15 @@ header > section {
   margin-top: 17px;
   max-width: 620px;
   color: #5a5049;
-  font-family: "Fenix";
+  font-family: "Alegreya";
   font-size: 21px;
+  font-weight: 500;
   line-height: 28px;
   text-align: center;
 }
 .highlight {
   color:#864D23;
-  font-weight: bold;
+  font-weight: 600;
 }
 @media only screen and (max-width: 486px) {
   .lead {
@@ -170,6 +171,9 @@ header > section {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.download-firefox {
+  margin-left: 15px;
 }
 .usage {
   display: flex;
@@ -195,6 +199,9 @@ header > section {
   height: 50px;
   text-decoration: none;
 }
+.download-btn--firefox {
+  background: #c1563c;
+}
 .download-btn > .text {
   color: #ffffff;
   font-family: "Fira Code";
@@ -218,13 +225,16 @@ header > section {
 .download-btn:hover {
   background: #389890;
 }
+.download-btn--firefox:hover {
+  background: #bb482c;
+}
 .screencast {
   align-items: center;
   margin-top: 45px;
 }
 .screencast-message {
   font-size: 11px;
-  font-family: "Fenix";
+  font-family: "Alegreya";
   margin-top: 5px;
   color: #555;
 }
@@ -476,11 +486,10 @@ header > section {
   }
 }
 .title {
-  font-family: "Fenix";
+  font-family: "Alegreya";
   color: #864d23;
   font-size: 21px;
   font-weight: 600;
-  font-weight: bold;
 }
 .historical-image {
   width: 80%;
@@ -524,22 +533,24 @@ header > section {
   padding: 10px 10px;
 }
 .faq-summary {
-  font-family: 'Fenix';
-  font-weight: bold;
+  font-family: 'Alegreya', Lucida Grande, serif;
+  font-weight: 500;
   cursor: pointer;
   outline: none;
 }
 .faq-details > p {
-  font-family: 'Fenix';
-  line-height: 21px;
+  font-family: Lucida Grande, 'Alegreya', serif;
+  font-size: 13px;
+  line-height: 20px;
   padding: 0 10px;
 }
 .faq-details ul {
   padding: 0 10px 0 20px;
 }
 .faq-details li {
-  font-family: 'Fenix';
-  line-height: 21px;
+  font-family: Lucida Grande, 'Alegreya', serif;
+  font-size: 13px;
+  line-height: 20px;
   padding: 7px 0;
 }
 .action {
@@ -570,7 +581,7 @@ header > section {
 }
 .action-container > .message {
   font-size: 17px;
-  font-family: "Fenix";
+  font-family: "Alegreya";
   color: #333;
   line-height: 25px;
   max-width: 600px;
@@ -617,7 +628,7 @@ header > section {
   top: 7px;
 }
 .author {
-  font-family: "Fenix";
+  font-family: "Alegreya";
   font-size: 15px;
   color: #555;
   width: 185px;
@@ -630,7 +641,7 @@ header > section {
 .source {
   display: flex;
   align-items: flex-end;
-  font-family: "Fenix";
+  font-family: "Alegreya";
   font-size: 15px;
   color: #555;
 }

@@ -11,7 +11,8 @@
   <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png">
   <title>Vandal | Navigator for Web Archive</title>
   <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Fenix&display=swap"
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Alegreya:wght@400;500;600&display=swap"
     rel="stylesheet">
   <link type="text/css" rel="stylesheet" href="assets/css/styles.css" />
   <script async defer data-domain="vegetableman.github.com" src="https://plausible.io/js/plausible.js"></script>
@@ -82,7 +83,7 @@
           </span>
         </div>
         <h3 class="lead">
-          A chrome extension that helps you <span class="highlight">navigate back in time</span> without leaving the
+          Browser extension that helps you <span class="highlight">navigate back in time</span> without leaving your
           current
           tab.
         </h3>
@@ -96,12 +97,17 @@
           <div class="text">ADD TO CHROME</div>
         </a>
       </div>
+      <div class="download download-firefox">
+        <a class="download-btn download-btn--firefox"
+          href="https://chrome.google.com/webstore/detail/vandal/knoccgahmcfhngbjhdbcodajdioedgdo">
+          <div class="text">ADD TO FIREFOX</div>
+        </a>
+      </div>
     </section>
 
     <section class="inline">
       <div class="screencast">
-        <video class="lazy" autoplay="true" loop="true" muted poster="assets/images/japantimes.png" controls
-          playsinline>
+        <video class="lazy" autoplay="true" loop="true" muted poster="assets/images/japantimes.png" playsinline>
           <source typ="video/mp4" data-src="assets/videos/japantimes.mp4" />
           <source type="video/webm" data-src="assets/videos/japantimes.webm" />
         </video>
@@ -288,6 +294,7 @@
 
               video.target.load();
               video.target.classList.remove("lazy");
+              video.target.setAttribute("controls", true);
               lazyVideoObserver.unobserve(video.target);
             }
           });
