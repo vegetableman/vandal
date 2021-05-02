@@ -4,8 +4,9 @@ const requests = {};
 
 browser.browserAction.onClicked.addListener(() => {
   browser.tabs.insertCSS({ file: "build/content.css" });
-  browser.tabs.executeScript({ file: "build/browser-polyfill.js" });
-  browser.tabs.executeScript({ file: "build/content.js" });
+  browser.tabs.executeScript({ file: "build/browser-polyfill.js" }).then(() => {
+    browser.tabs.executeScript({ file: "build/content.js" });
+  });
 });
 
 browser.runtime.onConnect.addListener((port) => {

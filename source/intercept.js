@@ -200,7 +200,8 @@ class NavigationHandler {
       message: "__VANDAL__NAV__HISTORYCHANGE",
       data: {
         url,
-        type: getTransitionType(transitionQualifiers, transitionType, url)
+        type: getTransitionType(transitionQualifiers, transitionType, url),
+        isForwardBack: transitionQualifiers.indexOf("forward_back") > -1
       }
     });
   };

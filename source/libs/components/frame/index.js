@@ -137,7 +137,8 @@ const Frame = memo(({ onExit, ...props }) => {
           sendToNav("UPDATE_HISTORY", {
             payload: {
               url: frameURL,
-              type: _.get(request.data, "type")
+              type: _.get(request.data, "type"),
+              isForwardBack: _.get(request.data, "isForwardBack")
             }
           });
           break;
