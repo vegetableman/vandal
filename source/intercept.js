@@ -373,18 +373,17 @@ function addListeners() {
 
 function init() {
   browser.tabs.onActivated.addListener((activeInfo) => {
-    log("Tab activated");
     const { tabId } = activeInfo;
+    // Remove listeners if the tab is not active
+    // to avoid intercepting requests from other url's
     if (
       hasValidTabs() &&
       !isValidTab(tabId) &&
       getWindowCount() === 1 &&
       hasNavigationCompleted
     ) {
-      log("Tab activated: invalid");
       removeListeners();
     } else if (isValidTab(tabId)) {
-      log("Tab activated: valid", tabId);
       addListeners();
     }
   });
