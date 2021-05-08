@@ -81,6 +81,13 @@
   transform: rotate(180deg);
 }
 
+@-moz-document url-prefix() {
+  .prev__icon {
+    top: 5.2px;
+    width: 14.4px;
+  }
+}
+
 .next__icon {
   position: relative;
   top: 4.5px;

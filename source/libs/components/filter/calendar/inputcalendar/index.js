@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 import React, {
-  useState, useEffect, memo, useRef
+  useState, useEffect, memo, useRef, useCallback
 } from "react";
 import PropTypes from "prop-types";
 import memoizeOne from "memoize-one";
@@ -12,8 +12,8 @@ import _ from "lodash";
 import cx from "classnames";
 import { Sparklines, SparklinesCurve } from "react-sparklines";
 import VirtualList from "react-tiny-virtual-list";
-import { Icon, withDialog } from "../../../common";
-import { monthNames, compareProps } from "../../../../utils";
+import { Icon, withDialog, MonthInput } from "../../../common";
+import { monthNames, compareProps, longMonthNames } from "../../../../utils";
 import { colors } from "../../../../constants";
 import styles from "./inputcalendar.module.css";
 import { useTheme } from "../../../../hooks";
@@ -189,7 +189,7 @@ const colorFromRange = memoizeOne((min, max) => scaleLinear()
 
 const InputCalendar = memo((props) => {
   const { theme } = useTheme();
-  const [isVisible, toggleCalendar] = useState(false);
+  const [showCalendar, toggleCalendar] = useState(false);
 
   const {
     sparkline,
@@ -206,14 +206,31 @@ const InputCalendar = memo((props) => {
     date
   } = props;
 
-  if (_.isEmpty(_.keys(sparkline))) return null;
-
+  const monthInputRef = useRef(null);
   const sparklineYears = _.keys(sparkline);
   const result = _.map(sparklineYears, (y) => (
     { year: _.parseInt(y), count: _.max(sparkline[y]) }
   ));
 
   const years = _.map(result, "year");
+
+  const onPrevious = useCallback(() => {
+    if (monthInputRef.current.selectionEnd <= _.size(_.nth(longMonthNames, currentMonth - 1))) {
+      goToPrevious("month");
+    } else {
+      goToPrevious("year");
+    }
+  }, [currentMonth, goToPrevious]);
+
+  const onNext = useCallback(() => {
+    if (monthInputRef.current.selectionEnd <= _.size(_.nth(longMonthNames, currentMonth - 1))) {
+      goToNext("month");
+    } else {
+      goToNext("year");
+    }
+  }, [currentMonth, goToNext]);
+
+  if (_.isEmpty(_.keys(sparkline))) return null;
 
   return (
     <div className={styles.input__calendar}>
@@ -223,16 +240,16 @@ const InputCalendar = memo((props) => {
           className={cx({
             [styles.filter__icon]: true,
             [styles.filter__icon___light]: theme === "light",
-            [styles.filter__icon___active]: isVisible
+            [styles.filter__icon___active]: showCalendar
           })}
-          onClick={() => toggleCalendar((misVisible) => !misVisible)}
+          onClick={() => toggleCalendar((show) => !show)}
         />
       )}
       <div className={styles.nav}>
         <Icon
           name="prevMonth"
           className={styles.prev__icon}
-          onClick={goToPrevious}
+          onClick={onPrevious}
         />
         <Icon
           name="nextMonth"
@@ -240,24 +257,20 @@ const InputCalendar = memo((props) => {
             [styles.next__icon]: true,
             [styles.next__icon___disabled]: disableNext
           })}
-          onClick={disableNext ? () => {} : goToNext}
+          onClick={disableNext ? () => {} : onNext}
         />
       </div>
-      <input
-        autoFocus
-        className={cx({
-          [styles.input]: true,
-          [styles.input___open]: isVisible
-        })}
-        defaultValue={date}
-        key={date}
+      <MonthInput
+        ref={monthInputRef}
+        date={date}
         disabled={disabled}
-        min="1996-01"
+        isOpen={showCalendar}
+        min={!_.isEmpty(years) ? `${_.nth(years, 0)}-01` : "1996-01"}
+        minYear={_.nth(years, 0)}
         max={`${currentDateInstance.getFullYear()}-12`}
-        type="month"
         onChange={onChange}
       />
-      {isVisible && (
+      {showCalendar && (
         <div className={styles.calendar}>
           <WithDialogCalendar
             theme={theme}

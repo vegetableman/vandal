@@ -138,11 +138,13 @@ const CalendarFilter = memo(({ onChange, ...props }) => {
   }, [onChange]);
 
   const onInputCalendarChange = useCallback((e) => {
-    e.persist();
-    const { value: dateValue } = e.target;
-    setDate(dateValue);
-    onChange(dateValue);
-  }, [onChange]);
+    const dateValue = _.isString(e) ? e : _.get(e, "target.value");
+    const year = _.parseInt(_.nth(dateValue.split("-"), 0));
+    if (date !== dateValue && year >= 1996) {
+      setDate(dateValue);
+      onChange(dateValue);
+    }
+  }, [onChange, date]);
 
   return (
     <div className={styles.container}>
@@ -150,7 +152,7 @@ const CalendarFilter = memo(({ onChange, ...props }) => {
         {!props.showSparkError &&
           !_.isEmpty(_.keys(props.sparkline)) &&
           !props.showErrLoader && (
-            <div className={styles.label}>Select Date :</div>
+            <div className={styles.label}>Select Date</div>
         )}
         <div className={styles.nav__container}>
           <div className={styles.input__container}>

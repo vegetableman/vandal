@@ -254,20 +254,28 @@ const TimeTravel = (props) => {
   });
 
   const onCalNext = useCallback(
-    () => {
+    (selection) => {
       const { currentMonth, currentYear } = ctx;
-      if (currentMonth === 12) {
-        send("GOTO__MONTHYEAR", {
-          payload: {
-            year: Math.min(new Date().getFullYear(), currentYear + 1),
-            month: 1
-          }
-        });
+      if (selection === "month") {
+        if (currentMonth === 12) {
+          send("GOTO__MONTHYEAR", {
+            payload: {
+              year: Math.min(new Date().getFullYear(), currentYear + 1),
+              month: 1
+            }
+          });
+        } else {
+          send("GOTO__MONTHYEAR", {
+            payload: {
+              year: currentYear,
+              month: currentMonth + 1
+            }
+          });
+        }
       } else {
         send("GOTO__MONTHYEAR", {
           payload: {
-            year: currentYear,
-            month: currentMonth + 1
+            year: Math.min(new Date().getFullYear(), currentYear + 1)
           }
         });
       }
@@ -276,20 +284,28 @@ const TimeTravel = (props) => {
   );
 
   const onCalPrevious = useCallback(
-    () => {
+    (selection) => {
       const { currentMonth, currentYear } = ctx;
-      if (currentMonth === 1) {
-        send("GOTO__MONTHYEAR", {
-          payload: {
-            year: Math.max(1996, currentYear - 1),
-            month: 12
-          }
-        });
+      if (selection === "month") {
+        if (currentMonth === 1) {
+          send("GOTO__MONTHYEAR", {
+            payload: {
+              year: Math.max(1996, currentYear - 1),
+              month: 12
+            }
+          });
+        } else {
+          send("GOTO__MONTHYEAR", {
+            payload: {
+              year: currentYear,
+              month: currentMonth - 1
+            }
+          });
+        }
       } else {
         send("GOTO__MONTHYEAR", {
           payload: {
-            year: currentYear,
-            month: currentMonth - 1
+            year: Math.max(1996, currentYear - 1)
           }
         });
       }
