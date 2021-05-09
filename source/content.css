@@ -2,9 +2,9 @@
   @font-face {
     font-family: "VANDAL__SourceSansPro";
     src:
-      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff2")
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.woff2")
       format("woff2"),
-      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff")
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.woff")
       format("woff");
   }
 
@@ -12,9 +12,9 @@
     font-weight: 600;
     font-family: "VANDAL__SourceSansPro";
     src:
-      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff2")
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.woff2")
       format("woff2"),
-      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff")
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.woff")
       format("woff");
   }
 
@@ -22,9 +22,9 @@
     font-weight: bold;
     font-family: "VANDAL__SourceSansPro";
     src:
-      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff2")
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.woff2")
       format("woff2"),
-      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff")
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.woff")
       format("woff");
   }
 
@@ -78,9 +78,9 @@
   @font-face {
     font-family: "VANDAL__SourceSansPro";
     src:
-      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff2")
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.woff2")
       format("woff2"),
-      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff")
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.woff")
       format("woff");
   }
 
@@ -88,9 +88,9 @@
     font-weight: 600;
     font-family: "VANDAL__SourceSansPro";
     src:
-      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff2")
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.woff2")
       format("woff2"),
-      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff")
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.woff")
       format("woff");
   }
 
@@ -98,9 +98,9 @@
     font-weight: bold;
     font-family: "VANDAL__SourceSansPro";
     src:
-      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff2")
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.woff2")
       format("woff2"),
-      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff")
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.woff")
       format("woff");
   }
 

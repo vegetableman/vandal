@@ -38,9 +38,13 @@ const fetchRequest = async ({
   }
 
   if (fetchFromCache && typeof caches !== "undefined") {
-    const resFromCache = await caches.match(request);
-    if (_.get(resFromCache, "status") === 200) {
-      return [await getResponse(resFromCache), null];
+    try {
+      const resFromCache = await caches.match(request);
+      if (_.get(resFromCache, "status") === 200) {
+        return [await getResponse(resFromCache), null];
+      }
+    } catch (ex) {
+      console.error("cache failure:", ex.message);
     }
   }
 
@@ -61,8 +65,12 @@ const fetchRequest = async ({
       (fetchFromCache || cacheResponse) &&
       _.get(resFromFetch, "status") === 200
     ) {
-      const responseCache = await caches.open("__VANDAL__");
-      responseCache.put(request, resFromFetch.clone());
+      try {
+        const responseCache = await caches.open("__VANDAL__");
+        responseCache.put(request, resFromFetch.clone());
+      } catch (ex) {
+        console.error("cache failure:", ex.message);
+      }
     }
 
     if (_.get(resFromFetch, "status") === 200) {

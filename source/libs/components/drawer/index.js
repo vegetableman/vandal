@@ -307,7 +307,7 @@ const Drawer = memo((props) => {
                             className={cx({
                               [styles.timestamp__delta]: true,
                               [styles.timestamp__delta___plus]:
-                                _.get(dt, "delta") >= 0,
+                                _.get(dt, "delta") > 0,
                               [styles.timestamp__delta___minus]:
                                 _.get(dt, "delta") < 0
                             })}
