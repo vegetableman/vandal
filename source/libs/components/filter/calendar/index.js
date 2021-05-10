@@ -113,7 +113,6 @@ Calendar.propTypes = {
 };
 
 const CalendarFilter = memo(({ onChange, ...props }) => {
-  const currentDateInstance = new Date();
   const [date, setDate] = useState(
     props.currentYear && props.currentMonth ?
       `${props.currentYear}-${_.padStart(props.currentMonth, 2, "0")}` :
@@ -137,14 +136,10 @@ const CalendarFilter = memo(({ onChange, ...props }) => {
     onChange(selectedDate);
   }, [onChange]);
 
-  const onInputCalendarChange = useCallback((e) => {
-    const dateValue = _.isString(e) ? e : _.get(e, "target.value");
-    const year = _.parseInt(_.nth(dateValue.split("-"), 0));
-    if (date !== dateValue && year >= 1996) {
-      setDate(dateValue);
-      onChange(dateValue);
-    }
-  }, [onChange, date]);
+  const onInputCalendarChange = useCallback((dateValue) => {
+    setDate(dateValue);
+    onChange(dateValue);
+  }, [onChange]);
 
   return (
     <div className={styles.container}>
@@ -161,13 +156,6 @@ const CalendarFilter = memo(({ onChange, ...props }) => {
               selectedMonth={props.selectedMonth}
               selectedYear={props.selectedYear}
               disabled={props.showSparkError || props.showCalendarError}
-              disableNext={
-                `${currentDateInstance.getFullYear()}-${_.padStart(
-                  currentDateInstance.getMonth() + 1,
-                  2,
-                  "0"
-                )}` === date
-              }
               currentMonth={props.currentMonth}
               currentYear={props.currentYear}
               sparkline={props.sparkline}

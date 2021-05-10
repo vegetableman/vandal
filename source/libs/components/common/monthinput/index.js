@@ -12,7 +12,7 @@ const formatDate = (date) => (
 );
 
 const MonthInput = forwardRef(({
-  date, minYear, disabled, isOpen, onChange = () => {}
+  date, minYear, maxYear, disabled, isOpen, onChange = () => {}, onMonthSelection, onYearSelection
 }, inputRef) => {
   const inputValueRef = useRef(null);
   const characterRef = useRef(null);
@@ -118,11 +118,13 @@ const MonthInput = forwardRef(({
       event.preventDefault();
       event.stopPropagation();
       inputRef.current.setSelectionRange(_.size(month) + 1, _.size(month) + 1 + _.size(year));
+      onYearSelection(_.parseInt(year));
     // left
     } else if (_.get(event, "keyCode") === 37) {
       event.preventDefault();
       event.stopPropagation();
       inputRef.current.setSelectionRange(0, _.size(month));
+      onMonthSelection(_.indexOf(longMonthNames, month), _.parseInt(year));
     // down
     } else if (_.get(event, "keyCode") === 40) {
       event.preventDefault();
@@ -141,10 +143,10 @@ const MonthInput = forwardRef(({
         const monthIndex = _.indexOf(longMonthNames, month);
         setInputValue(`${_.nth(longMonthNames, monthIndex >= 11 ? 0 : monthIndex + 1)} ${year}`);
       } else {
-        setInputValue(`${month} ${_.parseInt(year) + 1}`);
+        setInputValue(`${month} ${Math.min(_.parseInt(year) + 1, maxYear)}`);
       }
     }
-  }, [inputValue, minYear]);
+  }, [inputValue, minYear, inputRef, maxYear]);
 
   const onKeyUp = useCallback(() => {
     characterRef.current = null;
@@ -192,11 +194,10 @@ MonthInput.propTypes = {
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
   date: PropTypes.string.isRequired,
-  minYear: PropTypes.number
-};
-
-MonthInput.defaultProps = {
-  minYear: 1996
+  minYear: PropTypes.number.isRequired,
+  maxYear: PropTypes.number.isRequired,
+  onMonthSelection: PropTypes.func.isRequired,
+  onYearSelection: PropTypes.func.isRequired
 };
 
 export default MonthInput;

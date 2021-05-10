@@ -195,7 +195,6 @@ const InputCalendar = memo((props) => {
     sparkline,
     goToPrevious,
     goToNext,
-    disableNext,
     currentMonth,
     selectedMonth,
     selectedYear,
@@ -206,6 +205,7 @@ const InputCalendar = memo((props) => {
     date
   } = props;
 
+  const [isNextDisabled, disabledNext] = useState(false);
   const monthInputRef = useRef(null);
   const sparklineYears = _.keys(sparkline);
   const result = _.map(sparklineYears, (y) => (
@@ -229,6 +229,30 @@ const InputCalendar = memo((props) => {
       goToNext("year");
     }
   }, [currentMonth, goToNext]);
+
+  const onInputChange = useCallback((e) => {
+    const dateValue = _.isString(e) ? e : _.get(e, "target.value");
+    const year = _.parseInt(_.nth(dateValue.split("-"), 0));
+    const month = _.parseInt(_.nth(dateValue.split("-"), 1));
+    if (monthInputRef.current.selectionEnd > _.size(_.nth(longMonthNames, month - 1))) {
+      disabledNext(year >= currentDateInstance.getFullYear());
+    } else {
+      disabledNext(year >= currentDateInstance.getFullYear() &&
+        month >= currentDateInstance.getMonth() + 1);
+    }
+    if (date !== dateValue && year >= 1996) {
+      onChange(dateValue);
+    }
+  }, [date, onChange]);
+
+  const onYearSelection = useCallback((year) => {
+    disabledNext(year >= currentDateInstance.getFullYear());
+  }, []);
+
+  const onMonthSelection = useCallback((month, year) => {
+    disabledNext(year >= currentDateInstance.getFullYear() &&
+        month >= currentDateInstance.getMonth());
+  }, []);
 
   if (_.isEmpty(_.keys(sparkline))) return null;
 
@@ -255,9 +279,9 @@ const InputCalendar = memo((props) => {
           name="nextMonth"
           className={cx({
             [styles.next__icon]: true,
-            [styles.next__icon___disabled]: disableNext
+            [styles.next__icon___disabled]: isNextDisabled
           })}
-          onClick={disableNext ? () => {} : onNext}
+          onClick={isNextDisabled ? () => {} : onNext}
         />
       </div>
       <MonthInput
@@ -265,10 +289,11 @@ const InputCalendar = memo((props) => {
         date={date}
         disabled={disabled}
         isOpen={showCalendar}
-        min={!_.isEmpty(years) ? `${_.nth(years, 0)}-01` : "1996-01"}
         minYear={_.nth(years, 0)}
-        max={`${currentDateInstance.getFullYear()}-12`}
-        onChange={onChange}
+        maxYear={currentDateInstance.getFullYear()}
+        onChange={onInputChange}
+        onMonthSelection={onMonthSelection}
+        onYearSelection={onYearSelection}
       />
       {showCalendar && (
         <div className={styles.calendar}>
@@ -304,7 +329,6 @@ const InputCalendar = memo((props) => {
 InputCalendar.propTypes = {
   goToPrevious: PropTypes.func.isRequired,
   goToNext: PropTypes.func.isRequired,
-  disableNext: PropTypes.bool.isRequired,
   onSelect: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
