@@ -183,7 +183,6 @@ const MonthInput = forwardRef(({
       onKeyUp={debouncedKeyUp}
       onBlur={onBlur}
       onClick={onClick}
-      tabIndex={-1}
     />
   );
 });
