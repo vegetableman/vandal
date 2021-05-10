@@ -72,7 +72,7 @@ const URLBox = memo(({ toggleTimeTravel, ...props }) => {
           break;
       }
     };
-    chrome.runtime.onMessage.addListener(onMessage);
+    browser.runtime.onMessage.addListener(onMessage);
 
     const checkServiceWorker = async () => {
       if (!_.get(navigator, "serviceWorker.controller")) return;
@@ -95,7 +95,7 @@ const URLBox = memo(({ toggleTimeTravel, ...props }) => {
     }
 
     return () => {
-      chrome.runtime.onMessage.removeListener(onMessage);
+      browser.runtime.onMessage.removeListener(onMessage);
     };
   }, []);
 
@@ -233,7 +233,7 @@ const URLBox = memo(({ toggleTimeTravel, ...props }) => {
       />
       <Toast
         err
-        closeTimeout={8000}
+        closeTimeout={4000}
         className={styles.frame_render_err__toast}
         show={isSWRendered && showURLLoader}
       >

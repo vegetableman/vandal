@@ -1,75 +1,153 @@
-@font-face {
-  font-family: "VANDAL__SourceSansPro";
-  src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff2")
-    format("woff2"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.otf.woff")
-    format("woff");
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  @font-face {
+    font-family: "VANDAL__SourceSansPro";
+    src:
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.woff2")
+      format("woff2"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.woff")
+      format("woff");
+  }
+
+  @font-face {
+    font-weight: 600;
+    font-family: "VANDAL__SourceSansPro";
+    src:
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.woff2")
+      format("woff2"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.woff")
+      format("woff");
+  }
+
+  @font-face {
+    font-weight: bold;
+    font-family: "VANDAL__SourceSansPro";
+    src:
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.woff2")
+      format("woff2"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.woff")
+      format("woff");
+  }
+
+  @font-face {
+    font-weight: normal;
+    font-family: "VANDAL__Cousine";
+    font-style: normal;
+    src:
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.eot?#iefix")
+      format("embedded-opentype"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.woff")
+      format("woff"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.ttf")
+      format("truetype"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.svg#Cousine-Regular")
+      format("svg");
+  }
+
+  @font-face {
+    font-weight: normal;
+    font-family: "VANDAL__Inconsolata";
+    font-style: normal;
+    src:
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.eot?#iefix")
+      format("embedded-opentype"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.woff")
+      format("woff"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.ttf")
+      format("truetype"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.svg#Inconsolata-Regular")
+      format("svg");
+  }
+
+  @font-face {
+    font-weight: bold;
+    font-family: "VANDAL__Inconsolata";
+    font-style: normal;
+    src:
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.eot?#iefix")
+      format("embedded-opentype"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.woff")
+      format("woff"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.ttf")
+      format("truetype"),
+      url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.svg#Inconsolata-Bold")
+      format("svg");
+  }
 }
 
-@font-face {
-  font-weight: 600;
-  font-family: "VANDAL__SourceSansPro";
-  src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff2")
-    format("woff2"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.otf.woff")
-    format("woff");
-}
+@-moz-document url-prefix() {
+  @font-face {
+    font-family: "VANDAL__SourceSansPro";
+    src:
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.woff2")
+      format("woff2"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Regular.woff")
+      format("woff");
+  }
 
-@font-face {
-  font-weight: bold;
-  font-family: "VANDAL__SourceSansPro";
-  src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff2")
-    format("woff2"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.otf.woff")
-    format("woff");
-}
+  @font-face {
+    font-weight: 600;
+    font-family: "VANDAL__SourceSansPro";
+    src:
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.woff2")
+      format("woff2"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.woff")
+      format("woff");
+  }
 
-@font-face {
-  font-weight: normal;
-  font-family: "VANDAL__Cousine";
-  font-style: normal;
-  src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.eot?#iefix")
-    format("embedded-opentype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.woff")
-    format("woff"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.ttf")
-    format("truetype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.svg#Cousine-Regular")
-    format("svg");
-}
+  @font-face {
+    font-weight: bold;
+    font-family: "VANDAL__SourceSansPro";
+    src:
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.woff2")
+      format("woff2"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.woff")
+      format("woff");
+  }
 
-@font-face {
-  font-weight: normal;
-  font-family: "VANDAL__Inconsolata";
-  font-style: normal;
-  src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.eot?#iefix")
-    format("embedded-opentype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.woff")
-    format("woff"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.ttf")
-    format("truetype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.svg#Inconsolata-Regular")
-    format("svg");
-}
+  @font-face {
+    font-weight: normal;
+    font-family: "VANDAL__Cousine";
+    font-style: normal;
+    src:
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.eot?#iefix")
+      format("embedded-opentype"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.woff")
+      format("woff"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.ttf")
+      format("truetype"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Cousine-Regular.svg#Cousine-Regular")
+      format("svg");
+  }
 
-@font-face {
-  font-weight: bold;
-  font-family: "VANDAL__Inconsolata";
-  font-style: normal;
-  src:
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.eot?#iefix")
-    format("embedded-opentype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.woff")
-    format("woff"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.ttf")
-    format("truetype"),
-    url("chrome-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.svg#Inconsolata-Bold")
-    format("svg");
+  @font-face {
+    font-weight: normal;
+    font-family: "VANDAL__Inconsolata";
+    font-style: normal;
+    src:
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.eot?#iefix")
+      format("embedded-opentype"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.woff")
+      format("woff"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.ttf")
+      format("truetype"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Regular.svg#Inconsolata-Regular")
+      format("svg");
+  }
+
+  @font-face {
+    font-weight: bold;
+    font-family: "VANDAL__Inconsolata";
+    font-style: normal;
+    src:
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.eot?#iefix")
+      format("embedded-opentype"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.woff")
+      format("woff"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.ttf")
+      format("truetype"),
+      url("moz-extension://__MSG_@@extension_id__/build/fonts/Inconsolata-Bold.svg#Inconsolata-Bold")
+      format("svg");
+  }
 }
 
 html,
@@ -87,12 +165,13 @@ body {
   width: 100% !important;
   height: 100% !important;
 
-  --vandal-primary-background-color: #f6f6f6;
+  --vandal-primary-background-color: #f2f2f2;
   --vandal-secondary-background-color: #f5f5f5;
   --vandal-blink-background-color: #eee;
   --vandal-date-background-color: #f5f5f5;
   --vandal-url-info-background-color: #f5f5f5;
-  --vandal-drawer-background-color: #eee;
+  --vandal-drawer-background-color: #fff;
+  --vandal-drawer-title-background-color: #eee;
   --vandal-drawer-item-hover-background-color: #e5e5e5;
   --vandal-url-info-redirect-background-color: #eee;
   --vandal-text-selection-color: #b3d7ff;
@@ -140,6 +219,7 @@ body {
   --vandal-graph-loader-border-color: #ddd;
 
   /* Timetravel */
+  --vandal-timetravel-background-color: #f6f6f6;
   --vandal-timetravel-footer-background-color: #f1f1f1;
   --vandal-timetravel-footer-border-color: #ccc;
   --vandal-timetravel-btn-intro-background-color: #f4f0ea;
@@ -161,6 +241,7 @@ body {
   /* Card */
   --vandal-card-status-icon: #555;
   --vandal-card-progress-color: #29d;
+  --vandal-card-background-color: #f9f9f9;
 
   /* Tooltips */
   --vandal-tooltip-background-color: #fff;
@@ -205,7 +286,8 @@ body {
   --vandal-blink-background-color: #8e8d8d;
   --vandal-date-background-color: #807f7e;
   --vandal-url-info-background-color: var(--vandal-primary-background-color);
-  --vandal-drawer-background-color: #505050;
+  --vandal-drawer-background-color: var(--vandal-primary-background-color);
+  --vandal-drawer-title-background-color: #505050;
   --vandal-drawer-item-hover-background-color: #525151;
   --vandal-url-info-redirect-background-color: #444343;
   --vandal-text-selection-color: #fff;
@@ -259,6 +341,7 @@ body {
   --vandal-graph-loader-border-color: #333;
 
   /* Timetravel */
+  --vandal-timetravel-background-color: var(--vandal-primary-background-color);
   --vandal-timetravel-footer-background-color: #4e4c4c;
   --vandal-timetravel-footer-border-color: #777;
   --vandal-timetravel-btn-intro-background-color: #b18b0c;
@@ -280,6 +363,7 @@ body {
   /* Card */
   --vandal-card-status-icon: #ddd;
   --vandal-card-progress-color: #ff920b;
+  --vandal-card-background-color: #4e4e4d;
 
   /* Tooltips */
   --vandal-tooltip-background-color: #4e4c4c;

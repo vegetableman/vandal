@@ -2,7 +2,7 @@
 import { Machine, actions, spawn } from "xstate";
 import memoizeOne from "memoize-one";
 import {
-  api, abort, getDateTimeFromTS, browser, parseDate
+  api, abort, getDateTimeFromTS, navigator, parseDate
 } from "../../utils";
 import cardMachine from "../common/card/card.machine";
 
@@ -692,7 +692,7 @@ const timetravelMachine = Machine(
         lastTS: (ctx, e) => _.get(e, "data.lastTS", ctx.lastTS)
       }),
       navigateToURL: (ctx) => {
-        browser.navigate(
+        navigator.navigate(
           `https://web.archive.org/web/${ctx.selectedTS}/${ctx.url}`
         );
       },
@@ -717,7 +717,7 @@ const timetravelMachine = Machine(
         }
       },
       notifyNoSparkline: () => {
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
           message: "__VANDAL__CLIENT__NOSPARKLINEFOUND"
         });
       }

@@ -2,12 +2,14 @@ const { fetch } = require("./libs/utils");
 
 const requests = {};
 
-chrome.browserAction.onClicked.addListener(() => {
-  chrome.tabs.insertCSS({ file: "build/content.css" });
-  chrome.tabs.executeScript({ file: "build/content.js" });
+browser.browserAction.onClicked.addListener(() => {
+  browser.tabs.insertCSS({ file: "build/content.css" });
+  browser.tabs.executeScript({ file: "build/browser-polyfill.js" }).then(() => {
+    browser.tabs.executeScript({ file: "build/content.js" });
+  });
 });
 
-chrome.runtime.onConnect.addListener((port) => {
+browser.runtime.onConnect.addListener((port) => {
   port.onMessage.addListener((event) => {
     if (event.message === "__VANDAL__CLIENT__FETCH") {
       const { uniqueId, meta, ...rest } = event.data;
@@ -39,7 +41,7 @@ chrome.runtime.onConnect.addListener((port) => {
   });
 });
 
-chrome.runtime.onMessage.addListener(async (request, sender) => {
+browser.runtime.onMessage.addListener((request, sender) => {
   const { message, data } = request;
-  chrome.tabs.sendMessage(sender.tab.id, { message, data });
+  browser.tabs.sendMessage(sender.tab.id, { message, data });
 });

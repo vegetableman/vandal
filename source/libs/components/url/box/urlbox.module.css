@@ -129,9 +129,9 @@
 .timetravel__btn {
   position: relative;
   display: flex;
-  flex: 0 0 35px;
   align-items: center;
   justify-content: center;
+  width: 35px;
   height: 100%;
   background: none;
   border: 0;
@@ -171,6 +171,12 @@
 
 .timetravel__icon {
   fill: var(--vandal-primary-icon-color);
+}
+
+@-moz-document url-prefix() {
+  .timetravel__icon {
+    transform: scale(1.2);
+  }
 }
 
 .timetravel__btn___selected .timetravel__icon,

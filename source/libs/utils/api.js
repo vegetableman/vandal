@@ -4,7 +4,7 @@ const promiseMap = {};
 let port;
 
 const getPort = () => {
-  port = chrome.runtime.connect({ name: "vandal" });
+  port = browser.runtime.connect({ name: "vandal" });
   port.onDisconnect.addListener((obj) => {
     // eslint-disable-next-line no-console
     console.log("disconnected port", obj);

@@ -160,18 +160,40 @@ const navigatorMachine = Machine(
 
                     // Handles <- | -> transitions for history changes
                     if (_.get(e, "payload.type") === "auto" && !_.isEmpty(ctx.currentRecords)) {
+                      const isMoz = navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
                       // Handles Medium.com URL navigation
                       // Add URL to currentRecords if not present
                       if (_.indexOf(ctx.currentRecords, url) < 0) {
-                        currentRecords = [
-                          ..._.slice(
-                            ctx.currentRecords,
-                            0,
-                            Math.max(currentIndex, 0)
-                          ),
-                          url
-                        ];
+                        // Firefox sends auto unlike chrome for history changes
+                        if (isMoz) {
+                          currentRecords = [
+                            ..._.slice(
+                              ctx.currentRecords,
+                              0,
+                              Math.max(currentIndex + 1, 0)
+                            ),
+                            url
+                          ];
+                          currentIndex = Math.max(_.size(currentRecords) - 1, 0);
+                        } else {
+                          currentRecords = [
+                            ..._.slice(
+                              ctx.currentRecords,
+                              0,
+                              Math.max(currentIndex, 0)
+                            ),
+                            url
+                          ];
+                        }
+                      } else if (isMoz && _.get(e, "payload.isForwardBack") &&
+                        _.lastIndexOf(ctx.currentRecords, url) - ctx.currentIndex !== -1 &&
+                        _.lastIndexOf(ctx.currentRecords, url) - ctx.currentIndex !== 1
+                      ) {
+                        currentRecords = _.without(ctx.currentRecords,
+                          _.nth(ctx.currentRecords, ctx.currentIndex - 1));
+                        currentIndex = _.lastIndexOf(ctx.currentRecords, url);
                       }
+
                       if (_.nth(ctx.currentRecords, Math.max(ctx.currentIndex - 1, 0)) === url) {
                         currentIndex = Math.max(ctx.currentIndex - 1, 0);
                       } else if (_.nth(ctx.currentRecords, ctx.currentIndex + 1) === url) {

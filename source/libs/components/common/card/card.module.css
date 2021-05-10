@@ -7,7 +7,7 @@
   min-height: 27px;
   max-height: 400px;
   text-align: center;
-  background: var(--vandal-primary-background-color);
+  background: var(--vandal-card-background-color);
   border: 1px solid var(--vandal-primary-border-color);
 }
 

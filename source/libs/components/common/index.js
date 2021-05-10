@@ -7,3 +7,4 @@ export { default as Switch } from "./switch";
 export { default as withDialog } from "./withdialog";
 export { default as Icon } from "./icon";
 export { default as Spinner } from "./spinner";
+export { default as MonthInput } from "./monthinput";

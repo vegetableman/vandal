@@ -25,6 +25,12 @@
   padding: 0 5px 0 0;
 }
 
+@-moz-document url-prefix() {
+  .controls {
+    bottom: 2px;
+  }
+}
+
 .control {
   padding: 0 5px;
   background: none;
@@ -73,6 +79,13 @@
   top: 5px;
   width: 14px;
   transform: rotate(180deg);
+}
+
+@-moz-document url-prefix() {
+  .prev__icon {
+    top: 5.2px;
+    width: 14.4px;
+  }
 }
 
 .next__icon {

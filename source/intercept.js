@@ -44,6 +44,8 @@ const getTransitionType = (transitionQualifiers = [], transitionType) => {
   return null;
 };
 
+const isMozExtension = (url) => url.indexOf("moz-extension://") === 0;
+
 let isManualTransition = false;
 let commitURL;
 
@@ -52,12 +54,13 @@ class NavigationHandler {
     const {
       tabId, parentFrameId, frameId, url
     } = details;
-    if (!isValidTab(tabId) || !isValidFrame(tabId, frameId, parentFrameId)) {
+
+    if (!isValidTab(tabId) || !isValidFrame(tabId, frameId, parentFrameId) || isMozExtension(url)) {
       return;
     }
 
     if (details.url === "about:blank" && !!parentFrameId) {
-      chrome.tabs.sendMessage(tabId, {
+      browser.tabs.sendMessage(tabId, {
         message: "__VANDAL__NAV__BUSTED"
       });
       return;
@@ -77,7 +80,7 @@ class NavigationHandler {
 
     isBeforeNavigate = true;
 
-    chrome.tabs.sendMessage(tabId, {
+    browser.tabs.sendMessage(tabId, {
       message: "__VANDAL__NAV__BEFORENAVIGATE",
       data: { url }
     });
@@ -97,7 +100,8 @@ class NavigationHandler {
       url.indexOf("chrome-extension://") === 0 ||
       !isValidTab(tabId) ||
       !isValidFrame(tabId, frameId, parentFrameId) ||
-      url === "about:blank"
+      url === "about:blank" ||
+      isMozExtension(url)
     ) {
       return;
     }
@@ -124,7 +128,7 @@ class NavigationHandler {
 
     commitURL = url;
 
-    chrome.tabs.sendMessage(tabId, {
+    browser.tabs.sendMessage(tabId, {
       message: "__VANDAL__NAV__COMMIT",
       data: {
         url,
@@ -142,13 +146,17 @@ class NavigationHandler {
 
   domLoadHandler = (details) => {
     const { tabId, frameId } = details;
-    if (!isValidTab(tabId) || !isValidFrame(tabId, frameId)) {
+    if (!isValidTab(tabId) || !isValidFrame(tabId, frameId) || isMozExtension(details.url)) {
       return;
     }
 
     log("Dom Loaded");
-
-    chrome.tabs.executeScript(tabId, {
+    browser.tabs.executeScript(tabId, {
+      file: "build/browser-polyfill.js",
+      frameId,
+      matchAboutBlank: true
+    });
+    browser.tabs.executeScript(tabId, {
       file: "build/frame.js",
       frameId,
       matchAboutBlank: true
@@ -158,7 +166,7 @@ class NavigationHandler {
   completedHandler = (details) => {
     const { tabId, frameId, url } = details;
 
-    if (!isValidTab(tabId) || !isValidFrame(tabId, frameId)) {
+    if (!isValidTab(tabId) || !isValidFrame(tabId, frameId) || isMozExtension(url)) {
       return;
     }
 
@@ -166,7 +174,7 @@ class NavigationHandler {
 
     commitURL = null;
     hasNavigationCompleted = true;
-    chrome.tabs.sendMessage(tabId, {
+    browser.tabs.sendMessage(tabId, {
       message: "__VANDAL__NAV__COMPLETE",
       data: { url }
     });
@@ -188,11 +196,12 @@ class NavigationHandler {
     log("History Change");
 
     hasNavigationCompleted = true;
-    chrome.tabs.sendMessage(tabId, {
+    browser.tabs.sendMessage(tabId, {
       message: "__VANDAL__NAV__HISTORYCHANGE",
       data: {
         url,
-        type: getTransitionType(transitionQualifiers, transitionType, url)
+        type: getTransitionType(transitionQualifiers, transitionType, url),
+        isForwardBack: transitionQualifiers.indexOf("forward_back") > -1
       }
     });
   };
@@ -206,7 +215,7 @@ class NavigationHandler {
     log("Navigation Error");
 
     hasNavigationCompleted = true;
-    chrome.tabs.sendMessage(tabId, {
+    browser.tabs.sendMessage(tabId, {
       message: "__VANDAL__NAV__ERROR",
       data: {
         error: details.error,
@@ -220,7 +229,8 @@ class NavigationHandler {
     log("Header Received");
 
     // Return on invalid frames
-    if (!(isValidTab(details.tabId) && isValidFrame(details.tabId, details.frameId))) {
+    if (!(isValidTab(details.tabId) && isValidFrame(details.tabId, details.frameId)) ||
+    isMozExtension(details.url)) {
       return null;
     }
 
@@ -251,7 +261,7 @@ class NavigationHandler {
       details.statusCode >= 400 &&
       details.url.indexOf("web.archive.org/web") < 0
     ) {
-      chrome.tabs.sendMessage(details.tabId, {
+      browser.tabs.sendMessage(details.tabId, {
         message: "__VANDAL__NAV__NOTFOUND",
         data: { url: details.url }
       });
@@ -269,7 +279,7 @@ const eventMap = {
       urls: requestFilters,
       types: ["sub_frame"]
     },
-    extras: ["blocking", "responseHeaders", "extraHeaders"]
+    extras: ["blocking", "responseHeaders", chrome.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS]
   },
   onRequestCompleted: {
     name: "onCompleted",
@@ -332,54 +342,60 @@ function addListeners() {
   for (const [event, value] of Object.entries(eventMap)) {
     if (value.type !== "webRequest") {
       if (
-        !chrome.webNavigation[value.name || event].hasListener(
+        !browser.webNavigation[value.name || event].hasListener(
           navigationHandler[value.handler]
         )
       ) {
-        chrome.webNavigation[value.name || event].addListener(
+        browser.webNavigation[value.name || event].addListener(
           navigationHandler[value.handler]
         );
       }
     } else if (
-      !chrome.webRequest[value.name || event].hasListener(
+      !browser.webRequest[value.name || event].hasListener(
         navigationHandler[value.handler]
       )
     ) {
-      chrome.webRequest[value.name || event].addListener(
-        navigationHandler[value.handler],
-        value.options,
-        value.extras
-      );
+      if (value.extras) {
+        browser.webRequest[value.name || event].addListener(
+          navigationHandler[value.handler],
+          value.options,
+          value.extras.filter((e) => !!e)
+        );
+      } else {
+        browser.webRequest[value.name || event].addListener(
+          navigationHandler[value.handler],
+          value.options
+        );
+      }
     }
   }
 }
 
 function init() {
-  chrome.tabs.onActivated.addListener((activeInfo) => {
-    log("Tab activated");
+  browser.tabs.onActivated.addListener((activeInfo) => {
     const { tabId } = activeInfo;
+    // Remove listeners if the tab is not active
+    // to avoid intercepting requests from other url's
     if (
       hasValidTabs() &&
       !isValidTab(tabId) &&
       getWindowCount() === 1 &&
       hasNavigationCompleted
     ) {
-      log("Tab activated: invalid");
       removeListeners();
     } else if (isValidTab(tabId)) {
-      log("Tab activated: valid", tabId);
       addListeners();
     }
   });
 
-  chrome.tabs.onRemoved.addListener((tabId) => {
+  browser.tabs.onRemoved.addListener((tabId) => {
     log("Tabs removed: ", tabId);
     if (!isValidTab(tabId)) return;
     if (isValidTab(tabId)) {
       validTabs[tabId] = null;
       delete validTabs[tabId];
     }
-    chrome.tabs.query(
+    browser.tabs.query(
       {
         active: true
       },
@@ -393,7 +409,7 @@ function init() {
   });
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((request, sender) => {
   const { message } = request;
   const currTab = sender.tab;
   const tabId = currTab.id;
@@ -405,8 +421,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       matchTab.parentFrameId = null;
       removeListeners();
       addListeners();
-      sendResponse({ message: "___VANDAL__BG__SETUPDONE" });
-      return true;
+      return Promise.resolve({ message: "___VANDAL__BG__SETUPDONE" });
     }
     validTabs[tabId] = {
       url: currTab.url,
@@ -416,7 +431,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     };
     removeListeners();
     addListeners();
-    sendResponse({ message: "___VANDAL__BG__SETUPDONE" });
   } else if (message === "___VANDAL__CLIENT__EXIT") {
     if (getWindowCount() === 1) {
       removeListeners();
@@ -426,22 +440,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (message === "___VANDAL__CLIENT__CHECKVALID") {
     // If page not navigated yet, then return
     if (!isBeforeNavigate) return null;
-    sendResponse({ isValid: Boolean(validTabs[tabId]) });
   }
-  return true;
+  return Promise.resolve({ isValid: Boolean(validTabs[tabId]) });
 });
 
 let isBrowserActionClicked = false;
-chrome.browserAction.onClicked.addListener(() => {
-  chrome.tabs.query(
+browser.browserAction.onClicked.addListener(() => {
+  browser.tabs.query(
     {
       active: true
-    },
-    () => {
-      if (!isBrowserActionClicked) {
-        isBrowserActionClicked = true;
-        init();
-      }
     }
-  );
+  ).then(() => {
+    if (!isBrowserActionClicked) {
+      isBrowserActionClicked = true;
+      init();
+    }
+  });
 });

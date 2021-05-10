@@ -352,6 +352,7 @@ template {
 }
 
 input::selection {
+  color: #333;
   background: var(--vandal-text-selection-color);
 }
 

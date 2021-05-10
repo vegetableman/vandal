@@ -8,25 +8,26 @@ class Overlay {
     this.container.appendChild(this.node);
     this.container.appendChild(this.tip);
     doc.body.appendChild(this.container);
-
     const style = document.createElement("style");
-    style.appendChild(
-      document.createTextNode(`
+    if (!navigator || !navigator.userAgent || navigator.userAgent.toLowerCase().indexOf("firefox") < 0) {
+      style.appendChild(
+        document.createTextNode(`
     @font-face {
       font-family: 'VANDAL__Inconsolata';
-      src: url('chrome-extension://${chrome.runtime.id}/build/fonts/Inconsolata-Bold.eot?#iefix')
+      src: url('chrome-extension://${browser.runtime.id}/build/fonts/Inconsolata-Bold.eot?#iefix')
           format('embedded-opentype'),
-        url('chrome-extension://${chrome.runtime.id}/build/fonts/Inconsolata-Bold.woff')
+        url('chrome-extension://${browser.runtime.id}/build/fonts/Inconsolata-Bold.woff')
           format('woff'),
-        url('chrome-extension://${chrome.runtime.id}/build/fonts/Inconsolata-Bold.ttf')
+        url('chrome-extension://${browser.runtime.id}/build/fonts/Inconsolata-Bold.ttf')
           format('truetype'),
-        url('chrome-extension://${chrome.runtime.id}/build/fonts/Inconsolata-Bold.svg#Inconsolata-Bold')
+        url('chrome-extension://${browser.runtime.id}/build/fonts/Inconsolata-Bold.svg#Inconsolata-Bold')
           format('svg');
       font-weight: bold;
       font-style: normal;
     }
     `)
-    );
+      );
+    }
     doc.head.appendChild(style);
 
     this.container.style.cssText = `
@@ -44,7 +45,8 @@ class Overlay {
       background-color: #333740;
       border-radius: 3px;
       color: #fff;
-      font-family: VANDAL__Inconsolata;
+      font-family: VANDAL__Inconsolata, Courier New;
+      font-weight: bold;
       font-size: 12px;
       padding: 5px 10px;
       position: fixed;
@@ -54,10 +56,15 @@ class Overlay {
 
   highlight(node, ts, scrollOnHighlight) {
     if (scrollOnHighlight) {
-      node.scrollIntoViewIfNeeded();
+      if (node.scrollIntoViewIfNeeded) {
+        node.scrollIntoViewIfNeeded();
+      } else {
+        node.scrollIntoView();
+      }
     }
     const box = node.getBoundingClientRect();
     Object.assign(this.container.style, {
+      display: "block",
       left: `${box.left}px`,
       top: `${box.top}px`,
       width: `${box.width}px`,
@@ -69,6 +76,7 @@ class Overlay {
       });
     } else {
       Object.assign(this.tip.style, {
+        display: "block",
         left: `${box.left}px`,
         top: `${box.top + box.height}px`
       });
@@ -76,9 +84,16 @@ class Overlay {
     }
   }
 
+  hide() {
+    if (this.container) {
+      this.container.style.display = "none";
+    }
+  }
+
   remove() {
-    if (this.container.parentNode) {
+    if (this.container && this.container.parentNode) {
       this.container.parentNode.removeChild(this.container);
+      this.container = null;
     }
   }
 }
@@ -101,7 +116,6 @@ function findElementsByTagName(currWindow, tag) {
 }
 
 let imageMap = {};
-let overlay;
 
 const ARCHIVE_STATIC_PATH = "https://web.archive.org/_static/";
 const ARCHIVE_DONATE_PATH = "https://archive.org/includes/donate.php";
@@ -109,7 +123,6 @@ const ARCHIVE_DONATE_PATH = "https://archive.org/includes/donate.php";
 // Derived from web.archive.org source
 function getSources() {
   imageMap = {};
-  overlay = null;
   // images
   const prefix = `${window.location.origin}/static/`;
   const srcList = [];
@@ -177,13 +190,20 @@ function getSources() {
 }
 
 const mousedownHandler = () => {
-  chrome.runtime.sendMessage({ message: "__VANDAL__FRAME__MOUSEDOWN" });
+  browser.runtime.sendMessage({ message: "__VANDAL__FRAME__MOUSEDOWN" });
 };
 
+let overlay;
 const messageHandler = async (request) => {
   if (!request) return;
   if (request.message === "__VANDAL__CLIENT__FETCH__SOURCES") {
-    chrome.runtime.sendMessage({
+    // reset overlay
+    if (overlay) {
+      overlay.remove();
+      overlay = null;
+    }
+
+    browser.runtime.sendMessage({
       message: "__VANDAL__FRAME__SOURCES",
       data: getSources()
     });
@@ -198,17 +218,19 @@ const messageHandler = async (request) => {
     overlay.highlight(node, request.data.ts, request.data.scrollOnHighlight);
   } else if (request.message === "__VANDAL__CLIENT__REMOVE__HIGHLIGHT") {
     if (overlay) {
-      overlay.remove();
-      overlay = null;
+      overlay.hide();
     }
+  } else if (request.message === "__VANDAL__CLIENT__TOGGLEDRAWER") {
+    overlay.remove();
+    overlay = null;
   }
 };
 
 function onDomReady(window) {
   window.removeEventListener("mousedown", mousedownHandler);
   window.addEventListener("mousedown", mousedownHandler);
-  chrome.runtime.onMessage.removeListener(messageHandler);
-  chrome.runtime.onMessage.addListener(messageHandler);
+  browser.runtime.onMessage.removeListener(messageHandler);
+  browser.runtime.onMessage.addListener(messageHandler);
 }
 
 (function invoke(global) {

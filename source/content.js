@@ -21,7 +21,7 @@ async function onDomReady() {
 
   // using iframe.html as it's a web accessible resource
   // so as to avoid getting blocked by client errors
-  const baseURL = chrome.runtime.getURL("build/iframe.html");
+  const baseURL = browser.runtime.getURL("build/iframe.html");
   const frame = document.createElement("iframe");
 
   let url = new URL(window.location.href);
@@ -47,7 +47,7 @@ async function onDomReady() {
   container.appendChild(drawer);
 
   ReactDOM.render(
-    <App baseURL={baseURL} url={url.href} root={container} browser={frame} />,
+    <App baseURL={baseURL} url={url.href} root={container} navigator={frame} />,
     box
   );
   ReactDOM.render(<Drawer frame={frame} />, drawer);

@@ -12,7 +12,7 @@ import cx from "classnames";
 import { useMachine } from "@xstate/react";
 
 import { VerticalMenu, Switch, Icon } from "../common";
-import { browser, trackDonate } from "../../utils";
+import { navigator, trackDonate } from "../../utils";
 import { TimetravelProvider, useTheme } from "../../hooks";
 import { colors } from "../../constants";
 import URL from "../url";
@@ -51,10 +51,10 @@ const Frame = memo(({ onExit, ...props }) => {
       {
         actions: {
           reload: () => {
-            browser.reload();
+            navigator.reload();
           },
           navigateToURL: (ctx) => {
-            browser.navigate(ctx.currentURL);
+            navigator.navigate(ctx.currentURL);
           },
           navigateBack: () => {
             window.history.back();
@@ -82,7 +82,7 @@ const Frame = memo(({ onExit, ...props }) => {
   }, [send]);
 
   const navigateToURL = useCallback((url) => {
-    browser.navigate(url);
+    navigator.navigate(url);
   }, []);
 
   const clearHistory = useCallback(() => {
@@ -99,7 +99,7 @@ const Frame = memo(({ onExit, ...props }) => {
 
   const toggleDrawer = useCallback(() => {
     send("TOGGLE_RESOURCEL_DRAWER");
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       message: "__VANDAL__CLIENT__TOGGLEDRAWER"
     });
   }, [send]);
@@ -137,7 +137,8 @@ const Frame = memo(({ onExit, ...props }) => {
           sendToNav("UPDATE_HISTORY", {
             payload: {
               url: frameURL,
-              type: _.get(request.data, "type")
+              type: _.get(request.data, "type"),
+              isForwardBack: _.get(request.data, "isForwardBack")
             }
           });
           break;
@@ -155,9 +156,9 @@ const Frame = memo(({ onExit, ...props }) => {
           break;
       }
     };
-    chrome.runtime.onMessage.addListener(onMessage);
+    browser.runtime.onMessage.addListener(onMessage);
     return () => {
-      chrome.runtime.onMessage.removeListener(onMessage);
+      browser.runtime.onMessage.removeListener(onMessage);
     };
   }, []);
 
@@ -232,7 +233,7 @@ const Frame = memo(({ onExit, ...props }) => {
             <img
               alt="logo"
               className={styles.logo}
-              src={chrome.runtime.getURL("build/images/icon.png")}
+              src={browser.runtime.getURL("build/images/icon.png")}
             />
           </div>
           <div className={styles.navigation}>

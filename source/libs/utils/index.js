@@ -40,9 +40,9 @@ export const longMonthNames = [
   "December"
 ];
 
-class Browser {
-  setBrowser(mbrowser) {
-    this.browser = mbrowser;
+class Navigator {
+  setNavigator(mnavigator) {
+    this.navigator = mnavigator;
   }
 
   setBaseURL(url) {
@@ -54,17 +54,17 @@ class Browser {
   }
 
   navigate(url) {
-    this.browser.src = `${this.baseURL}?url=${encodeURIComponent(url)}`;
+    this.navigator.src = `${this.baseURL}?url=${encodeURIComponent(url)}`;
   }
 
   reload() {
     if (this.url) {
-      this.browser.src = `${this.baseURL}?url=${encodeURIComponent(this.url)}`;
+      this.navigator.src = `${this.baseURL}?url=${encodeURIComponent(this.url)}`;
     }
   }
 }
 
-export const browser = new Browser();
+export const navigator = new Navigator();
 
 /**
  * Automatically stops checking for an element to appear once the DOM is ready.

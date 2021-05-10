@@ -145,33 +145,6 @@
   color: var(--vandal-text-color);
 }
 
-.input {
-  width: 165px;
-  padding: 2px 5px 2px 6px;
-  color: var(--vandal-input-color);
-  font-size: 14px;
-  font-family: "VANDAL__SourceSansPro", Arial, Helvetica, sans-serif;
-  line-height: 19.1px;
-  background: var(--vandal-input-background-color);
-  border: 1px solid var(--vandal-primary-border-color);
-  outline: none;
-}
-
-.input::-webkit-clear-button {
-  display: none;
-}
-
-.input::-webkit-datetime-edit-day-field:focus,
-.input::-webkit-datetime-edit-month-field:focus,
-.input::-webkit-datetime-edit-year-field:focus {
-  color: #333;
-  background: var(--vandal-text-selection-color);
-}
-
-.input___open {
-  border-bottom: 0;
-}
-
 .scroll__container {
   overflow: hidden !important;
   visibility: hidden;
