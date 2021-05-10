@@ -233,7 +233,7 @@ const URLBox = memo(({ toggleTimeTravel, ...props }) => {
       />
       <Toast
         err
-        closeTimeout={8000}
+        closeTimeout={4000}
         className={styles.frame_render_err__toast}
         show={isSWRendered && showURLLoader}
       >
