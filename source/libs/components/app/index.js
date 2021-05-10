@@ -111,7 +111,7 @@ const App = (props) => {
     browser.runtime.onMessage.addListener(onMessage);
     document.addEventListener("beforeunload", sendExit);
     checkDonate();
-    // trackUsage();
+    trackUsage();
     return () => {
       document.removeEventListener("beforeunload", sendExit);
       browser.runtime.onMessage.removeListener(onMessage);
