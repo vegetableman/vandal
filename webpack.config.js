@@ -10,7 +10,7 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 
 module.exports = () => ({
-  devtool: "inline-source-map",
+  devtool: "source-map",
   entry: {
     content: "./source/content",
     frame: "./source/frame",
