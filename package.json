@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "1.0.5",
+  "version": "1.1.0",
   "scripts": {
     "ava": "ava",
     "lint": "run-p lint:* --continue-on-error",
