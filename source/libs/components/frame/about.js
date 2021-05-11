@@ -39,7 +39,7 @@ const About = ({ toggleAbout }) => (
           height={35}
           src={browser.runtime.getURL("build/images/logo-title.png")}
         />
-        <div className={styles.version}>Version 1.0.0</div>
+        <div className={styles.version}>Version 1.1.0</div>
       </div>
       <div className={styles.about}>
         <div style={{ fontSize: 14 }}>
