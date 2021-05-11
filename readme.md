@@ -24,6 +24,7 @@ ___
 - [Features](#features)
 - [Limitations](#limitations)
 - [Comparison to Wayback Machine](#comparison-to-wayback-machine)
+- [Build](#build)
 - [API and Tools Used](#api-and-tools-used)
 
 ## Why?
@@ -46,6 +47,41 @@ Vandal supports the following features for navigation and inspection:
 
 ## Comparison to Wayback Machine
 Vandal is not affliated to Internet Archive. As for features, it's more of a subset to the mighty Wayback Machine.
+
+## Build
+
+### Requirements
+Node.js version 14 or later is required.
+
+Install dependencies:
+```sh
+npm install
+```
+
+To create a build:
+```sh
+npm run build 
+```
+
+When working on the extension, run below to constantly build your changes:
+
+```sh
+npm run watch # Listen to file changes and automatically rebuild
+```
+
+Then load or reload it into the browser to see the changes.
+
+### Loading into the browser
+
+Once built, load it in the browser of your choice with [web-ext](https://github.com/mozilla/web-ext):
+
+```sh
+npx web-ext run --target=chromium # Open extension in Chrome
+```
+
+```sh
+npx web-ext run # Open extension in Firefox
+```
 
 ## API and Tools Used
 Vandal uses the [Wayback Machine API](https://archive.org/help/wayback_api.php).
