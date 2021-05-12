@@ -22,10 +22,17 @@
   <header>
     <section>
       <a id="logo" href="/">
-        <img src="assets/images/logo-full.svg" alt="Vandal" class="logo">
+        <picture>
+          <source media="(min-width:650px)" alt="Vandal" srcset="assets/images/logo-full.svg" />
+          <img src="assets/images/logo.svg" alt="Vandal" class="logo" />
+        </picture>
       </a>
-      <div class="built-info">Built using <img src="assets/images/wayback.png" alt="wayback machine"
-          class="wayback-logo" />API</div>
+      <a class="ph"
+        href="https://www.producthunt.com/posts/vandal?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-vandal"
+        target="_blank"><img
+          src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=293547&theme=dark"
+          alt="Vandal - Navigate back in time ⏳ without leaving your current tab | Product Hunt"
+          style="width: 250px; height: 54px;" width="250" height="54" /></a>
     </section>
     <a href="https://github.com/vegetableman/vandal" class="github-corner" aria-label="View source on GitHub"><svg
         width="80" height="80" viewBox="0 0 250 250"
@@ -91,15 +98,17 @@
     </section>
 
     <section class="inline">
+      <div class="download download-firefox">
+        <a class="download-btn download-btn--firefox"
+          onclick="alert('Firefox addon is under-review 🎉. Meanwhile, try it out on Chrome.')"
+          onclick="alert('Firefox addon is under-review 🎉. Meanwhile, try it out on Chrome.')">
+          <div class="text">ADD TO FIREFOX</div>
+        </a>
+      </div>
       <div class="download">
         <a class="download-btn"
           href="https://chrome.google.com/webstore/detail/vandal/knoccgahmcfhngbjhdbcodajdioedgdo">
           <div class="text">ADD TO CHROME</div>
-        </a>
-      </div>
-      <div class="download download-firefox">
-        <a class="download-btn download-btn--firefox">
-          <div class="text">ADD TO FIREFOX</div>
         </a>
       </div>
     </section>
@@ -176,7 +185,7 @@
         style="font-size: 12px;color: #333333;font-family: 'Fira Code';padding-left: 5px;">Experimental</b></span>
     <img src="assets/images/historical.png" class="historical-image" alt="historical" />
     <div class="bubble historical-bubble">
-      <span><b style="color:#864D23;">Historical View</b> to see the changes in a webpage throughout the
+      <span><b style="color:#864D23;">Historical View</b> to see the snapshots of a webpage throughout the
         years.</span>
     </div>
   </section>
@@ -190,7 +199,8 @@
           of
           a tiny subset to the mighty <a target="_blank" href="https://web.archive.org/" rel="noopener noreferrer"
             class="link">Wayback Machine</a>, a
-          web archive service provided by them. Also, to know more, checkout the list of limitations below.</p>
+          web archive service provided by them and it is built using the Wayback Machine API. Also, to know more,
+          checkout the list of limitations below.</p>
       </details>
       <details class="faq-details">
         <summary class="faq-summary">Why was this built?</summary>
@@ -222,7 +232,6 @@
             manually entering a URL in an input. Also, Internet Archive provides a full-fledged service with
             support for personal account to maintain collections, web archives, etc in your own library for easy access.
           </li>
-          <li>It's only available in Chrome for now.</li>
         </ul>
       </details>
       <details class="faq-details">
@@ -246,11 +255,18 @@
         - Vandal
       </span>
       <div class="download">
-        <a class="download-btn"
-          href="https://chrome.google.com/webstore/detail/vandal/knoccgahmcfhngbjhdbcodajdioedgdo">
-          <div class="text">ADD TO CHROME</div>
-          <img class="icon" src="assets/images/chrome.svg" alt="Chrome Web Store" />
-        </a>
+        <div class="download download-firefox">
+          <a class="download-btn download-btn--firefox"
+            onclick="alert('Firefox addon is under-review 🎉. Meanwhile, try it out on Chrome.')">
+            <div class="text">ADD TO FIREFOX</div>
+          </a>
+        </div>
+        <div class="download">
+          <a class="download-btn"
+            href="https://chrome.google.com/webstore/detail/vandal/knoccgahmcfhngbjhdbcodajdioedgdo">
+            <div class="text">ADD TO CHROME</div>
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -259,14 +275,19 @@
   <section>
     <div class="footer">
       <div class="wrapper">
-        <div class="author">
-          <span>Built by</span>
-          <a href="https://github.com/vegetableman/" target="_blank" rel="noopener noreferrer">
-            <img src="assets/images/avatar.png" class="avatar-image" alt="avatar" />
-            vegetableman
-          </a>
-          </a>
+        <div class="author-built-info">
+          <div class="author">
+            <span>Built by</span>
+            <a href="https://github.com/vegetableman/" target="_blank" rel="noopener noreferrer">
+              <img src="assets/images/avatar.png" class="avatar-image" alt="avatar" />
+              vegetableman
+            </a>
+          </div>
+          <div class="built">using<img src="assets/images/wayback.png" alt="wayback machine" class="wayback-logo" />API
+          </div>
         </div>
+        <div class="built-info">Built using <img src="assets/images/wayback.png" alt="wayback machine"
+            class="wayback-logo" />API</div>
         <div class="source">
           <span>Source:</span>
           <a href="https://github.com/vegetableman/vandal" target="_blank" rel="noopener noreferrer">
