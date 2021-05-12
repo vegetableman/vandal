@@ -7,3 +7,4 @@ _site
 .env
 .vandal.code-workspace
 distribution.zip
+web-ext-artifacts
