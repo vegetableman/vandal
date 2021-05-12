@@ -4,3 +4,4 @@ _site
 .serverless
 .env
 distribution.zip
+web-ext-artifacts
