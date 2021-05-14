@@ -50,6 +50,7 @@ body {
 .built-info {
   display: flex;
   align-items: center;
+  font-weight: 500;
   color: #333;
   position: relative;
   top: 5px;
@@ -685,13 +686,14 @@ header > section {
     padding: 20px 0;
   }
   .author-built-info >  .built {
+    color: #555;
     display: block;
+    font-size: 10px;
+    font-weight: 500;
+    position: relative;
+    text-decoration: underline;
+    top: 9px;
   }
-}
-@media only screen and (max-width: 486px) {
-  .author-built-info >  .built {
-    display: none;
-  } 
 }
 .avatar-image {
   width: 25px;
@@ -700,6 +702,7 @@ header > section {
 }
 .author {
   font-size: 13px;
+  font-weight: 500;
   color: #555;
   width: 185px;
 }
@@ -711,6 +714,7 @@ header > section {
 .source {
   display: flex;
   align-items: flex-end;
+  font-weight: 500;
   font-size: 13px;
   height: 25px;
   color: #555;
