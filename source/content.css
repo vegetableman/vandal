@@ -19,16 +19,6 @@
   }
 
   @font-face {
-    font-weight: bold;
-    font-family: "VANDAL__SourceSansPro";
-    src:
-      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.woff2")
-      format("woff2"),
-      url("chrome-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.woff")
-      format("woff");
-  }
-
-  @font-face {
     font-weight: normal;
     font-family: "VANDAL__Cousine";
     font-style: normal;
@@ -91,16 +81,6 @@
       url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.woff2")
       format("woff2"),
       url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Semibold.woff")
-      format("woff");
-  }
-
-  @font-face {
-    font-weight: bold;
-    font-family: "VANDAL__SourceSansPro";
-    src:
-      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.woff2")
-      format("woff2"),
-      url("moz-extension://__MSG_@@extension_id__/build/fonts/SourceSans3-Bold.woff")
       format("woff");
   }
 
