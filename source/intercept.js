@@ -66,7 +66,9 @@ class NavigationHandler {
       return;
     }
 
-    log("Before Navigate");
+    if (process.env.NODE_ENV === "development") {
+      log("Before Navigate");
+    }
 
     if (!validTabs[tabId].parentFrameId) {
       validTabs[tabId].parentFrameId = parentFrameId;
@@ -118,7 +120,9 @@ class NavigationHandler {
       isManualTransition = true;
     }
 
-    log("Commit");
+    if (process.env.NODE_ENV === "development") {
+      log("Commit");
+    }
 
     const transitionTypeQualifier = getTransitionType(
       transitionQualifiers,
@@ -150,7 +154,10 @@ class NavigationHandler {
       return;
     }
 
-    log("Dom Loaded");
+    if (process.env.NODE_ENV === "development") {
+      log("Dom Loaded");
+    }
+
     browser.tabs.executeScript(tabId, {
       file: "build/browser-polyfill.js",
       frameId,
@@ -170,7 +177,9 @@ class NavigationHandler {
       return;
     }
 
-    log("Completed");
+    if (process.env.NODE_ENV === "development") {
+      log("Completed");
+    }
 
     commitURL = null;
     hasNavigationCompleted = true;
@@ -193,7 +202,9 @@ class NavigationHandler {
       return;
     }
 
-    log("History Change");
+    if (process.env.NODE_ENV === "development") {
+      log("History Change");
+    }
 
     hasNavigationCompleted = true;
     browser.tabs.sendMessage(tabId, {
@@ -253,7 +264,9 @@ class NavigationHandler {
   };
 
   onRequestCompletedHandler = (details) => {
-    log("Request Completed");
+    if (process.env.NODE_ENV === "development") {
+      log("Request Completed");
+    }
 
     if (
       isValidTab(details.tabId) &&

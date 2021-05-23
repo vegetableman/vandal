@@ -10,7 +10,7 @@ const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 
 module.exports = () => ({
-  devtool: "source-map",
+  devtool: process.env.NODE_ENV === "development" ? "inline-source-map" : "source-map",
   entry: {
     content: "./source/content",
     frame: "./source/frame",
@@ -85,7 +85,10 @@ module.exports = () => ({
     new webpack.ProvidePlugin({
       _: "lodash"
     }),
-    new DotEnvPlugin()
+    new DotEnvPlugin(),
+    new webpack.DefinePlugin({
+      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development")
+    })
   ],
   optimization: {
     concatenateModules: true,
