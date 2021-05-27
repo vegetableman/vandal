@@ -9,8 +9,8 @@ const getCSSModuleLocalIdent = require("react-dev-utils/getCSSModuleLocalIdent")
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
 
-module.exports = () => ({
-  devtool: process.env.NODE_ENV === "development" ? "inline-source-map" : "source-map",
+module.exports = (_env, argv) => ({
+  devtool: argv.mode === "development" ? "inline-source-map" : "source-map",
   entry: {
     content: "./source/content",
     frame: "./source/frame",
