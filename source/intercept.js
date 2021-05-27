@@ -340,7 +340,7 @@ function removeListeners() {
   log("Remove Listeners");
   // eslint-disable-next-line no-restricted-syntax
   for (const [event, value] of Object.entries(eventMap)) {
-    chrome[value.type][value.name || event].removeListener(
+    browser[value.type][value.name || event].removeListener(
       navigationHandler[value.handler]
     );
   }
