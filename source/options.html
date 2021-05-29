@@ -3,15 +3,95 @@
 
 <head>
   <meta charset="utf-8">
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      color: #333;
+      font-size: 12px;
+      background: #f2f1e9;
+    }
+
+    @-moz-document url-prefix() {
+
+      html,
+      body {
+        height: 100%;
+      }
+    }
+
+    .container {
+      float: left;
+      padding: 20px 15px;
+    }
+
+    .btn {
+      padding: 7px 10px;
+      color: #fff;
+      font-size: 12px;
+      text-shadow: none;
+      background: #00a69a;
+      border: 0;
+      border-radius: 3px;
+      box-shadow: none;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      color: #fff !important;
+      background: #019e94 !important;
+      background-image: none !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    .btn:active {
+      background: #019e94;
+      transform: scale(0.9);
+    }
+
+    .option_description {
+      padding: 5px 18px;
+    }
+
+    @-moz-document url-prefix() {
+      .option_description {
+        padding: 5px 23px;
+      }
+    }
+
+    #clear-message {
+      padding-left: 5px;
+      font-size: 12px;
+      visibility: hidden;
+    }
+
+    b {
+      color: #333;
+      font-weight: 600;
+    }
+  </style>
 </head>
 
 <body>
-  <label>
-    <input type="checkbox" id="is-hist-enabled" value="true" />
-    <strong>Persist history</strong>: Store your browsing history with in Vandal to local storage.<br />
-  </label>
-  <br />
-  <button id="clear-logs">Clear All History</button>
+  <div class="container">
+    <label>
+      <input type="checkbox" id="is-hist-enabled" value="true" />
+      <b>Persist history</b>
+      <div class="option_description">
+        <span>Store your browsing history with in Vandal to local storage.</span>
+        <span>Note: The storage won't be synced across browser sessions.</span>
+      </div>
+    </label>
+    <br />
+    <button id="clear-logs" class="btn">Clear History</button>
+    <span id="clear-message">Cleared!</span>
+    <div class="option_description" style="padding-top: 7px; padding-left: 0;">
+      <span>Clear all browsing history because browser's don't provide an intuitive way to clear extension
+        storage.</span>
+    </div>
+  </div>
   <script src="browser-polyfill.js"></script>
   <script src="options.js"></script>
 </body>
