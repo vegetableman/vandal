@@ -5,7 +5,7 @@ import _ from "lodash";
 
 // TODO: consider removing this, since runtime.lastError is merely a warning
 const promisifiedGet = (key) => new Promise((resolve, reject) => {
-  chrome.storage.local.get([key], (value) => {
+  browser.storage.local.get([key], (value) => {
     if (browser.runtime.lastError) {
       return reject(browser.runtime.lastError);
     }
@@ -18,7 +18,7 @@ export const historyDB = {
   setRecords(suffix, collection) {
     if (!collection || _.isEmpty(collection)) return;
     const key = `${historyPrefix}__${suffix}`;
-    chrome.storage.local.set({ [key]: collection }, () => {
+    browser.storage.local.set({ [key]: collection }, () => {
       // Notify that we saved.
       console.log("HistoryDB: Settings saved");
     });
@@ -35,7 +35,7 @@ export const historyDB = {
 
   async clearRecords(suffix) {
     const promisifiedClear = (key) => new Promise((resolve, reject) => {
-      chrome.storage.local.remove(key, () => {
+      browser.storage.local.remove(key, () => {
         if (browser.runtime.lastError) {
           return reject(browser.runtime.lastError);
         }
@@ -56,7 +56,7 @@ const drawerKey = "__VANDAL__DRAWER__STORAGE";
 
 export const drawerDB = {
   setHeight(value) {
-    chrome.storage.local.set({ [drawerKey]: value }, () => {
+    browser.storage.local.set({ [drawerKey]: value }, () => {
       // Notify that we saved.
       console.log("DrawerDB: Settings saved");
     });
@@ -64,7 +64,7 @@ export const drawerDB = {
 
   getHeight() {
     return new Promise((resolve) => {
-      chrome.storage.local.get([drawerKey], (value) => resolve(value[drawerKey]));
+      browser.storage.local.get([drawerKey], (value) => resolve(value[drawerKey]));
     });
   }
 };
@@ -72,7 +72,7 @@ export const drawerDB = {
 const themeKey = "__VANDAL__THEME__STORAGE";
 export const themeDB = {
   setTheme(value) {
-    chrome.storage.local.set({ [themeKey]: value }, () => {
+    browser.storage.local.set({ [themeKey]: value }, () => {
       // Notify that we saved.
       console.info("ThemeDB: Settings saved");
     });
@@ -80,7 +80,7 @@ export const themeDB = {
 
   getTheme() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(themeKey, (value) => resolve(value[themeKey]));
+      browser.storage.local.get(themeKey, (value) => resolve(value[themeKey]));
     });
   }
 };
@@ -88,7 +88,7 @@ export const themeDB = {
 const introKey = "__VANDAL__INTRO__STORAGE";
 export const introDB = {
   setIntro(value) {
-    chrome.storage.local.set({ [introKey]: value }, () => {
+    browser.storage.local.set({ [introKey]: value }, () => {
       // Notify that we saved.
       console.info("IntroDB: Settings saved");
     });
@@ -96,7 +96,7 @@ export const introDB = {
 
   getIntro() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(introKey, (value) => resolve(value[introKey]));
+      browser.storage.local.get(introKey, (value) => resolve(value[introKey]));
     });
   }
 };
@@ -104,7 +104,7 @@ export const introDB = {
 const historicalKey = "__VANDAL__HIST_INFO__STORAGE";
 export const historicalDB = {
   setInfo(value) {
-    chrome.storage.local.set({ [historicalKey]: value }, () => {
+    browser.storage.local.set({ [historicalKey]: value }, () => {
       // Notify that we saved.
       console.info("HistoricalDB: Settings saved");
     });
@@ -112,7 +112,7 @@ export const historicalDB = {
 
   getInfo() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(historicalKey, (value) => resolve(value[historicalKey]));
+      browser.storage.local.get(historicalKey, (value) => resolve(value[historicalKey]));
     });
   }
 };
@@ -120,7 +120,7 @@ export const historicalDB = {
 const appKey = "__VANDAL__APP__STORAGE";
 export const appDB = {
   setDonateState(value) {
-    chrome.storage.local.set({ [`${appKey}__DONATE`]: value }, () => {
+    browser.storage.local.set({ [`${appKey}__DONATE`]: value }, () => {
       // Notify that we saved.
       console.info("donateDB: Settings saved");
     });
@@ -128,7 +128,7 @@ export const appDB = {
 
   getDonateState() {
     return new Promise((resolve) => {
-      chrome.storage.local.get(`${appKey}__DONATE`, (value) => resolve(value[`${appKey}__DONATE`]));
+      browser.storage.local.get(`${appKey}__DONATE`, (value) => resolve(value[`${appKey}__DONATE`]));
     });
   }
 };
