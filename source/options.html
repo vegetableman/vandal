@@ -6,14 +6,13 @@
 </head>
 
 <body>
-  <p>storage.managed colour: <b id="managed-colour">no value found</b></p>
   <label>
-    <input type="checkbox" id="is-log-enabled" value="true" />
-    <strong>Persist history logs</strong> (Stores the history of navigation for
-    a URL to local storage. Please note: This data is synced across browser
-    instances, if you are logged in through Firefox sync or a Google
-    account.)<br />
+    <input type="checkbox" id="is-hist-enabled" value="true" />
+    <strong>Persist history</strong>: Store your browsing history with in Vandal to local storage.<br />
   </label>
+  <br />
+  <button id="clear-logs">Clear All History</button>
+  <script src="browser-polyfill.js"></script>
   <script src="options.js"></script>
 </body>
 

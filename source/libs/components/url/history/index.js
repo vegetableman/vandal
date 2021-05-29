@@ -91,7 +91,7 @@ const URLHistory = ({
         )}
         {_.isEmpty(history) && (
           <div className={styles.empty__msg}>
-            No logs found. To disable storage of navigation history across
+            No logs found. To enable or disable storage of navigation history across
             sessions, go to Extension options.
           </div>
         )}

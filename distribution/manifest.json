@@ -36,7 +36,8 @@
     "build/iframe.js"
   ],
   "options_ui": {
-    "page": "options.html",
+    "page": "build/options.html",
+    "chrome_style": true,
     "browser_style": true
   }
 }
