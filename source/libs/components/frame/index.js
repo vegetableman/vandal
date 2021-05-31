@@ -115,6 +115,10 @@ const Frame = memo(({ onExit, ...props }) => {
       send("TOGGLE_HISTORICAL_MODE");
     } else if (option === "about") {
       toggleAbout(true);
+    } else if (option === "settings") {
+      browser.runtime.sendMessage({
+        message: "___VANDAL__CLIENT__SETTINGS"
+      });
     }
   }, [onExit, props.url, send]);
 
@@ -208,6 +212,10 @@ const Frame = memo(({ onExit, ...props }) => {
           </div>
         ),
         hideOnSelect: false
+      },
+      {
+        value: "settings",
+        text: "Settings"
       },
       {
         value: "about",
