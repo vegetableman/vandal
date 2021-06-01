@@ -331,9 +331,8 @@
 }
 
 .tooltip {
-  padding: 5px 10px 3px 10px !important;
+  padding: 3px 10px 3px 10px !important;
   font-size: 12px !important;
-  border-radius: 2px !important;
   transition: none !important;
 }
 
