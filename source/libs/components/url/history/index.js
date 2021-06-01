@@ -3,6 +3,7 @@
 import React from "react";
 import memoizeOne from "memoize-one";
 import PropTypes from "prop-types";
+import ReactTooltip from "react-tooltip";
 import {
   getDateTsFromURL,
   getDateTimeFromTS,
@@ -12,6 +13,7 @@ import {
   longMonthNames
 } from "../../../utils";
 import { withDialog, Icon } from "../../common";
+import { colors } from "../../../constants";
 
 import styles from "./urlhistory.module.css";
 import boxStyles from "../box/urlbox.module.css";
@@ -92,15 +94,41 @@ const URLHistory = ({
         {_.isEmpty(history) && (
           <div className={styles.empty__msg}>
             No logs found. To enable or disable storage of navigation history across
-            sessions, go to Extension options.
+            sessions, go to
+            {" "}
+            <button
+              type="button"
+              className={styles.options__btn}
+              onClick={() => {
+                browser.runtime.sendMessage({
+                  message: "___VANDAL__CLIENT__SETTINGS"
+                });
+              }}
+            >
+              Extension options
+            </button>
+            .
           </div>
         )}
       </ul>
       <div className={styles.footer}>
         <Icon
           name="clear"
+          data-for="vandal-clear-hist"
+          data-tip="Clear History"
           className={styles.clear__icon}
           onClick={clearHistory}
+        />
+        <ReactTooltip
+          id="vandal-clear-hist"
+          className={styles.tooltip}
+          arrowColor={colors.BL}
+          textColor={colors.WHITE}
+          backgroundColor={colors.BL}
+          effect="solid"
+          place="bottom"
+          type="dark"
+          offset={{ bottom: 6, left: 0 }}
         />
       </div>
     </div>
