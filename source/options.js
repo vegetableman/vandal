@@ -1,32 +1,44 @@
-const historyKey = "__VANDAL__HIST__STORAGE__ISENABLED";
+const historyEnabledKey = "__VANDAL__HIST__STORAGE__ISENABLED";
 let timeout;
 
 function clearHistory() {
   browser.storage.local.clear().then(() => {
-    document.getElementById("clear-message").style.visibility = "visible";
+    document.getElementById("history-list").style.visibility = "visible";
+    document.getElementById("history-list").innerHTML = "Cleared!";
     if (timeout) {
       clearTimeout(timeout);
     }
     timeout = setTimeout(() => {
-      document.getElementById("clear-message").style.visibility = "hidden";
+      document.getElementById("history-list").style.visibility = "hidden";
     }, 2000);
   }, () => {
-    document.getElementById("clear-message").innerHTML = "Some Error Occured!.";
+    document.getElementById("history-list").innerHTML = "Some Error Occured!.";
   });
 }
 
 function toggleHistory() {
   const isEnabled = document.getElementById("is-hist-enabled").checked;
-  browser.storage.sync.set({ [historyKey]: isEnabled });
+  browser.storage.sync.set({ [historyEnabledKey]: isEnabled });
 }
 
-function restoreOptions() {
-  browser.storage.sync.get(historyKey).then((item) => {
-    if (typeof item[historyKey] === "undefined") {
+async function restoreOptions() {
+  const items = await browser.storage.local.get();
+  if (items && Object.keys(items).length) {
+    let count = 0;
+    Object.keys(items).forEach((item) => {
+      count += items[item].length;
+    });
+    if (count) {
+      document.getElementById("history-list").style.visibility = "visible";
+      document.getElementById("history-list").innerHTML = `ⓘ Found ${count} URL${count > 1 ? "'s" : ""}`;
+    }
+  }
+  browser.storage.sync.get(historyEnabledKey).then((item) => {
+    if (typeof item[historyEnabledKey] === "undefined") {
       document.getElementById("is-hist-enabled").checked = false;
       return;
     }
-    document.getElementById("is-hist-enabled").checked = item[historyKey];
+    document.getElementById("is-hist-enabled").checked = item[historyEnabledKey];
   });
   document.getElementById("clear-logs").addEventListener("click", clearHistory);
   document.getElementById("is-hist-enabled").addEventListener("change", toggleHistory);
