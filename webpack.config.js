@@ -16,7 +16,8 @@ module.exports = (_env, argv) => ({
     frame: "./source/frame",
     iframe: "./source/iframe",
     background: "./source/background",
-    intercept: "./source/intercept"
+    intercept: "./source/intercept",
+    options: "./source/options"
   },
   output: {
     path: path.join(__dirname, "distribution/build"),

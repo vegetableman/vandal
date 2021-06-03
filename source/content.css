@@ -161,6 +161,7 @@ body {
   --vandal-text-bright-color: #333;
   --vandal-tooltip-color: #333;
   --vandal-link-color: blue;
+  --vandal-link-hover-color: #0000b3;
   --vandal-link-selected-color: #d9e2ff;
   --vandal-url-info-color: navy;
   --vandal-drawer-text-color: #555;
@@ -277,6 +278,7 @@ body {
   --vandal-text-bright-color: #fff;
   --vandal-tooltip-color: #fff;
   --vandal-link-color: orange;
+  --vandal-link-hover-color: #ec9a02;
   --vandal-link-selected-color: #6b3e0e;
   --vandal-url-info-color: #ffa500d1;
   --vandal-drawer-text-color: #ddd;

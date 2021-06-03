@@ -110,3 +110,22 @@
   font-size: 13px;
   background: var(--vandal-history-list-background-color);
 }
+
+.options__btn {
+  padding: 0;
+  color: var(--vandal-link-color);
+  text-decoration: underline;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.options__btn:hover {
+  color: var(--vandal-link-hover-color);
+}
+
+.tooltip {
+  padding: 3px 10px 3px 10px !important;
+  font-size: 12px !important;
+  transition: none !important;
+}

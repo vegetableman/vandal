@@ -162,7 +162,7 @@
 
 .tooltip {
   max-width: 270px;
-  padding: 5px 10px !important;
+  padding: 3px 10px !important;
   color: var(--vandal-text-color);
   border: 1px solid var(--vandal-primary-border-color) !important;
   opacity: 1 !important;
@@ -196,8 +196,7 @@
 
 .reload_tooltip,
 .selection_tooltip {
-  padding: 6px 9px 3px 9px !important;
-  border-radius: 2px !important;
+  padding: 3px 9px 3px 9px !important;
   transition: none !important;
 }
 

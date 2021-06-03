@@ -173,12 +173,6 @@
   fill: var(--vandal-primary-icon-color);
 }
 
-@-moz-document url-prefix() {
-  .timetravel__icon {
-    transform: scale(1.2);
-  }
-}
-
 .timetravel__btn___selected .timetravel__icon,
 .timetravel__btn:hover .timetravel__icon {
   fill: var(--vandal-primary-icon-active-color);
@@ -267,9 +261,8 @@
 }
 
 .tooltip {
-  padding: 5px 10px 3px 10px !important;
+  padding: 3px 10px 3px 10px !important;
   font-size: 12px !important;
-  border-radius: 2px !important;
   transition: none !important;
 }
 

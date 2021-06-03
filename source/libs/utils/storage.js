@@ -1,54 +1,35 @@
-/* eslint-disable no-console */
 import _ from "lodash";
 
 // unlimitedStorage is set to avoid any storage errors
-
-// TODO: consider removing this, since runtime.lastError is merely a warning
-const promisifiedGet = (key) => new Promise((resolve, reject) => {
-  chrome.storage.local.get([key], (value) => {
-    if (browser.runtime.lastError) {
-      return reject(browser.runtime.lastError);
-    }
-    return resolve(value[key]);
-  });
-});
 
 const historyPrefix = "__VANDAL__HIST__STORAGE";
 export const historyDB = {
   setRecords(suffix, collection) {
     if (!collection || _.isEmpty(collection)) return;
     const key = `${historyPrefix}__${suffix}`;
-    chrome.storage.local.set({ [key]: collection }, () => {
-      // Notify that we saved.
-      console.log("HistoryDB: Settings saved");
-    });
+    browser.storage.local.set({ [key]: collection });
   },
 
   async getRecords(suffix) {
-    try {
-      const res = await promisifiedGet(`${historyPrefix}__${suffix}`);
-      return [res, null];
-    } catch (err) {
-      return [null, err];
-    }
+    const key = `${historyPrefix}__${suffix}`;
+    return browser.storage.local.get(key).then((value) => {
+      if (browser.runtime.lastError) {
+        return [null, browser.runtime.lastError];
+      }
+      return [_.get(value, key), null];
+    },
+    (err) => [null, err]);
   },
 
   async clearRecords(suffix) {
-    const promisifiedClear = (key) => new Promise((resolve, reject) => {
-      chrome.storage.local.remove(key, () => {
-        if (browser.runtime.lastError) {
-          return reject(browser.runtime.lastError);
-        }
-        return resolve();
-      });
-    });
+    const key = `${historyPrefix}__${suffix}`;
+    return browser.storage.local.remove(key);
+  },
 
-    try {
-      const res = await promisifiedClear(`${historyPrefix}__${suffix}`);
-      return [res, null];
-    } catch (err) {
-      return [null, err];
-    }
+  async isEnabled() {
+    const key = `${historyPrefix}__ISENABLED`;
+    return browser.storage.sync.get(key).then((value) => (
+      _.isUndefined(value[key]) ? false : value[key]), () => (false));
   }
 };
 
@@ -56,79 +37,54 @@ const drawerKey = "__VANDAL__DRAWER__STORAGE";
 
 export const drawerDB = {
   setHeight(value) {
-    chrome.storage.local.set({ [drawerKey]: value }, () => {
-      // Notify that we saved.
-      console.log("DrawerDB: Settings saved");
-    });
+    browser.storage.local.set({ [drawerKey]: value });
   },
 
   getHeight() {
-    return new Promise((resolve) => {
-      chrome.storage.local.get([drawerKey], (value) => resolve(value[drawerKey]));
-    });
+    return browser.storage.local.get([drawerKey]).then((value) => value[drawerKey]);
   }
 };
 
 const themeKey = "__VANDAL__THEME__STORAGE";
 export const themeDB = {
   setTheme(value) {
-    chrome.storage.local.set({ [themeKey]: value }, () => {
-      // Notify that we saved.
-      console.info("ThemeDB: Settings saved");
-    });
+    browser.storage.sync.set({ [themeKey]: value });
   },
 
   getTheme() {
-    return new Promise((resolve) => {
-      chrome.storage.local.get(themeKey, (value) => resolve(value[themeKey]));
-    });
+    return browser.storage.sync.get(themeKey).then((value) => value[themeKey]);
   }
 };
 
 const introKey = "__VANDAL__INTRO__STORAGE";
 export const introDB = {
   setIntro(value) {
-    chrome.storage.local.set({ [introKey]: value }, () => {
-      // Notify that we saved.
-      console.info("IntroDB: Settings saved");
-    });
+    browser.storage.sync.set({ [introKey]: value });
   },
 
   getIntro() {
-    return new Promise((resolve) => {
-      chrome.storage.local.get(introKey, (value) => resolve(value[introKey]));
-    });
+    return browser.storage.sync.get(introKey).then((value) => value[introKey]);
   }
 };
 
 const historicalKey = "__VANDAL__HIST_INFO__STORAGE";
 export const historicalDB = {
   setInfo(value) {
-    chrome.storage.local.set({ [historicalKey]: value }, () => {
-      // Notify that we saved.
-      console.info("HistoricalDB: Settings saved");
-    });
+    browser.storage.sync.set({ [historicalKey]: value });
   },
 
   getInfo() {
-    return new Promise((resolve) => {
-      chrome.storage.local.get(historicalKey, (value) => resolve(value[historicalKey]));
-    });
+    return browser.storage.sync.get(historicalKey).then((value) => value[historicalKey]);
   }
 };
 
 const appKey = "__VANDAL__APP__STORAGE";
 export const appDB = {
   setDonateState(value) {
-    chrome.storage.local.set({ [`${appKey}__DONATE`]: value }, () => {
-      // Notify that we saved.
-      console.info("donateDB: Settings saved");
-    });
+    browser.storage.sync.set({ [`${appKey}__DONATE`]: value });
   },
 
   getDonateState() {
-    return new Promise((resolve) => {
-      chrome.storage.local.get(`${appKey}__DONATE`, (value) => resolve(value[`${appKey}__DONATE`]));
-    });
+    return browser.storage.sync.get(`${appKey}__DONATE`).then((value) => value[`${appKey}__DONATE`]);
   }
 };

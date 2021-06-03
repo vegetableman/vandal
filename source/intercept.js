@@ -453,8 +453,10 @@ browser.runtime.onMessage.addListener((request, sender) => {
   } else if (message === "___VANDAL__CLIENT__CHECKVALID") {
     // If page not navigated yet, then return
     if (!isBeforeNavigate) return null;
+  } else if (message === "___VANDAL__CLIENT__SETTINGS") {
+    return browser.runtime.openOptionsPage();
   }
-  return Promise.resolve({ isValid: Boolean(validTabs[tabId]) });
+  return false;
 });
 
 let isBrowserActionClicked = false;

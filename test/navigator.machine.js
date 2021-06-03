@@ -32,7 +32,10 @@ test("validate navigation history entries [intrepret]", (t) => new Promise(((res
   let loadedTwo = false;
   let isForward = false;
 
-  const navService = interpret(NavigatorMachine.withConfig({
+  const navService = interpret(NavigatorMachine.withContext({
+    ...NavigatorMachine.context,
+    test: true
+  }).withConfig({
     actions: {
       navigateToURL: () => {},
       navigateBack: () => {}
@@ -114,7 +117,10 @@ test("validate auto navigation entries [interpret]", (t) => new Promise(((resolv
   let loadedThree = false;
   let loadedFour = false;
 
-  const navService = interpret(NavigatorMachine.withConfig({
+  const navService = interpret(NavigatorMachine.withContext({
+    ...NavigatorMachine.context,
+    test: true
+  }).withConfig({
     actions: {
       navigateToURL: () => {}
     }
@@ -198,7 +204,10 @@ test("validate redirect [interpret]", (t) => new Promise(((resolve) => {
   let loadedOne = false;
   let loadedTwo = false;
 
-  const navService = interpret(NavigatorMachine.withConfig({
+  const navService = interpret(NavigatorMachine.withContext({
+    ...NavigatorMachine.context,
+    test: true
+  }).withConfig({
     actions: {
       navigateToURL: () => {}
     }
@@ -253,7 +262,10 @@ test("validate auto redirect with new URL's [interpret]", (t) => new Promise(((r
   let loadedOne = false;
   let loadedTwo = false;
 
-  const navService = interpret(NavigatorMachine.withConfig({
+  const navService = interpret(NavigatorMachine.withContext({
+    ...NavigatorMachine.context,
+    test: true
+  }).withConfig({
     actions: {
       navigateToURL: () => {}
     }
@@ -308,7 +320,10 @@ test("validate auto navigation with _if", (t) => new Promise(((resolve) => {
   let loadedOne = false;
   let loadedTwo = false;
 
-  const navService = interpret(NavigatorMachine.withConfig({
+  const navService = interpret(NavigatorMachine.withContext({
+    ...NavigatorMachine.context,
+    test: true
+  }).withConfig({
     actions: {
       navigateToURL: () => {}
     }
@@ -379,7 +394,10 @@ test("reset index on auto if no immediate match found", (t) => new Promise(((res
   let loadedOne = false;
   let loadedTwo = false;
 
-  const navService = interpret(NavigatorMachine.withConfig({
+  const navService = interpret(NavigatorMachine.withContext({
+    ...NavigatorMachine.context,
+    test: true
+  }).withConfig({
     actions: {
       navigateToURL: () => {}
     }

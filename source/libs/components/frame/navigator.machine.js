@@ -307,9 +307,12 @@ const navigatorMachine = Machine(
     actions: {
       persistHistory: async (ctx, e) => {
         const test = _.get(e, "payload.meta.test");
-        if (!test) {
-          historyDB.setRecords(ctx.url, ctx.allRecords);
-        }
+        if (test) return;
+
+        const isEnabled = await historyDB.isEnabled();
+        if (!isEnabled) return;
+
+        historyDB.setRecords(ctx.url, ctx.allRecords);
       },
       clearHistory: async (ctx) => {
         await historyDB.clearRecords(ctx.url);
@@ -317,6 +320,7 @@ const navigatorMachine = Machine(
     },
     services: {
       loadHistory: async (ctx) => {
+        if (ctx.test) return [];
         const [records, err] = await historyDB.getRecords(ctx.url);
         return { records: !err ? records : [] };
       }
