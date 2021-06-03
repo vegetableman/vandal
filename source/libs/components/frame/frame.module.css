@@ -86,7 +86,6 @@
 @-moz-document url-prefix() {
   .resource__icon {
     top: 1px;
-    transform: scale(1.25);
   }
 }
 

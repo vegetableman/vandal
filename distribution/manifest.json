@@ -39,5 +39,11 @@
     "page": "build/options.html",
     "chrome_style": true,
     "browser_style": true
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{6f4b5739-1d94-4977-9595-bb25b6f86b80}",
+      "strict_min_version": "84.0"
+    }
   }
 }
