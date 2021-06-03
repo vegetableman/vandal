@@ -5,7 +5,6 @@ import themeMachine from "../components/app/theme.machine";
 
 const defaultValue = { theme: "light", setTheme: () => {} };
 const ThemeContext = createContext(defaultValue);
-
 const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
 const ThemeProvider = ({ children, notifyThemeChanged }) => {
@@ -20,14 +19,19 @@ const ThemeProvider = ({ children, notifyThemeChanged }) => {
     )
   );
 
-  useEffect(() => {
-    darkModeMediaQuery.addEventListener("change", (e) => {
-      const darkModeOn = e.matches;
-      send("SET_THEME", {
-        payload: { theme: darkModeOn ? "dark" : "light" }
-      });
+  const onThemeChange = (e) => {
+    const darkModeOn = e.matches;
+    send("SET_THEME", {
+      payload: { theme: darkModeOn ? "dark" : "light" }
     });
-  }, [send]);
+  };
+
+  useEffect(() => {
+    darkModeMediaQuery.addEventListener("change", onThemeChange);
+    return () => {
+      darkModeMediaQuery.removeEventListener(onThemeChange);
+    };
+  }, []);
 
   const value = {
     theme: _.get(state, "context.theme"),
