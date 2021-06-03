@@ -325,7 +325,7 @@ const navigatorMachine = Machine(
       loadHistory: async (ctx) => {
         if (ctx.test) return [];
         const isEnabled = await historyDB.isEnabled();
-        if (!isEnabled) return {records: []};
+        if (!isEnabled) return { records: [] };
 
         const [records, err] = await historyDB.getRecords(ctx.url);
         return { records: !err ? records : [] };
