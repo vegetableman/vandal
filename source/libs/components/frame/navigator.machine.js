@@ -315,7 +315,10 @@ const navigatorMachine = Machine(
         historyDB.setRecords(ctx.url, ctx.allRecords);
       },
       clearHistory: async (ctx) => {
-        await historyDB.clearRecords(ctx.url);
+        const isEnabled = await historyDB.isEnabled();
+        if (!isEnabled) return;
+
+        historyDB.clearRecords(ctx.url);
       }
     },
     services: {
