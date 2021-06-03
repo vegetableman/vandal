@@ -3,16 +3,16 @@ let timeout;
 
 function clearHistory() {
   browser.storage.local.clear().then(() => {
-    document.getElementById("history-list").style.visibility = "visible";
-    document.getElementById("history-list").innerHTML = "Cleared!";
+    document.getElementById("history-info").style.visibility = "visible";
+    document.getElementById("history-info").innerHTML = "Cleared!";
     if (timeout) {
       clearTimeout(timeout);
     }
     timeout = setTimeout(() => {
-      document.getElementById("history-list").style.visibility = "hidden";
+      document.getElementById("history-info").style.visibility = "hidden";
     }, 2000);
   }, () => {
-    document.getElementById("history-list").innerHTML = "Some Error Occured!.";
+    document.getElementById("history-info").innerHTML = "Some Error Occured!.";
   });
 }
 
@@ -29,8 +29,8 @@ async function restoreOptions() {
       count += items[item].length;
     });
     if (count) {
-      document.getElementById("history-list").style.visibility = "visible";
-      document.getElementById("history-list").innerHTML = `ⓘ Found ${count} URL${count > 1 ? "'s" : ""}`;
+      document.getElementById("history-info").style.visibility = "visible";
+      document.getElementById("history-info").innerHTML = `ⓘ Found ${count} URL${count > 1 ? "'s" : ""}`;
     }
   }
   browser.storage.sync.get(historyEnabledKey).then((item) => {
