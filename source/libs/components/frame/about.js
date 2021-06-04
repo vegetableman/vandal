@@ -6,6 +6,7 @@ import { Icon } from "../common";
 import styles from "./frame.module.css";
 import { trackDonate } from "../../utils";
 
+const { version } = browser.runtime.getManifest();
 const About = ({ toggleAbout }) => (
   <div
     role="dialog"
@@ -39,7 +40,11 @@ const About = ({ toggleAbout }) => (
           height={35}
           src={browser.runtime.getURL("build/images/logo-title.png")}
         />
-        <div className={styles.version}>Version 1.1.0</div>
+        <div className={styles.version}>
+          Version
+          {" "}
+          {version}
+        </div>
       </div>
       <div className={styles.about}>
         <div style={{ fontSize: 14 }}>
