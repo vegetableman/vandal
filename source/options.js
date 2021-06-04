@@ -30,8 +30,10 @@ async function restoreOptions() {
     });
     if (count) {
       document.getElementById("history-info").style.visibility = "visible";
-      document.getElementById("history-info").innerHTML = `ⓘ Found ${count} URL${count > 1 ? "'s" : ""}`;
+      document.getElementById("history-info").innerHTML = `ⓘ <span style="font-style:italic;">Found ${count} URL${count > 1 ? "'s" : ""}</span>`;
     }
+  } else {
+    document.getElementById("clear-logs").disabled = true;
   }
   browser.storage.sync.get(historyEnabledKey).then((item) => {
     if (typeof item[historyEnabledKey] === "undefined") {
