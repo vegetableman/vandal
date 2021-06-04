@@ -88,7 +88,7 @@ module.exports = (_env, argv) => ({
     }),
     new DotEnvPlugin(),
     new webpack.DefinePlugin({
-      "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development")
+      "process.env.NODE_ENV": JSON.stringify(argv.mode)
     })
   ],
   optimization: {
