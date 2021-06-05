@@ -5,6 +5,7 @@ function clearHistory() {
   browser.storage.local.clear().then(() => {
     document.getElementById("history-info").style.visibility = "visible";
     document.getElementById("history-info").innerHTML = "Cleared!";
+    document.getElementById("clear-logs").disabled = true;
     if (timeout) {
       clearTimeout(timeout);
     }
