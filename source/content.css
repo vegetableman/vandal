@@ -259,6 +259,9 @@ body {
 
   /* About */
   --vandal-modal-background-color: #f6f6f6;
+
+  /* Input Calendar */
+  --vandal-input-months-background-color: #e7ebee;
 }
 
 .vandal[data-theme="dark"] {
@@ -382,6 +385,9 @@ body {
 
   /* About */
   --vandal-modal-background-color: #f3f0ea;
+
+  /* Input Calendar */
+  --vandal-input-months-background-color: #4d4c4c;
 }
 
 .vandal,

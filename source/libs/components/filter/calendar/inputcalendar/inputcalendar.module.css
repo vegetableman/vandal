@@ -69,6 +69,7 @@
   flex-wrap: wrap;
   align-items: baseline;
   height: 50px;
+  background: var(--vandal-input-months-background-color);
 }
 
 .month {
