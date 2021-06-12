@@ -61,22 +61,28 @@
 }
 
 .backward__icon {
-  position: relative;
-  top: 5px;
   width: 23px;
   height: 15px;
   transform: rotate(180deg);
   fill: var(--vandal-primary-icon-color);
 }
 
-.first__icon {
+.first__btn {
   position: relative;
   top: 4px;
 }
 
-.prev__icon {
+.backward__btn {
   position: relative;
   top: 5px;
+}
+
+.prev__btn {
+  position: relative;
+  top: 5px;
+}
+
+.prev__icon {
   width: 14px;
   transform: rotate(180deg);
 }
@@ -89,19 +95,25 @@
 }
 
 .next__icon {
-  position: relative;
-  top: 4.5px;
   width: 14px;
 }
 
-.forward__icon {
+.next__btn {
   position: relative;
-  top: 5px;
+  top: 4.5px;
+}
+
+.forward__icon {
   width: 23px;
   height: 15px;
 }
 
-.last__icon {
+.forward__btn {
+  position: relative;
+  top: 5px;
+}
+
+.last__btn {
   position: relative;
   top: 3.8px;
 }

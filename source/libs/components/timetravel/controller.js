@@ -117,7 +117,7 @@ const Controller = memo((props) => {
       <div className={styles.controls}>
         <button
           type="button"
-          className={styles.control}
+          className={`${styles.control} ${styles.first__btn}`}
           disabled={
             !props.versionCount ||
             !props.firstTS ||
@@ -132,7 +132,7 @@ const Controller = memo((props) => {
             data-for="vandal-first-ts"
             data-tip="First Snapshot"
             name="firstTS"
-            className={`${styles.control__icon} ${styles.first__icon}`}
+            className={styles.control__icon}
           />
           <ReactTooltip
             id="vandal-first-ts"
@@ -149,7 +149,7 @@ const Controller = memo((props) => {
         </button>
         <button
           type="button"
-          className={styles.control}
+          className={`${styles.control} ${styles.backward__btn}`}
           onClick={() => {
             onDateNavigation("prev");
           }}
@@ -185,7 +185,7 @@ const Controller = memo((props) => {
         </button>
         <button
           type="button"
-          className={styles.control}
+          className={`${styles.control} ${styles.prev__btn}`}
           disabled={
             !props.versionCount ||
             !props.selectedTS ||
@@ -218,7 +218,7 @@ const Controller = memo((props) => {
         </button>
         <button
           type="button"
-          className={styles.control}
+          className={`${styles.control} ${styles.next__btn}`}
           disabled={
             !props.versionCount ||
             !props.selectedTS ||
@@ -251,7 +251,7 @@ const Controller = memo((props) => {
         </button>
         <button
           type="button"
-          className={styles.control}
+          className={`${styles.control} ${styles.forward__btn}`}
           disabled={
             !props.versionCount ||
             !props.lastTS ||
@@ -288,7 +288,7 @@ const Controller = memo((props) => {
         </button>
         <button
           type="button"
-          className={styles.control}
+          className={`${styles.control} ${styles.last__btn}`}
           disabled={
             !props.versionCount ||
             !props.lastTS ||
@@ -303,7 +303,7 @@ const Controller = memo((props) => {
             name="lastTS"
             data-for="vandal-last-ts"
             data-tip="Last Snapshot"
-            className={`${styles.control__icon} ${styles.last__icon}`}
+            className={styles.control__icon}
           />
           <ReactTooltip
             id="vandal-last-ts"
