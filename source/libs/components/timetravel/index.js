@@ -439,11 +439,6 @@ const TimeTravel = (props) => {
                   effect="solid"
                   place="left"
                   type={theme}
-                  backgroundColor={
-                    theme === "dark" ? colors.GY_6E : colors.WHITE
-                  }
-                  borderColor={theme === "dark" ? colors.GY_6E : colors.WHITE}
-                  arrowColor={theme === "dark" ? colors.GY_6E : colors.GY_CC}
                   delayHide={100}
                   delayShow={100}
                   getContent={() => (
@@ -472,7 +467,7 @@ const TimeTravel = (props) => {
             type={theme}
             backgroundColor={theme === "dark" ? colors.GY_6E : colors.WHITE}
             borderColor={theme === "dark" ? colors.GY_6E : colors.WHITE}
-            arrowColor={theme === "dark" ? colors.GY_6E : colors.GY_CC}
+            arrowColor={theme === "dark" ? colors.BL_33 : colors.GY_CC}
             delayHide={100}
             delayShow={100}
             getContent={(count) => (

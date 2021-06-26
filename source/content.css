@@ -214,6 +214,7 @@ body {
   --vandal-cl-retry-bg-color: #eee;
   --vandal-cl-retry-bg-hover-color: #929090;
   --vandal-cl-disabled-icon-color: #ababab;
+  --vandal-capacity-background-color: #fff;
 
   /* Graph */
   --vandal-timetravel-graph-border-color: #d8d8d8;
@@ -340,6 +341,7 @@ body {
   --vandal-cl-retry-bg-color: #777;
   --vandal-cl-retry-bg-hover-color: #929090;
   --vandal-cl-disabled-icon-color: #949494;
+  --vandal-capacity-background-color: #71706e;
 
   /* Graph */
   --vandal-timetravel-graph-border-color: #2f2f2f;

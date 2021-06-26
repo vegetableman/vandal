@@ -176,7 +176,15 @@
 }
 
 .capacity_tooltip {
-  color: var(--vandal-text-bright-color);
+  background-color: var(--vandal-capacity-background-color);
+}
+
+.capacity_tooltip::before {
+  border-left-color: var(--vandal-capacity-background-color) !important;
+}
+
+.capacity_tooltip::after {
+  border-left-color: var(--vandal-primary-border-color) !important;
 }
 
 .tooltip:hover {
