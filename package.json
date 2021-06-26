@@ -11,7 +11,9 @@
     "test": "run-p ava lint:* build",
     "fix:css": "stylelint 'source/**/*.css' --fix",
     "build": "webpack --mode=production",
-    "watch": "webpack --mode=development --watch"
+    "watch": "webpack --mode=development --watch",
+    "start": "npx web-ext run",
+    "start:chromium": "npx web-ext run --target=chromium"
   },
   "dependencies": {
     "@babel/runtime": "^7.12.5",
