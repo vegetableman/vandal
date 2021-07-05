@@ -6,8 +6,14 @@
 
 .year__container {
   display: flex;
-  justify-content: flex-end;
+  align-self: flex-end;
+  width: 97%;
   max-height: 75px;
+  overflow-x: auto;
+}
+
+.year__container::-webkit-scrollbar {
+  display: none;
 }
 
 .year {
