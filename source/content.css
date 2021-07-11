@@ -389,7 +389,7 @@ body {
   --vandal-modal-background-color: #f3f0ea;
 
   /* Input Calendar */
-  --vandal-input-months-background-color: #4d4c4c;
+  --vandal-input-months-background-color: #444;
 }
 
 .vandal,

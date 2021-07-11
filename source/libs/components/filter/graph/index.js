@@ -1,4 +1,4 @@
-import React, { memo } from "react";
+import React, { memo, useRef } from "react";
 import PropTypes from "prop-types";
 import cx from "classnames";
 import _ from "lodash";
@@ -90,6 +90,7 @@ const GraphFilter = memo((props) => {
 
   let { sparkline } = props;
 
+  const scrollRef = useRef();
   const { theme } = useTheme();
 
   if (showSparkError || showCalendarError) {
@@ -150,32 +151,43 @@ const GraphFilter = memo((props) => {
   return (
     <div className={styles.root}>
       <div className={styles.year__container}>
-        {_.map(years, (y) => (
-          <div
-            role="button"
-            tabIndex={0}
-            className={cx({
-              [styles.year]: true,
-              [styles.year___selected]: theme !== "dark" && currentYear === y,
-              [styles.year___selected___dark]:
-                  theme === "dark" && currentYear === y
-            })}
-            key={`year-${y}`}
-            onClick={onYearChange(y)}
-          >
-            <span className={styles.year__value}>{y}</span>
-            <Spark
-              data={sparkline[y]}
-              margin={0}
-              width={48}
-              height={75}
-              min={0}
-              max={maxcount}
+        <button
+          type="button"
+          className={styles.left__scroll__button}
+          onClick={() => {
+            scrollRef.current.scrollLeft = 0;
+          }}
+        >
+          <Icon name="leftNav" className={styles.left__nav__icon} />
+        </button>
+        <div ref={scrollRef} className={styles.scroll__wrapper}>
+          {_.map(years, (y) => (
+            <div
+              role="button"
+              tabIndex={0}
+              className={cx({
+                [styles.year]: true,
+                [styles.year___selected]: theme !== "dark" && currentYear === y,
+                [styles.year___selected___dark]:
+                    theme === "dark" && currentYear === y
+              })}
+              key={`year-${y}`}
+              onClick={onYearChange(y)}
             >
-              <Bars theme={theme} />
-            </Spark>
-          </div>
-        ))}
+              <span className={styles.year__value}>{y}</span>
+              <Spark
+                data={sparkline[y]}
+                margin={0}
+                width={48}
+                height={75}
+                min={0}
+                max={maxcount}
+              >
+                <Bars theme={theme} />
+              </Spark>
+            </div>
+          ))}
+        </div>
       </div>
       {showCalendarLoader && !isOverCapacity && (
         <div className={styles.loader__container}>
