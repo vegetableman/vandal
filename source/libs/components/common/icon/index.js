@@ -155,7 +155,7 @@ const icons = {
     </svg>
   ),
   leftNav: ({ ...props }) => (
-    <svg viewBox="13 -1.7 68 107" {...props}>
+    <svg viewBox="13 -1.7 68 107" style={{ transform: "rotate(180deg)" }} {...props}>
       <title>{props.title}</title>
       <polygon points="40.6,70.6 37.9,67.7 56.3,50 37.9,32.3 40.6,29.4 62.1,50" />
     </svg>

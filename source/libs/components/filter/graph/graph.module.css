@@ -5,14 +5,20 @@
 }
 
 .year__container {
+  position: relative;
   display: flex;
-  align-self: flex-end;
-  width: 97%;
+  justify-content: flex-end;
   max-height: 75px;
-  overflow-x: auto;
 }
 
-.year__container::-webkit-scrollbar {
+.scroll__wrapper {
+  display: flex;
+  width: 97%;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+}
+
+.scroll__wrapper::-webkit-scrollbar {
   display: none;
 }
 
@@ -209,4 +215,18 @@
   height: auto;
   margin-top: 30px;
   background: none;
+}
+
+.left__scroll__button {
+  position: absolute;
+  left: 0;
+  width: 25px;
+  height: 100%;
+  background: #545454;
+  border: 0;
+  cursor: pointer;
+}
+
+.left__nav__icon {
+  fill: #fff;
 }
