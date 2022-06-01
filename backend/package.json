@@ -14,7 +14,7 @@
   "dependencies": {
     "airtable": "^0.10.1",
     "chrome-aws-lambda": "^5.3.0",
-    "sharp": "^0.26.1"
+    "sharp": "^0.30.5"
   },
   "devDependencies": {
     "dotenv": "^8.2.0"
