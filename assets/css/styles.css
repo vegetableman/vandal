@@ -123,8 +123,6 @@ header > section {
 }
 @media only screen and (max-width: 486px) {
   .bubble > span {
-    /* font-size: 12px;
-    line-height: 18px; */
     font-size: 13px;
     line-height: 20px;
     background: #F8F7F7;
@@ -138,10 +136,13 @@ header > section {
   text-decoration: none;
 }
 .intro-bubble {
-  background-image: url("../images/intro-bubble.svg");
+  position: relative;
   margin-top: 3px;
   height: 97px;
   width: 396px;
+}
+.intro-bubble > svg {
+  position: absolute;
 }
 .intro-bubble > span {
   top: 10px;
@@ -263,6 +264,7 @@ header > section {
 .screencast > video {
   width: 1100px;
   border-radius: 3px;
+  aspect-ratio: 1.63;
 }
 @media only screen and (max-width: 1242px) {
   .screencast {
